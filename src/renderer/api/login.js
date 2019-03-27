@@ -51,12 +51,12 @@ export function getUserInfo (token) {
 }
 
 /**
- * 获取网吧
+ * 获取网吧信息
 */
 
 export function getNetCafe () {
   return request({
-    url: '/user/info',
+    url: '/getNetCafeInfo',
     method: 'get'
   })
 }

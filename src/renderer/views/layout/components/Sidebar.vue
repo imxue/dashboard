@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Menu active-name="0-0" theme="light" width="auto" :open-names="openname" ref="side_menu">
+    <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu">
       <template v-for="(item,index) in routes.children">
         <Submenu :name="index + ''" :key="index">
           <template slot="title">
@@ -8,7 +8,7 @@
             {{ item.meta.title }}
           </template>
           <template v-for="(subItem,subIndex) in item.children" >
-            <Menu-item v-if="!subItem.hidden" :name="getSubItemName(index, subIndex)" :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ subItem.meta.title }} </Menu-item>
+            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ subItem.meta.title }} </Menu-item>
           </template>
         </Submenu>
       </template>
@@ -20,7 +20,8 @@
   export default {
     data () {
       return {
-        openname: '[]'
+        openname: [],
+        activeName: ''
       }
     },
     created () {
@@ -42,6 +43,8 @@
     },
     methods: {
       getSubItemName (itemIndex, subItemIndex) {
+      // this.activeName = itemIndex + '-' + subItemIndex
+      //  console.log(itemIndex + '-' + subItemIndex)
         return itemIndex + '-' + subItemIndex
       },
       test () {
@@ -50,6 +53,11 @@
           return item.path === this.$route.matched[0].path
         })
         console.log(matched)
+      }
+    },
+    watch: {
+      '$route': function (to) {
+        this.activeName = to.path
       }
     }
   }

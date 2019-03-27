@@ -7,10 +7,11 @@
 <script>
   export default {
     name: 'subType1-1',
-    data () {
-      return {
-      }
-    },
+    // data () {
+    //   return {
+  
+    //   }
+    // },
     created () {
       // console.log(this.$route.matched[0])
       // console.log('hello', JSON.stringify(this.routes))

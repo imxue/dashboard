@@ -5,7 +5,7 @@
     </header>
     <article>
       <Layout>
-        <Sider hide-trigger :style="{background: '#fff'}">
+        <Sider hide-trigger :style="{background: '#fff'}" class="mySider">
           <Sidebar></Sidebar>
         </Sider>
         <Layout>
@@ -91,7 +91,9 @@
     display: flex;
     flex-direction: column;
     min-width: 1500px !important;
-    
+  }
+  .mySider{
+    height: calc(100vh - 62px);
   }
 </style>
 
