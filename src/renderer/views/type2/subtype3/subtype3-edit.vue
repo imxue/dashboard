@@ -321,6 +321,7 @@
           ).then((a) => {
             if (a.data.error === null) {
               this.$Message.success('保存成功！')
+              this.$router.push('/allPlan') // 跳转到 全部方案首页
             } else {
               this.$Message.error(a.data.error)
             }
@@ -367,6 +368,9 @@
         this.$set(this.tableData1, index, i)
         this.handleGetDataLength()
         // console.log('handleMoveBottom::after===' + JSON.stringify(this.tableData1))
+      },
+      handleReset () {
+        this.$router.push('/allplan')
       }
     }
   }

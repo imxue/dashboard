@@ -10,6 +10,7 @@ import './mock'
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+import './router/Hook'
 
 Vue.use(iView)
 Vue.use(moment)

@@ -311,7 +311,25 @@ export function editPcGroup (name, networkMask, networkGateway, dns1, dns2, data
     deps: colorDepth
   })
 }
-
+/**
+ * 删除启动方案
+ * @param {*} list
+ */
+export function deleteItem (list) {
+  return makeRequest('Del_PcGp', {
+    list: [
+      list
+    ]
+  })
+}
+/**
+ * 从主服务器删除服务器
+ */
+export function deleteserver (ip) {
+  return makeRequest('Del_Servers', {
+    serverIp: ip
+  })
+}
 export function getPcGroup () { // 客户机方案
   return makeRequest('Get_PcGp', {
   })

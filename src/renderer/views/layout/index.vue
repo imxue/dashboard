@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div class="layout"> 
     <header>
       <Navbar></Navbar>
     </header>
@@ -90,6 +90,8 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    min-width: 1500px !important;
+    
   }
 </style>
 

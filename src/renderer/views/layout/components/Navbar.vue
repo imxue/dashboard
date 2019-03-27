@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div class="myheader">
     <Row class="ivu-menu-dark ivu-menu-horizontal">
         <i-col span="12">
           <Menu mode="horizontal" theme="dark" active-name="1">
-            <template v-for="item in routes" v-if="!item.hidden&&item.children">
+            <template v-for="item in routes">
+              <template  v-if="!item.hidden&&item.children">
               <router-link :to="item.redirect||item.path+'/'+item.children[0].path" :key="item.children[0].name">
                 <Menu-item :name="item.name" >
                   <Icon type="ios-paper" />
@@ -11,6 +12,7 @@
                   <span v-if="item.meta&&item.meta.title" slot="title">{{item.meta.title}}</span>
                 </Menu-item>
               </router-link>
+              </template>
             </template>
           </Menu>
         </i-col>
@@ -64,7 +66,10 @@
 </script>
 
 
-<style scoped>
-  .redColor{color: #ff4d43;}
-</style>
 
+<style scoped>
+.myheader{
+  min-width: 800px;
+}
+ .redColor{color: #ff4d43;}
+</style>

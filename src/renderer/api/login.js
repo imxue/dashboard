@@ -49,3 +49,14 @@ export function getUserInfo (token) {
     params: { token }
   })
 }
+
+/**
+ * 获取网吧
+*/
+
+export function getNetCafe () {
+  return request({
+    url: '/user/info',
+    method: 'get'
+  })
+}

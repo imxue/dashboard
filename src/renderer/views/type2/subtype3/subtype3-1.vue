@@ -24,9 +24,7 @@
 </template>
 
 <script>
-  import {
-    getPcGroup
-  } from '@/api/wupan'
+  import { getPcGroup, deleteItem } from '@/api/wupan'
   export default {
     name: 'subType3-1',
     data () {
@@ -83,9 +81,10 @@
               //   on: { click: () => { this.handleStop(params.row) } }
               // }, '停用')
               let d = h('Button', { props: { type: 'error' },
-                on: { click: () => { this.handleDelete(params.row) } }
+                on: { click: () => { this.handleDelete(params) } }
               }, '删除')
               // return [a, b, c, d]
+
               return [a, d]
             }
           }
@@ -140,8 +139,18 @@
       },
       handleStart () {},
       handleStop () {},
-      handleDelete (index) {
-        this.tableData.splice(index, 1)
+      handleDelete (row) {
+        this.$Modal.confirm({
+          title: '警告',
+          content: '<p>删除会导致使用该方案的客户机无法使用</p>',
+          onOk: () => {
+            deleteItem(row.row.name)
+            this.handleGetPcGroup()
+          },
+          onCancel: () => {
+            this.$Message.info('Clicked cancel')
+          }
+        })
       }
     }
   }

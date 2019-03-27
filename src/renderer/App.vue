@@ -15,5 +15,4 @@
   .topItem{ height: 60px;line-height: 32px;}
   .topColumn{ float:left; margin-right:10px;}
   .modalBox .ivu-modal-footer{ display: none !important;}
-
 </style>

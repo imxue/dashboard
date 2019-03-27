@@ -12,7 +12,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonRemote">远程</Button>
       <Button type="primary" class="topColumn" @click="handleButtonUpgrade">升级</Button> -->
       <!-- <Divider type="vertical"/> -->
-      <Button type="error" class="topColumn" @click="handleButtonDelete">删除</Button>
+      <Button type="error" class="topColumn" @click="handleButtonDelete(tempMasterServerIp)">删除</Button>
       <Divider type="vertical"/>
       <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button>
     </div>
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-  import { getNetwork, getDiskStatus, setDiskFunction, addServers, editServersNode } from '@/api/wupan'
+  import { getNetwork, getDiskStatus, setDiskFunction, addServers, editServersNode, deleteserver } from '@/api/wupan'
   import { formatSize, bytesToSize } from '@/utils/index'
   export default {
     name: 'subType1-detail',
@@ -360,7 +360,10 @@
       handleButtonRestart () {},
       handleButtonRemote () {},
       handleButtonUpgrade () {},
-      handleButtonDelete () {},
+      handleButtonDelete (ip) {
+        console.log(ip)
+        deleteserver(ip)
+      },
       handleButtonBack () {},
       handleButtonSetSever () {
         // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
