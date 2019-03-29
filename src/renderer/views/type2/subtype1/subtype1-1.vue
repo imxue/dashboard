@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import { getServers, addServers } from '@/api/wupan'
+  import { getServers, addServers, getServersNode, editServersNode } from '@/api/wupan'
   export default {
     name: 'subType1-1',
     data () {
@@ -159,16 +159,19 @@
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.handleSubmitAddServer()
+            getServersNode().then(res => {
+              this.handleSubmitAddServer(res.data.result.guid)
+            })
           } else {
             this.showPopup = true
             this.$Message.error('验证失败')
           }
         })
       },
-      handleSubmitAddServer () {
+      handleSubmitAddServer (guid) {
         // this.showPopup = false
-        addServers(this.formValidate.serverIP, this.formValidate.password).then((a) => {
+        editServersNode(this.formValidate.serverIP)
+        addServers(this.formValidate.serverIP, guid).then((a) => {
           // var result = a.data.result
           if (a.data.error === null) {
             this.$Message.success('添加成功')

@@ -20,7 +20,7 @@
   export default {
     data () {
       return {
-        openname: [],
+        openname: ['0', '1', '2', '3'],
         activeName: ''
       }
     },

@@ -12,9 +12,11 @@
       <Button type="primary" class="topColumn" @click="handleButtonRemote">远程</Button>
       <Button type="primary" class="topColumn" @click="handleButtonUpgrade">升级</Button> -->
       <!-- <Divider type="vertical"/> -->
-      <Button type="error" class="topColumn" @click="handleButtonDelete(tempMasterServerIp)">删除</Button>
+      <!-- <Button type="error" class="topColumn" @click="handleButtonDelete(tempMasterServerIp)">删除</Button> -->
+            <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">删除</Button>
       <Divider type="vertical"/>
       <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRefresh">刷新</Button>
     </div>
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
     <Row style="margin:20px 0;">
@@ -42,7 +44,7 @@
           </div>
       </Modal> -->
     </Row>
-    <Table border ref="selection" :columns="tableColumns2" :data="tableData2" @on-selection-change="handleCheckBox"></Table>
+    <Table border ref="selection" :columns="tableColumns2" :data="tableData2" @on-selection-change="handleCheckBox" ></Table>
     <Row style="margin:20px 0;">
       <h3>磁盘设置</h3>
       <Divider />
@@ -107,8 +109,8 @@
 </template>
 
 <script>
-  import { getNetwork, getDiskStatus, setDiskFunction, addServers, editServersNode, deleteserver } from '@/api/wupan'
-  import { formatSize, bytesToSize } from '@/utils/index'
+  import { getNetwork, getDiskStatus, setDiskFunction, addServers, editServersNode, deleteserver, setVdiskEthernet } from '@/api/wupan'
+  import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
   export default {
     name: 'subType1-detail',
     data () {
@@ -116,6 +118,7 @@
         tempMasterServerIp: '', // 主服务器Ip
         isMaster: '', // 是否为主服务器
         rowData: '',
+        ServerIp: '',
         selecteDiskF: '',
         selecteDisk: '',
         getCheckboxVal: [], // 勾选复选框值
@@ -189,10 +192,10 @@
           // { title: '上行流量 KB/s', key: 'sendRate' },
           // { title: '下行流量 KB/s', key: 'recvRate' },
           {
-            title: '当前工况',
+            title: '网卡速率',
             key: 'linkRate',
             render: (h, params) => {
-              var a = formatSize(params.row.linkRate)
+              var a = params.row.linkRate / 1000 + ' G'
               return h('span', a)
             }
           },
@@ -209,6 +212,9 @@
             key: 'recvRate',
             render: (h, params) => {
               var a = formatSize(params.row.recvRate)
+              console.log('下行流量')
+              console.log(formatSize(params.row.recvRate))
+              console.log('下行流量')
               return h('span', a)
             }
           },
@@ -229,11 +235,9 @@
             }
           }
         ],
-        tableData2: [
-          { id: 1, dataload: '启用' }
-        ],
+        tableData2: [], // 网卡信息
         tableColumns3: [
-          { title: '设备', key: 'name' },
+          { title: '设备', key: 'path' },
           {
             title: '磁盘大小',
             key: 'size',
@@ -257,7 +261,7 @@
             title: '作用',
             key: 'fun',
             render: (h, params) => {
-              let type = params.row.linkStatic
+              let type = params.row.fun
               switch (type) {
                 case 'osDisk':
                   return h('span', '系统盘')
@@ -277,7 +281,20 @@
             }
           },
           { title: '映射盘符', key: 'mountVol' },
-          { title: '存放菜单', key: 'networkCard' },
+          {
+            title: 'IO读速率',
+            key: 'readRate',
+            render: (h, params) => {
+              return h('span', bytesToRate(params.row.readRate))
+            }
+          },
+          {
+            title: 'IO写速率',
+            key: 'writeRate',
+            render: (h, params) => {
+              return h('span', bytesToRate(params.row.writeRate))
+            }
+          },
           {
             title: '累计IO读取',
             key: 'readTotal',
@@ -289,6 +306,7 @@
             title: '累计IO写入',
             key: 'writeTotal',
             render: (h, params) => {
+              //  return h('span', bytesToSize(params.row.writeRate))
               return h('span', bytesToSize(params.row.writeTotal))
             }
           },
@@ -312,13 +330,12 @@
             }
           }
         ],
-        tableData3: [
-          { id: 1, device: 'sda4', size01: '200', size02: '20' }
-        ]
+        tableData3: [] // 磁盘信息类别
       }
     },
     created () {
       this.tempMasterServerIp = this.$route.query.tempMasterServerIp
+      this.ServerIp = this.$route.query.data.serverIp
       this.handleGetServerInfo()
       this.handleGetNetwork()
       this.handleGetDiskStatus()
@@ -334,10 +351,18 @@
         this.tableData1.push(data)
         this.isMaster = this.tableData1[0].isMaster
       },
+      /**
+       * 获取网卡信息
+       */
       handleGetNetwork () {
         getNetwork().then((a) => {
           var arr = a.data.result.list
           if (a.data.error === null && arr !== null) {
+            arr.map(item => {
+              if (item.vdiskSet === 'yes') {
+                item['_checked'] = true
+              }
+            })
             this.tableData2 = arr
           } else {
             this.$Message.error(a.data.error)
@@ -360,11 +385,31 @@
       handleButtonRestart () {},
       handleButtonRemote () {},
       handleButtonUpgrade () {},
+      /**
+       * 删除ip
+       */
       handleButtonDelete (ip) {
-        console.log(ip)
-        deleteserver(ip)
+        this.$Modal.confirm({
+          title: '删除警告',
+          content: '<p>后果自负</p>',
+          okText: '删除',
+          onOk: () => {
+            this.$Message.info('Clicked ok')
+            deleteserver(ip).then(() => {
+              this.$Message.success('删除成功')
+              this.$router.push({
+                path: 'subType1-1'
+              })
+            })
+          },
+          cancelTexxt: '取消'
+        })
       },
-      handleButtonBack () {},
+      handleButtonBack () {
+        this.$router.push({
+          path: 'subType1-1'
+        })
+      },
       handleButtonSetSever () {
         // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
         if (this.$route.query.tempMasterServerIp && this.tempMasterServerIp === this.rowData.serverIP) {
@@ -408,21 +453,30 @@
       handleResetCard () {
         this.showPopup02 = false
       },
+      /**
+       * 设置负载网卡
+       */
       handleLoadNIC () {
-        // this.showPopup01 = true
+        setVdiskEthernet(this.getCheckboxVal).then(() => {
+          this.$Message.info('设置成功')
+          this.handleGetNetwork()
+        })
       },
       handleSetDisk (index) {
         this.rowData = index
         this.showPopup02 = true
       },
+      /**
+       * 获取网卡设置选项
+       */
       handleCheckBox (arr) {
         var data = arr
         var list = []
         for (var i in arr) {
-          list.push(data[i].id)
+          list.push(data[i].name)
         }
-        this.getCheckboxVal = list.join(',')
-        // console.log(this.getCheckboxVal)
+        this.getCheckboxVal = list
+  
         return this.getCheckboxVal
       },
       test () {
@@ -434,6 +488,12 @@
         // if ( this.selecteDisk === '无作用') {
         //   this.showState = true
         // }
+      },
+      /*
+      刷新
+      */
+      handleButtonRefresh () {
+        this.handleGetDiskStatus()
       }
     }
   }

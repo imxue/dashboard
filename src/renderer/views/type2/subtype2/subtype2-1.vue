@@ -4,7 +4,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="mirroringInfo"></Table>
     <Modal
       title="添加镜像"
       v-model="showPopup"
@@ -22,7 +22,14 @@
         </FormItem> -->
         <FormItem label="保存路径：" prop="path">
           <Select v-model="formValidate.path" placeholder="——请选择保存路径——" >
-            <Option v-for="(item, index) in diskList" :key="index" :value="item.path"> {{item.path}}</Option>
+            
+             <Tooltip  placement="right" v-for="(item, index) in diskList" :key="index" :value="item.path">
+               <div slot="content">
+                可用容量 {{item.availableSize}}
+               </div>
+              <Option>{{item.path}}</Option>
+            </Tooltip>
+        
           </Select>
         </FormItem>
         <FormItem label="映射盘符：" prop="mountVol">
@@ -44,7 +51,7 @@
 </template>
 
 <script>
-  import { getImageList, createImage, getDiskStatus } from '@/api/wupan'
+  import { getImageList, createImage, getDiskStatus, deleteImage } from '@/api/wupan'
   import { bytesToSize } from '@/utils/index'
   export default {
     name: 'subType2-1',
@@ -124,20 +131,22 @@
             }
           }
         ],
-        tableData: [
-          { id: 1, name: '镜像名称', size: '56.11', space: '10.85 GB', number: '1202002', state: '施工中' },
-          { id: 2, name: '镜像名称', size: '56.11', space: '10.85 GB', number: '1202002', state: '施工中' }
-        ],
+        mirroringInfo: [],
         formValidate: {
           nameVal: '',
           size: '',
+          diskSize: '',
           path: '',
           menuItemName: '',
           cacheSize: '',
           mountVol: 'z',
           isImportFormMaster: 'yes'
         },
-        ruleValidate: { nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }] }
+  
+        ruleValidate: {
+          nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          size: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        }
       }
     },
     created () {
@@ -157,26 +166,37 @@
       //     return '-'
       //   }
       // },
-      handleGetDiskStatus () { // get磁盘
+
+      /**
+       * 获取磁盘
+       */
+      handleGetDiskStatus () {
         getDiskStatus().then((a) => {
           var arr = a.data.result.list
+          let temp = []
           if (a.data.error === null && arr.length !== null) {
             var newArr = arr.filter(item => item.fun === 'imageDisk')
             for (var i in newArr) {
-              this.diskList.push({
-                path: newArr[i].path
+              temp.push({
+                path: newArr[i].path,
+                availableSize: bytesToSize(newArr[i].availableSize)
               })
+              this.diskList = temp
+              temp = []
             }
           } else {
             this.$Message.error(a.data.error)
           }
         })
       },
+      /**
+       * 获取镜像列表
+       */
       handleGetImageList () {
         getImageList().then((a) => {
           var arr = a.data.result.list
-          if (a.data.error === null && arr.length !== null) {
-            this.tableData = arr
+          if (a.data.error === null && arr && arr.length !== null) {
+            this.mirroringInfo = arr
           } else {
             this.$Message.error(a.data.error)
           }
@@ -229,8 +249,22 @@
       // },
       handleImport () {},
       handleExport () {},
-      handleDelete (index) {
-        this.tableData.splice(index, 1)
+      /*
+      删除镜像
+      */
+      handleDelete (name) {
+        this.$Modal.confirm({
+          title: '删除确认',
+          content: '<p>确认删除</p>',
+          onOk: () => {
+            deleteImage(name.name).then(() => {
+              this.handleGetImageList()
+            })
+          },
+          onCancel: () => {
+
+          }
+        })
       },
       handleEdit () {}
     }

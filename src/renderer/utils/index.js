@@ -24,22 +24,31 @@ export function formatSize (value) {
     size = (limit / (1024 * 1024 * 1024)).toFixed(2) + 'GB/s'
   }
 
-  var sizeStr = size + '' // 转成字符串
-  var index = sizeStr.indexOf('.') // 获取小数点处的索引
-  var dou = sizeStr.substr(index + 1, 2) // 获取小数点后两位的值
-  if (dou === '00') { // 判断后两位是否为00，如果是则删除00
-    return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
-  }
+  // var sizeStr = size + '' // 转成字符串
+  // var index = sizeStr.indexOf('.') // 获取小数点处的索引
+  // var dou = sizeStr.substr(index + 1, 2) // 获取小数点后两位的值
+  // if (dou === '00') { // 判断后两位是否为00，如果是则删除00
+  //   return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
+  // }
   return size
 }
 // 数据容量单位转换(kb,mb,gb,tb)
 export function bytesToSize (bytes) {
   if (bytes === 0) return '0'
   var k = 1024 // or 1000
-  var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   var i = Math.floor(Math.log(bytes) / Math.log(k))
   return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
 }
+// 数据容量单位转换速率
+export function bytesToRate (bytes) {
+  if (bytes === '0' || bytes.isNaN) return '0'
+  var k = 1024 // or 1000
+  var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i] + '/s'
+}
+
 export function parseTime (time, cFormat) {
   if (arguments.length === 0) {
     return null

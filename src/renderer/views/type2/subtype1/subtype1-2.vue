@@ -57,10 +57,7 @@
             }
           }
         ],
-        tableData: [
-          { id: 1, state: '在线异常', ip: '56.11', mode: '10.85 GB', number: '1202002', systemLoad: '1202002', networkCard: 'c：//ldmmvv', diskState: 'c：//ldmmvv', firmwareVersion: '', serverVersion: '' },
-          { id: 2, state: '异常', ip: '56.11', mode: '10.85 GB', number: '1202002', systemLoad: '1202002', networkCard: 'c：//ldmmvv', diskState: 'c：//ldmmvv', firmwareVersion: '', serverVersion: '' }
-        ],
+        tableData: [],
         formValidate: { nameVal: '' },
         ruleValidate: [{ required: true, message: '不能为空', trigger: 'blur' }]
       }

@@ -337,6 +337,7 @@ export default new Router({
             {
               path: 'subType1-1',
               name: 'type3-SubType1-1',
+              alias: '/disklesslist',
               meta: { title: '客户机列表' },
               component: () => import('@/views/type3/subtype1/subtype1-1')
             },

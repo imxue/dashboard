@@ -6,7 +6,7 @@ import axios from 'axios'
 const service = axios.create({
   // baseURL: 'http://10.30.11.6:8080',
   // baseURL: 'http://10.30.18.62:1010',
-  baseURL: 'http://10.88.66.142:13302/jsonrpc',
+  baseURL: 'http://10.88.66.143:13302/jsonrpc',
   //  baseURL: 'http://142.10.179.220:13302/jsonrpc',
   // baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 5000 // request timeout
@@ -14,7 +14,7 @@ const service = axios.create({
 
 // request interceptor
 // service.interceptors.request.use(
-//   config => {
+//   0.0.0.0.0.0.0 => {
 //     // Do something before request is sent
 //     if (store.getters.token) {
 //       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
@@ -28,12 +28,14 @@ const service = axios.create({
 //     Promise.reject(error)
 //   }
 // )
-
+service.interceptors.request.use(
+  config => {
+    return config
+  }
+)
 // response interceptor
 service.interceptors.response.use(
-  response => {
-    console.log(response)
-  },
+  response => response,
   /**
    * 下面的注释为通过在response里，自定义code来标示请求状态
    * 当code返回如下情况则说明权限有问题，登出并返回到登录页
