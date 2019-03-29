@@ -49,6 +49,7 @@
 
 <script>
   import { getClientList, deleteClient, changeSchema } from '@/api/client'
+//  import { getPcListConfig } from '@/api/wupan'
   export default {
     name: 'subType1-1',
     data () {
@@ -145,6 +146,9 @@
     },
     created () {
       this.handleGetClientList(this.curroffset, this.currlimit)
+      // getPcListConfig().then(response => {
+      //   this.tableData = response.data.result.list
+      // })
     },
     computed: {
       routes () {

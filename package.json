@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "netbarmanagement",
   "version": "0.0.1",
   "author": "admin@admin.com",
   "description": "An electron-vue project",
@@ -22,10 +22,15 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "my-project",
+    "productName": "网吧管理系统",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
     },
     "files": [
       "dist/electron/**/*"

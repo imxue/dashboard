@@ -265,7 +265,9 @@ export function editPcConfig (mac, pc, ip, isDisable, pcGroup) {
     pcGp: pcGroup
   })
 }
-
+/**
+ * 获取所以客户机属性
+ */
 export function getPcListConfig () {
   return makeRequest('Get_PcListConf', {
   })
@@ -494,7 +496,9 @@ export function getErrorStringList () {
   return makeRequest('GetErList', {
   })
 }
-
+/**
+ * 获取guid
+ */
 export function getServersNode () {
   return makeRequest('Get_Servers_Node', {
   })
@@ -507,7 +511,11 @@ export function editServersNode (masterIp, isSyncImage, isOverload) {
     auba: isOverload ? '1' : '0'
   })
 }
-
+/**
+ * 添加服务器
+ * @param {*} serverIp
+ * @param {*} guid
+ */
 export function addServers (serverIp, guid) {
   return makeRequest('Add_Servers', {
     serverIp: serverIp,
