@@ -3,5 +3,6 @@ import router from '../router'
 router.beforeEach((to, from, next) => {
   // console.log(store.state.user.Netcafe)
   // console.log(to)
+  console.log(to)
   next()
 })

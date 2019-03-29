@@ -307,7 +307,6 @@ export default new Router({
               path: 'subType3-1',
               name: 'type2-SubType3-1',
               meta: { title: '全部方案' },
-              alias: '/allPlan',
               component: () => import('@/views/type2/subtype3/subtype3-1')
             },
             {

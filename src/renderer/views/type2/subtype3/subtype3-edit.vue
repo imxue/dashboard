@@ -3,7 +3,7 @@
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
         <Row>
           <i-col span="10" offset="2">
-          <FormItem prop="name">
+          <FormItem prop="namex">
           <Row>
             <i-col span="4">方案名称：</i-col>
             <i-col span="10"><i-input v-model="formValidate.name" placeholder=""></i-input></i-col>
@@ -214,8 +214,11 @@
 
         },
         ruleValidate: {
-          // name: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          // time: [ { required: true, message: '不能为空', trigger: 'blur' } ]
+          formValidate: [
+            { required: true, message: '不能为空', trigger: 'blur' } ],
+          time: [ { required: true, message: '不能为空', trigger: 'blur' }
+          ]
+  
         },
         formValidate2: { schemeName: '', configName: '' },
         ruleValidate2: {
@@ -370,7 +373,7 @@
         // console.log('handleMoveBottom::after===' + JSON.stringify(this.tableData1))
       },
       handleReset () {
-        this.$router.push('/allplan')
+        this.$router.push('subType3-1')
       }
     }
   }
