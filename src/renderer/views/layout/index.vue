@@ -90,11 +90,12 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-width: 1500px !important;
+    min-width: 1270px;
   }
   .mySider{
     height: calc(100vh - 62px);
   }
+  
 </style>
 
 

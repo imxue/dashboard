@@ -302,7 +302,8 @@ export function editPcGroup (name, networkMask, networkGateway, dns1, dns2, data
     dns2: dns2,
     daSV: dataServerIP,
     bala: isBalance ? '0' : '1',
-    disable: isDisable ? '0' : '1',
+    //  disable: isDisable ? '0' : '1',
+    disable: isDisable,
     wrLimG: writeLimitGB,
     imgG: imageList,
     gTim: imageTimeout,
@@ -332,6 +333,9 @@ export function deleteserver (ip) {
     serverIp: ip
   })
 }
+/**
+ * 获取启动方案类别
+ */
 export function getPcGroup () { // 客户机方案
   return makeRequest('Get_PcGp', {
   })

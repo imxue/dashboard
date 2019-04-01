@@ -313,6 +313,7 @@
       },
       handleDelete (index) {
         // image, projectNO
+        debugger
         deleteImageProject(this.tableData1[0].name, index.no).then((a) => {
           var result = a.data.result
           if (a.data.error === null && result === null) {

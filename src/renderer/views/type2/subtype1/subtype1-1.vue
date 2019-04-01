@@ -1,5 +1,6 @@
 <template>
   <div>
+     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Input class="topColumn" v-model="searchVal" search enter-button="搜索" @on-search="handleSearch" placeholder="请输入服务器IP..." style="width: 200px;" />
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加服务器</Button>
@@ -130,11 +131,13 @@
           var arr = data.filter(item => item.isMaster === '1')
           this.tempMasterServerIp = arr[0].serverIp
         }
+        this.spinShow = false
       },
       handleButtonAdd (val) {
         this.showPopup = true
       },
       handleButtonRefesh (val) {
+        this.spinShow = true
         this.handleGetServerList()
       },
       handleButtonRemote (val) {

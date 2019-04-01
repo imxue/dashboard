@@ -68,8 +68,13 @@
 
 
 <style scoped>
-.myheader{
-  min-width: 800px;
-}
  .redColor{color: #ff4d43;}
+.myheader{
+     min-width: 1250px;
+   }
+ @media screen and (max-width: 1280px) {
+   .myheader{
+     min-width: 1250px;
+   }
+ }
 </style>

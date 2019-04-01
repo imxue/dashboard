@@ -1,47 +1,41 @@
 <template>
   <div style="margin-top:20px;">
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-position="right" :label-width="120">
         <Row>
           <i-col span="10" offset="2">
-          <FormItem prop="namex">
+     
+          <FormItem prop="name" label="方案名称：">
           <Row>
-            <i-col span="4">方案名称：</i-col>
             <i-col span="10"><i-input v-model="formValidate.name" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="netMk">
+        <FormItem prop="netMk"  label="子网淹码：">
           <Row>
-            <i-col span="4">子网淹码：</i-col>
             <i-col span="10"><i-input v-model="formValidate.netMk" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="netGW">
+        <FormItem prop="netGW"  label="子网淹码：">
           <Row>
-            <i-col span="4">网关：</i-col>
             <i-col span="10"><i-input v-model="formValidate.netGW" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="dns1">
+        <FormItem prop="dns1"  label="首选dns：">
           <Row>
-            <i-col span="4">首选dns：</i-col>
             <i-col span="10"><i-input v-model="formValidate.dns1" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="dns2">
+        <FormItem prop="dns2" label="备用dns：">
           <Row>
-            <i-col span="4">备用dns：</i-col>
             <i-col span="10"><i-input v-model="formValidate.dns2" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="daSV">
+        <FormItem prop="daSV" label="数据服务器：">
           <Row>
-            <i-col span="4">数据服务器：</i-col>
             <i-col span="10"><i-input v-model="formValidate.daSV" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="bala">
+        <FormItem prop="bala"  label="负载均衡：">
           <Row>
-            <i-col span="4">负载均衡：</i-col>
             <i-col span="10">
               <Select v-model="formValidate.bala">
                 <Option value="0">启用</Option>
@@ -50,59 +44,51 @@
             </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="disable">
+        <FormItem prop="disable" label="启用状态：">
           <Row>
-            <i-col span="4">启用状态：</i-col>
             <i-col span="10">
               <Select v-model="formValidate.disable">
+                 <Option value="1">启用</Option>
                 <Option value="0">禁用</Option>
-                <Option value="1">启用</Option>
               </Select>
             </i-col>
           </Row>
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG">
+        <FormItem prop="wrLimG"  label="回写总量限制：">
           <Row>
-            <i-col span="4">回写总量限制：</i-col>
             <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="gTim">
+        <FormItem prop="gTim"  label="方案切换等待：">
           <Row>
-            <i-col span="4">方案切换等待：</i-col>
             <i-col span="16"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input>&nbsp;&nbsp;秒，后启动默认方案，单镜像单配置时无需等待。
             </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="cach">
+        <FormItem prop="cach" label="缓存大小：">
           <Row>
-            <i-col span="4">缓存大小：</i-col>
             <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; * 单位M</i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh">
+        <FormItem prop="wieh" label="分辨率宽：">
           <Row>
-            <i-col span="4">分辨率宽：</i-col>
             <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="hith">
+        <FormItem prop="hith" label="分辨率高：">
           <Row>
-            <i-col span="4">分辨率高：</i-col>
             <i-col span="10"><i-input v-model="formValidate.hith" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="resh">
+        <FormItem prop="resh" label="刷新率：">
           <Row>
-            <i-col span="4">刷新率：</i-col>
             <i-col span="10"><i-input v-model="formValidate.resh" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="deps">
+        <FormItem prop="deps" label="色彩：">
           <Row>
-            <i-col span="4">色彩：</i-col>
             <i-col span="10"><i-input v-model="formValidate.deps" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
@@ -116,7 +102,7 @@
     </Form>
     <Row style="margin-bottom:20px;">
       <!-- <Divider /> -->
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加镜像</Button>
+      <Button type="primary"  @click="handleButtonAdd">添加镜像</Button>
     </Row>
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
     <Modal
@@ -127,12 +113,12 @@
       class-name="vertical-center-modal">
       <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="100">
         <FormItem label="镜像名称:" prop="schemeName">
-          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue" clearable class="topColumn" style="width:200px;" placeholder="---请选择镜像---">
+          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue" clearable style="width:200px;" placeholder="---请选择镜像---">
             <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
         <FormItem label="配置名称:" prop="configName">
-          <Select v-model="formValidate2.configName" clearable class="topColumn" style="width:200px;" placeholder="---请选择配置名称---">
+          <Select v-model="formValidate2.configName" clearable style="width:200px;" placeholder="---请选择配置名称---">
             <Option v-for="item in imageProList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
@@ -213,17 +199,31 @@
           deps: '32'
 
         },
+        // 验证添加方案字段
         ruleValidate: {
-          formValidate: [
+          name: [
             { required: true, message: '不能为空', trigger: 'blur' } ],
-          time: [ { required: true, message: '不能为空', trigger: 'blur' }
-          ]
+          netMk: [ { required: true, message: '不能为空', trigger: 'blur' }
+          ],
+          netGW: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          dns1: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          dns2: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          daSV: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          bala: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          disable: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          wrLimG: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          gTim: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          cach: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          wieh: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          hith: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          resh: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          deps: [{ required: true, message: '不能为空', trigger: 'blur' }]
   
         },
         formValidate2: { schemeName: '', configName: '' },
         ruleValidate2: {
-          // schemeName: [{ required: true, message: '不能为空', trigger: 'change' }],
-          // configName: [{ required: true, message: '不能为空', trigger: 'change' }]
+          schemeName: [{ required: true, message: '不能为空', trigger: 'change' }],
+          configName: [{ required: true, message: '不能为空', trigger: 'change' }]
         },
         imageList: [],
         imageProList: []
@@ -297,39 +297,42 @@
       //   value2 = this.configNameList.filter(item => item.name === this.formValidate2.configName)
       //   this.name02 = value2[0].id
       // },
-      handleSubmit () {
-        if (this.tableData1.length === 0) {
-          this.$Message.error('请至少添加一个镜像')
-        } else {
-        // this.handleFormatValue()
-        // name, networkMask, networkGateway, dns1, dns2, dataServerIP, isBalance, isDisable,
-        // writeLimitGB, imageList, imageTimeout, cacheMB, pixelWidth, pixelHeight, refresh, colorDepth
-          editPcGroup(
-            this.formValidate.name,
-            this.formValidate.netMk,
-            this.formValidate.netGW,
-            this.formValidate.dns1,
-            this.formValidate.dns2,
-            this.formValidate.daSV,
-            this.formValidate.bala,
-            this.formValidate.disable,
-            this.formValidate.wrLimG,
-            this.tableData1,
-            this.formValidate.gTim,
-            this.formValidate.cach,
-            this.formValidate.wieh,
-            this.formValidate.hith,
-            this.formValidate.resh,
-            this.formValidate.deps
-          ).then((a) => {
-            if (a.data.error === null) {
-              this.$Message.success('保存成功！')
-              this.$router.push('/allPlan') // 跳转到 全部方案首页
+      handleSubmit (name) {
+        this.$refs[name].validate(valid => {
+          if (valid) {
+            if (this.tableData1.length === 0) {
+              this.$Message.error('请至少添加一个镜像')
             } else {
-              this.$Message.error(a.data.error)
+              editPcGroup(
+                this.formValidate.name,
+                this.formValidate.netMk,
+                this.formValidate.netGW,
+                this.formValidate.dns1,
+                this.formValidate.dns2,
+                this.formValidate.daSV,
+                this.formValidate.bala,
+                this.formValidate.disable,
+                this.formValidate.wrLimG,
+                this.tableData1,
+                this.formValidate.gTim,
+                this.formValidate.cach,
+                this.formValidate.wieh,
+                this.formValidate.hith,
+                this.formValidate.resh,
+                this.formValidate.deps
+              ).then((a) => {
+                if (a.data.error === null) {
+                  this.$Message.success('保存成功！')
+                  this.$router.push('subType3-1') // 跳转到 全部方案首页
+                } else {
+                  this.$Message.error(a.data.error)
+                }
+              })
             }
-          })
-        }
+          } else {
+            this.$Message.error('验证失败xx')
+          }
+        })
       },
       handleSubmitProject () {
 
@@ -352,7 +355,9 @@
           }
         })
       },
-      handleImageReset (name) {},
+      handleImageReset (name) {
+        this.showPopup = false
+      },
       handleMove (index) {
         this.tableData1.splice(index, 1)
         this.handleGetDataLength()
@@ -380,5 +385,8 @@
 </script>
 
 <style scoped>
-  .ivu-col-span-4{text-align: right; margin-right: 5px;}
+ 
+  .FormItem {
+    margin-bottom: 20px;
+  }
 </style>

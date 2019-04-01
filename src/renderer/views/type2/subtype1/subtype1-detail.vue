@@ -1,5 +1,6 @@
 <template>
   <div>
+      <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Button class="topColumn" @click="handleButtonBack">返回列表</Button>
 
@@ -44,7 +45,7 @@
           </div>
       </Modal> -->
     </Row>
-    <Table border ref="selection" :columns="tableColumns2" :data="tableData2" @on-selection-change="handleCheckBox" ></Table>
+    <Table border ref="selection" :columns="tableColumns2" :data="tableData2" @on-selection-change="handleCheckBox"></Table>
     <Row style="margin:20px 0;">
       <h3>磁盘设置</h3>
       <Divider />
@@ -335,6 +336,7 @@
     },
     created () {
       this.tempMasterServerIp = this.$route.query.tempMasterServerIp
+      debugger
       this.ServerIp = this.$route.query.data.serverIp
       this.handleGetServerInfo()
       this.handleGetNetwork()
@@ -348,6 +350,7 @@
     methods: {
       handleGetServerInfo () {
         var data = this.$route.query.data
+        //  this.tableData1.push(data)
         this.tableData1.push(data)
         this.isMaster = this.tableData1[0].isMaster
       },
@@ -361,6 +364,7 @@
             arr.map(item => {
               if (item.vdiskSet === 'yes') {
                 item['_checked'] = true
+                this.getCheckboxVal = item
               }
             })
             this.tableData2 = arr
@@ -370,6 +374,7 @@
         })
       },
       handleGetDiskStatus () {
+        let that = this
         getDiskStatus().then((a) => {
           var arr = a.data.result.list
           if (a.data.error === null && arr !== null) {
@@ -378,6 +383,7 @@
             this.$Message.error(a.data.error)
           }
         })
+        that.spinShow = false
       },
       handleButtonStandby () {},
       handleButtonWorking () {},
@@ -391,7 +397,7 @@
       handleButtonDelete (ip) {
         this.$Modal.confirm({
           title: '删除警告',
-          content: '<p>后果自负</p>',
+          content: '<p>后果很严重</p>',
           okText: '删除',
           onOk: () => {
             this.$Message.info('Clicked ok')
@@ -418,6 +424,7 @@
           // 提交data:
           // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
           // serverIp, guid
+          debugger
           addServers(this.rowData.serverIp, this.rowData.guid).then((a) => {
             if (a.data.error === null) {
               this.handleEditServersNode() // 将之前的主服务器serverIp设置 为从服务器
@@ -457,8 +464,12 @@
        * 设置负载网卡
        */
       handleLoadNIC () {
+        this.spanShow = true
         setVdiskEthernet(this.getCheckboxVal).then(() => {
-          this.$Message.info('设置成功')
+          this.spanShow = false
+          this.$Notice.success({
+            title: '设置负载网卡成功'
+          })
           this.handleGetNetwork()
         })
       },
@@ -493,6 +504,8 @@
       刷新
       */
       handleButtonRefresh () {
+        this.spinShow = true
+        this.handleGetNetwork()
         this.handleGetDiskStatus()
       }
     }

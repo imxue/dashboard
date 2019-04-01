@@ -21,14 +21,21 @@
           <Input v-model="formValidate.menuItemName" placeholder="请输入显示名称..." />
         </FormItem> -->
         <FormItem label="保存路径：" prop="path">
-          <Select v-model="formValidate.path" placeholder="——请选择保存路径——" >
+          <Select v-model="formValidate.path" placeholder="——请选择保存路径——"  >
+         
             
-             <Tooltip  placement="right" v-for="(item, index) in diskList" :key="index" :value="item.path">
-               <div slot="content">
-                可用容量 {{item.availableSize}}
-               </div>
-              <Option>{{item.path}}</Option>
-            </Tooltip>
+          
+                
+              <Tooltip placement="right"  v-for="(item, index) in diskList" :key="index">
+      <Option  :value="item.path" >{{item.path}}</Option>
+        <div slot="content">
+            <p>可用容量{{item.availableSize}}</p>
+        </div>
+
+    </Tooltip>
+             
+            
+         
         
           </Select>
         </FormItem>
@@ -145,7 +152,8 @@
   
         ruleValidate: {
           nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          size: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          size: [{ required: true, message: '不能为空', trigger: 'blur' }],
+          path: [{ required: true, message: '不能为空', trigger: 'blur' }]
         }
       }
     },
@@ -195,11 +203,11 @@
       handleGetImageList () {
         getImageList().then((a) => {
           var arr = a.data.result.list
-          if (a.data.error === null && arr && arr.length !== null) {
-            this.mirroringInfo = arr
-          } else {
-            this.$Message.error(a.data.error)
-          }
+          // if (a.data.error === null && arr && arr.length !== null) {
+          // } else {
+          //   this.$Message.error(a.data.error)
+          // }
+          this.mirroringInfo = arr
         })
       },
       handleButtonAdd (val) {
@@ -208,13 +216,16 @@
       },
       handleSubmit (name) {
         var self = this
+        console.log(self.formValidate)
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showPopup = false
             // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
             createImage(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster).then((a) => {
               if (a.data.error === null) {
-                self.$Message.success('添加成功')
+                self.$Notice.success({
+                  title: `${self.formValidate.nameVal} 镜像 添加 成功`
+                })
                 self.handleGetImageList()
               } else {
                 self.$Message.error(a.data.error)
