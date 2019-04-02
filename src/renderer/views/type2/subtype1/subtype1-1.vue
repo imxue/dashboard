@@ -114,6 +114,7 @@
       },
       handleGetServerList () {
         getServers().then((a) => {
+          this.spinShow = false
           var datalist = a.data.result.list
           if (a.data.error === null) {
             this.tableData = a.data.result.list
