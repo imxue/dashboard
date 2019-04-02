@@ -103,6 +103,7 @@
       // console.log(this.$route.matched[0])
       // console.log('hello', JSON.stringify(this.routes))
       // this.test()
+      console.log(11)
     },
     computed: {
       routes () {

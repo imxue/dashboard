@@ -298,39 +298,40 @@
       //   this.name02 = value2[0].id
       // },
       handleSubmit (name) {
+        let that = this
         this.$refs[name].validate(valid => {
           if (valid) {
-            if (this.tableData1.length === 0) {
+            if (that.tableData1 && that.tableData1.length === 0) {
               this.$Message.error('请至少添加一个镜像')
             } else {
               editPcGroup(
-                this.formValidate.name,
-                this.formValidate.netMk,
-                this.formValidate.netGW,
-                this.formValidate.dns1,
-                this.formValidate.dns2,
-                this.formValidate.daSV,
-                this.formValidate.bala,
-                this.formValidate.disable,
-                this.formValidate.wrLimG,
-                this.tableData1,
-                this.formValidate.gTim,
-                this.formValidate.cach,
-                this.formValidate.wieh,
-                this.formValidate.hith,
-                this.formValidate.resh,
-                this.formValidate.deps
+                that.formValidate.name,
+                that.formValidate.netMk,
+                that.formValidate.netGW,
+                that.formValidate.dns1,
+                that.formValidate.dns2,
+                that.formValidate.daSV,
+                that.formValidate.bala,
+                that.formValidate.disable,
+                that.formValidate.wrLimG,
+                that.tableData1,
+                that.formValidate.gTim,
+                that.formValidate.cach,
+                that.formValidate.wieh,
+                that.formValidate.hith,
+                that.formValidate.resh,
+                that.formValidate.deps
               ).then((a) => {
                 if (a.data.error === null) {
-                  this.$Message.success('保存成功！')
-                  this.$router.push('subType3-1') // 跳转到 全部方案首页
+                  that.$Message.success('保存成功！')
+                  that.$router.push('subType3-1') // 跳转到 全部方案首页
                 } else {
-                  this.$Message.error(a.data.error)
+                  that.$Message.error(a.data.error)
                 }
-              })
+              }, (err) => { console.log(err) })
             }
           } else {
-            this.$Message.error('验证失败xx')
+            that.$Message.error('验证失败xx')
           }
         })
       },

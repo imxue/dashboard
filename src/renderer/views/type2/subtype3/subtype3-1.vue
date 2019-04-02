@@ -144,8 +144,10 @@
           title: '警告',
           content: '<p>删除会导致使用该方案的客户机无法使用</p>',
           onOk: () => {
-            deleteItem(row.row.name)
-            this.handleGetPcGroup()
+            deleteItem(row.row.name).then((response) => {
+              this.$Message.error(response.data.error)
+              this.handleGetPcGroup()
+            })
           },
           onCancel: () => {
             this.$Message.info('Clicked cancel')

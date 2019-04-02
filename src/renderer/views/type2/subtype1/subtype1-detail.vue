@@ -51,7 +51,21 @@
       <Divider />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </Row>
+    <Row>
     <Table border :columns="tableColumns3" :data="tableData3"></Table>
+    </Row>
+    <div class="dig">
+     <Modal
+        v-model="modal6"
+        :loading="loading"
+        footer-hide
+        :styles="{top: '400px'}"
+        :closable="false"
+        >
+        <p class="textAlign">设置磁盘中</p>
+    </Modal>
+    </div>
+    
       <Modal
         title="磁盘设置"
         v-model="showPopup02"
@@ -102,7 +116,7 @@
             </i-col>
           </Row>
           <div class="buttonList" style="margin-top:20px;">
-              <Button type="primary" @click="handleSetCard">保存</Button>
+              <Button type="primary" @click="handleSetCard" :loading="loading">保存</Button>
               <Button @click="handleResetCard" style="margin-left: 8px">取消</Button>
           </div>
       </Modal>
@@ -116,6 +130,8 @@
     name: 'subType1-detail',
     data () {
       return {
+        modal6: false,
+        spinShow: false, // 加载动画
         tempMasterServerIp: '', // 主服务器Ip
         isMaster: '', // 是否为主服务器
         rowData: '',
@@ -315,6 +331,8 @@
           { title: '健康度', key: 'isHealth' },
           { title: '操作',
             key: 'operation',
+            width: 140,
+            align: 'center',
             render: (h, params) => {
               let a = h('Button', {
                 props: { type: 'info', ghost: true },
@@ -336,7 +354,6 @@
     },
     created () {
       this.tempMasterServerIp = this.$route.query.tempMasterServerIp
-      debugger
       this.ServerIp = this.$route.query.data.serverIp
       this.handleGetServerInfo()
       this.handleGetNetwork()
@@ -418,16 +435,16 @@
       },
       handleButtonSetSever () {
         // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
+
         if (this.$route.query.tempMasterServerIp && this.tempMasterServerIp === this.rowData.serverIP) {
           this.$Message.info('当前服务器为主服务器')
         } else {
           // 提交data:
           // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
           // serverIp, guid
-          debugger
           addServers(this.rowData.serverIp, this.rowData.guid).then((a) => {
             if (a.data.error === null) {
-              this.handleEditServersNode() // 将之前的主服务器serverIp设置 为从服务器
+              this.handleEditServersNode(this.rowData.serverIp) // 将之前的主服务器serverIp设置 为从服务器
             } else {
               this.$Message.error(a.data.error)
             }
@@ -436,7 +453,7 @@
       },
       handleEditServersNode () {
         // masterIp, syncimg, auba
-        editServersNode(this.tempMasterServerIp, '1', '1').then((a) => {
+        editServersNode(this.tempMasterServerIp, '1', '1', this.rowData.serverIp).then((a) => {
           if (a.data.error === null) {
             this.$Message.sucess('设置成功')
           } else {
@@ -445,16 +462,19 @@
         })
       },
       handleSetCard () {
+        this.showPopup02 = false
+        this.modal6 = true
+        this.spinShow = true
         // path, diskFunctionType, cacheSizeMB, isFormat, volume
         setDiskFunction(this.rowData.path, this.selecteDisk, '512', this.selecteFormatValue, this.selecteDiskF).then((a) => {
           // var result = a.data.result
           if (a.data.error === null) {
-            this.$Message.success('保存成功')
+            this.modal6 = false
             this.handleGetDiskStatus() // 刷新列表
           } else {
-            this.showPopup02 = true
             this.$Message.error(a.data.error)
           }
+          this.spinShow = false
         })
       },
       handleResetCard () {
@@ -513,11 +533,17 @@
 </script>
 
 <style scoped>
+
   .topColumn{ float: none;}
   .ivu-divider-vertical{margin-left: -2px;}
   .ivu-divider{background-color: #b0b0b0;}
   .ivu-modal-body {padding-left: 50px;}
   h3{ margin-bottom:-20px;}
   .rowlist { height: 30px; line-height: 30px; width: 100%; margin-bottom: 10px;}
+  .textAlign{
+    text-align: center;
+    font-size: 14px;
+    margin:-10px;
+  }
 </style>
 

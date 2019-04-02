@@ -56,9 +56,10 @@
       }
     },
     watch: {
-      '$route': function (to) {
-        this.activeName = to.path
-      }
+      // '$route': function (to) {
+      //    console.log(to.matched[1])
+      //    this.activeName = to.matched[1]
+      // }
     }
   }
 </script>

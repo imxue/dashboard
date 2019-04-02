@@ -41,6 +41,7 @@
     name: 'subType1-1',
     data () {
       return {
+        spinShow: false,
         searchVal: '',
         loading: false,
         showPopup: false,
@@ -140,6 +141,7 @@
       handleButtonRefesh (val) {
         this.spinShow = true
         this.handleGetServerList()
+        this.spinShow = false
       },
       handleButtonRemote (val) {
         alert('暂无')
@@ -160,11 +162,22 @@
           query: { data: index, tempMasterServerIp: this.tempMasterServerIp }
         })
       },
+      /**
+       * 添加服务器
+       */
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            getServersNode().then(res => {
-              this.handleSubmitAddServer(res.data.result.guid)
+            getServers().then(res => {
+              var datalist = res.data.result.list
+              let master = datalist.filter(item => { return item.isMaster === '1' })
+              if (master) {
+                getServersNode(this.formValidate.serverIP).then(res => {
+                  this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
+                })
+              } else {
+
+              }
             })
           } else {
             this.showPopup = true
@@ -172,9 +185,9 @@
           }
         })
       },
-      handleSubmitAddServer (guid) {
+      handleSubmitAddServer (guid, masterIp) {
         // this.showPopup = false
-        editServersNode(this.formValidate.serverIP)
+        editServersNode(masterIp, this.formValidate.serverIP) // 设置主服务器
         addServers(this.formValidate.serverIP, guid).then((a) => {
           // var result = a.data.result
           if (a.data.error === null) {

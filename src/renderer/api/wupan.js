@@ -98,6 +98,7 @@ export function editImage (name, title, mountVolume) {
 }
 
 export function deleteImage (name) {
+  debugger
   return makeRequest('Delete_Img', {
     name: name
   })
@@ -503,18 +504,46 @@ export function getErrorStringList () {
 /**
  * 获取guid
  */
-export function getServersNode () {
-  return makeRequest('Get_Servers_Node', {
+export function getServersNode (url) {
+  return makeGuid(url)
+}
+
+function makeGuid (url) {
+  const data = {
+    method: 'Get_Servers_Node',
+    params: [
+      {}
+    ]
+  }
+  return request({
+    method: 'post',
+    url: `http://${url}:13302/jsonrpc`,
+    data
   })
 }
 
-export function editServersNode (masterIp, isSyncImage, isOverload) {
-  return makeRequest('Set_Servers_Node', {
+export function editServersNode (masterIp, url, isSyncImage, isOverload) {
+  return makeServersNode('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',
     auba: isOverload ? '1' : '0'
+  }, url)
+}
+
+function makeServersNode (method, param, url) {
+  const data = {
+    method: method,
+    params: [
+      param
+    ]
+  }
+  return request({
+    url: `http://${url}:13302/jsonrpc`,
+    method: 'post',
+    data
   })
 }
+
 /**
  * 添加服务器
  * @param {*} serverIp

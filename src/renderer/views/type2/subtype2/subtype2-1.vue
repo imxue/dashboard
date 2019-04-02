@@ -227,6 +227,7 @@
                   title: `${self.formValidate.nameVal} 镜像 添加 成功`
                 })
                 self.handleGetImageList()
+                this.$refs[name].resetFields()
               } else {
                 self.$Message.error(a.data.error)
               }
