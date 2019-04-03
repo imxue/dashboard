@@ -8,29 +8,26 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
     <!-- table -->
-    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail"></Table>
+    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail"></Table>
     <Modal
       title="添加服务器"
       v-model="showPopup"
       width= "500"
-      footer-hide
-      class-name="vertical-center-modal">
+      footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="服务器IP:" prop="serverIP">
           <Input v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
         </FormItem>
         <FormItem label="服务器标识:" prop="password">
-          <Input v-model="formValidate.password" placeholder="请输入服务器标识"  />
+          <Input v-model="formValidate.password" placeholder="请输入服务器密码"  />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleAddServer('formValidate')">保存</Button>
+             <Button type="primary" @click="handleAddServer('formValidate')" :loading='t'>保存</Button>
              <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">取消</Button>
         </FormItem>
       </Form>
      </Modal>
     <Row style="margin-top:10px; ">
-      <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
-      <!-- <i-col span="24"><Page :total="100"  style=" float:right;"/></i-col> -->
     </Row>
   </div>
 </template>
@@ -85,12 +82,6 @@ export default {
             }
           },
           { title: '服务器IP', key: 'serverIp' },
-          // { title: '模式', key: 'mode' },
-          // { title: '当前带机数', key: 'number' },
-          // { title: '系统负载', key: 'systemLoad' },
-          // { title: '网卡状态', key: 'networkCard' },
-          // { title: '硬盘状态', key: 'diskState' },
-          // { title: '固件版本', key: 'firmwareVersion' },
           { title: '服务版本', key: 'dataVer' },
           { title: '操作',
             key: 'operation',
@@ -103,7 +94,7 @@ export default {
             }
           }
         ],
-        tableData: [],
+        serverList: [],
         formValidate: { serverIP: '', password: '' },
         ruleValidate: {
           serverIP: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -122,23 +113,25 @@ export default {
     methods: {
       handleSearch () {
         this.loading = true
-        var arr = this.tableData
+        var arr = this.serverList
         setTimeout(() => {
           this.loading = false
           var newArr = arr.filter(item => item.serverIp === this.searchVal)
           // console.log('newArr::' + JSON.stringify(newArr))
-          this.tableData = newArr
+          this.serverList = newArr
         }, 1000)
       },
+      /**
+       * 获取服务器列表
+       */
       handleGetServerList () {
         getServers().then((a) => {
           this.spinShow = false
           var datalist = a.data.result.list
           if (a.data.error === null) {
-            this.tableData = a.data.result.list
+            this.serverList = a.data.result.list
             this.handleGetCurrMasterServerIp(datalist)
           } else {
-            this.data = null
             this.$Message.error(a.data.Msg)
           }
         })
@@ -152,6 +145,9 @@ export default {
         }
         this.spinShow = false
       },
+      /**
+       * 弹起添加服务器弹窗
+       */
       handleButtonAdd (val) {
         this.showPopup = true
       },
@@ -184,36 +180,44 @@ export default {
        */
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
+          let that = this
+          var guid = ''
           if (valid) {
-            getServers().then(res => {
-              var datalist = res.data.result.list
-              let master = datalist.filter(item => { return item.isMaster === '1' })
-              if (master) {
-                getServersNode(this.formValidate.serverIP).then(res => {
-                  this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
-                })
+            // 获取服务器guid
+            getServersNode(that.formValidate.serverIP).then(res => {
+              if (!res.data.err) {
+                guid = res.data.result.guid
+                if (that.serverList) {
+                  let master = that.serverList.filter(item => { return item.isMaster === '1' })
+                  if (master) {
+                    this.handsubmit(master.serverIp, that.formValidate.serverIP, guid)
+                  }
+                } else {
+                  // 服务器List为空
+                  getServersNode(that.formValidate.serverIP).then(res => {
+                    if (!res.data.err) {
+                      guid = res.data.result.guid
+                    }
+                  })
+                  this.handsubmit(that.formValidate.serverIP, that.formValidate.serverIP, guid)
+                }
               } else {
-
+                this.$Message.error(res)
               }
-            })
-          } else {
-            this.showPopup = true
-            this.$Message.error('验证失败')
+            }, () => { this.$Message.error('网络错误,请检查服务器地址，重试') })
           }
         })
       },
-      handleSubmitAddServer (guid, masterIp) {
-        // this.showPopup = false
-        editServersNode(masterIp, this.formValidate.serverIP) // 设置主服务器
-        addServers(this.formValidate.serverIP, guid).then((a) => {
-          // var result = a.data.result
-          if (a.data.error === null) {
+      handsubmit (masertIp, selfIp, guid) {
+        editServersNode(masertIp, selfIp)
+        addServers(selfIp, guid).then(resp => {
+          if (resp.data.error === null) {
             this.$Message.success('添加成功')
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
           } else {
             this.showPopup02 = true
-            this.$Message.error(a.data.error)
+            this.$Message.error(resp.data.error)
           }
         })
       },
