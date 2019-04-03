@@ -148,15 +148,32 @@
             key: 'online',
             render: (h, params) => {
               let type = params.row.online
-              switch (type) {
-                case '0':
-                  return h('span', { style: { color: '#999999' } }, '离线')
-                case '1':
-                  return h('span', '在线')
-                case '2':
-                  return h('span', '在线异常')
-                default:
-                  return '-'
+              let isMaster = params.row.isMaster
+              if (isMaster === '1') {
+                switch (type) {
+                  case '0':
+                    return h('div', [h('span', { style: { color: '#999999' } }, '离线'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                  case '1':
+                    return h('div', [h('span', { style: { color: '#0ecf1f' } }, '在线'), h('Tag', { props: { color: 'red' },
+                      style: {
+                        marginLeft: '8px'
+                      } }, '主服务器')])
+                  case '2':
+                    return h('div', [h('span', { style: { color: '#f90' } }, '在线异常'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                  default:
+                    return '-'
+                }
+              } else {
+                switch (type) {
+                  case '0':
+                    return h('span', { style: { color: '#999999' } }, '离线')
+                  case '1':
+                    return h('span', { style: { color: '#0ecf1f' } }, '在线')
+                  case '2':
+                    return h('span', { style: { color: '#f90' } }, '在线异常')
+                  default:
+                    return '-'
+                }
               }
             }
           },
@@ -494,6 +511,11 @@
         })
       },
       handleSetDisk (index) {
+        this.$messager.alert({
+          title: 'Info',
+          icon: 'info',
+          msg: 'Here is a info message!'
+        })
         this.rowData = index
         this.showPopup02 = true
       },
