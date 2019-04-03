@@ -310,6 +310,12 @@ export default new Router({
               component: () => import('@/views/type2/subtype3/subtype3-1')
             },
             {
+              path: 'subType3-1',
+              name: 'type2-SubType3-2',
+              meta: { title: 'DPCP配置' },
+              component: () => import('@/views/type2/subtype3/subtype3-1')
+            },
+            {
               path: 'subType3-edit',
               name: 'type2-SubType3-edit',
               meta: { title: '方案编辑' },
