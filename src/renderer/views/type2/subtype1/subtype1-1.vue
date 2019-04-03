@@ -8,7 +8,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
     <!-- table -->
-    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
+    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail"></Table>
     <Modal
       title="添加服务器"
       v-model="showPopup"
@@ -37,7 +37,7 @@
 
 <script>
   import { getServers, addServers, getServersNode, editServersNode } from '@/api/wupan'
-  export default {
+export default {
     name: 'subType1-1',
     data () {
       return {
@@ -55,15 +55,32 @@
             key: 'online',
             render: (h, params) => {
               let type = params.row.online
-              switch (type) {
-                case '0':
-                  return h('span', { style: { color: '#999999' } }, '离线')
-                case '1':
-                  return h('span', { style: { color: '#0ecf1f' } }, '在线')
-                case '2':
-                  return h('span', { style: { color: '#f90' } }, '在线异常')
-                default:
-                  return '-'
+              let isMaster = params.row.isMaster
+              if (isMaster === '1') {
+                switch (type) {
+                  case '0':
+                    return h('div', [h('span', { style: { color: '#999999' } }, '离线'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                  case '1':
+                    return h('div', [h('span', { style: { color: '#0ecf1f' } }, '在线'), h('Tag', { props: { color: 'red' },
+                      style: {
+                        marginLeft: '8px'
+                      } }, '主服务器')])
+                  case '2':
+                    return h('div', [h('span', { style: { color: '#f90' } }, '在线异常'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                  default:
+                    return '-'
+                }
+              } else {
+                switch (type) {
+                  case '0':
+                    return h('span', { style: { color: '#999999' } }, '离线')
+                  case '1':
+                    return h('span', { style: { color: '#0ecf1f' } }, '在线')
+                  case '2':
+                    return h('span', { style: { color: '#f90' } }, '在线异常')
+                  default:
+                    return '-'
+                }
               }
             }
           },

@@ -80,6 +80,7 @@
 <style scoped>
   article {
     flex: auto;
+   
   }
 
   .layout{
@@ -93,7 +94,7 @@
     min-width: 1250px;
   }
   .mySider{
-    height: calc(100vh - 62px);
+    min-height: calc(100vh - 62px);
   }
   
 </style>
