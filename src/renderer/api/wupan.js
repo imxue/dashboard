@@ -242,12 +242,14 @@ export function getDHCPConfig () {
 //   inputEnter: 'inputEnter'
 // }
 
-export function editDHCPConfig (prefix, numbeLength, numberBegin, ipBegin, dhcpConfigAddMode, pcGroup) {
+export function editDHCPConfig ({ prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }) {
   return makeRequest('Set_DhcpConf', {
     prefix: prefix,
-    numbetLength: numbeLength,
-    addMode: dhcpConfigAddMode,
-    pcGp: pcGroup
+    numbetLength: numbetLength,
+    numberBegin: numberBegin,
+    ipBegin: ipBegin,
+    addMode: addMode,
+    pcGp: pcGp
   })
 }
 
