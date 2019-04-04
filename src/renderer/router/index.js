@@ -377,29 +377,29 @@ export default new Router({
         }
       ]
     },
-    {
-      path: '/type4',
-      name: '4',
-      component: Layout,
-      redirect: '/type4/subType1/subType1-1',
-      meta: { title: '系统设置', icon: 'example' },
-      children: [
-        {
-          path: 'subType1',
-          name: 'type4-SubType1',
-          meta: { title: '系统设置', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType1-1',
-              name: 'type4-SubType1-1',
-              meta: { title: '用户管理' },
-              component: () => import('@/views/type4/subtype1/subtype1-1')
-            }
-          ]
-        }
-      ]
-    },
+    // {
+    //   path: '/type4',
+    //   name: '4',
+    //   component: Layout,
+    //   redirect: '/type4/subType1/subType1-1',
+    //   meta: { title: '系统设置', icon: 'example' },
+    //   children: [
+    //     {
+    //       path: 'subType1',
+    //       name: 'type4-SubType1',
+    //       meta: { title: '系统设置', hidden: true },
+    //       component: NullLayout,
+    //       children: [
+    //         {
+    //           path: 'subType1-1',
+    //           name: 'type4-SubType1-1',
+    //           meta: { title: '用户管理' },
+    //           component: () => import('@/views/type4/subtype1/subtype1-1')
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
     {
       path: '*',
       redirect: '/404',

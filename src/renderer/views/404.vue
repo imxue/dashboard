@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>404 - {{ lastUrlPath }}</p>
+    <p>页面失踪了</p>
     <Button type="primary" @click="handleBack">返回</Button>
   </div>
 </template>

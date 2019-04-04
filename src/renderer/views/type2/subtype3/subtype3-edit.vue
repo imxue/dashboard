@@ -254,7 +254,6 @@
           this.formValidate.bala = data.bala
           this.formValidate.disable = data.disable
           this.formValidate.wrLimG = data.wrLimG
-          // this.formValidate.imgG = data.imgG
           this.formValidate.gTim = data.gTim
           this.formValidate.cach = data.cach
           this.formValidate.wieh = data.wieh
