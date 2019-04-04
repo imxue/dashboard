@@ -245,21 +245,22 @@
       handleCheckData () {
         var data = this.$route.query.data
         if (data) {
-          this.formValidate.name = data.name
-          this.formValidate.netMk = data.netMk
-          this.formValidate.netGW = data.netGW
-          this.formValidate.dns1 = data.dns1
-          this.formValidate.dns2 = data.dns2
-          this.formValidate.daSV = data.daSV
-          this.formValidate.bala = data.bala
-          this.formValidate.disable = data.disable
-          this.formValidate.wrLimG = data.wrLimG
-          this.formValidate.gTim = data.gTim
-          this.formValidate.cach = data.cach
-          this.formValidate.wieh = data.wieh
-          this.formValidate.hith = data.hith
-          this.formValidate.resh = data.resh
-          this.formValidate.deps = data.deps
+          // this.formValidate.name = data.name
+          // this.formValidate.netMk = data.netMk
+          // this.formValidate.netGW = data.netGW
+          // this.formValidate.dns1 = data.dns1
+          // this.formValidate.dns2 = data.dns2
+          // this.formValidate.daSV = data.daSV
+          // this.formValidate.bala = data.bala
+          // this.formValidate.disable = data.disable
+          // this.formValidate.wrLimG = data.wrLimG
+          // this.formValidate.gTim = data.gTim
+          // this.formValidate.cach = data.cach
+          // this.formValidate.wieh = data.wieh
+          // this.formValidate.hith = data.hith
+          // this.formValidate.resh = data.resh
+          // this.formValidate.deps = data.deps
+          this.formValidate = data
           this.tableData1 = data.imgG
         }
       },
