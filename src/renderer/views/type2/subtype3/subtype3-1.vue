@@ -106,7 +106,7 @@
       handleGetPcGroup () {
         getPcGroup().then((a) => {
           var arr = a.data.result.list
-          if (a.data.error === null && arr.length !== null) {
+          if (a.data.error === null) {
             this.tableData = arr
           } else {
             this.$Message.error(a.data.error)
@@ -145,7 +145,6 @@
           content: '<p>删除会导致使用该方案的客户机无法使用</p>',
           onOk: () => {
             deleteItem(row.row.name).then((response) => {
-              this.$Message.error(response.data.error)
               this.handleGetPcGroup()
             })
           },

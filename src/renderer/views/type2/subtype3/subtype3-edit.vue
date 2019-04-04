@@ -303,23 +303,9 @@
             if (that.tableData1 && that.tableData1.length === 0) {
               this.$Message.error('请至少添加一个镜像')
             } else {
+              that.formValidate.imgG = that.tableData1
               editPcGroup(
-                that.formValidate.name,
-                that.formValidate.netMk,
-                that.formValidate.netGW,
-                that.formValidate.dns1,
-                that.formValidate.dns2,
-                that.formValidate.daSV,
-                that.formValidate.bala,
-                that.formValidate.disable,
-                that.formValidate.wrLimG,
-                that.tableData1,
-                that.formValidate.gTim,
-                that.formValidate.cach,
-                that.formValidate.wieh,
-                that.formValidate.hith,
-                that.formValidate.resh,
-                that.formValidate.deps
+                that.formValidate
               ).then((a) => {
                 if (a.data.error === null) {
                   that.$Message.success('保存成功！')

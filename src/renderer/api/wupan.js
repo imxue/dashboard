@@ -295,26 +295,8 @@ export function deletePcGroup (list) {
   })
 }
 
-export function editPcGroup (name, networkMask, networkGateway, dns1, dns2, dataServerIP, isBalance, isDisable, writeLimitGB, imageList, imageTimeout, cacheMB, pixelWidth, pixelHeight, refresh, colorDepth) {
-  return makeRequest('Set_PcGp', {
-    name: name,
-    netMk: networkMask,
-    netGW: networkGateway,
-    dns1: dns1,
-    dns2: dns2,
-    daSV: dataServerIP,
-    bala: isBalance ? '0' : '1',
-    //  disable: isDisable ? '0' : '1',
-    disable: isDisable,
-    wrLimG: writeLimitGB,
-    imgG: imageList,
-    gTim: imageTimeout,
-    cach: cacheMB,
-    wieh: pixelWidth,
-    hith: pixelHeight,
-    resh: refresh,
-    deps: colorDepth
-  })
+export function editPcGroup ({ name, netMk, netGW, dns1, dns2, daSV, bala, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }) {
+  return makeRequest('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps })
 }
 /**
  * 删除启动方案
