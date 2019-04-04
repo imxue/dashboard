@@ -38,7 +38,7 @@
 </template>
 <script>
 
-import { editDHCPConfig, getPcConfig, getPcGroup } from '@/api/wupan'
+import { editDHCPConfig, getPcConfig, getPcGroup, getDHCPConfig } from '@/api/wupan'
 export default {
   data () {
     return {
@@ -96,32 +96,6 @@ export default {
           title: 'pc分组',
           key: 'pcGp'
         }
-      ],
-      data1: [
-        {
-          name: 'John Brown',
-          age: 18,
-          address: 'New York No. 1 Lake Park',
-          date: '2016-10-03'
-        },
-        {
-          name: 'Jim Green',
-          age: 24,
-          address: 'London No. 1 Lake Park',
-          date: '2016-10-01'
-        },
-        {
-          name: 'Joe Black',
-          age: 30,
-          address: 'Sydney No. 1 Lake Park',
-          date: '2016-10-02'
-        },
-        {
-          name: 'Jon Snow',
-          age: 26,
-          address: 'Ottawa No. 2 Lake Park',
-          date: '2016-10-04'
-        }
       ]
 
     }
@@ -141,15 +115,20 @@ export default {
     },
     handleGetPcConf (mac) {
       getPcConfig(mac)
-    }
-  },
-  created: {
-    handleGetPcGroup () {
-      getPcGroup().then(() => {
-
+      getPcGroup()
+    },
+    getDHCP () {
+      getDHCPConfig().then((resp) => {
+        if (resp.data.error === null) {
+          this.clientTemplate = resp.data.result
+        } else {
+          this.$Message.error(resp.data.error)
+        }
       })
     }
-
+  },
+  created () {
+    this.getDHCP()
   }
 
 }
