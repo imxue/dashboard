@@ -331,7 +331,7 @@
               }, (err) => { console.log(err) })
             }
           } else {
-            that.$Message.error('验证失败xx')
+            // 为空不操作
           }
         })
       },

@@ -98,7 +98,6 @@ export function editImage (name, title, mountVolume) {
 }
 
 export function deleteImage (name) {
-  debugger
   return makeRequest('Delete_Img', {
     name: name
   })

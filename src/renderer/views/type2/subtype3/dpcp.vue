@@ -108,6 +108,7 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           editDHCPConfig(this.clientTemplate)
+          this.$Message.success('DPCP设置成功')
         } else {
           this.$Message.error('Fail!')
         }
