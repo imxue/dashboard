@@ -136,22 +136,36 @@
           path: 'subtype3-edit',
           query: { data: index }
         })
+        console.dir(index)
       },
       handleStart () {},
       handleStop () {},
       handleDelete (row) {
-        this.$Modal.confirm({
-          title: '警告',
-          content: '<p>删除会导致使用该方案的客户机无法使用</p>',
-          onOk: () => {
-            deleteItem(row.row.name).then((response) => {
-              this.handleGetPcGroup()
-            })
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel')
-          }
-        })
+        if (row.row.name === 'default') {
+          this.$Modal.confirm({
+            title: '警告',
+            content: '<p>不允许删除默认方案</p>',
+            onOk: () => {
+  
+            },
+            onCancel: () => {
+  
+            }
+          })
+        } else {
+          this.$Modal.confirm({
+            title: '警告',
+            content: '<p>删除会导致使用该方案的客户机无法使用</p>',
+            onOk: () => {
+              deleteItem(row.row.name).then((response) => {
+                this.handleGetPcGroup()
+              })
+            },
+            onCancel: () => {
+              this.$Message.info('Clicked cancel')
+            }
+          })
+        }
       }
     }
   }

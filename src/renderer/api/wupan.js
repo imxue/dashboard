@@ -14,6 +14,20 @@ function makeRequest (method, param) {
   })
 }
 
+function makeRequestx (method, param, ip) {
+  const data = {
+    method: method,
+    params: [
+      param
+    ]
+  }
+  return request({
+    url: `http://${ip}:13302/jsonrpc`,
+    method: 'post',
+    data
+  })
+}
+
 // Get_ImgList 全部镜像
 export function getServers () {
   return makeRequest('Get_Servers', {})
@@ -55,6 +69,11 @@ export function getDiskStatus () {
   })
 }
 
+export function getDiskStatusx (url) {
+  return makeRequestx('Get_DiskStatus', {
+  }, url)
+}
+
 // var DiskFunction_Type = {
 //   imageDisk: 'imageDisk',
 //   dataDisk: 'dataDisk',
@@ -62,14 +81,14 @@ export function getDiskStatus () {
 //   unUsed: 'unUsed'
 // }
 
-export function setDiskFunction (path, diskFunctionType, cacheSizeMB, isFormat, volume) {
-  return makeRequest('Set_DiskFun', {
+export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat, volume, ip) {
+  return makeRequestx('Set_DiskFun', {
     path: path,
     fun: diskFunctionType,
     cacheSize: cacheSizeMB,
     isFormat: isFormat ? 'yes' : 'no',
     vol: volume
-  })
+  }, ip)
 }
 
 export function getImageList () {
@@ -213,13 +232,22 @@ export function getNetwork () {
   })
 }
 
-// list = ['eth0', 'eth1']
-export function setVdiskEthernet (list) {
-  return makeRequest('Set_VdiskEth', {
-    list: list
-  })
+export function getNetworkx (ip) {
+  return makeRequestx('Get_Net', {
+  }, ip)
 }
 
+// list = ['eth0', 'eth1']
+// export function setVdiskEthernet (list) {
+//   return makeRequest('Set_VdiskEth', {
+//     list: list
+//   })
+// }
+export function setVdiskEthernetx (list, ip) {
+  return makeRequestx('Set_VdiskEth', {
+    list: list
+  }, ip)
+}
 export function getClientStatus () {
   return makeRequest('Get_CliStat', {
   })
@@ -295,8 +323,8 @@ export function deletePcGroup (list) {
   })
 }
 
-export function editPcGroup ({ name, netMk, netGW, dns1, dns2, daSV, bala, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }) {
-  return makeRequest('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps })
+export function editPcGroup ({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }) {
+  return makeRequest('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps })
 }
 /**
  * 删除启动方案

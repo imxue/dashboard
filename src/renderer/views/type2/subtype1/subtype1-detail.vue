@@ -2,24 +2,27 @@
   <div>
     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
-      <Select style="width:200px">
-        <option value="bei">newo</option>
+      <Select style="width:200px; marginRight:10px;" v-model="model1" @on-change="listTypeChange">
+        <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}}</Option>
       </Select>
-
+        
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">刷新</Button>
 
       <Divider type="vertical"/>
       <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button>
       <Divider type="vertical"/>
-      <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button>
-      <Divider type="vertical"/>
+      <!-- <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button> -->
+ 
       <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">删除</Button>
     </div>
+
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
+
+
     <Row style="margin:20px 0;">
       <h3>网卡设置</h3>
       <Divider/>
-      <Button type="primary" class="topColumn" @click="handleLoadNIC">设置负载网卡</Button>
+      <Button type="primary" class="topColumn" @click="handleLoadNICx">设置负载网卡</Button>
     </Row>
     <Table
       border
@@ -116,7 +119,7 @@
         </i-col>
       </Row>
       <div class="buttonList" style="margin-top:20px;">
-        <Button type="primary" @click="handleSetCard" :loading="loading">保存</Button>
+        <Button type="primary" @click="handleSetCard">保存</Button>
         <Button @click="handleResetCard" style="margin-left: 8px">取消</Button>
       </div>
     </Modal>
@@ -125,19 +128,24 @@
 
 <script>
 import {
-  getNetwork,
-  getDiskStatus,
-  setDiskFunction,
+  setDiskFunctionx,
   addServers,
   editServersNode,
   deleteserver,
-  setVdiskEthernet
+  getServers,
+  getNetworkx,
+  getDiskStatusx,
+  setVdiskEthernetx
 } from '@/api/wupan'
-import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
+import { bytesToSize, bytesToRate } from '@/utils/index'
+// import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
 export default {
   name: 'subType1-detail',
   data () {
     return {
+      model1: '',
+      loading: '',
+      serverList: '',
       modal6: false,
       spinShow: false, // 加载动画
       tempMasterServerIp: '', // 主服务器Ip
@@ -255,42 +263,42 @@ export default {
             var a = params.row.linkRate / 1000 + ' G'
             return h('span', a)
           }
-        },
-        {
-          title: '上行流量',
-          key: 'sendRate',
-          render: (h, params) => {
-            var a = formatSize(params.row.sendRate)
-            return h('span', a)
-          }
-        },
-        {
-          title: '下行流量',
-          key: 'recvRate',
-          render: (h, params) => {
-            var a = formatSize(params.row.recvRate)
-            console.log('下行流量')
-            console.log(formatSize(params.row.recvRate))
-            console.log('下行流量')
-            return h('span', a)
-          }
-        },
-        {
-          title: '累计发送',
-          key: 'sendTotal',
-          render: (h, params) => {
-            var a = formatSize(params.row.sendTotal)
-            return h('span', a)
-          }
-        },
-        {
-          title: '累计接收',
-          key: 'recvTotal',
-          render: (h, params) => {
-            var a = formatSize(params.row.recvTotal)
-            return h('span', a)
-          }
         }
+        // {
+        //   title: '上行流量',
+        //   key: 'sendRate',
+        //   render: (h, params) => {
+        //     var a = formatSize(params.row.sendRate)
+        //     return h('span', a)
+        //   }
+        // },
+        // {
+        //   title: '下行流量',
+        //   key: 'recvRate',
+        //   render: (h, params) => {
+        //     var a = formatSize(params.row.recvRate)
+        //     console.log('下行流量')
+        //     console.log(formatSize(params.row.recvRate))
+        //     console.log('下行流量')
+        //     return h('span', a)
+        //   }
+        // },
+        // {
+        //   title: '累计发送',
+        //   key: 'sendTotal',
+        //   render: (h, params) => {
+        //     var a = formatSize(params.row.sendTotal)
+        //     return h('span', a)
+        //   }
+        // },
+        // {
+        //   title: '累计接收',
+        //   key: 'recvTotal',
+        //   render: (h, params) => {
+        //     var a = formatSize(params.row.recvTotal)
+        //     return h('span', a)
+        //   }
+        // }
       ],
       tableData2: [], // 网卡信息
       tableColumns3: [
@@ -364,7 +372,7 @@ export default {
           key: 'writeTotal',
           render: (h, params) => {
             //  return h('span', bytesToSize(params.row.writeRate))
-            return h('span', bytesToSize(params.row.writeTotal))
+            return h('span', bytesToSize(Number(params.row.writeTotal)))
           }
         },
         // { title: '累计IO写入', key: 'writeTotal' },
@@ -409,8 +417,11 @@ export default {
     this.tempMasterServerIp = this.$route.query.tempMasterServerIp
     this.ServerIp = this.$route.query.data.serverIp
     this.handleGetServerInfo()
-    this.handleGetNetwork()
-    this.handleGetDiskStatus()
+    // this.handleGetNetwork()
+    // this.handleGetDiskStatus()
+    this.GetServerList()
+    this.handleGetNetworkx(this.ServerIp)
+    this.handleGetDiskStatusx(this.ServerIp)
   },
   computed: {
     routes () {
@@ -418,17 +429,43 @@ export default {
     }
   },
   methods: {
+    GetServerList () {
+      let that = this
+      getServers().then(response => {
+        if (response.data.error === null) {
+          that.serverList = response.data.result.list
+        }
+        console.log(that.serverList)
+      })
+    },
     handleGetServerInfo () {
       var data = this.$route.query.data
-      //  this.tableData1.push(data)
+      this.model1 = data.serverIp
       this.tableData1.push(data)
       this.isMaster = this.tableData1[0].isMaster
     },
+
+    // handleGetNetwork () {
+    //   getNetwork().then(a => {
+    //     var arr = a.data.result.list
+    //     if (a.data.error === null && arr !== null) {
+    //       arr.map(item => {
+    //         if (item.vdiskSet === 'yes') {
+    //           item['_checked'] = true
+    //           this.getCheckboxVal = item
+    //         }
+    //       })
+    //       this.tableData2 = arr
+    //     } else {
+    //       this.$Message.error(a.data.error)
+    //     }
+    //   })
+    // },
     /**
      * 获取网卡信息
      */
-    handleGetNetwork () {
-      getNetwork().then(a => {
+    handleGetNetworkx (ip) {
+      getNetworkx(ip).then(a => {
         var arr = a.data.result.list
         if (a.data.error === null && arr !== null) {
           arr.map(item => {
@@ -443,9 +480,21 @@ export default {
         }
       })
     },
-    handleGetDiskStatus () {
+    // handleGetDiskStatus () {
+    //   let that = this
+    //   getDiskStatus().then(a => {
+    //     var arr = a.data.result.list
+    //     if (a.data.error === null && arr !== null) {
+    //       this.tableData3 = arr
+    //     } else {
+    //       this.$Message.error(a.data.error)
+    //     }
+    //   })
+    //   that.spinShow = false
+    // },
+    handleGetDiskStatusx (ip) {
       let that = this
-      getDiskStatus().then(a => {
+      getDiskStatusx(ip).then(a => {
         var arr = a.data.result.list
         if (a.data.error === null && arr !== null) {
           this.tableData3 = arr
@@ -481,11 +530,11 @@ export default {
         cancelTexxt: '取消'
       })
     },
-    handleButtonBack () {
-      this.$router.push({
-        path: 'subType1-1'
-      })
-    },
+    // handleButtonBack () {
+    //   this.$router.push({
+    //     path: 'subType1-1'
+    //   })
+    // },
     handleButtonSetSever () {
       // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
 
@@ -527,17 +576,19 @@ export default {
       this.modal6 = true
       this.spinShow = true
       // path, diskFunctionType, cacheSizeMB, isFormat, volume
-      setDiskFunction(
+      setDiskFunctionx(
         this.rowData.path,
         this.selecteDisk,
         '512',
         this.selecteFormatValue,
-        this.selecteDiskF
+        this.selecteDiskF,
+        this.ServerIp
       ).then(a => {
         // var result = a.data.result
         if (a.data.error === null) {
           this.modal6 = false
-          this.handleGetDiskStatus() // 刷新列表
+          this.spinShow = false
+          this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
         } else {
           this.$Message.error(a.data.error)
         }
@@ -550,9 +601,20 @@ export default {
     /**
      * 设置负载网卡
      */
-    handleLoadNIC () {
+    // handleLoadNIC () {
+    //   this.spanShow = true
+    //   setVdiskEthernet(this.getCheckboxVal).then(() => {
+    //     this.spanShow = false
+    //     this.$Notice.success({
+    //       title: '设置负载网卡成功'
+    //     })
+    //     this.handleGetNetwork()
+    //   })
+    // },
+
+    handleLoadNICx () {
       this.spanShow = true
-      setVdiskEthernet(this.getCheckboxVal).then(() => {
+      setVdiskEthernetx(this.getCheckboxVal, this.ServerIp).then(() => {
         this.spanShow = false
         this.$Notice.success({
           title: '设置负载网卡成功'
@@ -592,8 +654,18 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      this.handleGetNetwork()
-      this.handleGetDiskStatus()
+      this.handleGetNetworkx(this.ServerIp)
+      this.handleGetDiskStatusx(this.ServerIp)
+    },
+    /*
+    列表选择
+    */
+    listTypeChange () {
+      this.tableData1 = this.serverList.filter(item => {
+        return item.serverIp === this.model1
+      })
+      this.handleGetNetworkx(this.model1)
+      this.handleGetDiskStatusx(this.model1)
     }
   }
 }

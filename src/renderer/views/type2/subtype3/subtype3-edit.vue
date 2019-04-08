@@ -245,22 +245,8 @@
       handleCheckData () {
         var data = this.$route.query.data
         if (data) {
-          // this.formValidate.name = data.name
-          // this.formValidate.netMk = data.netMk
-          // this.formValidate.netGW = data.netGW
-          // this.formValidate.dns1 = data.dns1
-          // this.formValidate.dns2 = data.dns2
-          // this.formValidate.daSV = data.daSV
-          // this.formValidate.bala = data.bala
-          // this.formValidate.disable = data.disable
-          // this.formValidate.wrLimG = data.wrLimG
-          // this.formValidate.gTim = data.gTim
-          // this.formValidate.cach = data.cach
-          // this.formValidate.wieh = data.wieh
-          // this.formValidate.hith = data.hith
-          // this.formValidate.resh = data.resh
-          // this.formValidate.deps = data.deps
           this.formValidate = data
+          // 镜像列表
           this.tableData1 = data.imgG
         }
       },
@@ -305,6 +291,7 @@
               this.$Message.error('请至少添加一个镜像')
             } else {
               that.formValidate.imgG = that.tableData1
+              console.dir(that.formValidate)
               editPcGroup(
                 that.formValidate
               ).then((a) => {

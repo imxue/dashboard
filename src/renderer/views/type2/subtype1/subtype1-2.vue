@@ -85,9 +85,6 @@
           }
         })
       },
-      handleButtonRefesh (val) {
-        alert('刷新列表')
-      },
       handleButtonRemote (val) {
         alert('远程部署')
       },
