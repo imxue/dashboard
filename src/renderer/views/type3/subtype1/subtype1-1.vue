@@ -5,7 +5,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
       <Button type="primary" class="topColumn" @click="handleButtonEdit">批量编辑</Button>
       <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>

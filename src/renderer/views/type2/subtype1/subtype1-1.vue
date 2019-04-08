@@ -37,6 +37,7 @@
 
 <script>
   import { getServers, addServers, getServersNode, editServersNode } from '@/api/wupan'
+  import Cookies from 'js-cookie'
 export default {
     name: 'subType1-1',
     data () {
@@ -131,17 +132,27 @@ export default {
         }, 1000)
       },
       handleGetServerList () {
-        getServers().then((a) => {
+        if (JSON.parse(Cookies.get('serverlist'))) {
           this.spinShow = false
-          var datalist = a.data.result.list
-          if (a.data.error === null) {
-            this.tableData = a.data.result.list
-            this.handleGetCurrMasterServerIp(datalist)
-          } else {
-            this.data = null
-            this.$Message.error(a.data.Msg)
-          }
-        })
+          let list = JSON.parse(Cookies.get('serverlist'))
+          this.tableData = list
+          this.handleGetCurrMasterServerIp(list)
+        } else {
+          getServers().then((a) => {
+            this.spinShow = false
+            var datalist = a.data.result.list
+            if (a.data.error === null) {
+              Cookies.set('serverlist', datalist)
+              this.tableData = datalist
+              this.spinShow = false
+              this.handleGetCurrMasterServerIp(datalist)
+            } else {
+              this.data = null
+              this.spinShow = false
+              this.$Message.error(a.data.Msg)
+            }
+          })
+        }
       },
       handleGetCurrMasterServerIp (data) {
         if (data === null) {
@@ -187,13 +198,17 @@ export default {
           if (valid) {
             getServers().then(res => {
               var datalist = res.data.result.list
-              let master = datalist.filter(item => { return item.isMaster === '1' })
-              if (master) {
-                getServersNode(this.formValidate.serverIP).then(res => {
-                  this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
-                })
+              if (datalist) {
+                let master = datalist.filter(item => { return item.isMaster === '1' })
+                if (master) {
+                  getServersNode(this.formValidate.serverIP).then(res => {
+                    this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
+                  })
+                }
               } else {
-
+                getServersNode(this.formValidate.serverIP).then(res => {
+                  this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP)
+                })
               }
             })
           } else {
