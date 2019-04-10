@@ -28,9 +28,13 @@ function makeRequestx (method, param, ip) {
   })
 }
 
-// Get_ImgList 全部镜像
+// Get_ImgList 获取服务器类表
 export function getServers () {
   return makeRequest('Get_Servers', {})
+}
+
+export function getServersx (ip) {
+  return makeRequestx('Get_Servers', {}, ip)
 }
 
 export function login (password) {

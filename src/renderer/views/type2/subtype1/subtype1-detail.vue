@@ -138,7 +138,7 @@ import {
   setVdiskEthernetx
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 // import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
 export default {
   name: 'subType1-detail',
@@ -520,10 +520,10 @@ export default {
         content: '<p>后果很严重</p>',
         okText: '删除',
         onOk: () => {
-          let n = JSON.parse(Cookies.get('serverlist')).filter(i => {
-            return i.serverIp !== ip
-          })
-          Cookies.set('serverlist', n)
+          // let n = JSON.parse(Cookies.get('serverlist')).filter(i => {
+          //   return i.serverIp !== ip
+          // })
+          // Cookies.set('serverlist', n)
           deleteserver(ip).then(() => {
             this.$Message.success('删除成功')
             this.$router.push({

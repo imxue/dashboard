@@ -4,7 +4,7 @@
     <div class="topItem">
       <Input class="topColumn" v-model="searchVal" search enter-button="搜索" @on-search="handleSearch" placeholder="请输入服务器IP..." style="width: 200px;" />
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加服务器</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRefesh">刷新</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">刷新</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
     <!-- table -->
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { getServers, addServers, getServersNode, editServersNode } from '@/api/wupan'
+  import { addServers, getServersNode, editServersNode, getServersx } from '@/api/wupan'
   import Cookies from 'js-cookie'
 export default {
     name: 'subType1-1',
@@ -116,8 +116,12 @@ export default {
       this.handleGetServerList()
     },
     computed: {
-      routes () {
-        return this.$router.options.routes
+      refesh () {
+        if (this.tempMasterServerIp) {
+          return false
+        } else {
+          return true
+        }
       }
     },
     methods: {
@@ -132,27 +136,40 @@ export default {
         }, 1000)
       },
       handleGetServerList () {
-        if (JSON.parse(Cookies.get('serverlist'))) {
+        // let i = Cookies.get('serverlist')
+        // if (i && JSON.parse(i)) {
+        //   this.spinShow = false
+        //   let list = JSON.parse(Cookies.get('serverlist'))
+        //   this.tableData = list
+        //   this.handleGetCurrMasterServerIp(list)
+        // } else {
+        //   getServers().then((a) => {
+        //     this.spinShow = false
+        //     var datalist = a.data.result.list
+        //     if (a.data.error === null) {
+        //       Cookies.set('serverlist', datalist)
+        //       this.tableData = datalist
+        //       this.spinShow = false
+        //       this.handleGetCurrMasterServerIp(datalist)
+        //     } else {
+        //       this.data = null
+        //       this.spinShow = false
+        //       this.$Message.error(a.data.Msg)
+        //     }
+        //   }, (error) => { this.$Message.error(error) })
+        // }
+        let d = Cookies.get('masterip')
+        getServersx(d).then((a) => {
           this.spinShow = false
-          let list = JSON.parse(Cookies.get('serverlist'))
-          this.tableData = list
-          this.handleGetCurrMasterServerIp(list)
-        } else {
-          getServers().then((a) => {
-            this.spinShow = false
-            var datalist = a.data.result.list
-            if (a.data.error === null) {
-              Cookies.set('serverlist', datalist)
-              this.tableData = datalist
-              this.spinShow = false
-              this.handleGetCurrMasterServerIp(datalist)
-            } else {
-              this.data = null
-              this.spinShow = false
-              this.$Message.error(a.data.Msg)
-            }
-          })
-        }
+          var datalist = a.data.result.list
+          if (a.data.error === null) {
+            this.tableData = a.data.result.list
+            this.handleGetCurrMasterServerIp(datalist)
+          } else {
+            this.data = null
+            this.$Message.error(a.data.Msg)
+          }
+        })
       },
       handleGetCurrMasterServerIp (data) {
         if (data === null) {
@@ -196,16 +213,25 @@ export default {
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            getServers().then(res => {
+            getServersx(this.formValidate.serverIP).then(res => {
               var datalist = res.data.result.list
+              debugger
               if (datalist) {
                 let master = datalist.filter(item => { return item.isMaster === '1' })
-                if (master) {
+                if (master.length !== 0) {
+                  Cookies.set('masterip', master[0].serverIp)
                   getServersNode(this.formValidate.serverIP).then(res => {
                     this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
                   })
+                } else {
+                  // 没有找到主服务器
+                  this.tempMasterServerIp = this.formValidate.serverIP
+                  getServersNode(this.formValidate.serverIP).then(res => {
+                    this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP)
+                  })
                 }
               } else {
+                this.showPopup = false
                 getServersNode(this.formValidate.serverIP).then(res => {
                   this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP)
                 })
