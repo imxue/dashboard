@@ -587,7 +587,6 @@ export function addServers (serverIp, guid) {
 }
 
 export function addServersx (serverIp, guid, ip) {
-  debugger
   return makeRequestx('Add_Servers', {
     serverIp: serverIp,
     guid: guid

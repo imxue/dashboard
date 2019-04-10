@@ -192,9 +192,7 @@ export default {
         this.$refs[name].validate((valid) => {
           if (valid) {
             let cookiesMasterIp = Cookies.get('masterip')
-            debugger
             if (cookiesMasterIp) {
-              debugger
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               })
