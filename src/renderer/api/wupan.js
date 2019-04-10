@@ -302,9 +302,18 @@ export function editPcConfig (mac, pc, ip, isDisable, pcGroup) {
 /**
  * 获取所以客户机属性
  */
+
 export function getPcListConfig () {
   return makeRequest('Get_PcListConf', {
   })
+}
+
+/**
+ * 获取所以客户机属性2
+ */
+export function getPcListConfigx (ip) {
+  return makeRequestx('Get_PcListConf', {
+  }, ip)
 }
 
 export function editPcsConfig (macList, pcGroup, isDisable) {
@@ -348,6 +357,12 @@ export function deleteserver (ip) {
   return makeRequest('Del_Servers', {
     serverIp: ip
   })
+}
+/**
+ * 删除服务器属性
+ */
+export function deleteserverConfig (ip) {
+  return makeRequestx('Cls_Servers_Node', {}, ip)
 }
 /**
  * 获取启动方案类别
@@ -537,15 +552,15 @@ function makeGuid (url) {
   })
 }
 
-export function editServersNode (masterIp, url, isSyncImage, isOverload) {
+export function editServersNode (masterIp, ip, isSyncImage, isOverload) {
   return makeServersNode('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',
     auba: isOverload ? '1' : '0'
-  }, url)
+  }, ip)
 }
 
-function makeServersNode (method, param, url) {
+function makeServersNode (method, param, ip) {
   const data = {
     method: method,
     params: [
@@ -553,7 +568,7 @@ function makeServersNode (method, param, url) {
     ]
   }
   return request({
-    url: `http://${url}:13302/jsonrpc`,
+    url: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })
@@ -569,6 +584,14 @@ export function addServers (serverIp, guid) {
     serverIp: serverIp,
     guid: guid
   })
+}
+
+export function addServersx (serverIp, guid, ip) {
+  debugger
+  return makeRequestx('Add_Servers', {
+    serverIp: serverIp,
+    guid: guid
+  }, ip)
 }
 
 export function delServers (serverIp) {

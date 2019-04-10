@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { addServers, getServersNode, editServersNode, getServersx } from '@/api/wupan'
+  import { addServersx, getServersNode, editServersNode, getServersx } from '@/api/wupan'
   import Cookies from 'js-cookie'
 export default {
     name: 'subType1-1',
@@ -136,28 +136,6 @@ export default {
         }, 1000)
       },
       handleGetServerList () {
-        // let i = Cookies.get('serverlist')
-        // if (i && JSON.parse(i)) {
-        //   this.spinShow = false
-        //   let list = JSON.parse(Cookies.get('serverlist'))
-        //   this.tableData = list
-        //   this.handleGetCurrMasterServerIp(list)
-        // } else {
-        //   getServers().then((a) => {
-        //     this.spinShow = false
-        //     var datalist = a.data.result.list
-        //     if (a.data.error === null) {
-        //       Cookies.set('serverlist', datalist)
-        //       this.tableData = datalist
-        //       this.spinShow = false
-        //       this.handleGetCurrMasterServerIp(datalist)
-        //     } else {
-        //       this.data = null
-        //       this.spinShow = false
-        //       this.$Message.error(a.data.Msg)
-        //     }
-        //   }, (error) => { this.$Message.error(error) })
-        // }
         let d = Cookies.get('masterip')
         getServersx(d).then((a) => {
           this.spinShow = false
@@ -213,6 +191,16 @@ export default {
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
+            let cookiesMasterIp = Cookies.get('masterip')
+            debugger
+            if (cookiesMasterIp) {
+              debugger
+              getServersNode(this.formValidate.serverIP).then(res => {
+                this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
+              })
+              return
+            }
+            // 获取服务器类别
             getServersx(this.formValidate.serverIP).then(res => {
               var datalist = res.data.result.list
               debugger
@@ -221,19 +209,22 @@ export default {
                 if (master.length !== 0) {
                   Cookies.set('masterip', master[0].serverIp)
                   getServersNode(this.formValidate.serverIP).then(res => {
-                    this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp)
+                    this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp, this.formValidate.serverIP)
                   })
                 } else {
-                  // 没有找到主服务器
                   this.tempMasterServerIp = this.formValidate.serverIP
+                  Cookies.set('masterip', this.tempMasterServerIp)
                   getServersNode(this.formValidate.serverIP).then(res => {
-                    this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP)
+                    this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
                   })
                 }
               } else {
+                // 没有找到主服务器
                 this.showPopup = false
+                Cookies.set('masterip', this.formValidate.serverIP)
+                debugger
                 getServersNode(this.formValidate.serverIP).then(res => {
-                  this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP)
+                  this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
                 })
               }
             })
@@ -243,11 +234,12 @@ export default {
           }
         })
       },
-      handleSubmitAddServer (guid, masterIp) {
+      handleSubmitAddServer (guid, masterIp, selfip) {
         // this.showPopup = false
-        editServersNode(masterIp, this.formValidate.serverIP) // 设置主服务器
-        addServers(this.formValidate.serverIP, guid).then((a) => {
-          // var result = a.data.result
+        editServersNode(masterIp, selfip) // 设置主服务器
+        debugger
+        addServersx(selfip, guid, masterIp).then((a) => {
+          debugger
           if (a.data.error === null) {
             this.$Message.success('添加成功')
             this.showPopup = false

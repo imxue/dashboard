@@ -135,11 +135,13 @@ import {
   getServers,
   getNetworkx,
   getDiskStatusx,
-  setVdiskEthernetx
+  setVdiskEthernetx,
+  deleteserverConfig
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 // import Cookies from 'js-cookie'
 // import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
+import Cookies from 'js-cookie'
 export default {
   name: 'subType1-detail',
   data () {
@@ -530,6 +532,10 @@ export default {
               path: 'subType1-1'
             })
           })
+          if (ip === Cookies.get('masterip')) {
+            Cookies.remove('masterip')
+          }
+          deleteserverConfig(ip)
         },
         cancelTexxt: '取消'
       })

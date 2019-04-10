@@ -49,7 +49,8 @@
 
 <script>
   import { getClientList, deleteClient, changeSchema } from '@/api/client'
-//  import { getPcListConfig } from '@/api/wupan'
+  import { getPcListConfigx } from '@/api/wupan'
+import Cookies from 'js-cookie'
   export default {
     name: 'subType1-1',
     data () {
@@ -69,71 +70,10 @@
         tableDataList: [], // 批量编辑时，传值到下一页
         tableColumns: [
           { type: 'selection', width: 50, align: 'center' },
-          {
-            title: '状态',
-            width: 70,
-            key: 'Id'
-            // render: (h, params) => {
-            //   let type = params.row.state
-            //   switch (type) {
-            //     case true:
-            //       return h('span', '在线')
-            //     case false:
-            //       return h('span', { style: { color: '#999999' } }, '离线')
-            //     default:
-            //       return '-'
-            //   }
-            // }
-          },
           { title: '客户机IP', key: 'Ip' },
           { title: '客户机MAC', key: 'Mac' },
           { title: '配置方案', key: 'ConfigureScheme' },
-          { title: '当前镜像', key: 'CurrentImage' },
-          { title: '当前镜像配置', key: 'CurrentImageSetting' },
-          {
-            title: '在线时长',
-            key: 'onlineTime',
-            render: (h, params) => {
-              return params.row.onlineTime // 格式化时间
-            }
-          },
-          { title: '操作',
-            width: 120,
-            fixed: 'right',
-            key: 'operation',
-            render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
-              let a = h('Button', {
-                props: { type: 'primary', ghost: true },
-                on: { click: () => { this.handleTableEdit(params.row) } }
-              }, '编辑')
-              let b = h('Button', {
-                props: { type: 'info', ghost: true },
-                on: { click: () => { this.handleTableRemove(params.row) } }
-              }, '移动至方案')
-              let type = params.row.Enabe
-              switch (type) {
-                case 0:
-                  return [a, b]
-                case 1:
-                  return [a]
-                default:
-                  return [a, b]
-              }
-            }
-          },
-          { title: 'CPU型号', key: 'Cpu' },
-          { title: '主板型号', key: 'MainBoard' },
-          {
-            title: '内存大小',
-            key: 'MemorySize',
-            render: (h, params) => {
-              return params.row.MemorySize + 'MB'
-            }
-          },
-          { title: '网卡型号', key: 'NetworkCard' },
-          { title: '显卡型号', key: 'GraphicsCard' },
-          { title: '声卡型号', key: 'SoundCard' }
+          { title: '机器分组', key: 'pcGp' }
         ],
         nameList: [
           { Id: 1, value: '大厅A001', label: '大厅A001-A050' },
@@ -145,10 +85,8 @@
       }
     },
     created () {
-      this.handleGetClientList(this.curroffset, this.currlimit)
-      // getPcListConfig().then(response => {
-      //   this.tableData = response.data.result.list
-      // })
+      // this.handleGetClientList(this.curroffset, this.currlimit)
+      this.handgetClienList()
     },
     computed: {
       routes () {
@@ -156,6 +94,14 @@
       }
     },
     methods: {
+      handgetClienList () {
+        if (Cookies.get('masterip')) {
+          let ip = Cookies.get('masterip')
+          getPcListConfigx(ip).then((response) => {
+            this.tableData = response.data.result.list
+          })
+        }
+      },
       handleRemoveTableRowInfo (data) {
         this.handleFormatArr(data)
       },

@@ -11,6 +11,23 @@ import request from '@/utils/request'
 //     data
 //   })
 // }
+function makeRequestx (method, param, ip) {
+  const data = {
+    method: method,
+    params: [
+      param
+    ]
+  }
+  return request({
+    url: `http://${ip}:13302/jsonrpc`,
+    method: 'post',
+    data
+  })
+}
+
+export function setClienConf ({ list }, ip) {
+  return makeRequestx('Set_PcConf', { list }, ip)
+}
 
 export function getClientList (query) {
   return request({
