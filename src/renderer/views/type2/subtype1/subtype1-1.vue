@@ -203,7 +203,6 @@ export default {
             // 获取服务器类别
             getServersx(this.formValidate.serverIP).then(res => {
               var datalist = res.data.result.list
-              debugger
               if (datalist) {
                 let master = datalist.filter(item => { return item.isMaster === '1' })
                 if (master.length !== 0) {
@@ -222,7 +221,6 @@ export default {
                 // 没有找到主服务器
                 this.showPopup = false
                 Cookies.set('masterip', this.formValidate.serverIP)
-                debugger
                 getServersNode(this.formValidate.serverIP).then(res => {
                   this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
                 })
@@ -237,9 +235,7 @@ export default {
       handleSubmitAddServer (guid, masterIp, selfip) {
         // this.showPopup = false
         editServersNode(masterIp, selfip) // 设置主服务器
-        debugger
         addServersx(selfip, guid, masterIp).then((a) => {
-          debugger
           if (a.data.error === null) {
             this.$Message.success('添加成功')
             this.showPopup = false

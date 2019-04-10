@@ -70,10 +70,10 @@ import Cookies from 'js-cookie'
         tableDataList: [], // 批量编辑时，传值到下一页
         tableColumns: [
           { type: 'selection', width: 50, align: 'center' },
-          { title: '客户机IP', key: 'Ip' },
-          { title: '客户机MAC', key: 'Mac' },
-          { title: '配置方案', key: 'ConfigureScheme' },
-          { title: '机器分组', key: 'pcGp' }
+          { title: '状态', key: 'stat' },
+          { title: '客户机IP', key: 'ip' },
+          { title: '客户机MAC', key: 'mac' },
+          { title: '配置方案', key: 'pcGp' }
         ],
         nameList: [
           { Id: 1, value: '大厅A001', label: '大厅A001-A050' },
