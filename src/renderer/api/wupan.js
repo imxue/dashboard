@@ -28,7 +28,7 @@ function makeRequestx (method, param, ip) {
   })
 }
 
-// Get_ImgList 获取服务器类表
+//  获取服务器类表
 export function getServers () {
   return makeRequest('Get_Servers', {})
 }
@@ -98,6 +98,10 @@ export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat,
 export function getImageList () {
   return makeRequest('Get_ImgList', {
   })
+}
+export function getImageListx (ip) {
+  return makeRequestx('Get_ImgList', {
+  }, ip)
 }
 
 export function createImage (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster) {
@@ -261,10 +265,12 @@ export function getServerStatus () {
   return makeRequest('Get_SrvStat', {
   })
 }
-
-export function getDHCPConfig () {
-  return makeRequest('Get_DhcpConf', {
-  })
+/*
+获取dpcp配置
+*/
+export function getDHCPConfig (ip) {
+  return makeRequestx('Get_DhcpConf', {
+  }, ip)
 }
 
 // var DHCPConfig_AddMode = {

@@ -202,6 +202,7 @@ export default {
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               })
+              this.$store.dispatch('saveMaster', cookiesMasterIp)
             } else {
               this.showPopup = false
               localStorage.setItem('masterip', this.formValidate.serverIP)
@@ -209,6 +210,7 @@ export default {
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
               })
+              this.$store.dispatch('saveMaster', this.formValidate.serverIP)
             }
           } else {
             this.showPopup = true

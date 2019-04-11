@@ -23,9 +23,6 @@
         <FormItem label="保存路径：" prop="path">
           <Select v-model="formValidate.path" placeholder="——请选择保存路径——"  >
          
-            
-          
-                
               <Tooltip placement="right"  v-for="(item, index) in diskList" :key="index">
       <Option  :value="item.path" >{{item.path}}</Option>
         <div slot="content">

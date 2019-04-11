@@ -24,7 +24,11 @@ function makeRequestx (method, param, ip) {
     data
   })
 }
-
+/**
+ * 设置客户机属性
+ * @param {*} param0
+ * @param {*} ip
+ */
 export function setClienConf ({ list }, ip) {
   return makeRequestx('Set_PcConf', { list }, ip)
 }
@@ -34,6 +38,14 @@ export function getClientList (query) {
     url: '/v1/client/queryAll' + query,
     method: 'get'
   })
+}
+
+export function setSuper (data, ip) {
+  return makeRequestx('Set_SupIp', data, ip)
+}
+
+export function getSuper (ip) {
+  return makeRequestx('Get_SupIp', {}, ip)
 }
 
 export function editClient (activeDns, backupDns, enable, gateway, id, ip, mac, startSchema, subnet) {
