@@ -131,7 +131,7 @@ import {
   setDiskFunctionx,
   addServers,
   editServersNode,
-  deleteserver,
+  deleteserverx,
   getServers,
   getNetworkx,
   getDiskStatusx,
@@ -141,7 +141,6 @@ import {
 import { bytesToSize, bytesToRate } from '@/utils/index'
 // import Cookies from 'js-cookie'
 // import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
-import Cookies from 'js-cookie'
 export default {
   name: 'subType1-detail',
   data () {
@@ -212,12 +211,6 @@ export default {
           }
         },
         { title: '服务器IP', key: 'serverIp' },
-        // { title: '模式', key: 'mode' },
-        // { title: '当前带机数', key: 'number' },
-        // { title: '系统负载', key: 'systemLoad' },
-        // { title: '网卡状态', key: 'networkCard' },
-        // { title: '硬盘状态', key: 'diskState' },
-        // { title: '固件版本', key: 'firmwareVersion' },
         { title: '服务版本', key: 'dataVer' }
       ],
       tableData1: [],
@@ -522,18 +515,14 @@ export default {
         content: '<p>后果很严重</p>',
         okText: '删除',
         onOk: () => {
-          // let n = JSON.parse(Cookies.get('serverlist')).filter(i => {
-          //   return i.serverIp !== ip
-          // })
-          // Cookies.set('serverlist', n)
-          deleteserver(ip).then(() => {
+          deleteserverx(ip, this.tempMasterServerIp).then(() => {
             this.$Message.success('删除成功')
             this.$router.push({
               path: 'subType1-1'
             })
           })
-          if (ip === Cookies.get('masterip')) {
-            Cookies.remove('masterip')
+          if (ip === localStorage.getItem('masterip')) {
+            localStorage.removeItem('masterip')
           }
           deleteserverConfig(ip)
         },

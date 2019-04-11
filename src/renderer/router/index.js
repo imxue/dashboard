@@ -13,18 +13,18 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {
-      path: '/login',
-      component: () => import('@/views/login/index')
-    },
-    {
-      path: '/login/login',
-      component: () => import('@/views/login/login')
-    },
-    {
-      path: '/login/reset',
-      component: () => import('@/views/login/reset')
-    },
+    // {
+    //   path: '/login',
+    //   component: () => import('@/views/login/index')
+    // },
+    // {
+    //   path: '/login/login',
+    //   component: () => import('@/views/login/login')
+    // },
+    // {
+    //   path: '/login/reset',
+    //   component: () => import('@/views/login/reset')
+    // },
     // {
     //   path: 'subtype1-1-download',
     //   component: () => import('@/views/game/type1/subType1/subtype1-1-download'),

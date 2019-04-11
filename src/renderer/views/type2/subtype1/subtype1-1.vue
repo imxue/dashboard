@@ -37,7 +37,7 @@
 
 <script>
   import { addServersx, getServersNode, editServersNode, getServersx } from '@/api/wupan'
-  import Cookies from 'js-cookie'
+  // import Cookies from 'js-cookie'
 export default {
     name: 'subType1-1',
     data () {
@@ -135,12 +135,16 @@ export default {
           this.tableData = newArr
         }, 1000)
       },
+      /*
+        获取列表
+      */
       handleGetServerList () {
-        let d = Cookies.get('masterip')
+        // let d = Cookies.get('masterip')
+        let d = localStorage.getItem('masterip')
         getServersx(d).then((a) => {
           this.spinShow = false
           var datalist = a.data.result.list
-          if (a.data.error === null) {
+          if (datalist && a.data.error === null) {
             this.tableData = a.data.result.list
             this.handleGetCurrMasterServerIp(datalist)
           } else {
@@ -191,39 +195,21 @@ export default {
       handleAddServer (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            let cookiesMasterIp = Cookies.get('masterip')
+            let cookiesMasterIp = localStorage.getItem('masterip')
+            // let cookiesMasterIp = Cookies.get('masterip')
             if (cookiesMasterIp) {
+              this.showPopup = false
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               })
-              return
+            } else {
+              this.showPopup = false
+              localStorage.setItem('masterip', this.formValidate.serverIP)
+              // Cookies.set('masterip', this.formValidate.serverIP, { expires: 14 })
+              getServersNode(this.formValidate.serverIP).then(res => {
+                this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
+              })
             }
-            // 获取服务器类别
-            getServersx(this.formValidate.serverIP).then(res => {
-              var datalist = res.data.result.list
-              if (datalist) {
-                let master = datalist.filter(item => { return item.isMaster === '1' })
-                if (master.length !== 0) {
-                  Cookies.set('masterip', master[0].serverIp)
-                  getServersNode(this.formValidate.serverIP).then(res => {
-                    this.handleSubmitAddServer(res.data.result.guid, master[0].serverIp, this.formValidate.serverIP)
-                  })
-                } else {
-                  this.tempMasterServerIp = this.formValidate.serverIP
-                  Cookies.set('masterip', this.tempMasterServerIp)
-                  getServersNode(this.formValidate.serverIP).then(res => {
-                    this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
-                  })
-                }
-              } else {
-                // 没有找到主服务器
-                this.showPopup = false
-                Cookies.set('masterip', this.formValidate.serverIP)
-                getServersNode(this.formValidate.serverIP).then(res => {
-                  this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
-                })
-              }
-            })
           } else {
             this.showPopup = true
             this.$Message.error('验证失败')

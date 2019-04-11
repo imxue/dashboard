@@ -358,6 +358,11 @@ export function deleteserver (ip) {
     serverIp: ip
   })
 }
+export function deleteserverx (ip, toip) {
+  return makeRequestx('Del_Servers', {
+    serverIp: ip
+  }, toip)
+}
 /**
  * 删除服务器属性
  */
