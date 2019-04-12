@@ -112,8 +112,8 @@ export default new Router({
             },
             {
               path: 'subType3-2',
-              name: 'DPCP配置',
-              meta: { title: 'DPCP配置' },
+              name: 'DHCP配置',
+              meta: { title: 'DHCP配置' },
               component: () => import('@/views/type2/subtype3/dpcp')
             },
             {

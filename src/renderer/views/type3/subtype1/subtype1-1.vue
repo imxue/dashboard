@@ -9,7 +9,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
-      <Button type="primary" class="topColumn" @click="handleButtonReStart">设置为超级工作站</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonReStart">刷新</Button>
     </div>
     <!-- table -->
     <Table
@@ -42,56 +42,69 @@
     >
       <p>是否删除当前数据？</p>
     </Modal>
-    <!-- 移动至方案 -->
-    <!-- <Modal
-      class="modalBox"
-      title="移动至方案"
-      v-model="showPopup"
-      width= "500"
-      class-name="vertical-center-modal">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="移动至方案：" prop="nameVal">
-            <Select v-model="formValidate.nameVal" placeholder="默认当前(方案)">
-                <Option  v-for="item in nameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-        </FormItem>
-        <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">确定</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
-        </FormItem>
-      </Form>
-    </Modal>-->
-    <Modal  title="添加服务器" v-model="adddetail" footer-hide width="500">
-       <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
-      <FormItem label="镜像" prop="imglistVal">
-            <Select v-model="formValidatex.imglist" placeholder="默认当前(方案)">
-                <Option  v-for="item in imglist" :value="item" :key="item.name">{{ item.name }}</Option>
-            </Select>
+    <Modal title="设置超级工作站" v-model="adddetail" footer-hide width="500">
+      <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
+        <FormItem label="镜像" prop="imglistVal">
+          <Select v-model="formValidatex.imglist" placeholder="默认当前(方案)">
+            <Option v-for="item in imglist" :value="item.name" :key="item.name">{{ item.name }}</Option>
+          </Select>
         </FormItem>
         <FormItem label="配置" prop="profileListVal">
-            <Select v-model="formValidatex.profileList" placeholder="默认当前(方案)">
-                <Option  v-for="item in profileList" :value="item" :key="item.name">{{ item.name }}</Option> 
-            </Select>
+          <Select v-model="formValidatex.profileList" placeholder="默认当前(方案)">
+            <template v-if="profileList">
+              <Option
+                v-for="item in profileList"
+                :value="item.name"
+                :key="item.name"
+              >{{ item.name }}</Option>
+            </template>
+          </Select>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmitx('formValidatex')">设置为超级工作站</Button>
-            <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button>
-            </FormItem>
+          <Button type="primary" @click="handleSubmitx('formValidatex')">设置为超级工作站</Button>
+          <!-- <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button> -->
+        </FormItem>
+      </Form>
+    </Modal>
+    <Modal title="取消超级工作站" v-model="cancleup" footer-hide width="500">
+      <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
+        <FormItem label="操作" prop="plan">
+          <Select v-model="formValidate1.action" placeholder="默认当前(方案)">
+            <Option value="apply">保存</Option>
+            <Option value="discard">取消保存</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="备注" prop="comment">
+          <input v-model="formValidate1.comment" type="text" />
+        </FormItem>
+        <FormItem>
+          <Button type="primary" @click="handleCancelaction('formValidate1')">取消当前超级工作站</Button>
+          <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button>
+        </FormItem>
       </Form>
     </Modal>
   </div>
 </template>
 
 <script>
-import { getClientList, deleteClient, changeSchema, setSuper, getSuper } from '@/api/client'
-import { getPcListConfigx, getImageListx } from '@/api/wupan'
+import {
+  getClientList,
+  deleteClient,
+  changeSchema,
+  setSuper,
+  getSuper,
+  setCancelSuper
+} from '@/api/client'
+import { getPcListConfigx, getImageListx, deletePcsConfigx } from '@/api/wupan'
 export default {
   name: 'subType1-1',
+  inject: ['reload'],
   data () {
     return {
       currentSuperip: '',
       imglist: '',
       addedip: '',
+      canceledip: '',
       selecteFormatValue: '',
       adddetail: false,
       popupVal: '',
@@ -100,6 +113,7 @@ export default {
       totalPageNumber: 0,
       pageSize: 10,
       currentPage: 1,
+      cancleup: false,
       tableListPage: true,
       showPopup: false,
       showDeleteBox: false,
@@ -108,8 +122,25 @@ export default {
       tableData: [],
       tableDataList: [], // 批量编辑时，传值到下一页
       tableColumns: [
-        { type: 'selection', width: 50, align: 'center' },
-        { title: '状态', key: 'stat' },
+        // { type: 'selection', width: 50, align: 'center' },
+        { title: '状态',
+          key: 'stat',
+          width: 60,
+          render: (h, params) => {
+            let a = ''
+            switch (params.row.stat) {
+              case '1':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#33AFFF' } })
+                break
+              case '0':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#B5B6BE' } })
+                break
+            }
+
+            return a
+          }
+
+        },
         { title: '客户机IP', key: 'ip' },
         { title: '客户机MAC', key: 'mac' },
         { title: '配置方案', key: 'pcGp' },
@@ -119,16 +150,40 @@ export default {
           render: (h, params) => {
             let that = this
             let a = ''
-            if (params.row.ip === that.currentSuperip) {
-              a = h(
-                'Tag',
-                {
-                  props: { type: 'info', ghost: true }
-                },
-                '当前为超级工作站'
-              )
+            if (that.currentSuperip) {
+              if (params.row.ip === that.currentSuperip) {
+                a = h('div', [
+                  h('Tag', { props: { color: 'magenta' } }, '超级工作站'),
+                  h(
+                    'Button',
+                    {
+                      props: { type: 'info' },
+                      style: { marginLeft: '10px' },
+                      on: {
+                        click: () => {
+                          this.setcancle(params.row)
+                        }
+                      }
+                    },
+                    '取消'
+                  ),
+                  h(
+                    'Button',
+                    {
+                      props: { type: 'error' },
+                      style: { marginLeft: '10px' },
+                      on: {
+                        click: () => {
+                          this.setcancle(params.row)
+                        }
+                      }
+                    },
+                    '删除'
+                  )
+                ])
+              }
             } else {
-              a = h(
+              a = h('div', [h(
                 'Button',
                 {
                   props: { type: 'info', ghost: true },
@@ -139,7 +194,19 @@ export default {
                   }
                 },
                 '设置'
-              )
+              ), h(
+                'Button',
+                {
+                  props: { type: 'error' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handDetele(params.row)
+                    }
+                  }
+                },
+                '删除'
+              )])
             }
 
             return a
@@ -156,16 +223,29 @@ export default {
         imglist: '',
         profileList: ''
       },
+      formValidate1: {
+        action: '',
+        comment: ''
+      },
       ruleValidatex: {
         formValidatex: {
           imglistVal: [
-            { type: 'object', required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
           ],
           profileListVal: [
-            { type: 'object', required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
           ]
         }
-
+      },
+      ruleValidatex1: {
+        formValidate1: {
+          plan: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ],
+          comment: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ]
+        }
       }
     }
   },
@@ -178,13 +258,21 @@ export default {
       return this.$router.options.routes
     },
     profileList () {
-      return this.formValidatex.imglist.profileList
+      if (this.imglist && this.formValidatex.imglist) {
+        let xx = this.imglist.filter(item => {
+          return item.name === this.formValidatex.imglist
+        })
+
+        return xx[0].profileList
+      }
     }
   },
   methods: {
     handleGetSuper () {
       let ip = localStorage.getItem('masterip')
-      getSuper(ip).then((response) => { this.currentSuperip = response.data.result.ip })
+      getSuper(ip).then(response => {
+        this.currentSuperip = response.data.result.ip
+      })
     },
     handgetClienList () {
       if (localStorage.getItem('masterip')) {
@@ -195,7 +283,9 @@ export default {
       }
     },
     getSuperList () {},
-
+    /*
+    获取超级工作站
+    */
     setSuperList (data) {
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
@@ -204,6 +294,47 @@ export default {
       })
       this.addedip = data.ip
     },
+    setcancle (data) {
+      this.cancleup = true
+      this.canceledip = data.ip
+    },
+    /*
+    取消超级工作站
+    */
+    handleCancelaction (name) {
+      let that = this
+      this.cancleup = false
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          console.log(this.formValidate1.action)
+          console.log(this.formValidate1.comment)
+          let ip = localStorage.getItem('masterip')
+          let data = { ip: this.canceledip, action: this.formValidate1.action, comment: this.formValidate1.comment }
+          setCancelSuper(data, ip).then(response => {
+            setTimeout(() => {
+              that.reload()
+            }, 0)
+          })
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
+      })
+    },
+    /**
+     * 删除客户机
+    */
+
+    handDetele (data) {
+      this.$Modal.confirm({
+        title: '删除提示',
+        onOk: () => {
+          deletePcsConfigx([data.mac], localStorage.getItem('masterip')).then(respon => {
+            this.handgetClienList()
+          })
+        }
+      })
+    },
+
     handleRemoveTableRowInfo (data) {
       this.handleFormatArr(data)
     },
@@ -390,15 +521,28 @@ export default {
         }
       })
     },
+    /*
+    设置为超级工作站
+    */
     handleSubmitx (name) {
       var self = this
       self.$refs[name].validate(valid => {
         if (valid) {
           self.adddetail = false
           let cookiesMasterIp = localStorage.getItem('masterip')
-          setSuper({ 'ip': self.addedip, 'image': self.formValidatex.imglist.name, 'profile': self.formValidatex.profileList.name }, cookiesMasterIp).then(response => {
-            if (response.data.error === null) {
-              self.currentSuperip = response.result.vdiskInfo.serverIp
+          setSuper(
+            {
+              ip: self.addedip,
+              image: self.formValidatex.imglist,
+              profile: self.formValidatex.profileList
+            },
+            cookiesMasterIp
+          ).then(response => {
+            if (response.data.result.vdiskInfo && response.data.error === null) {
+              self.currentSuperip = response.data.result.vdiskInfo.serverIp
+              setTimeout(() => {
+                self.reload()
+              }, 0)
             }
           })
         } else {

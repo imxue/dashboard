@@ -335,6 +335,14 @@ export function deletePcsConfig (macList) {
     macList: macList
   })
 }
+/*
+删除客户机
+*/
+export function deletePcsConfigx (macList, ip) {
+  return makeRequestx('Del_PcsConf', {
+    macList: macList
+  }, ip)
+}
 
 export function deletePcGroup (list) {
   return makeRequest('Del_PcGp', {

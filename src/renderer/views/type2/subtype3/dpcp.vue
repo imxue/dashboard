@@ -118,8 +118,8 @@ export default {
       getPcConfig(mac)
       getPcGroup()
     },
-    getDHCP () {
-      getDHCPConfig().then((resp) => {
+    getDHCP (ip) {
+      getDHCPConfig(ip).then((resp) => {
         if (resp.data.error === null) {
           this.clientTemplate = resp.data.result
         } else {
@@ -129,7 +129,8 @@ export default {
     }
   },
   created () {
-    this.getDHCP()
+    let ip = localStorage.getItem('masterip')
+    this.getDHCP(ip)
   }
 
 }

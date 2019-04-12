@@ -44,6 +44,10 @@ export function setSuper (data, ip) {
   return makeRequestx('Set_SupIp', data, ip)
 }
 
+export function setCancelSuper (data, ip) {
+  return makeRequestx('Del_SupIp', data, ip)
+}
+
 export function getSuper (ip) {
   return makeRequestx('Get_SupIp', {}, ip)
 }

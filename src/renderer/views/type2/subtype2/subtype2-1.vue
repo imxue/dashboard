@@ -17,9 +17,6 @@
          <FormItem label="镜像大小：" prop="size">
           <Row><Input v-model="formValidate.size" placeholder="请输入镜像大小..." />* 单位：GB</Row>
         </FormItem>
-        <!-- <FormItem label="菜单在显示名称:" prop="menuItemName">
-          <Input v-model="formValidate.menuItemName" placeholder="请输入显示名称..." />
-        </FormItem> -->
         <FormItem label="保存路径：" prop="path">
           <Select v-model="formValidate.path" placeholder="——请选择保存路径——"  >
          
@@ -30,10 +27,6 @@
         </div>
 
     </Tooltip>
-             
-            
-         
-        
           </Select>
         </FormItem>
         <FormItem label="映射盘符：" prop="mountVol">
@@ -63,6 +56,7 @@
       return {
         showPopup: false,
         diskList: [],
+        serverlist: '',
         tableColumns: [
           { title: '镜像名称', key: 'name' },
           {
@@ -163,15 +157,6 @@
       }
     },
     methods: {
-      // handleCheckLength (arr) {
-      //   if (arr !== null) {
-      //     console.log(JSON.stringify(arr) + arr.length)
-      //     return arr.length
-      //   } else {
-      //     return '-'
-      //   }
-      // },
-
       /**
        * 获取磁盘
        */
@@ -210,6 +195,7 @@
       handleButtonAdd (val) {
         this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
+        this.handlegetServerlist() // 获取服务器
       },
       handleSubmit (name) {
         var self = this
