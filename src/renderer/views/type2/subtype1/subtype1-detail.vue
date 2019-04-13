@@ -9,8 +9,8 @@
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">刷新</Button>
 
       <Divider type="vertical"/>
-      <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button>
-      <Divider type="vertical"/>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button> -->
+      <!-- <Divider type="vertical"/> -->
       <!-- <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button> -->
  
       <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">删除</Button>
@@ -132,7 +132,7 @@ import {
   addServers,
   editServersNode,
   deleteserverx,
-  getServers,
+  getServersx,
   getNetworkx,
   getDiskStatusx,
   setVdiskEthernetx,
@@ -427,7 +427,7 @@ export default {
   methods: {
     GetServerList () {
       let that = this
-      getServers().then(response => {
+      getServersx(localStorage.getItem('masterip')).then(response => {
         if (response.data.error === null) {
           that.serverList = response.data.result.list
         }
@@ -440,23 +440,6 @@ export default {
       this.tableData1.push(data)
       this.isMaster = this.tableData1[0].isMaster
     },
-
-    // handleGetNetwork () {
-    //   getNetwork().then(a => {
-    //     var arr = a.data.result.list
-    //     if (a.data.error === null && arr !== null) {
-    //       arr.map(item => {
-    //         if (item.vdiskSet === 'yes') {
-    //           item['_checked'] = true
-    //           this.getCheckboxVal = item
-    //         }
-    //       })
-    //       this.tableData2 = arr
-    //     } else {
-    //       this.$Message.error(a.data.error)
-    //     }
-    //   })
-    // },
     /**
      * 获取网卡信息
      */
@@ -476,18 +459,9 @@ export default {
         }
       })
     },
-    // handleGetDiskStatus () {
-    //   let that = this
-    //   getDiskStatus().then(a => {
-    //     var arr = a.data.result.list
-    //     if (a.data.error === null && arr !== null) {
-    //       this.tableData3 = arr
-    //     } else {
-    //       this.$Message.error(a.data.error)
-    //     }
-    //   })
-    //   that.spinShow = false
-    // },
+    /*
+   获取磁盘信息
+   */
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(a => {
@@ -536,7 +510,6 @@ export default {
     // },
     handleButtonSetSever () {
       // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
-
       if (
         this.$route.query.tempMasterServerIp &&
         this.tempMasterServerIp === this.rowData.serverIP
@@ -597,20 +570,9 @@ export default {
     handleResetCard () {
       this.showPopup02 = false
     },
-    /**
-     * 设置负载网卡
-     */
-    // handleLoadNIC () {
-    //   this.spanShow = true
-    //   setVdiskEthernet(this.getCheckboxVal).then(() => {
-    //     this.spanShow = false
-    //     this.$Notice.success({
-    //       title: '设置负载网卡成功'
-    //     })
-    //     this.handleGetNetwork()
-    //   })
-    // },
-
+    /*
+设置网卡
+*/
     handleLoadNICx () {
       this.spanShow = true
       setVdiskEthernetx(this.getCheckboxVal, this.ServerIp).then(() => {

@@ -193,7 +193,7 @@ export default {
                     }
                   }
                 },
-                '设置'
+                '设置超级工作站'
               ), h(
                 'Button',
                 {

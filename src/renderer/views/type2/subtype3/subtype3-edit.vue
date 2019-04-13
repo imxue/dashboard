@@ -304,8 +304,6 @@
               this.$Message.error('请至少添加一个镜像')
             } else {
               that.formValidate.imgG = that.tableData1
-              console.dir(that.formValidate)
-              debugger
               editPcGroup(
                 that.formValidate
               ).then((a) => {

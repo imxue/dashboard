@@ -115,6 +115,17 @@ export function createImage (name, sizeGB, title, path, cacheSizeMB, mountVolume
     isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
   })
 }
+export function createImagex (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster, ip) {
+  return makeRequestx('Create_Img', {
+    name: name,
+    size: sizeGB,
+    menuItemName: title,
+    path: path,
+    cacheSize: cacheSizeMB,
+    mountVol: mountVolume,
+    isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
+  }, ip)
+}
 
 export function editImage (name, title, mountVolume) {
   return makeRequest('Set_Img', {
@@ -288,6 +299,10 @@ export function editDHCPConfig ({ prefix, numbetLength, numberBegin, ipBegin, ad
     addMode: addMode,
     pcGp: pcGp
   })
+}
+
+export function editDHCPConfigx ({ prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }, ip) {
+  return makeRequestx('Set_DhcpConf', { prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }, ip)
 }
 
 export function getPcConfig (mac) {

@@ -196,7 +196,6 @@ export default {
         this.$refs[name].validate((valid) => {
           if (valid) {
             let cookiesMasterIp = localStorage.getItem('masterip')
-            // let cookiesMasterIp = Cookies.get('masterip')
             if (cookiesMasterIp) {
               this.showPopup = false
               getServersNode(this.formValidate.serverIP).then(res => {
@@ -205,16 +204,14 @@ export default {
               this.$store.dispatch('saveMaster', cookiesMasterIp)
             } else {
               this.showPopup = false
-              localStorage.setItem('masterip', this.formValidate.serverIP)
-              // Cookies.set('masterip', this.formValidate.serverIP, { expires: 14 })
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
+              }, (error) => {
+                this.$Message.error('' + error)
               })
               this.$store.dispatch('saveMaster', this.formValidate.serverIP)
             }
           } else {
-            this.showPopup = true
-            this.$Message.error('验证失败')
           }
         })
       },
@@ -223,6 +220,7 @@ export default {
         editServersNode(masterIp, selfip) // 设置主服务器
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
+            localStorage.setItem('masterip', this.formValidate.serverIP)
             this.$Message.success('添加成功')
             this.showPopup = false
             this.handleGetServerList() // 刷新列表

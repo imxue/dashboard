@@ -18,7 +18,6 @@ service.interceptors.request.use(
   //   return config
   // }
   (error) => {
-    console.log('xxxxxxxxxxxxx')
     return error
   }
 )
