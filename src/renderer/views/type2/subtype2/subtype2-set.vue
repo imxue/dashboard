@@ -243,7 +243,6 @@
             this.handeCheckModalSubmitType()
           } else {
             this.showImgPopup = true
-            this.$Message.error('验证失败')
           }
         })
       },

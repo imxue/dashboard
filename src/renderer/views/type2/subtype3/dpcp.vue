@@ -32,8 +32,8 @@
         <Input v-model="clientTemplate.pcGp"/>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('clientTemplate')">应用</Button>
-        <Button @click="handleReset('clientTemplate')" style="margin-left: 8px">Reset</Button>
+        <Button type="primary" @click="handleSubmit('clientTemplate')" :loading="loading">应用</Button>
+        <Button @click="handleReset('clientTemplate')" style="margin-left: 8px">重置</Button>
       </FormItem>
     </Form>
   </div>
@@ -49,6 +49,7 @@ export default {
   data () {
     return {
       showPopup: false,
+      loading: false,
       clientTemplate: {
         prefix: '',
         numbetLength: '',
@@ -129,20 +130,28 @@ export default {
     handUp () {
       this.showPopup = true
     },
+
     handleSubmit (name) {
+      this.loading = true
       let that = this
       that.$refs[name].validate(valid => {
         if (valid) {
           editDHCPConfigx(that.clientTemplate, localStorage.getItem('masterip'))
             .then(e => {
+              this.loading = false
               that.$Message.success('DPCP设置成功')
             })
             .catch(() => {
+              this.loading = false
               that.$Message.error('网络出问题了')
             })
         } else {
+          this.loading = false
         }
       })
+    },
+    handleReset (name) {
+      this.$refs[name].resetFields()
     },
     handleGetPcConf (mac) {
       getPcConfig(mac)
