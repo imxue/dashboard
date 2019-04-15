@@ -21,7 +21,7 @@
 
 <script>
   export default {
-    name: 'subType1-1',
+    name: 'allGame',
     data () {
       return {
         model1: '',
@@ -103,7 +103,6 @@
       // console.log(this.$route.matched[0])
       // console.log('hello', JSON.stringify(this.routes))
       // this.test()
-      console.log(11)
     },
     computed: {
       routes () {

@@ -106,7 +106,7 @@
       handleGetPcGroup () {
         getPcGroup().then((a) => {
           var arr = a.data.result.list
-          if (a.data.error === null && arr.length !== null) {
+          if (a.data.error === null) {
             this.tableData = arr
           } else {
             this.$Message.error(a.data.error)
@@ -136,23 +136,36 @@
           path: 'subtype3-edit',
           query: { data: index }
         })
+        console.dir(index)
       },
       handleStart () {},
       handleStop () {},
       handleDelete (row) {
-        this.$Modal.confirm({
-          title: '警告',
-          content: '<p>删除会导致使用该方案的客户机无法使用</p>',
-          onOk: () => {
-            deleteItem(row.row.name).then((response) => {
-              this.$Message.error(response.data.error)
-              this.handleGetPcGroup()
-            })
-          },
-          onCancel: () => {
-            this.$Message.info('Clicked cancel')
-          }
-        })
+        if (row.row.name === 'default') {
+          this.$Modal.confirm({
+            title: '警告',
+            content: '<p>不允许删除默认方案</p>',
+            onOk: () => {
+  
+            },
+            onCancel: () => {
+  
+            }
+          })
+        } else {
+          this.$Modal.confirm({
+            title: '警告',
+            content: '<p>删除会导致使用该方案的客户机无法使用</p>',
+            onOk: () => {
+              deleteItem(row.row.name).then((response) => {
+                this.handleGetPcGroup()
+              })
+            },
+            onCancel: () => {
+              this.$Message.info('Clicked cancel')
+            }
+          })
+        }
       }
     }
   }

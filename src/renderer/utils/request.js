@@ -12,10 +12,10 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 service.interceptors.request.use(
-  config => {
-    return config
-  }
-
+  // (config) => {
+  //   console.log(config)
+  //   return config
+  // }
 )
 
 // response interceptor

@@ -245,22 +245,8 @@
       handleCheckData () {
         var data = this.$route.query.data
         if (data) {
-          this.formValidate.name = data.name
-          this.formValidate.netMk = data.netMk
-          this.formValidate.netGW = data.netGW
-          this.formValidate.dns1 = data.dns1
-          this.formValidate.dns2 = data.dns2
-          this.formValidate.daSV = data.daSV
-          this.formValidate.bala = data.bala
-          this.formValidate.disable = data.disable
-          this.formValidate.wrLimG = data.wrLimG
-          // this.formValidate.imgG = data.imgG
-          this.formValidate.gTim = data.gTim
-          this.formValidate.cach = data.cach
-          this.formValidate.wieh = data.wieh
-          this.formValidate.hith = data.hith
-          this.formValidate.resh = data.resh
-          this.formValidate.deps = data.deps
+          this.formValidate = data
+          // 镜像列表
           this.tableData1 = data.imgG
         }
       },
@@ -304,23 +290,10 @@
             if (that.tableData1 && that.tableData1.length === 0) {
               this.$Message.error('请至少添加一个镜像')
             } else {
+              that.formValidate.imgG = that.tableData1
+              console.dir(that.formValidate)
               editPcGroup(
-                that.formValidate.name,
-                that.formValidate.netMk,
-                that.formValidate.netGW,
-                that.formValidate.dns1,
-                that.formValidate.dns2,
-                that.formValidate.daSV,
-                that.formValidate.bala,
-                that.formValidate.disable,
-                that.formValidate.wrLimG,
-                that.tableData1,
-                that.formValidate.gTim,
-                that.formValidate.cach,
-                that.formValidate.wieh,
-                that.formValidate.hith,
-                that.formValidate.resh,
-                that.formValidate.deps
+                that.formValidate
               ).then((a) => {
                 if (a.data.error === null) {
                   that.$Message.success('保存成功！')
@@ -331,7 +304,7 @@
               }, (err) => { console.log(err) })
             }
           } else {
-            that.$Message.error('验证失败xx')
+            // 为空不操作
           }
         })
       },

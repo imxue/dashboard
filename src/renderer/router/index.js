@@ -310,6 +310,12 @@ export default new Router({
               component: () => import('@/views/type2/subtype3/subtype3-1')
             },
             {
+              path: 'subType3-2',
+              name: 'DPCP配置',
+              meta: { title: 'DPCP配置' },
+              component: () => import('@/views/type2/subtype3/dpcp')
+            },
+            {
               path: 'subType3-edit',
               name: 'type2-SubType3-edit',
               meta: { title: '方案编辑' },
@@ -371,29 +377,29 @@ export default new Router({
         }
       ]
     },
-    {
-      path: '/type4',
-      name: '4',
-      component: Layout,
-      redirect: '/type4/subType1/subType1-1',
-      meta: { title: '系统设置', icon: 'example' },
-      children: [
-        {
-          path: 'subType1',
-          name: 'type4-SubType1',
-          meta: { title: '系统设置', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType1-1',
-              name: 'type4-SubType1-1',
-              meta: { title: '用户管理' },
-              component: () => import('@/views/type4/subtype1/subtype1-1')
-            }
-          ]
-        }
-      ]
-    },
+    // {
+    //   path: '/type4',
+    //   name: '4',
+    //   component: Layout,
+    //   redirect: '/type4/subType1/subType1-1',
+    //   meta: { title: '系统设置', icon: 'example' },
+    //   children: [
+    //     {
+    //       path: 'subType1',
+    //       name: 'type4-SubType1',
+    //       meta: { title: '系统设置', hidden: true },
+    //       component: NullLayout,
+    //       children: [
+    //         {
+    //           path: 'subType1-1',
+    //           name: 'type4-SubType1-1',
+    //           meta: { title: '用户管理' },
+    //           component: () => import('@/views/type4/subtype1/subtype1-1')
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // },
     {
       path: '*',
       redirect: '/404',
