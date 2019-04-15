@@ -115,3 +115,32 @@ export function netbarAdd (clientStartPath, displayChoice, exeName, gameName, ga
     data
   })
 }
+
+/**
+ * 获取全部游戏
+ */
+export function getAllGame () { // 本吧批量添加
+  const data = {}
+  return request({
+    url: '/v1/centerresource/getAllCenterGames',
+    method: 'get',
+    data
+  })
+}
+/**
+ * 获取盘符
+ */
+export function getLogicalDrives () { // 本吧批量添加
+  const data = {}
+  return request({
+    url: '/v1/sysbase/getLogicalDrives',
+    method: 'get',
+    data
+  })
+}
+export function setDownGame (info) { // 本吧批量添加
+  return request({
+    url: `/v1/centerresource/downloadGame?CenterGameId=${info.CenterGameId}&DiskSymbol=${info.DiskSymbol}`,
+    method: 'post'
+  })
+}
