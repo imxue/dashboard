@@ -46,6 +46,7 @@
           { title: '当前热度', key: 'hot' },
           { title: '更新量', key: 'updateSize' },
           { title: '已更新', key: 'updatedSize' },
+          { title: '进度', key: 'jd' },
           { title: '更新速度', key: 'speed' },
           { title: '预计完成时间', key: 'time' },
           { title: '操作',
