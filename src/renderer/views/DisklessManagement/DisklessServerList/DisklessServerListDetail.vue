@@ -454,7 +454,7 @@ export default {
           deleteserverx(ip, this.tempMasterServerIp).then(() => {
             this.$Message.success('删除成功')
             this.$router.push({
-              path: 'subType1-1'
+              path: 'DisklessServerList'
             })
           })
           if (ip === localStorage.getItem('masterip')) {

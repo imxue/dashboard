@@ -26,6 +26,7 @@
         <FormItem class="buttonList">
              <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>保存</Button>
              <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">取消</Button>
+            
         </FormItem>
       </Form>
      </Modal>
@@ -183,6 +184,7 @@ export default {
       handleButtonAdd (val) {
         this.showPopup = true
         this.NetWork = false
+        this.loadingBtn = false
       },
       handleButtonRefesh (val) {
         this.spinShow = true
@@ -224,12 +226,13 @@ export default {
               })
               this.$store.dispatch('saveMaster', cookiesMasterIp)
             } else { // 没有
-              this.showPopup = false
               getServersNode(this.formValidate.serverIP).then(res => {
+                this.showPopup = false
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
-              }, (error) => {
+              }, () => {
                 this.loadingBtn = false
-                this.$Message.error('' + error)
+                this.NetWork = true
+                this.showPopup = true
               })
               this.$store.dispatch('saveMaster', this.formValidate.serverIP)
             }
@@ -243,7 +246,6 @@ export default {
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
             localStorage.setItem('masterip', masterIp)
-            this.$Message.success('添加成功')
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
           } else {

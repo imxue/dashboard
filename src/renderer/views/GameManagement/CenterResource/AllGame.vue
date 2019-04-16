@@ -139,7 +139,10 @@ export default {
     },
     handleSubmit () {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
-      setDownGame(info).then(() => { this.DownloadGameUp = false })
+      setDownGame(info).then(() => {
+        this.DownloadGameUp = false
+        getAllGame()
+      })
     },
     handleDownGame (id) {
       this.DownloadGameUp = true

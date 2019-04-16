@@ -35,6 +35,7 @@ export default {
       name: 'type3-SubType1',
       meta: { title: '客户机设置', hidden: true },
       component: NullLayout,
+      hidden: true,
       children: [
         {
           path: 'subType2-1',
