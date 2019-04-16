@@ -9,7 +9,7 @@
             <i-col span="10"><i-input v-model="formValidate.name" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="netMk"  label="子网淹码：">
+        <FormItem prop="netMk"  label="网关：">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.netMk" placeholder=""></i-input></i-col>
           </Row>
@@ -29,11 +29,7 @@
             <i-col span="10"><i-input v-model="formValidate.dns2" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="daSV" label="数据服务器：">
-          <Row>
-            <i-col span="10"><i-input v-model="formValidate.daSV" placeholder=""></i-input></i-col>
-          </Row>
-        </FormItem>
+     
         <FormItem prop="bala"  label="负载均衡：">
           <Row>
             <i-col span="10">
@@ -48,8 +44,8 @@
           <Row>
             <i-col span="10">
               <Select v-model="formValidate.disable">
-                 <Option value="1">启用</Option>
-                <Option value="0">禁用</Option>
+                 <Option value="0">启用</Option>
+                <Option value="1">禁用</Option>
               </Select>
             </i-col>
           </Row>
@@ -117,6 +113,11 @@
             <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
+        <FormItem label="数据服务器：" prop="daSV">
+           <Select v-model="formValidate2.daSV" style="width:200px;" placeholder="---请选择数据库---">
+              <Option v-for="item in serverlist" v-bind:key="item.serverIp" v-bind:value="item.serverIp">{{item.serverIp}}</Option>
+            </Select>
+        </FormItem>
         <FormItem label="配置名称:" prop="configName">
           <Select v-model="formValidate2.configName" clearable style="width:200px;" placeholder="---请选择配置名称---">
             <Option v-for="item in imageProList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
@@ -136,7 +137,7 @@
 </template>
 
 <script>
-  import { getImageList, editPcGroup } from '@/api/wupan'
+  import { getImageList, editPcGroup, getServersx } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -145,8 +146,10 @@
         showPopup: false,
         name01: '',
         name02: '',
+        serverlist: '',
         tableColumns1: [
           { title: '镜像名称', key: 'img' },
+          { title: '数据库服务器', key: 'daSV' },
           { title: '配置名称', key: 'prof' },
           { title: '操作',
             width: 400,
@@ -232,6 +235,7 @@
     created () {
       this.handleCheckData()
       this.handleGetDataLength()
+      this.handlegetServerlist()
     },
     computed: {
       routes () {
@@ -249,6 +253,15 @@
           // 镜像列表
           this.tableData1 = data.imgG
         }
+      },
+      /*
+      获取服务器类表
+      */
+      handlegetServerlist () {
+        let mip = localStorage.getItem('masterip')
+        getServersx(mip).then(response => {
+          this.serverlist = response.data.result.list
+        })
       },
       handleGetImageList () {
         getImageList().then((a) => {
@@ -291,7 +304,6 @@
               this.$Message.error('请至少添加一个镜像')
             } else {
               that.formValidate.imgG = that.tableData1
-              console.dir(that.formValidate)
               editPcGroup(
                 that.formValidate
               ).then((a) => {
@@ -318,7 +330,7 @@
             this.tableData1.push({
               img: this.formValidate2.schemeName,
               prof: this.formValidate2.configName,
-              daSV: '',
+              daSV: this.formValidate2.daSV,
               item: this.formValidate2.schemeName
             })
             this.handleGetDataLength()

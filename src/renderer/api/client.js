@@ -11,12 +11,45 @@ import request from '@/utils/request'
 //     data
 //   })
 // }
+function makeRequestx (method, param, ip) {
+  const data = {
+    method: method,
+    params: [
+      param
+    ]
+  }
+  return request({
+    url: `http://${ip}:13302/jsonrpc`,
+    method: 'post',
+    data
+  })
+}
+/**
+ * 设置客户机属性
+ * @param {*} param0
+ * @param {*} ip
+ */
+export function setClienConf ({ list }, ip) {
+  return makeRequestx('Set_PcConf', { list }, ip)
+}
 
 export function getClientList (query) {
   return request({
     url: '/v1/client/queryAll' + query,
     method: 'get'
   })
+}
+
+export function setSuper (data, ip) {
+  return makeRequestx('Set_SupIp', data, ip)
+}
+
+export function setCancelSuper (data, ip) {
+  return makeRequestx('Del_SupIp', data, ip)
+}
+
+export function getSuper (ip) {
+  return makeRequestx('Get_SupIp', {}, ip)
 }
 
 export function editClient (activeDns, backupDns, enable, gateway, id, ip, mac, startSchema, subnet) {

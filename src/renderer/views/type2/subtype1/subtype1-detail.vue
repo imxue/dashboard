@@ -9,8 +9,8 @@
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">刷新</Button>
 
       <Divider type="vertical"/>
-      <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button>
-      <Divider type="vertical"/>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button> -->
+      <!-- <Divider type="vertical"/> -->
       <!-- <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button> -->
  
       <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">删除</Button>
@@ -131,13 +131,15 @@ import {
   setDiskFunctionx,
   addServers,
   editServersNode,
-  deleteserver,
-  getServers,
+  deleteserverx,
+  getServersx,
   getNetworkx,
   getDiskStatusx,
-  setVdiskEthernetx
+  setVdiskEthernetx,
+  deleteserverConfig
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
+// import Cookies from 'js-cookie'
 // import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
 export default {
   name: 'subType1-detail',
@@ -209,12 +211,6 @@ export default {
           }
         },
         { title: '服务器IP', key: 'serverIp' },
-        // { title: '模式', key: 'mode' },
-        // { title: '当前带机数', key: 'number' },
-        // { title: '系统负载', key: 'systemLoad' },
-        // { title: '网卡状态', key: 'networkCard' },
-        // { title: '硬盘状态', key: 'diskState' },
-        // { title: '固件版本', key: 'firmwareVersion' },
         { title: '服务版本', key: 'dataVer' }
       ],
       tableData1: [],
@@ -253,9 +249,6 @@ export default {
         },
         { title: '网络设备名', key: 'name' },
         { title: 'IP地址', key: 'ip' },
-        // { title: '当前工况 MB/s', key: 'linkRate' },
-        // { title: '上行流量 KB/s', key: 'sendRate' },
-        // { title: '下行流量 KB/s', key: 'recvRate' },
         {
           title: '网卡速率',
           key: 'linkRate',
@@ -264,41 +257,6 @@ export default {
             return h('span', a)
           }
         }
-        // {
-        //   title: '上行流量',
-        //   key: 'sendRate',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.sendRate)
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '下行流量',
-        //   key: 'recvRate',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.recvRate)
-        //     console.log('下行流量')
-        //     console.log(formatSize(params.row.recvRate))
-        //     console.log('下行流量')
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '累计发送',
-        //   key: 'sendTotal',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.sendTotal)
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '累计接收',
-        //   key: 'recvTotal',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.recvTotal)
-        //     return h('span', a)
-        //   }
-        // }
       ],
       tableData2: [], // 网卡信息
       tableColumns3: [
@@ -431,7 +389,7 @@ export default {
   methods: {
     GetServerList () {
       let that = this
-      getServers().then(response => {
+      getServersx(localStorage.getItem('masterip')).then(response => {
         if (response.data.error === null) {
           that.serverList = response.data.result.list
         }
@@ -444,23 +402,6 @@ export default {
       this.tableData1.push(data)
       this.isMaster = this.tableData1[0].isMaster
     },
-
-    // handleGetNetwork () {
-    //   getNetwork().then(a => {
-    //     var arr = a.data.result.list
-    //     if (a.data.error === null && arr !== null) {
-    //       arr.map(item => {
-    //         if (item.vdiskSet === 'yes') {
-    //           item['_checked'] = true
-    //           this.getCheckboxVal = item
-    //         }
-    //       })
-    //       this.tableData2 = arr
-    //     } else {
-    //       this.$Message.error(a.data.error)
-    //     }
-    //   })
-    // },
     /**
      * 获取网卡信息
      */
@@ -480,18 +421,9 @@ export default {
         }
       })
     },
-    // handleGetDiskStatus () {
-    //   let that = this
-    //   getDiskStatus().then(a => {
-    //     var arr = a.data.result.list
-    //     if (a.data.error === null && arr !== null) {
-    //       this.tableData3 = arr
-    //     } else {
-    //       this.$Message.error(a.data.error)
-    //     }
-    //   })
-    //   that.spinShow = false
-    // },
+    /*
+   获取磁盘信息
+   */
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(a => {
@@ -519,13 +451,16 @@ export default {
         content: '<p>后果很严重</p>',
         okText: '删除',
         onOk: () => {
-          this.$Message.info('Clicked ok')
-          deleteserver(ip).then(() => {
+          deleteserverx(ip, this.tempMasterServerIp).then(() => {
             this.$Message.success('删除成功')
             this.$router.push({
               path: 'subType1-1'
             })
           })
+          if (ip === localStorage.getItem('masterip')) {
+            localStorage.removeItem('masterip')
+          }
+          deleteserverConfig(ip)
         },
         cancelTexxt: '取消'
       })
@@ -537,7 +472,6 @@ export default {
     // },
     handleButtonSetSever () {
       // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
-
       if (
         this.$route.query.tempMasterServerIp &&
         this.tempMasterServerIp === this.rowData.serverIP
@@ -598,20 +532,9 @@ export default {
     handleResetCard () {
       this.showPopup02 = false
     },
-    /**
-     * 设置负载网卡
-     */
-    // handleLoadNIC () {
-    //   this.spanShow = true
-    //   setVdiskEthernet(this.getCheckboxVal).then(() => {
-    //     this.spanShow = false
-    //     this.$Notice.success({
-    //       title: '设置负载网卡成功'
-    //     })
-    //     this.handleGetNetwork()
-    //   })
-    // },
-
+    /*
+设置网卡
+*/
     handleLoadNICx () {
       this.spanShow = true
       setVdiskEthernetx(this.getCheckboxVal, this.ServerIp).then(() => {

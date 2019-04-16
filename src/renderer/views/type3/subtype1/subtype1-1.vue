@@ -1,195 +1,378 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
       <Button type="primary" class="topColumn" @click="handleButtonEdit">批量编辑</Button>
       <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>-->
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonReStart">重启</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
+      <Button type="primary" class="topColumn" @click="handleButtonReStart">刷新</Button>
     </div>
-        <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-select="handleGetTableRowInfo" @on-select-cancel="handleRemoveTableRowInfo"></Table>
+    <!-- table -->
+    <Table
+      border
+      ref="selection"
+      :columns="tableColumns"
+      :data="tableData"
+      @on-selection-change="handleCheckBox"
+      @on-select="handleGetTableRowInfo"
+      @on-select-cancel="handleRemoveTableRowInfo"
+    ></Table>
     <Row style="margin-top:10px; ">
       <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
-      <Page v-if="tableListPage" :current="currentPage"   :page-size="pageSize" :total="totalPageNumber"  show-total style=" float:right;" @on-change="hanbleChangePage"/>
+      <Page
+        v-if="tableListPage"
+        :current="currentPage"
+        :page-size="pageSize"
+        :total="totalPageNumber"
+        show-total
+        style=" float:right;"
+        @on-change="hanbleChangePage"
+      />
     </Row>
     <!-- 删除提示 -->
-        <Modal
-        v-model="showDeleteBox"
-        title="删除提示"
-        @on-ok="handleConfirmDelete"
-        @on-cancel="handleCancel">
-        <p>是否删除当前数据？</p>
-    </Modal>
-    <!-- 移动至方案 -->
     <Modal
-      class="modalBox"
-      title="移动至方案"
-      v-model="showPopup"
-      width= "500"
-      class-name="vertical-center-modal">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="移动至方案：" prop="nameVal">
-            <Select v-model="formValidate.nameVal" placeholder="默认当前(方案)">
-                <Option  v-for="item in nameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
+      v-model="showDeleteBox"
+      title="删除提示"
+      @on-ok="handleConfirmDelete"
+      @on-cancel="handleCancel"
+    >
+      <p>是否删除当前数据？</p>
+    </Modal>
+    <Modal title="设置超级工作站" v-model="adddetail" footer-hide width="500">
+      <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
+        <FormItem label="镜像" prop="imglistVal">
+          <Select v-model="formValidatex.imglist" placeholder="默认当前(方案)">
+            <Option v-for="item in imglist" :value="item.name" :key="item.name">{{ item.name }}</Option>
+          </Select>
         </FormItem>
-        <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">确定</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
+        <FormItem label="配置" prop="profileListVal">
+          <Select v-model="formValidatex.profileList" placeholder="默认当前(方案)">
+            <template v-if="profileList">
+              <Option
+                v-for="item in profileList"
+                :value="item.name"
+                :key="item.name"
+              >{{ item.name }}</Option>
+            </template>
+          </Select>
+             <div class="ivu-form-item-error-tip" v-if="err">获取虚拟盘信息失败</div>
+        </FormItem>
+        <FormItem>
+          <Button type="primary" @click="handleSubmitx('formValidatex')">设置为超级工作站</Button>
+          <!-- <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button> -->
         </FormItem>
       </Form>
-     </Modal>
+    </Modal>
+    <Modal title="取消超级工作站" v-model="cancleup" footer-hide width="500">
+      <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
+        <FormItem label="操作" prop="plan">
+          <Select v-model="formValidate1.action" placeholder="默认当前(方案)">
+            <Option value="apply">保存</Option>
+            <Option value="discard">取消保存</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="备注" prop="comment">
+          <input v-model="formValidate1.comment" type="text" />
+        </FormItem>
+        <FormItem>
+          <Button type="primary" @click="handleCancelaction('formValidate1')">取消当前超级工作站</Button>
+          <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button>
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
 <script>
-  import { getClientList, deleteClient, changeSchema } from '@/api/client'
-//  import { getPcListConfig } from '@/api/wupan'
-  export default {
-    name: 'subType1-1',
-    data () {
-      return {
-        popupVal: '',
-        curroffset: 0,
-        currlimit: 5,
-        totalPageNumber: 0,
-        pageSize: 10,
-        currentPage: 1,
-        tableListPage: true,
-        showPopup: false,
-        showDeleteBox: false,
-        getCheckboxVal: [], // 勾选复选框值
-        tableSelectVal: [],
-        tableData: [],
-        tableDataList: [], // 批量编辑时，传值到下一页
-        tableColumns: [
-          { type: 'selection', width: 50, align: 'center' },
-          {
-            title: '状态',
-            width: 70,
-            key: 'Id'
-            // render: (h, params) => {
-            //   let type = params.row.state
-            //   switch (type) {
-            //     case true:
-            //       return h('span', '在线')
-            //     case false:
-            //       return h('span', { style: { color: '#999999' } }, '离线')
-            //     default:
-            //       return '-'
-            //   }
-            // }
-          },
-          { title: '客户机IP', key: 'Ip' },
-          { title: '客户机MAC', key: 'Mac' },
-          { title: '配置方案', key: 'ConfigureScheme' },
-          { title: '当前镜像', key: 'CurrentImage' },
-          { title: '当前镜像配置', key: 'CurrentImageSetting' },
-          {
-            title: '在线时长',
-            key: 'onlineTime',
-            render: (h, params) => {
-              return params.row.onlineTime // 格式化时间
+import {
+  getClientList,
+  deleteClient,
+  changeSchema,
+  setSuper,
+  getSuper,
+  setCancelSuper
+} from '@/api/client'
+import { getPcListConfigx, getImageListx, deletePcsConfigx } from '@/api/wupan'
+export default {
+  name: 'subType1-1',
+  inject: ['reload'],
+  data () {
+    return {
+      err: '',
+      currentSuperip: '',
+      imglist: '',
+      addedip: '',
+      canceledip: '',
+      selecteFormatValue: '',
+      adddetail: false,
+      popupVal: '',
+      curroffset: 0,
+      currlimit: 5,
+      totalPageNumber: 0,
+      pageSize: 10,
+      currentPage: 1,
+      cancleup: false,
+      tableListPage: true,
+      showPopup: false,
+      showDeleteBox: false,
+      getCheckboxVal: [], // 勾选复选框值
+      tableSelectVal: [],
+      tableData: [],
+      tableDataList: [], // 批量编辑时，传值到下一页
+      tableColumns: [
+        // { type: 'selection', width: 50, align: 'center' },
+        { title: '状态',
+          key: 'stat',
+          width: 60,
+          render: (h, params) => {
+            let a = ''
+            switch (params.row.stat) {
+              case '1':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#33AFFF' } })
+                break
+              case '0':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#B5B6BE' } })
+                break
             }
-          },
-          { title: '操作',
-            width: 120,
-            fixed: 'right',
-            key: 'operation',
-            render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
-              let a = h('Button', {
-                props: { type: 'primary', ghost: true },
-                on: { click: () => { this.handleTableEdit(params.row) } }
-              }, '编辑')
-              let b = h('Button', {
-                props: { type: 'info', ghost: true },
-                on: { click: () => { this.handleTableRemove(params.row) } }
-              }, '移动至方案')
-              let type = params.row.Enabe
-              switch (type) {
-                case 0:
-                  return [a, b]
-                case 1:
-                  return [a]
-                default:
-                  return [a, b]
+
+            return a
+          }
+
+        },
+        { title: '客户机IP', key: 'ip' },
+        { title: '客户机MAC', key: 'mac' },
+        { title: '配置方案', key: 'pcGp' },
+        {
+          title: '超级工作站',
+          key: 'super',
+          render: (h, params) => {
+            let that = this
+            let a = ''
+            if (that.currentSuperip) {
+              if (params.row.ip === that.currentSuperip) {
+                a = h('div', [
+                  h('Tag', { props: { color: 'magenta' } }, '超级工作站'),
+                  h(
+                    'Button',
+                    {
+                      props: { type: 'info' },
+                      style: { marginLeft: '10px' },
+                      on: {
+                        click: () => {
+                          this.setcancle(params.row)
+                        }
+                      }
+                    },
+                    '取消'
+                  ),
+                  h(
+                    'Button',
+                    {
+                      props: { type: 'error' },
+                      style: { marginLeft: '10px' },
+                      on: {
+                        click: () => {
+                          this.setcancle(params.row)
+                        }
+                      }
+                    },
+                    '删除'
+                  )
+                ])
               }
+            } else {
+              a = h('div', [h(
+                'Button',
+                {
+                  props: { type: 'info', ghost: true },
+                  on: {
+                    click: () => {
+                      this.setSuperList(params.row)
+                    }
+                  }
+                },
+                '设置超级工作站'
+              ), h(
+                'Button',
+                {
+                  props: { type: 'error' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handDetele(params.row)
+                    }
+                  }
+                },
+                '删除'
+              )])
             }
-          },
-          { title: 'CPU型号', key: 'Cpu' },
-          { title: '主板型号', key: 'MainBoard' },
-          {
-            title: '内存大小',
-            key: 'MemorySize',
-            render: (h, params) => {
-              return params.row.MemorySize + 'MB'
-            }
-          },
-          { title: '网卡型号', key: 'NetworkCard' },
-          { title: '显卡型号', key: 'GraphicsCard' },
-          { title: '声卡型号', key: 'SoundCard' }
-        ],
-        nameList: [
-          { Id: 1, value: '大厅A001', label: '大厅A001-A050' },
-          { Id: 2, value: '大厅A002', label: '大厅A002-A050' },
-          { Id: 3, value: '大厅A003', label: '大厅A003-A050' }
-        ],
-        formValidate: { nameVal: '' },
-        ruleValidate: { nameVal: [{ required: true, message: '请至少选择一个', trigger: 'change' }] }
+
+            return a
+          }
+        }
+      ],
+      nameList: [
+        { Id: 1, value: '大厅A001', label: '大厅A001-A050' },
+        { Id: 2, value: '大厅A002', label: '大厅A002-A050' },
+        { Id: 3, value: '大厅A003', label: '大厅A003-A050' }
+      ],
+      formValidate: { nameVal: '' },
+      formValidatex: {
+        imglist: '',
+        profileList: ''
+      },
+      formValidate1: {
+        action: '',
+        comment: ''
+      },
+      ruleValidatex: {
+        formValidatex: {
+          imglistVal: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ],
+          profileListVal: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ]
+        }
+      },
+      ruleValidatex1: {
+        formValidate1: {
+          plan: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ],
+          comment: [
+            { required: true, message: '请至少选择一个', trigger: 'blur' }
+          ]
+        }
+      }
+    }
+  },
+  created () {
+    this.handgetClienList()
+    this.handleGetSuper()
+  },
+  computed: {
+    routes () {
+      return this.$router.options.routes
+    },
+    profileList () {
+      if (this.imglist && this.formValidatex.imglist) {
+        let xx = this.imglist.filter(item => {
+          return item.name === this.formValidatex.imglist
+        })
+
+        return xx[0].profileList
+      }
+    }
+  },
+  methods: {
+    handleGetSuper () {
+      let ip = localStorage.getItem('masterip')
+      getSuper(ip).then(response => {
+        this.currentSuperip = response.data.result.ip
+      })
+    },
+    handgetClienList () {
+      if (localStorage.getItem('masterip')) {
+        let ip = localStorage.getItem('masterip')
+        getPcListConfigx(ip).then(response => {
+          this.tableData = response.data.result.list
+        })
       }
     },
-    created () {
-      this.handleGetClientList(this.curroffset, this.currlimit)
-      // getPcListConfig().then(response => {
-      //   this.tableData = response.data.result.list
-      // })
+    getSuperList () {},
+    /*
+    获取超级工作站
+    */
+    setSuperList (data) {
+      this.err = false
+      this.adddetail = true
+      let ip = localStorage.getItem('masterip')
+      getImageListx(ip).then(response => {
+        this.imglist = response.data.result.list
+      })
+      this.addedip = data.ip
     },
-    computed: {
-      routes () {
-        return this.$router.options.routes
-      }
+    setcancle (data) {
+      this.cancleup = true
+      this.canceledip = data.ip
     },
-    methods: {
-      handleRemoveTableRowInfo (data) {
-        this.handleFormatArr(data)
-      },
-      handleGetTableRowInfo (data) {
-        this.handleFormatArr(data)
-      },
-      handleFormatArr (data) {
-        var list = []
-        for (var i in data) {
-          list.push({
-            ActiveDns: data[i].ActiveDns,
-            BackupDns: data[i].BackupDns,
-            Enable: data[i].Enable,
-            Gateway: data[i].Gateway,
-            Id: data[i].Id,
-            Ip: data[i].Ip,
-            StartSchema: data[i].StartSchema,
-            Subnet: data[i].Subnet
+    /*
+    取消超级工作站
+    */
+    handleCancelaction (name) {
+      let that = this
+      this.cancleup = false
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          console.log(this.formValidate1.action)
+          console.log(this.formValidate1.comment)
+          let ip = localStorage.getItem('masterip')
+          let data = { ip: this.canceledip, action: this.formValidate1.action, comment: this.formValidate1.comment }
+          setCancelSuper(data, ip).then(response => {
+            setTimeout(() => {
+              that.reload()
+            }, 0)
+          })
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
+      })
+    },
+    /**
+     * 删除客户机
+    */
+
+    handDetele (data) {
+      this.$Modal.confirm({
+        title: '删除提示',
+        onOk: () => {
+          deletePcsConfigx([data.mac], localStorage.getItem('masterip')).then(respon => {
+            this.handgetClienList()
           })
         }
-        this.tableDataList = list
-        // console.log(JSON.stringify(this.tableDataList))
-      },
-      handleCallBackVaild (res) {
-        var code = res.data.Code
-        if (code === 0 || res.data.state === 'OK') {
-          this.$Message.success('操作成功')
-        } else {
-          this.$Message.error('操作失败：' + res.data.Msg)
-        }
-      },
-      handleGetClientList (offset, limit) {
-        var listQuery = '?offset=' + offset + '&limit=' + limit
-        getClientList(listQuery).then((a) => {
+      })
+    },
+
+    handleRemoveTableRowInfo (data) {
+      this.handleFormatArr(data)
+    },
+    handleGetTableRowInfo (data) {
+      this.handleFormatArr(data)
+    },
+    handleFormatArr (data) {
+      var list = []
+      for (var i in data) {
+        list.push({
+          ActiveDns: data[i].ActiveDns,
+          BackupDns: data[i].BackupDns,
+          Enable: data[i].Enable,
+          Gateway: data[i].Gateway,
+          Id: data[i].Id,
+          Ip: data[i].Ip,
+          StartSchema: data[i].StartSchema,
+          Subnet: data[i].Subnet
+        })
+      }
+      this.tableDataList = list
+      // console.log(JSON.stringify(this.tableDataList))
+    },
+    handleCallBackVaild (res) {
+      var code = res.data.Code
+      if (code === 0 || res.data.state === 'OK') {
+        this.$Message.success('操作成功')
+      } else {
+        this.$Message.error('操作失败：' + res.data.Msg)
+      }
+    },
+    handleGetClientList (offset, limit) {
+      var listQuery = '?offset=' + offset + '&limit=' + limit
+      getClientList(listQuery).then(
+        a => {
           var datalist = a.data.Data.List
           if (a.data.Code === 0) {
             if (datalist === null) {
@@ -203,136 +386,183 @@
           } else {
             this.$Message.error(a.data.Msg)
           }
-        }, () => {
+        },
+        () => {
           this.$Message.error('请求出错，请稍后再试')
+        }
+      )
+    },
+    hanbleChangePage (num) {
+      if (num === 1) {
+        num = 0
+      } else {
+        num = this.currlimit * num - this.currlimit
+      }
+      this.handleGetClientList(num, this.currlimit)
+    },
+    handleCheckBoxNumber (name) {
+      var val = this.getCheckboxVal.length
+      if (val === 0 || val > 1) {
+        this.$Message.error('请选择列表中的一项')
+      } else {
+        this.handlePostData(name)
+      }
+    },
+    handlePostData (name) {
+      if (name === 'del') {
+        this.showDeleteBox = true // show删除提示
+      }
+    },
+    handleCheckBox (arr) {
+      var data = arr
+      var list = []
+      for (var i in arr) {
+        list.push(data[i].Id)
+      }
+      this.getCheckboxVal = list.join(',')
+      return this.getCheckboxVal
+    },
+    handleButtonFilter (val) {
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.$Message.error('请至少选择列表中的一项')
+      } else {
+        this.$Message.info('筛选成功……')
+      }
+    },
+    handleButtonAdd (val) {
+      this.$router.push({ path: 'subtype1-add' })
+    },
+    handleButtonEdit (val) {
+      // alert(JSON.stringify(this.tableDataList))
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.$Message.error('请至少选择列表中的一项')
+      } else {
+        this.$router.push({
+          path: 'subtype1-add',
+          query: { dataList: this.tableDataList }
         })
-      },
-      hanbleChangePage (num) {
-        if (num === 1) {
-          num = 0
-        } else {
-          num = (this.currlimit * num) - this.currlimit
-        }
-        this.handleGetClientList(num, this.currlimit)
-      },
-      handleCheckBoxNumber (name) {
-        var val = this.getCheckboxVal.length
-        if (val === 0 || val > 1) {
-          this.$Message.error('请选择列表中的一项')
-        } else {
-          this.handlePostData(name)
-        }
-      },
-      handlePostData (name) {
-        if (name === 'del') {
-          this.showDeleteBox = true // show删除提示
-        }
-      },
-      handleCheckBox (arr) {
-        var data = arr
-        var list = []
-        for (var i in arr) {
-          list.push(data[i].Id)
-        }
-        this.getCheckboxVal = list.join(',')
-        return this.getCheckboxVal
-      },
-      handleButtonFilter (val) {
-        val = this.getCheckboxVal.length
-        if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
-        } else {
-          this.$Message.info('筛选成功……')
-        }
-      },
-      handleButtonAdd (val) {
-        this.$router.push({ path: 'subtype1-add' })
-      },
-      handleButtonEdit (val) {
-        // alert(JSON.stringify(this.tableDataList))
-        val = this.getCheckboxVal.length
-        if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
-        } else {
-          this.$router.push({
-            path: 'subtype1-add',
-            query: { dataList: this.tableDataList }
-          })
-        }
-      },
-      handleConfirmDelete () {
-        deleteClient(this.getCheckboxVal).then((res) => {
+      }
+    },
+    handleConfirmDelete () {
+      deleteClient(this.getCheckboxVal).then(
+        res => {
           // console.log('res:' + JSON.stringify(res))
           this.$Message.success('操作成功')
           this.handleGetClientList()
-        }, () => {
+        },
+        () => {
           this.$Message.error('请求出错，请稍后再试')
-        })
-      },
-      handleButtonDelete (del) {
-        var name = 'del'
-        this.handleCheckBoxNumber(name)
-      },
-      handleCancel () {
-        this.showDeleteBox = false
-      },
-      handleButtonImport () {},
-      handleButtonRemove (name) {
-        var val = this.getCheckboxVal.length
-        if (val === 0 || val > 1) {
-          this.$Message.error('请选择列表中的一项')
-        } else {
-          this.showPopup = true
         }
-      },
-      handleButtonRemovePost () {
-        var currId = this.getCheckboxVal
-        var self = this
-        this.$refs[name].validate((valid) => {
-          if (valid) { // this.$Message.success('表单验证成功!')
-            deleteClient(currId).then((res) => {
-              self.handleCallBackVaild(res)
-            }, () => {
-              this.$Message.error('请求出错，请稍后再试')
-            })
-          } else {
-            this.$Message.error('表单验证失败!')
-          }
-        })
-      },
-      handleButtonAwaken () {},
-      handleButtonShutdown () {},
-      handleButtonReStart () {},
-      handleTableEdit (index) {
-        // alert(JSON.stringify(index))
-        this.$router.push({
-          path: 'subtype1-add',
-          query: { data: index }
-        })
-      },
-      handleTableRemove (index) {
+      )
+    },
+
+    handleButtonDelete (del) {
+      var name = 'del'
+      this.handleCheckBoxNumber(name)
+    },
+    handleCancel () {
+      this.showDeleteBox = false
+    },
+    handleButtonImport () {},
+    handleButtonRemove (name) {
+      var val = this.getCheckboxVal.length
+      if (val === 0 || val > 1) {
+        this.$Message.error('请选择列表中的一项')
+      } else {
         this.showPopup = true
-      },
-      handleSubmit (name) {
-        var self = this
-        this.$refs[name].validate((valid) => {
-          if (valid) { // this.$Message.success('表单验证成功!')
-            changeSchema(this.getCheckboxVal, this.formValidate.nameVal).then((res) => {
-              self.handleCallBackVaild(res)
-            }, () => {
-              this.$Message.error('请求出错，请稍后再试')
-            })
-          } else {
-            this.$Message.error('表单验证失败!')
-          }
-        })
-      },
-      handleReset (name) {
-        this.$refs[name].resetFields()
-        this.showPopup = false
       }
+    },
+    handleButtonRemovePost () {
+      var currId = this.getCheckboxVal
+      var self = this
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          // this.$Message.success('表单验证成功!')
+          deleteClient(currId).then(
+            res => {
+              self.handleCallBackVaild(res)
+            },
+            () => {
+              this.$Message.error('请求出错，请稍后再试')
+            }
+          )
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
+      })
+    },
+    handleButtonAwaken () {},
+    handleButtonShutdown () {},
+    handleButtonReStart () {},
+    handleTableEdit (index) {
+      // alert(JSON.stringify(index))
+      this.$router.push({
+        path: 'subtype1-add',
+        query: { data: index }
+      })
+    },
+    handleTableRemove (index) {
+      this.showPopup = true
+    },
+    handleSubmit (name) {
+      var self = this
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          // this.$Message.success('表单验证成功!')
+          changeSchema(this.getCheckboxVal, this.formValidate.nameVal).then(
+            res => {
+              self.handleCallBackVaild(res)
+            },
+            () => {
+              this.$Message.error('请求出错，请稍后再试')
+            }
+          )
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
+      })
+    },
+    /*
+    设置为超级工作站
+    */
+    handleSubmitx (name) {
+      var self = this
+      self.$refs[name].validate(valid => {
+        if (valid) {
+          let cookiesMasterIp = localStorage.getItem('masterip')
+          setSuper(
+            {
+              ip: self.addedip,
+              image: self.formValidatex.imglist,
+              profile: self.formValidatex.profileList
+            },
+            cookiesMasterIp
+          ).then(response => {
+            if (response.data.result.vdiskInfo && response.data.error === null) {
+              self.adddetail = false
+              self.currentSuperip = response.data.result.vdiskInfo.serverIp
+              setTimeout(() => {
+                self.reload()
+              }, 0)
+            } else {
+              this.err = true
+            }
+          }, (err) => {
+            self.$Message.error(err + '')
+          })
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
+      })
+    },
+    handleReset (name) {
+      this.$refs[name].resetFields()
+      this.showPopup = false
     }
   }
+}
 </script>
 
 <style scoped>

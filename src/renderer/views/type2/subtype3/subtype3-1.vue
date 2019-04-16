@@ -49,11 +49,11 @@
             key: 'disable',
             render: (h, params) => {
               switch (params.row.disable) {
-                case '0':
+                case '1':
                   return h('span', {
                     style: { color: '#bcbcbc' }
                   }, '禁用')
-                case '1':
+                case '0':
                   return h('span', '启用')
                 default:
                   return h('span', '-')

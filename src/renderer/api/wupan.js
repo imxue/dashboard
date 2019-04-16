@@ -28,9 +28,13 @@ function makeRequestx (method, param, ip) {
   })
 }
 
-// Get_ImgList 全部镜像
+//  获取服务器类表
 export function getServers () {
   return makeRequest('Get_Servers', {})
+}
+
+export function getServersx (ip) {
+  return makeRequestx('Get_Servers', {}, ip)
 }
 
 export function login (password) {
@@ -95,6 +99,10 @@ export function getImageList () {
   return makeRequest('Get_ImgList', {
   })
 }
+export function getImageListx (ip) {
+  return makeRequestx('Get_ImgList', {
+  }, ip)
+}
 
 export function createImage (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster) {
   return makeRequest('Create_Img', {
@@ -106,6 +114,17 @@ export function createImage (name, sizeGB, title, path, cacheSizeMB, mountVolume
     mountVol: mountVolume,
     isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
   })
+}
+export function createImagex (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster, ip) {
+  return makeRequestx('Create_Img', {
+    name: name,
+    size: sizeGB,
+    menuItemName: title,
+    path: path,
+    cacheSize: cacheSizeMB,
+    mountVol: mountVolume,
+    isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
+  }, ip)
 }
 
 export function editImage (name, title, mountVolume) {
@@ -257,10 +276,12 @@ export function getServerStatus () {
   return makeRequest('Get_SrvStat', {
   })
 }
-
-export function getDHCPConfig () {
-  return makeRequest('Get_DhcpConf', {
-  })
+/*
+获取dpcp配置
+*/
+export function getDHCPConfig (ip) {
+  return makeRequestx('Get_DhcpConf', {
+  }, ip)
 }
 
 // var DHCPConfig_AddMode = {
@@ -278,6 +299,10 @@ export function editDHCPConfig ({ prefix, numbetLength, numberBegin, ipBegin, ad
     addMode: addMode,
     pcGp: pcGp
   })
+}
+
+export function editDHCPConfigx ({ prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }, ip) {
+  return makeRequestx('Set_DhcpConf', { prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }, ip)
 }
 
 export function getPcConfig (mac) {
@@ -298,9 +323,18 @@ export function editPcConfig (mac, pc, ip, isDisable, pcGroup) {
 /**
  * 获取所以客户机属性
  */
+
 export function getPcListConfig () {
   return makeRequest('Get_PcListConf', {
   })
+}
+
+/**
+ * 获取所以客户机属性2
+ */
+export function getPcListConfigx (ip) {
+  return makeRequestx('Get_PcListConf', {
+  }, ip)
 }
 
 export function editPcsConfig (macList, pcGroup, isDisable) {
@@ -315,6 +349,14 @@ export function deletePcsConfig (macList) {
   return makeRequest('Del_PcsConf', {
     macList: macList
   })
+}
+/*
+删除客户机
+*/
+export function deletePcsConfigx (macList, ip) {
+  return makeRequestx('Del_PcsConf', {
+    macList: macList
+  }, ip)
 }
 
 export function deletePcGroup (list) {
@@ -344,6 +386,17 @@ export function deleteserver (ip) {
   return makeRequest('Del_Servers', {
     serverIp: ip
   })
+}
+export function deleteserverx (ip, toip) {
+  return makeRequestx('Del_Servers', {
+    serverIp: ip
+  }, toip)
+}
+/**
+ * 删除服务器属性
+ */
+export function deleteserverConfig (ip) {
+  return makeRequestx('Cls_Servers_Node', {}, ip)
 }
 /**
  * 获取启动方案类别
@@ -533,15 +586,15 @@ function makeGuid (url) {
   })
 }
 
-export function editServersNode (masterIp, url, isSyncImage, isOverload) {
+export function editServersNode (masterIp, ip, isSyncImage, isOverload) {
   return makeServersNode('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',
     auba: isOverload ? '1' : '0'
-  }, url)
+  }, ip)
 }
 
-function makeServersNode (method, param, url) {
+function makeServersNode (method, param, ip) {
   const data = {
     method: method,
     params: [
@@ -549,7 +602,7 @@ function makeServersNode (method, param, url) {
     ]
   }
   return request({
-    url: `http://${url}:13302/jsonrpc`,
+    url: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })
@@ -565,6 +618,13 @@ export function addServers (serverIp, guid) {
     serverIp: serverIp,
     guid: guid
   })
+}
+
+export function addServersx (serverIp, guid, ip) {
+  return makeRequestx('Add_Servers', {
+    serverIp: serverIp,
+    guid: guid
+  }, ip)
 }
 
 export function delServers (serverIp) {

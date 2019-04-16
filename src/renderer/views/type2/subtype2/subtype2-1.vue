@@ -17,15 +17,9 @@
          <FormItem label="镜像大小：" prop="size">
           <Row><Input v-model="formValidate.size" placeholder="请输入镜像大小..." />* 单位：GB</Row>
         </FormItem>
-        <!-- <FormItem label="菜单在显示名称:" prop="menuItemName">
-          <Input v-model="formValidate.menuItemName" placeholder="请输入显示名称..." />
-        </FormItem> -->
         <FormItem label="保存路径：" prop="path">
           <Select v-model="formValidate.path" placeholder="——请选择保存路径——"  >
          
-            
-          
-                
               <Tooltip placement="right"  v-for="(item, index) in diskList" :key="index">
       <Option  :value="item.path" >{{item.path}}</Option>
         <div slot="content">
@@ -33,10 +27,6 @@
         </div>
 
     </Tooltip>
-             
-            
-         
-        
           </Select>
         </FormItem>
         <FormItem label="映射盘符：" prop="mountVol">
@@ -58,7 +48,7 @@
 </template>
 
 <script>
-  import { getImageList, createImage, getDiskStatus, deleteImage } from '@/api/wupan'
+  import { getImageListx, createImagex, getDiskStatusx, deleteImage } from '@/api/wupan'
   import { bytesToSize } from '@/utils/index'
   export default {
     name: 'subType2-1',
@@ -66,6 +56,7 @@
       return {
         showPopup: false,
         diskList: [],
+        serverlist: '',
         tableColumns: [
           { title: '镜像名称', key: 'name' },
           {
@@ -166,20 +157,11 @@
       }
     },
     methods: {
-      // handleCheckLength (arr) {
-      //   if (arr !== null) {
-      //     console.log(JSON.stringify(arr) + arr.length)
-      //     return arr.length
-      //   } else {
-      //     return '-'
-      //   }
-      // },
-
       /**
        * 获取磁盘
        */
       handleGetDiskStatus () {
-        getDiskStatus().then((a) => {
+        getDiskStatusx(localStorage.getItem('masterip')).then((a) => {
           var arr = a.data.result.list
           let temp = []
           if (a.data.error === null && arr.length !== null) {
@@ -201,27 +183,23 @@
        * 获取镜像列表
        */
       handleGetImageList () {
-        getImageList().then((a) => {
+        getImageListx(localStorage.getItem('masterip')).then((a) => {
           var arr = a.data.result.list
-          // if (a.data.error === null && arr && arr.length !== null) {
-          // } else {
-          //   this.$Message.error(a.data.error)
-          // }
           this.mirroringInfo = arr
         })
       },
       handleButtonAdd (val) {
         this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
+        this.handlegetServerlist() // 获取服务器
       },
       handleSubmit (name) {
         var self = this
-        console.log(self.formValidate)
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showPopup = false
             // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
-            createImage(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster).then((a) => {
+            createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((a) => {
               if (a.data.error === null) {
                 self.$Notice.success({
                   title: `${self.formValidate.nameVal} 镜像 添加 成功`
