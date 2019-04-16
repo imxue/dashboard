@@ -1,27 +1,27 @@
 <template>
   <div class="main">
     <Form
-      ref="clientTemplate"
-      :model="clientTemplate"
+      ref="DHCPTable"
+      :model="DHCPTable"
       label-position="left"
       :label-width="90"
       :rules="ruleValidate"
     >
       <FormItem label="机器名前缀" prop="prefix">
-        <Input v-model="clientTemplate.prefix"/>
+        <Input v-model="DHCPTable.prefix"/>
       </FormItem>
       <FormItem label="编号长度" prop="numbetLength">
-        <Input v-model="clientTemplate.numbetLength"/>
+        <Input v-model="DHCPTable.numbetLength"/>
       </FormItem>
       <FormItem label="起始编号" prop="numberBegin">
-        <Input v-model="clientTemplate.numberBegin"/>
+        <Input v-model="DHCPTable.numberBegin"/>
       </FormItem>
       <FormItem label="起始IP" prop="ipBegin">
-        <Input v-model="clientTemplate.ipBegin"/>
+        <Input v-model="DHCPTable.ipBegin"/>
       </FormItem>
 
       <FormItem label="添加方式" prop="addMode">
-        <Select v-model="clientTemplate.addMode" style="width:200px">
+        <Select v-model="DHCPTable.addMode" style="width:200px">
           <Option value="disable">禁用客户机添加</Option>
           <Option value="inputNumber">输入编号添加</Option>
           <Option value="inputEnter">回车添加</Option>
@@ -29,11 +29,11 @@
       </FormItem>
 
       <FormItem label="pc分组" prop="pcGp">
-        <Input v-model="clientTemplate.pcGp"/>
+        <Input v-model="DHCPTable.pcGp"/>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('clientTemplate')" :loading="loading">应用</Button>
-        <Button @click="handleReset('clientTemplate')" style="margin-left: 8px">重置</Button>
+        <Button type="primary" @click="handleSubmit('DHCPTable')" :loading="loading">应用</Button>
+        <Button @click="handleReset('DHCPTable')" style="margin-left: 8px">重置</Button>
       </FormItem>
     </Form>
   </div>
@@ -50,7 +50,7 @@ export default {
     return {
       showPopup: false,
       loading: false,
-      clientTemplate: {
+      DHCPTable: {
         prefix: '',
         numbetLength: '',
         numberBegin: '',
@@ -136,7 +136,7 @@ export default {
       let that = this
       that.$refs[name].validate(valid => {
         if (valid) {
-          editDHCPConfigx(that.clientTemplate, localStorage.getItem('masterip'))
+          editDHCPConfigx(that.DHCPTable, localStorage.getItem('masterip'))
             .then(e => {
               this.loading = false
               that.$Message.success('DPCP设置成功')
@@ -159,8 +159,8 @@ export default {
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
-        if (resp.data.error === null) {
-          this.clientTemplate = resp.data.result
+        if (resp.data.error === null && resp.data.result) {
+          this.DHCPTable = resp.data.result
         } else {
           this.$Message.error(resp.data.error)
         }

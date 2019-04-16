@@ -249,9 +249,6 @@ export default {
         },
         { title: '网络设备名', key: 'name' },
         { title: 'IP地址', key: 'ip' },
-        // { title: '当前工况 MB/s', key: 'linkRate' },
-        // { title: '上行流量 KB/s', key: 'sendRate' },
-        // { title: '下行流量 KB/s', key: 'recvRate' },
         {
           title: '网卡速率',
           key: 'linkRate',
@@ -260,41 +257,6 @@ export default {
             return h('span', a)
           }
         }
-        // {
-        //   title: '上行流量',
-        //   key: 'sendRate',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.sendRate)
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '下行流量',
-        //   key: 'recvRate',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.recvRate)
-        //     console.log('下行流量')
-        //     console.log(formatSize(params.row.recvRate))
-        //     console.log('下行流量')
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '累计发送',
-        //   key: 'sendTotal',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.sendTotal)
-        //     return h('span', a)
-        //   }
-        // },
-        // {
-        //   title: '累计接收',
-        //   key: 'recvTotal',
-        //   render: (h, params) => {
-        //     var a = formatSize(params.row.recvTotal)
-        //     return h('span', a)
-        //   }
-        // }
       ],
       tableData2: [], // 网卡信息
       tableColumns3: [

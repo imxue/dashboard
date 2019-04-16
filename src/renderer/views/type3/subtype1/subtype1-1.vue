@@ -59,6 +59,7 @@
               >{{ item.name }}</Option>
             </template>
           </Select>
+             <div class="ivu-form-item-error-tip" v-if="err">获取虚拟盘信息失败</div>
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmitx('formValidatex')">设置为超级工作站</Button>
@@ -101,6 +102,7 @@ export default {
   inject: ['reload'],
   data () {
     return {
+      err: '',
       currentSuperip: '',
       imglist: '',
       addedip: '',
@@ -287,6 +289,7 @@ export default {
     获取超级工作站
     */
     setSuperList (data) {
+      this.err = false
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
       getImageListx(ip).then(response => {
@@ -528,7 +531,6 @@ export default {
       var self = this
       self.$refs[name].validate(valid => {
         if (valid) {
-          self.adddetail = false
           let cookiesMasterIp = localStorage.getItem('masterip')
           setSuper(
             {
@@ -539,11 +541,16 @@ export default {
             cookiesMasterIp
           ).then(response => {
             if (response.data.result.vdiskInfo && response.data.error === null) {
+              self.adddetail = false
               self.currentSuperip = response.data.result.vdiskInfo.serverIp
               setTimeout(() => {
                 self.reload()
               }, 0)
+            } else {
+              this.err = true
             }
+          }, (err) => {
+            self.$Message.error(err + '')
           })
         } else {
           this.$Message.error('表单验证失败!')

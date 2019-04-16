@@ -2,8 +2,8 @@
   <div>
      <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
-      <Input class="topColumn" v-model="searchVal" search enter-button="搜索" @on-search="handleSearch" placeholder="请输入服务器IP..." style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加服务器</Button>
+      <Input class="topColumn" v-model="searchVal" search enter-button="搜索" @on-search="handleSearch"  placeholder="请输入服务器IP..." style="width: 200px;" />
+      <Button type="primary" class="topColumn" @click="handleButtonAdd" >添加服务器</Button>
       <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">刷新</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
@@ -17,13 +17,15 @@
       class-name="vertical-center-modal">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="服务器IP:" prop="serverIP">
-          <Input v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
-        </FormItem>
-        <FormItem label="服务器标识:" prop="password">
-          <Input v-model="formValidate.password" placeholder="请输入服务器标识"  />
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
+        </FormItem>   
+        
+        <FormItem label="服务器密码:" prop="password">
+            <div class="ivu-form-item-error-tip" v-if="NetWork">网络连接不上</div>
+          <Input v-model="formValidate.password" placeholder="请输入服务器密码"  />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleAddServer('formValidate')">保存</Button>
+             <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>保存</Button>
              <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">取消</Button>
         </FormItem>
       </Form>
@@ -32,19 +34,30 @@
       <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
       <!-- <i-col span="24"><Page :total="100"  style=" float:right;"/></i-col> -->
     </Row>
+    <Modal
+        v-model="modal4"
+        title="该服务器可能已属于其他节点"
+        ok-text="OK"
+        @on-ok="remove"
+        cancel-text="Cancel">
+        <p>需要清除信息，你确定吗</p>
+    </Modal>
   </div>
 </template>
 
 <script>
-  import { addServersx, getServersNode, editServersNode, getServersx } from '@/api/wupan'
+  import { addServersx, getServersNode, editServersNode, getServersx, deleteserverConfig } from '@/api/wupan'
   // import Cookies from 'js-cookie'
 export default {
     name: 'subType1-1',
     data () {
       return {
+        NetWork: false,
         spinShow: false,
         searchVal: '',
+        modal4: false,
         loading: false,
+        loadingBtn: false,
         showPopup: false,
         tempMasterServerIp: '',
         getCheckboxVal: [], // 勾选复选框值
@@ -86,12 +99,6 @@ export default {
             }
           },
           { title: '服务器IP', key: 'serverIp' },
-          // { title: '模式', key: 'mode' },
-          // { title: '当前带机数', key: 'number' },
-          // { title: '系统负载', key: 'systemLoad' },
-          // { title: '网卡状态', key: 'networkCard' },
-          // { title: '硬盘状态', key: 'diskState' },
-          // { title: '固件版本', key: 'firmwareVersion' },
           { title: '服务版本', key: 'dataVer' },
           { title: '操作',
             key: 'operation',
@@ -135,16 +142,28 @@ export default {
           this.tableData = newArr
         }, 1000)
       },
+      ResetError () {
+        this.NetWork = false
+      },
+      /**
+       * 清除服务器信息
+      */
+      remove () {
+        deleteserverConfig(this.formValidate.serverIP).then(() => {
+          this.modal4 = false
+          this.handleAddServer('formValidate')
+        })
+      },
       /*
         获取列表
       */
       handleGetServerList () {
-        // let d = Cookies.get('masterip')
         let d = localStorage.getItem('masterip')
         getServersx(d).then((a) => {
           this.spinShow = false
           var datalist = a.data.result.list
           if (datalist && a.data.error === null) {
+            this.spinShow = false
             this.tableData = a.data.result.list
             this.handleGetCurrMasterServerIp(datalist)
           } else {
@@ -164,11 +183,11 @@ export default {
       },
       handleButtonAdd (val) {
         this.showPopup = true
+        this.NetWork = false
       },
       handleButtonRefesh (val) {
         this.spinShow = true
         this.handleGetServerList()
-        this.spinShow = false
       },
       handleButtonRemote (val) {
         alert('暂无')
@@ -193,20 +212,24 @@ export default {
        * 添加服务器
        */
       handleAddServer (name) {
+        this.loadingBtn = true
         this.$refs[name].validate((valid) => {
           if (valid) {
             let cookiesMasterIp = localStorage.getItem('masterip')
-            if (cookiesMasterIp) {
-              this.showPopup = false
+            if (cookiesMasterIp) { // 本地保存
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
+              }, () => {
+                this.loadingBtn = false
+                this.NetWork = true
               })
               this.$store.dispatch('saveMaster', cookiesMasterIp)
-            } else {
+            } else { // 没有
               this.showPopup = false
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
               }, (error) => {
+                this.loadingBtn = false
                 this.$Message.error('' + error)
               })
               this.$store.dispatch('saveMaster', this.formValidate.serverIP)
@@ -220,13 +243,15 @@ export default {
         editServersNode(masterIp, selfip) // 设置主服务器
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
-            localStorage.setItem('masterip', this.formValidate.serverIP)
+            localStorage.setItem('masterip', masterIp)
             this.$Message.success('添加成功')
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
           } else {
             this.showPopup02 = true
-            this.$Message.error(a.data.error)
+            if (a.data.error.indexOf('重复添加') !== '-1') {
+              this.modal4 = true
+            }
           }
         })
       },
