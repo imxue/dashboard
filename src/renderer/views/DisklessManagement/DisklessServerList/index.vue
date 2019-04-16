@@ -203,7 +203,7 @@ export default {
       },
       handleSeeDetail (index) {
         this.$router.push({
-          path: 'subType1-detail',
+          path: 'DisklessServerDetail',
           query: { data: index, tempMasterServerIp: this.tempMasterServerIp }
         })
       },
