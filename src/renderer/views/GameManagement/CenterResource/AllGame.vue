@@ -189,7 +189,6 @@ export default {
     },
     handleTableDw (index) {
       this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      // alert(this.getCheckboxVal)
       this.$router.push({
         path: 'subtype1-download',
         query: { id: this.getCheckboxVal }
@@ -198,15 +197,9 @@ export default {
     handleFixGame (index) {
       this.getCheckboxVal = this.tableSelectVal.push(index.id)
       this.$Message.info('id:' + this.getCheckboxVal + '修复中，请耐心等待……')
-      // alert(this.getCheckboxVal)
-      // this.$router.push({
-      //   path: 'subtype1-remove',
-      //   query: { id: this.getCheckboxVal }
-      // })
     },
     handleRemove (index) {
       this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      // alert(this.getCheckboxVal)
       this.$router.push({
         path: 'subtype1-remove',
         query: { id: this.getCheckboxVal }
