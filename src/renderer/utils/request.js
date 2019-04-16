@@ -10,12 +10,6 @@ const service = axios.create({
   baseURL: 'http://10.88.66.21:8080',
   // baseURL: 'http://142.10.179.220:13302/jsonrpc',
   // baseURL: process.env.BASE_API, // api 的 base_url
-<<<<<<< HEAD
-  timeout: 5000 // request timeout
-})
-service.interceptors.request.use(
-  config => { return config }
-=======
   timeout: 2000 // request timeout
 
 })
@@ -27,7 +21,6 @@ service.interceptors.request.use(
   (error) => {
     return error
   }
->>>>>>> onlyDisklss
 )
 
 // response interceptor

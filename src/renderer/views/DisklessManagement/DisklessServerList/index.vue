@@ -16,15 +16,6 @@
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="服务器IP:" prop="serverIP">
-<<<<<<< HEAD
-          <Input v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
-        </FormItem>
-        <FormItem label="服务器标识:" prop="password">
-          <Input v-model="formValidate.password" placeholder="请输入服务器密码"  />
-        </FormItem>
-        <FormItem class="buttonList">
-             <Button type="primary" @click="handleAddServer('formValidate')" :loading='t'>保存</Button>
-=======
           <Input @on-change='ResetError' v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
         </FormItem>   
         
@@ -34,7 +25,6 @@
         </FormItem>
         <FormItem class="buttonList">
              <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>保存</Button>
->>>>>>> onlyDisklss
              <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">取消</Button>
         </FormItem>
       </Form>
@@ -149,11 +139,6 @@ export default {
           this.serverList = newArr
         }, 1000)
       },
-<<<<<<< HEAD
-      /**
-       * 获取服务器列表
-       */
-=======
       ResetError () {
         this.NetWork = false
       },
@@ -169,20 +154,14 @@ export default {
       /*
         获取列表
       */
->>>>>>> onlyDisklss
       handleGetServerList () {
         let d = localStorage.getItem('masterip')
         getServersx(d).then((a) => {
           this.spinShow = false
           var datalist = a.data.result.list
-<<<<<<< HEAD
-          if (a.data.error === null) {
-            this.serverList = a.data.result.list
-=======
           if (datalist && a.data.error === null) {
             this.spinShow = false
-            this.tableData = a.data.result.list
->>>>>>> onlyDisklss
+            this.serverList = a.data.result.list
             this.handleGetCurrMasterServerIp(datalist)
           } else {
             this.$Message.error(a.data.Msg)
@@ -234,40 +213,7 @@ export default {
       handleAddServer (name) {
         this.loadingBtn = true
         this.$refs[name].validate((valid) => {
-          let that = this
-          var guid = ''
           if (valid) {
-<<<<<<< HEAD
-            // 获取服务器guid
-            getServersNode(that.formValidate.serverIP).then(res => {
-              if (!res.data.err) {
-                guid = res.data.result.guid
-                if (that.serverList) {
-                  let master = that.serverList.filter(item => { return item.isMaster === '1' })
-                  if (master) {
-                    this.handsubmit(master.serverIp, that.formValidate.serverIP, guid)
-                  }
-                } else {
-                  // 服务器List为空
-                  getServersNode(that.formValidate.serverIP).then(res => {
-                    if (!res.data.err) {
-                      guid = res.data.result.guid
-                    }
-                  })
-                  this.handsubmit(that.formValidate.serverIP, that.formValidate.serverIP, guid)
-                }
-              } else {
-                this.$Message.error(res)
-              }
-            }, () => { this.$Message.error('网络错误,请检查服务器地址，重试') })
-          }
-        })
-      },
-      handsubmit (masertIp, selfIp, guid) {
-        editServersNode(masertIp, selfIp)
-        addServers(selfIp, guid).then(resp => {
-          if (resp.data.error === null) {
-=======
             let cookiesMasterIp = localStorage.getItem('masterip')
             if (cookiesMasterIp) { // 本地保存
               getServersNode(this.formValidate.serverIP).then(res => {
@@ -297,19 +243,14 @@ export default {
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
             localStorage.setItem('masterip', masterIp)
->>>>>>> onlyDisklss
             this.$Message.success('添加成功')
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
           } else {
             this.showPopup02 = true
-<<<<<<< HEAD
-            this.$Message.error(resp.data.error)
-=======
             if (a.data.error.indexOf('重复添加') !== '-1') {
               this.modal4 = true
             }
->>>>>>> onlyDisklss
           }
         })
       },

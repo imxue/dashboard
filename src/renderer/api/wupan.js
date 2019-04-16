@@ -140,6 +140,14 @@ export function deleteImage (name) {
     name: name
   })
 }
+/*
+删除镜像
+*/
+export function deleteImagex (name, ip) {
+  return makeRequestx('Delete_Img', {
+    name: name
+  }, ip)
+}
 
 export function createImageProject (image, projectNO, restoreNo, name, title) {
   if (restoreNo === '') {
@@ -405,7 +413,10 @@ export function getPcGroup () { // 客户机方案
   return makeRequest('Get_PcGp', {
   })
 }
-
+export function getPcGroupx (ip) { // 客户机方案
+  return makeRequestx('Get_PcGp', {
+  }, ip)
+}
 // var PcsConfig_Operate = {
 //   shutdown: '1',
 //   restart: '2'

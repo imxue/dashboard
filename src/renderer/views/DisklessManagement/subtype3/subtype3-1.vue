@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { getPcGroup, deleteItem } from '@/api/wupan'
+  import { getPcGroupx, deleteItem } from '@/api/wupan'
   export default {
     name: 'subType3-1',
     data () {
@@ -104,7 +104,8 @@
     },
     methods: {
       handleGetPcGroup () {
-        getPcGroup().then((a) => {
+        let mip = localStorage.getItem('masterip')
+        getPcGroupx(mip).then((a) => {
           var arr = a.data.result.list
           if (a.data.error === null) {
             this.tableData = arr

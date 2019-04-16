@@ -16,40 +16,13 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-<<<<<<< HEAD
-
-=======
-    // {
-    //   path: '/login',
-    //   component: () => import('@/views/login/index')
-    // },
-    // {
-    //   path: '/login/login',
-    //   component: () => import('@/views/login/login')
-    // },
-    // {
-    //   path: '/login/reset',
-    //   component: () => import('@/views/login/reset')
-    // },
-    // {
-    //   path: 'subtype1-1-download',
-    //   component: () => import('@/views/game/type1/subType1/subtype1-1-download'),
-    //   hidden: true
-    // },
-    {
-      path: '/404',
-      component: () => import('@/views/404'),
-      hidden: true
-    },
->>>>>>> onlyDisklss
     {
       path: '/',
       name: 'home',
-      redirect: '/type2',
+      redirect: '/game',
       component: Layout,
       hidden: true
     },
-<<<<<<< HEAD
     gamemanagement, // 游戏管理
     diskmanagement, // 无盘管理
     clienmanagement, // 客户机管理
@@ -57,128 +30,5 @@ export default new Router({
     login2,
     login3,
     all
-=======
-    {
-      path: '/type2',
-      name: '2',
-      component: Layout,
-      redirect: '/type2/subType1/subType1-1',
-      meta: { title: '无盘管理', icon: 'example' },
-      children: [
-        {
-          path: 'subType1',
-          name: 'type2-SubType1',
-          meta: { title: '无盘服务器', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType1-1',
-              name: 'type2-SubType1-1',
-              meta: { title: '无盘服务器列表' },
-              component: () => import('@/views/type2/subtype1/subtype1-1')
-            },
-            {
-              path: 'subType1-add',
-              name: 'type2-SubType1-add',
-              meta: { title: '添加' },
-              component: () => import('@/views/type2/subtype1/subtype1-add'),
-              hidden: true
-            },
-            {
-              path: 'subType1-detail',
-              name: 'type2-SubType1-detail',
-              meta: { title: '查看详情' },
-              component: () => import('@/views/type2/subtype1/subtype1-detail'),
-              hidden: true
-            }
-          ]
-        },
-        {
-          path: 'subType2',
-          name: 'type2-SubType2-1',
-          meta: { title: '镜像管理', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType2-1',
-              name: 'type2-SubType2-1',
-              meta: { title: '全部镜像' },
-              component: () => import('@/views/type2/subtype2/subtype2-1')
-            },
-            {
-              path: 'subType2-set',
-              name: 'type2-SubsubType2Type1-set',
-              meta: { title: '配置点' },
-              component: () => import('@/views/type2/subtype2/subtype2-set'),
-              hidden: true
-            }
-          ]
-        },
-        {
-          path: 'subType3',
-          name: 'type2-SubType3',
-          meta: { title: '客户机启动', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType3-1',
-              name: 'type2-SubType3-1',
-              meta: { title: '全部方案' },
-              component: () => import('@/views/type2/subtype3/subtype3-1')
-            },
-            {
-              path: 'subType3-2',
-              name: 'DHCP配置',
-              meta: { title: 'DHCP配置' },
-              component: () => import('@/views/type2/subtype3/dpcp')
-            },
-            {
-              path: 'subType3-edit',
-              name: 'type2-SubType3-edit',
-              meta: { title: '方案编辑' },
-              component: () => import('@/views/type2/subtype3/subtype3-edit'),
-              hidden: true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      path: '/type3',
-      name: '3',
-      component: Layout,
-      redirect: '/type3/subType1/subType1-1',
-      meta: { title: '客户机管理', icon: 'example' },
-      children: [
-        {
-          path: 'subType1',
-          name: 'type3-SubType1',
-          meta: { title: '客户机管理', hidden: true },
-          component: NullLayout,
-          children: [
-            {
-              path: 'subType1-1',
-              name: 'type3-SubType1-1',
-              alias: '/disklesslist',
-              meta: { title: '客户机列表' },
-              component: () => import('@/views/type3/subtype1/subtype1-1')
-            },
-            {
-              path: 'subType1-add',
-              name: 'type3-SubType1-add',
-              meta: { title: '添加客户机列表' },
-              component: () => import('@/views/type3/subtype1/subtype1-add'),
-              hidden: true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      path: '*',
-      redirect: '/404',
-      hidden: true
-    }
->>>>>>> onlyDisklss
   ]
 })

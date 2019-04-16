@@ -28,7 +28,7 @@
         </Select>
       </FormItem>
 
-      <FormItem label="pc分组" prop="pcGp">
+      <FormItem label="启动方案" prop="pcGp">
         <Input v-model="DHCPTable.pcGp"/>
       </FormItem>
       <FormItem>
@@ -120,7 +120,7 @@ export default {
           key: 'addMode'
         },
         {
-          title: 'pc分组',
+          title: '启动方案',
           key: 'pcGp'
         }
       ]

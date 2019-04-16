@@ -48,7 +48,7 @@
 </template>
 
 <script>
-  import { getImageListx, createImagex, getDiskStatusx, deleteImage } from '@/api/wupan'
+  import { getImageListx, createImagex, getDiskStatusx, deleteImagex } from '@/api/wupan'
   import { bytesToSize } from '@/utils/index'
   export default {
     name: 'subType2-1',
@@ -247,7 +247,9 @@
           title: '删除确认',
           content: '<p>确认删除</p>',
           onOk: () => {
-            deleteImage(name.name).then(() => {
+            let ip = localStorage.getItem('masterip')
+            debugger
+            deleteImagex(name.name, ip).then(() => {
               this.handleGetImageList()
             })
           },
