@@ -13,12 +13,15 @@ const service = axios.create({
   timeout: 1000 // request timeout
 
 })
+let that = this
 service.interceptors.request.use(
   // (config) => {
   //   console.log(config)
   //   return config
   // }
+
   (error) => {
+    debugger
     return error
   }
 )
@@ -28,6 +31,7 @@ service.interceptors.response.use(
   response => { return response },
 
   error => {
+    that.$Message.error('111111')
     return Promise.reject(error)
   }
 )
