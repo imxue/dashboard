@@ -27,11 +27,7 @@
                 case 0:
                   return h('span', { style: { color: '#008000' } }, '完成')
                 case 1:
-                  return h('span', '等待')
-                case 2:
                   return h('span', { style: { color: '#ff0000' } }, '失败')
-                default:
-                  return '-'
               }
             }
           },
@@ -49,7 +45,7 @@
                 on: { click: () => { this.handleTableDw(params.row) } }
               }, '重新下载')
               switch (type) {
-                case 2:
+                case 1:
                   return h('div', [a])
                 default:
                   return h('div', '-')
@@ -60,7 +56,7 @@
         tableData: [
           { id: 0, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
           { id: 1, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-          { id: 2, state: 2, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
+          { id: 2, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
           { id: 3, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
           { id: 4, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
           { id: 5, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
