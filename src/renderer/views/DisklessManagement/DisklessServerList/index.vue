@@ -157,17 +157,19 @@ export default {
       */
       handleGetServerList () {
         let d = localStorage.getItem('masterip')
-        getServersx(d).then((a) => {
-          this.spinShow = false
-          var datalist = a.data.result.list
-          if (datalist && a.data.error === null) {
+        if (d) {
+          getServersx(d).then((a) => {
             this.spinShow = false
-            this.serverList = a.data.result.list
-            this.handleGetCurrMasterServerIp(datalist)
-          } else {
-            this.$Message.error(a.data.Msg)
-          }
-        })
+            var datalist = a.data.result.list
+            if (datalist && a.data.error === null) {
+              this.spinShow = false
+              this.serverList = a.data.result.list
+              this.handleGetCurrMasterServerIp(datalist)
+            } else {
+              this.$Message.error(a.data.Msg)
+            }
+          })
+        }
       },
       handleGetCurrMasterServerIp (data) {
         if (data === null) {

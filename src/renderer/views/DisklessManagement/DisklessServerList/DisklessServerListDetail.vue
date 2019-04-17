@@ -375,8 +375,6 @@ export default {
     this.tempMasterServerIp = this.$route.query.tempMasterServerIp
     this.ServerIp = this.$route.query.data.serverIp
     this.handleGetServerInfo()
-    // this.handleGetNetwork()
-    // this.handleGetDiskStatus()
     this.GetServerList()
     this.handleGetNetworkx(this.ServerIp)
     this.handleGetDiskStatusx(this.ServerIp)
@@ -389,12 +387,15 @@ export default {
   methods: {
     GetServerList () {
       let that = this
-      getServersx(localStorage.getItem('masterip')).then(response => {
-        if (response.data.error === null) {
-          that.serverList = response.data.result.list
-        }
-        console.log(that.serverList)
-      })
+      let ip = localStorage.getItem('masterip')
+      if (ip) {
+        getServersx().then(response => {
+          if (response.data.error === null) {
+            that.serverList = response.data.result.list
+          }
+          console.log(that.serverList)
+        })
+      }
     },
     handleGetServerInfo () {
       var data = this.$route.query.data
@@ -465,11 +466,6 @@ export default {
         cancelTexxt: '取消'
       })
     },
-    // handleButtonBack () {
-    //   this.$router.push({
-    //     path: 'subType1-1'
-    //   })
-    // },
     handleButtonSetSever () {
       // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
       if (
