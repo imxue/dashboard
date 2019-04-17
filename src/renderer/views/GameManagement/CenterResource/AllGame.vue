@@ -26,7 +26,7 @@
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
     <Row style="margin-top:10px; ">
       <i-col span="4">资源：{{AllGameCount}} &nbsp;&nbsp;&nbsp;&nbsp;已下载：{{DownLoadCount}}</i-col>
-      <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>
+      <i-col span="20"><Page :total="AllGameCount"  style=" float:right;"/></i-col>
     </Row>
   </div>
 </template>
@@ -37,6 +37,7 @@ export default {
   name: 'allGame',
   data () {
     return {
+      pageCount: '',
       disk: '',
       AllGameCount: '0', // 游戏总数
       DownLoadCount: '0', // 已下载的数

@@ -149,10 +149,24 @@ export function setDownGame (info) { // 本吧批量添加
 获取游戏队列
 */
 
-export function getAllGamex (info) { // 本吧批量添加
+export function getLoad (info) {
   const data = {}
   return request({
-    url: `/v1/centerresource/getAllCenterGames/getDownloadProgress?PageSize=${info.all}&CurrentPage=${info.all}`,
+    url: `/v1/centerresource/getDownloadProgress?PageSize=${info.PageSize}&CurrentPage=${info.CurrentPage}`,
+    method: 'get',
+    data
+  })
+}
+
+/**
+ * 获取今日更新游戏
+
+*/
+
+export function getTodayUpdateGames () {
+  const data = {}
+  return request({
+    url: `/v1/centerresource/getTodayUpdateGames`,
     method: 'get',
     data
   })

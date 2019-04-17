@@ -10,10 +10,10 @@ const service = axios.create({
   baseURL: 'http://10.88.66.153:8080',
   // baseURL: 'http://142.10.179.220:13302/jsonrpc',
   // baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 1000 // request timeout
+  timeout: 5000 // request timeout
 
 })
-let that = this
+
 service.interceptors.request.use(
   // (config) => {
   //   console.log(config)
@@ -21,6 +21,9 @@ service.interceptors.request.use(
   // }
 
   (error) => {
+    console.log('===')
+    console.log(error)
+    console.log('===')
     return error
   }
 )
@@ -30,7 +33,6 @@ service.interceptors.response.use(
   response => { return response },
 
   error => {
-    that.$Message.error('111111')
     return Promise.reject(error)
   }
 )

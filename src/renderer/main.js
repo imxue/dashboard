@@ -6,8 +6,6 @@ import router from './router'
 import store from './store'
 import moment from 'moment'
 
-import './mock'
-
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import './router/Hook'

@@ -252,6 +252,9 @@ export default {
             localStorage.setItem('masterip', masterIp)
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
+            setTimeout(() => {
+              this.handleGetServerList()
+            }, 1000)
           } else {
             this.showPopup02 = true
             if (a.data.error.indexOf('重复添加') !== '-1') {
