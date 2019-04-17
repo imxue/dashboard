@@ -221,6 +221,7 @@ export default {
             let cookiesMasterIp = localStorage.getItem('masterip')
             if (cookiesMasterIp) { // 本地保存
               getServersNode(this.formValidate.serverIP).then(res => {
+                this.loadingBtn = false
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
@@ -230,6 +231,7 @@ export default {
             } else { // 没有
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.showPopup = false
+                this.loadingBtn = false
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
