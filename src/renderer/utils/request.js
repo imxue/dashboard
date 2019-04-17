@@ -21,7 +21,6 @@ service.interceptors.request.use(
   // }
 
   (error) => {
-    debugger
     return error
   }
 )
