@@ -73,23 +73,10 @@
             }
           }
         ],
-        tableData: [
-          { id: 0, state: 0, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '1.53 MB/s', time: '19:20:20' },
-          { id: 1, state: 0, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '1.53 MB/s', time: '19:20:20' },
-          { id: 2, state: 0, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '1.53 MB/s', time: '19:20:20' },
-          { id: 3, state: 1, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '1.53 MB/s', time: '19:20:20' },
-          { id: 4, state: 0, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '-', time: '19:20:20' },
-          { id: 5, state: 1, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '-', time: '19:20:20' },
-          { id: 6, state: 1, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '-', time: '19:20:20' },
-          { id: 7, state: 1, type: '网络游戏', name: '英雄联盟', hot: '56.11', updatedSize: '5.85 GB', updateSize: '10.85 GB', speed: '-', time: '19:20:20' }
-        ]
+        tableData: [] // 队列数据
       }
     },
-    created () {
-      // console.log(this.$route.matched[0])
-      // console.log('hello', JSON.stringify(this.routes))
-      // this.test()
-    },
+    created () {},
     computed: {
       routes () {
         return this.$router.options.routes

@@ -144,3 +144,16 @@ export function setDownGame (info) { // 本吧批量添加
     method: 'post'
   })
 }
+
+/*
+获取游戏队列
+*/
+
+export function getAllGamex (info) { // 本吧批量添加
+  const data = {}
+  return request({
+    url: `/v1/centerresource/getAllCenterGames/getDownloadProgress?PageSize=${info.all}&CurrentPage=${info.all}`,
+    method: 'get',
+    data
+  })
+}
