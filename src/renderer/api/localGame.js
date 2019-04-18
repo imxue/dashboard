@@ -99,18 +99,17 @@ export function netbarEdit (clientStartPath, displayChoice, exeName, gameName, g
     data
   })
 }
-export function netbarAdd (clientStartPath, displayChoice, exeName, gameName, gamePath, iconPath, isServerSync) { // 本吧批量添加
+export function netbarAdd (name, icondata, path, exepath, exename, isEnableSync) { // 本吧批量添加
   const data = {
-    ClientStartPath: clientStartPath,
-    DisplayChoice: displayChoice,
-    ExeName: exeName,
-    GameName: gameName,
-    GamePath: gamePath,
-    IconPath: iconPath,
-    IsServerSync: isServerSync
+    name,
+    icondata,
+    path,
+    exepath,
+    exename,
+    is_enable_sync: isEnableSync
   }
   return request({
-    url: '/v1/netbar/add',
+    url: 'v1/localresource/addLocalGame',
     method: 'post',
     data
   })
@@ -168,6 +167,40 @@ export function getTodayUpdateGames () {
   return request({
     url: `/v1/centerresource/getTodayUpdateGames`,
     method: 'get',
+    data
+  })
+}
+
+/**
+ * 获取所有本地游戏
+
+*/
+
+export function getAllLocalGames () {
+  const data = {}
+  return request({
+    url: `/v1/localresource/getAllLocalGames`,
+    method: 'get',
+    data
+  })
+}
+
+/**
+ * 添加游戏
+
+*/
+export function addLocalGame ({ name, path, exepath, exename, isEnableSync }, icondata) {
+  const data = {
+    name,
+    icondata,
+    path,
+    exepath,
+    exename,
+    is_enable_sync: isEnableSync
+  }
+  return request({
+    url: `/v1/localresource/addLocalGame`,
+    method: 'post',
     data
   })
 }

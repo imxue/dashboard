@@ -5,23 +5,27 @@
       <Button type="primary" class="topColumn" @click="handleCancle">取消</Button>
     </div> -->
     <!-- Form -->
+      <img :src='imgUrlxx'>
+
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
           <Row>
             <i-col span="4">游戏图标：</i-col>
             <i-col span="8">
-              <img :src="imgUrl" v-if="showIcon === true" class="imgIcon">
+           
               <!-- 10.30.11.6:8080  10.30.18.62:1010-->
               <!-- //jsonplaceholder.typicode.com/posts/ -->
-              <Upload action="//10.30.18.62:1010/v1/netbar/upload"
+              <!-- <Upload action="//10.30.18.62:1010/v1/netbar/upload"
                 name="fileName"
                 :on-success="handleUploadSuccess"
                 :on-format-error="handleFormatError">
                   <Button icon="ios-cloud-upload-outline">上传游戏图标</Button>
-              </Upload>
+              </Upload> -->
+              <input type="file" v-on:change='imgUpload'>
               <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
             </i-col>
           </Row>
+           
         </FormItem>
         <!-- <FormItem prop="starterScheme">
           <Row>
@@ -39,30 +43,30 @@
             <i-col span="8"><i-input v-model="formValidate.name"  placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="gamePath">
+        <FormItem prop="path">
           <Row>
             <i-col span="4">游戏路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.gamePath" placeholder=""></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.path" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="startPath">
+        <FormItem prop="exepath">
           <Row>
             <i-col span="4">客户机启动路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.startPath" placeholder=""></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.exepath" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="run">
+        <FormItem prop="exename">
           <Row>
             <i-col span="4">执行程序：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.run" placeholder=""></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.exename" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="isServerSync">
           <Row>
             <i-col span="4">服务器同步：</i-col>
             <i-col span="8">
-              <Select v-model="formValidate.isServerSync" @on-change="handleSelectUpdataWays">
-                <Option v-for="item in updataWayList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
+              <Select v-model="formValidate.isEnableSync" @on-change="handleSelectUpdataWays">
+                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
               </Select>
             </i-col>
           </Row>
@@ -76,12 +80,14 @@
 </template>
 
 <script>
-  import { netbarAdd } from '@/api/localGame'
+  import { addLocalGame } from '@/api/localGame'
   export default {
     name: 'subType3-1-edit',
     data () {
       return {
+        imgUrlxx: '',
         showIcon: false,
+        temp: '', // 临时存放icon
         msg: '',
         imgUrl: '',
         imgName: '',
@@ -90,14 +96,14 @@
           // imgUrl: '',
           show: '全部显示',
           name: '',
-          gamePath: '',
-          startPath: '',
-          run: '',
-          isServerSync: '自动更新'
+          path: '',
+          exepath: '',
+          exename: '',
+          isEnableSync: '自动更新'
         },
         updataWayList: [
-          { Id: 0, value: '启用' },
-          { Id: 1, value: '禁用' }
+          { Id: 0, value: '禁用' },
+          { Id: 1, value: '启用' }
         ],
         showList: [
           { Id: 0, value: '全部显示' },
@@ -107,10 +113,10 @@
         ruleValidate: {
           // starterScheme: [ { required: true, message: '至少选择一个', trigger: 'change' } ],
           name: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          gamePath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          startPath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          run: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          isServerSync: [ { required: true, message: '至少选择一个', trigger: 'change' } ]
+          path: [ { required: true, message: '不能为空', trigger: 'blur' } ],
+          exepath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
+          exename: [ { required: true, message: '不能为空', trigger: 'blur' } ],
+          isEnableSync: [ { required: true, message: '至少选择一个', trigger: 'change' } ]
         },
         isSync: false
       }
@@ -136,6 +142,18 @@
         }
         // this.formValidate.imgUrl = file.url
         // this.showIcon = true
+      },
+      imgUpload (data) {
+        console.log(data)
+        let file = data.target.files[0]
+        this.temp = file
+        var reader = new FileReader(file)
+        reader.readAsDataURL(file)
+        reader.onload = function (e) {
+          this.imgUrlxx = e.target.result
+          console.log(this.imgUrlxx)
+          debugger
+        }
       },
       handleFormatError (res) {
         this.$Message.error('handleFormatError::' + res.Msg)
@@ -177,18 +195,23 @@
         }
       },
       handleSubmit (name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            // clientStartPath, displayChoice, exeName, gameName, gamePath, iconPath, isServerSync
-            netbarAdd(this.formValidate.startPath, '-1', this.formValidate.run, this.formValidate.name, this.formValidate.gamePath, this.iconPath, this.isSync).then((res) => {
-              this.handleCallBackVaild(res)
-            }, () => {
-              this.$Message.error('请求出错，请稍后再试')
-            })
-          } else {
-            this.$Message.error('表单验证失败!')
-          }
-        })
+        let that = this
+        var reader = new FileReader(that.temp)
+        reader.readAsDataURL(that.temp)
+        reader.onload = function (e) {
+          that.$refs[name].validate((valid) => {
+            if (e.target.result) {
+              if (valid) {
+                addLocalGame(that.formValidate, e.target.result).then((res) => {
+                }, () => {
+                  that.$Message.error('请求出错，请稍后再试')
+                })
+              } else {
+                that.$Message.error('表单验证失败!')
+              }
+            }
+          })
+        }
       },
       handleReset (name) {
         this.checkAll = true

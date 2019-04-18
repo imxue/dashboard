@@ -5,31 +5,27 @@
       <Button type="primary" class="topColumn" @click="handleCancle">取消</Button>
     </div> -->
     <!-- Form -->
+         <i-input  accept="image/*" v-model="formValidate.x" />
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
           <Row>
             <i-col span="4">游戏图标：</i-col>
             <i-col span="8">
               <img :src="imgUrl" v-if="showIcon === false" class="imgIcon">
-              <Upload action="//10.30.18.62:1010/v1/netbar/upload"
-              name="fileName"
-              :on-success="handleUploadSuccess"
-              :on-format-error="handleFormatError">
-                  <Button icon="ios-cloud-upload-outline" disabled>上传游戏图标</Button>
-              </Upload>
+              <input accept="image/*" v-model="formValidate.x">
             </i-col>
           </Row>
         </FormItem>
         <FormItem prop="name">
           <Row>
             <i-col span="4">游戏名称：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.name" disabled placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.name"  disabled placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="savePath">
           <Row>
             <i-col span="4">服务端存放路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.savePath" placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.savePath"  placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="startPath">
@@ -80,6 +76,7 @@
         ],
         imgName: '',
         formValidate: {
+          x: '',
           file: [],
           show: '全部显示',
           name: '',

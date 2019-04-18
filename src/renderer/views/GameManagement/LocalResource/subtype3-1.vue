@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { getLocalGame, localMultiSync } from '@/api/localGame'
+  import { localMultiSync, getAllLocalGames } from '@/api/localGame'
   import { getDrivers } from '@/api/sync'
   export default {
     name: 'subType3-1',
@@ -165,7 +165,7 @@
       },
       handleGetTableList (offset, limit) {
         var listQuery = '?keyword=' + this.searchVal + '&gameType=' + this.optionVal + '&offset=' + offset + '&limit=' + limit
-        getLocalGame(listQuery).then((a) => {
+        getAllLocalGames(listQuery).then((a) => {
           var datalist = a.data.Data.List
           if (a.data.Code === 0) {
             if (datalist === null) {
