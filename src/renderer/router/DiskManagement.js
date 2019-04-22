@@ -66,13 +66,13 @@ export default {
         {
           path: 'subType3-1',
           name: 'type2-SubType3-1',
-          meta: { title: '全部方案' },
+          meta: { title: '启动方案' },
           component: () => import('@/views/DisklessManagement/subtype3/subtype3-1')
         },
         {
           path: 'subType3-2',
           name: 'DPCP配置',
-          meta: { title: 'DPCP配置' },
+          meta: { title: 'DHCP配置' },
           component: () => import('@/views/DisklessManagement/subtype3/dpcp')
         },
         {

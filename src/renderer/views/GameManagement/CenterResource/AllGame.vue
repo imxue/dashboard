@@ -25,21 +25,21 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：{{AllGameCount}} &nbsp;&nbsp;&nbsp;&nbsp;已下载：{{DownLoadCount}}</i-col>
-      <i-col span="20"><Page :total="AllGameCount"  style=" float:right;"/></i-col>
+      <i-col span="4">资源：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;已下载：{{DownLoadCount}}</i-col>
+      <i-col span="20"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="2" @on-change="handleGetTableList" style=" float:right;"/></i-col>
     </Row>
   </div>
 </template>
 
 <script>
-import { getAllGame, getLogicalDrives, setDownGame } from '@/api/localGame'
+import { getAllGame, getLogicalDrives, downloadGame } from '@/api/localGame'
 export default {
   name: 'allGame',
   data () {
     return {
       pageCount: '',
       disk: '',
-      AllGameCount: '0', // 游戏总数
+      pageInfo: '',
       DownLoadCount: '0', // 已下载的数
       Dg: {
         data: ''
@@ -87,14 +87,15 @@ export default {
           key: 'operation',
           render: (h, params) => {
             let type = params.row.State
-            let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              on: { click: () => { this.handleFixGame(params.row) } }
-            }, '修复游戏')
-            let b = h('span', {
-              style: { color: '#2d8cf0', textDecoration: 'underline' },
+            let a = h('Button',
+              { style: { color: '#2d8cf0', marginRight: '10px' },
+                on: { click: () => { this.handleFixGame(params.row) } }
+              }, '修复游戏')
+            let b = h('Button', {
+              style: { color: '#2d8cf0' },
               on: { click: () => { this.handleRemove(params.row) } }
             }, '本地移除')
-            let c = h('span', {
+            let c = h('Button', {
               style: { color: '#2d8cf0', textDecoration: 'underline' },
               on: { click: () => { this.handleDownGame(params.row.Id) } }
             }, '下载游戏')
@@ -115,11 +116,7 @@ export default {
     }
   },
   created () {
-    getAllGame().then(response => {
-      this.tableData = response.data
-      this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-      this.AllGameCount = response.data.length
-    })
+    this.handgetAllGame(0, 2, 'Name')
   },
   computed: {
     routes () {
@@ -127,6 +124,25 @@ export default {
     }
   },
   methods: {
+    /**
+     * 获取全部游戏
+     */
+    handgetAllGame (offset, limit, orderby) {
+      getAllGame(offset, limit, orderby).then(response => {
+        if (response.data.data instanceof Array) {
+          this.tableData = response.data.data
+          this.pageInfo = response.data.pageino
+          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
+        }
+      }, (e) => {
+        this.$Notice.error({ desc: '' + e, duration: 0 })
+      }).catch((e) => {
+        this.$Notice.error({ desc: '' + e, duration: 0 })
+      })
+    },
+    handleGetTableList (e) {
+      this.handgetAllGame((e - 1) * 2, 2, 'Name')
+    },
     handleButtonDW (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
@@ -138,13 +154,21 @@ export default {
         })
       }
     },
+    /**
+     * 下载游戏
+    */
     handleSubmit () {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
-      setDownGame(info).then(() => {
+      downloadGame(info.CenterGameId, info.DiskSymbol).then(() => {
         this.DownloadGameUp = false
         getAllGame()
+      }).catch((e) => {
+        this.$Notice.error({ desc: '' + e, duration: 0 })
       })
     },
+    /**
+     * 下载游戏弹窗
+    */
     handleDownGame (id) {
       this.DownloadGameUp = true
       this.deleteid = id

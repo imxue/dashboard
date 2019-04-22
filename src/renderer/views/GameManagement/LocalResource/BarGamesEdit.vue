@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleConfirm">确定</Button>
-      <Button type="primary" class="topColumn" @click="handleCancle">取消</Button>
-    </div> -->
-    <!-- Form -->
          <i-input  accept="image/*" v-model="formValidate.x" />
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
@@ -13,6 +8,7 @@
             <i-col span="8">
               <img :src="imgUrl" v-if="showIcon === false" class="imgIcon">
               <input accept="image/*" v-model="formValidate.x">
+              
             </i-col>
           </Row>
         </FormItem>

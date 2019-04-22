@@ -32,12 +32,12 @@ export default {
           meta: { title: '系统工具' },
           component: () => import('@/views/GameManagement/CenterResource/SystemTool')
         },
-        {
-          path: 'subType1-4',
-          name: '停服资源',
-          meta: { title: '停服资源' },
-          component: () => import('@/views/GameManagement/CenterResource/StopResource')
-        },
+        // {
+        //   path: 'subType1-4',
+        //   name: '停服资源',
+        //   meta: { title: '停服资源' },
+        //   component: () => import('@/views/GameManagement/CenterResource/StopResource')
+        // },
         // {
         //   path: 'subType1-5',
         //   name: 'SubType1-5',
@@ -97,30 +97,30 @@ export default {
       children: [
         {
           path: 'SubType3-1',
-          name: 'GameManagement-SubType3-1',
+          name: '已下载游戏',
           meta: { title: '已下载游戏' },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-1')
+          component: () => import('@/views/GameManagement/LocalResource/DownloadedGame')
         },
         {
-          path: 'SubType3-2',
+          path: 'BarGames',
           name: 'GameManagement-SubType3-2',
           meta: { title: '本吧游戏' },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-2')
+          component: () => import('@/views/GameManagement/LocalResource/BarGames')
         },
         {
-          path: 'SubType3-1-add',
-          name: 'GameManagement-SubType3-1-add',
+          path: 'BarGameAdd',
+          name: 'BarGameAdd',
           meta: { title: '添加', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-1-add'),
+          component: () => import('@/views/GameManagement/LocalResource/BarGameAdd'),
           hidden: true
         },
-        {
-          path: 'SubType3-1-edit',
-          name: 'GameManagement-SubType3-1-edit',
-          meta: { title: '编辑', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-1-edit'),
-          hidden: true
-        },
+        // {
+        //   path: 'BarGamesEdit',
+        //   name: 'GameManagement-SubType3-1-edit',
+        //   meta: { title: '编辑', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/BarGamesEdit'),
+        //   hidden: true
+        // },
         {
           path: 'SubType3-1-fix',
           name: 'GameManagement-SubType3-1-fix',
@@ -139,14 +139,14 @@ export default {
           path: 'SubType3-2-add',
           name: 'GameManagement-SubType3-add',
           meta: { title: '添加', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-2-add'),
+          component: () => import('@/views/GameManagement/LocalResource/BarGameAddMain'),
           hidden: true
         },
         {
-          path: 'SubType3-2-edit',
+          path: 'BarGamesEditMain', // 编辑游戏
           name: 'GameManagement-SubType3-edit',
           meta: { title: '编辑', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-2-edit'),
+          component: () => import('@/views/GameManagement/LocalResource/BarGamesEditMain'),
           hidden: true
         },
         {

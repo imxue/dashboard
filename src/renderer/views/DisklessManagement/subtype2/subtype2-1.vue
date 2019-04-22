@@ -248,7 +248,6 @@
           content: '<p>确认删除</p>',
           onOk: () => {
             let ip = localStorage.getItem('masterip')
-            debugger
             deleteImagex(name.name, ip).then(() => {
               this.handleGetImageList()
             })

@@ -1,3 +1,4 @@
+
 /**
  * Created by jiachenpan on 16/11/18.
  */
@@ -37,6 +38,14 @@ export function bytesToSize (bytes) {
   if (bytes === 0) return '0'
   var k = 1024 // or 1000
   var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+}
+
+export function bytesToSize2 (bytes) {
+  if (bytes === 0) return '0'
+  var k = 1024 // or 1000
+  var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   var i = Math.floor(Math.log(bytes) / Math.log(k))
   return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
 }
@@ -318,4 +327,17 @@ export function uniqueArr (arr) {
 
 export function isExternal (path) {
   return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+export function UploadImg (file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader(file)
+    reader.readAsDataURL(file)
+    reader.onload = (e) => {
+      resolve(e)
+    }
+    reader.onerror = (e) => {
+      reject(e)
+    }
+  })
 }

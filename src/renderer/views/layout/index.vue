@@ -14,10 +14,6 @@
               <template v-for="item  in levelList" >                
                 <BreadcrumbItem :key="item.path">
                   {{item.meta.title}}
-                  <!-- <span v-if="item.redirect==='noredirect'||index==levelList.length-1" class="no-redirect">{{item.meta.title}}</span>
-                  <router-link v-else :to="item.redirect||item.path">
-                    {{item.meta.title}} {{ item.hidden }}
-                  </router-link> -->
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
@@ -28,9 +24,6 @@
         </Layout>
       </Layout>
     </article>
-    <!-- <footer>
-      <FooterBar></FooterBar>
-    </footer> -->
   </div>
 </template>
 
@@ -82,7 +75,6 @@
     flex: auto;
    
   }
-
   .layout{
     border: 1px solid #d7dde4;
     background: #f5f7f9;

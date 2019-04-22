@@ -8,9 +8,6 @@
     </div>
     <!-- table -->
     <div class="mainCenter">
-            <!-- <Select v-model="model1"  class="topColumn" style="width:150px;">
-              <Option v-for="item in gameList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ item.label }}</Option>
-            </Select> -->
       <Form ref="formValidate" :model="formValidate">
         <FormItem label="">
           <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox"></Table>

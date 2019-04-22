@@ -101,7 +101,8 @@ export default {
     }
   },
   created () {
-    getTodayUpdateGames().then((response) => {
+    getTodayUpdateGames(0, 10, 'Name').then((response) => {
+      this.tableData = response.data.data
       console.log(response)
     })
   },

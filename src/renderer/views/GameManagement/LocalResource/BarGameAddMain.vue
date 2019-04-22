@@ -1,42 +1,25 @@
 <template>
-  <div>
+  <div class="containers">
     <!-- <div class="topItem">
       <Button type="primary" class="topColumn" @click="handleConfirm">确定</Button>
       <Button type="primary" class="topColumn" @click="handleCancle">取消</Button>
     </div> -->
     <!-- Form -->
-      <img :src='imgUrlxx'>
+ 
 
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
           <Row>
             <i-col span="4">游戏图标：</i-col>
             <i-col span="8">
-           
-              <!-- 10.30.11.6:8080  10.30.18.62:1010-->
-              <!-- //jsonplaceholder.typicode.com/posts/ -->
-              <!-- <Upload action="//10.30.18.62:1010/v1/netbar/upload"
-                name="fileName"
-                :on-success="handleUploadSuccess"
-                :on-format-error="handleFormatError">
-                  <Button icon="ios-cloud-upload-outline">上传游戏图标</Button>
-              </Upload> -->
-              <input type="file" v-on:change='imgUpload'>
+           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
+             <img :src='imgUrlxx'>
+            <p>Click or drag files here to upload</p>
               <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
             </i-col>
           </Row>
-           
         </FormItem>
-        <!-- <FormItem prop="starterScheme">
-          <Row>
-            <i-col span="4">显示选择：</i-col>
-            <i-col span="8">
-              <Select v-model="formValidate.starterScheme"  @on-change="handleSelectShow"  placeholder="全部显示">
-                <Option v-for="item in showList" :value="item.value" :key="item.Id">{{ item.value }}</Option>
-              </Select>
-            </i-col>
-          </Row>
-        </FormItem> -->
+  
         <FormItem prop="name">
           <Row>
             <i-col span="4">游戏名称：</i-col>
@@ -81,6 +64,7 @@
 
 <script>
   import { addLocalGame } from '@/api/localGame'
+  import { UploadImg } from '@/utils/index'
   export default {
     name: 'subType3-1-edit',
     data () {
@@ -102,8 +86,8 @@
           isEnableSync: '自动更新'
         },
         updataWayList: [
-          { Id: 0, value: '禁用' },
-          { Id: 1, value: '启用' }
+          { Id: 1, value: '启用' },
+          { Id: 0, value: '禁用' }
         ],
         showList: [
           { Id: 0, value: '全部显示' },
@@ -146,14 +130,8 @@
       imgUpload (data) {
         console.log(data)
         let file = data.target.files[0]
+        this.imgUrlxx = file.path
         this.temp = file
-        var reader = new FileReader(file)
-        reader.readAsDataURL(file)
-        reader.onload = function (e) {
-          this.imgUrlxx = e.target.result
-          console.log(this.imgUrlxx)
-          debugger
-        }
       },
       handleFormatError (res) {
         this.$Message.error('handleFormatError::' + res.Msg)
@@ -196,22 +174,28 @@
       },
       handleSubmit (name) {
         let that = this
-        var reader = new FileReader(that.temp)
-        reader.readAsDataURL(that.temp)
-        reader.onload = function (e) {
+        UploadImg(that.temp).then((e) => {
           that.$refs[name].validate((valid) => {
             if (e.target.result) {
               if (valid) {
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
+                  that.$Message.info(res.data)
+                  that.$router.push({
+                    path: 'BarGames',
+                    query: { }
+                  })
                 }, () => {
-                  that.$Message.error('请求出错，请稍后再试')
                 })
               } else {
                 that.$Message.error('表单验证失败!')
               }
             }
           })
-        }
+        }, (e) => {
+          that.$Message.error('failed' + e)
+        }).catch((err) => {
+          that.$Message.error('failed' + err)
+        })
       },
       handleReset (name) {
         this.checkAll = true

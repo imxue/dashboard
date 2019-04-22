@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { localMultiSync, getAllLocalGames } from '@/api/localGame'
+  import { localMultiSync, getDownloadedGames } from '@/api/localGame'
   import { getDrivers } from '@/api/sync'
   export default {
     name: 'subType3-1',
@@ -50,10 +50,25 @@
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
-                case true:
-                  return h('span', '最新版本')
-                case false:
-                  return h('span', { style: { color: '#008000' } }, '更新中')
+                case 0:
+                  return h('span', '未更新')
+                case 1:
+                  return h('span', { style: { color: '#008000' } }, '已更新')
+                default:
+                  return '-'
+              }
+            }
+          },
+          {
+            title: '更新模式',
+            key: 'UpdateMode',
+            render: (h, params) => {
+              let type = params.row.UpdateMode
+              switch (type) {
+                case 0:
+                  return h('span', '手动更新')
+                case 1:
+                  return h('span', '自动更新')
                 default:
                   return '-'
               }
@@ -61,60 +76,32 @@
           },
           {
             title: '游戏类型',
-            // key: 'GType',
-            render: (h, params) => {
-              var type = Math.abs(params.row.GType)
-              if (type === 999) {
-                return h('span', '本吧游戏')
-              } else {
-                var arr = this.gameList
-                for (var name of arr) {
-                  if (name.Id === type) {
-                    // console.log(name.Name)
-                    return h('span', name.Name)
-                  }
-                }
-              }
-            }
+            key: 'TypeName'
           },
           { title: '游戏名称', key: 'Name' },
-          { title: '游戏热度', key: 'Centerpopularity' },
+          { title: '游戏热度', key: 'Popularity' },
           { title: '游戏大小', key: 'Size' },
-          {
-            title: '更新模式',
-            key: 'IsAutoupdate',
-            render: (h, params) => {
-              let type = params.row.IsAutoupdate
-              switch (type) {
-                case false:
-                  return h('span', '手动')
-                case true:
-                  return h('span', '自动')
-                default:
-                  return '-'
-              }
-            }
+          { title: '服务器存放路径',
+            key: 'SavePath',
+            tooltip: true,
+            width: 140
           },
-          { title: '服务器存放路径', key: 'Localpath' },
-          { title: '客户机执行路径', key: 'RunPath' },
+          { title: '执行程序', key: 'ExePath' },
           { title: '操作',
             key: 'operation',
             render: (h, params) => {
-              // let type = params.row.state
-              let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
+              let a = h('Button', {
+                props: { type: 'primary', size: 'small' },
+                style: {},
                 on: { click: () => { this.handleTableEdit(params.row) } }
               }, '编辑')
-              // let b = h('span', {
-              //   style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              //   on: { click: () => { this.handleTableFix(params.row) } }
-              // }, '修复')
-              let c = h('span', {
-                style: { color: '#2d8cf0', textDecoration: 'underline' },
+              let b = h('Button', {
+                props: { type: 'error', size: 'small' },
                 on: { click: () => { this.handleTableDelete(params.row) } }
               }, '删除')
               switch (params) {
                 default:
-                  return h('span', [a, c])
+                  return h('span', [a, b])
               }
             }
           }
@@ -123,11 +110,7 @@
       }
     },
     created () {
-      // console.log(this.$route.matched[0])
-      // console.log('hello', JSON.stringify(this.routes))
-      // this.test()
-      this.handleGetDrivers()
-      this.handleGetTableList(this.curroffset, this.currlimit)
+      this.handleGetTableList()
     },
     computed: {
       routes () {
@@ -154,34 +137,23 @@
       },
       handleSelectChange (index) {
         this.optionVal = index
-        // alert(index)
       },
       handleButtonSearch () {
         if (this.optionVal === undefined) {
           this.optionVal = 0
         }
-        // alert('selectValue::' + this.optionVal + '&&searchVal::' + this.searchVal)
         this.handleGetTableList(this.curroffset, this.currlimit)
       },
-      handleGetTableList (offset, limit) {
-        var listQuery = '?keyword=' + this.searchVal + '&gameType=' + this.optionVal + '&offset=' + offset + '&limit=' + limit
-        getAllLocalGames(listQuery).then((a) => {
-          var datalist = a.data.Data.List
-          if (a.data.Code === 0) {
-            if (datalist === null) {
-              this.data = null
-              this.tableData = []
-            } else {
-              this.tableData = a.data.Data.List
-              this.totalPageNumber = Number(a.data.Data.TotalCount)
-              this.currentPage = Number(a.data.Data.PageNo)
-              this.pageSize = Number(a.data.Data.PageSize)
-            }
-          } else {
-            this.$Message.error(a.data.Msg)
-          }
+      /**
+       * 获取已下载游戏
+      */
+      handleGetTableList () {
+        getDownloadedGames(0, 10, 'name').then((a) => {
+          this.tableData = a.data.data
         }, () => {
           this.$Message.error('请求出错，请稍后再试')
+        }).catch((e) => {
+          this.$Notice.error({ desc: '' + e, duration: 0 })
         })
       },
       hanbleChangePage (num) {
@@ -244,13 +216,14 @@
         this.getCheckboxVal = list
         return this.getCheckboxVal
       },
+      /**
+       * 编辑游戏
+      */
       handleTableEdit (index) {
-        // this.getCheckboxVal = this.tableSelectVal.push(index.Id)
-        // alert(JSON.stringify(index))
-        this.$router.push({
-          path: 'subtype3-1-edit',
-          query: { data: index }
-        })
+        // this.$router.push({
+        //   path: 'subtype3-1-edit',
+        //   query: { data: index }
+        // })
       },
       handleTableFix (index) {
         this.getCheckboxVal = this.tableSelectVal.push(index.Id)
@@ -276,5 +249,11 @@
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
+  .ivu-tooltip {
+    white-space: nowrap
+  }
+  .ivu-tooltip-rel{
+    white-space: nowrap
+  }
 </style>
 

@@ -1,7 +1,5 @@
-import { getNetCafe } from '../../api/login'
-
 const state = {
-  Netcafe: getNetCafe() // 获取网吧信息
+  Netcafe: '' // 获取网吧信息
 }
 
 const mutations = {

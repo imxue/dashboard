@@ -19,6 +19,7 @@
 
 <script>
 import { getLoad } from '@/api/localGame'
+import { bytesToSize2 } from '@/utils/index'
 export default {
   name: 'subType2-1',
   data () {
@@ -29,27 +30,16 @@ export default {
         { type: 'selection', width: 60, align: 'center' },
         {
           title: '当前状态',
-          key: 'state',
-          render: (h, params) => {
-            let type = params.row.State
-            switch (type) {
-              case 0:
-                return h('span', { style: { color: '#25da30' } }, '正在下载')
-              case 1:
-                return h('span', '等待')
-              default:
-                return '-'
-            }
-          }
+          key: 'Status'
         },
-        { title: '游戏类型', key: 'type' },
+        { title: '游戏类型', key: 'TypeName' },
         { title: '游戏名称', key: 'Name' },
         // { title: '当前热度', key: 'hot' },
-        { title: '更新量', key: 'updateSize' },
-        { title: '已更新', key: 'updatedSize' },
-        { title: '进度', key: 'jd' },
-        { title: '更新速度', key: 'speed' },
-        { title: '预计完成时间', key: 'time' },
+        { title: '更新量', key: 'UpdateBytes' },
+        { title: '已更新', key: 'UpdateBytes' },
+        { title: '进度', key: 'Progress' },
+        { title: '更新速度', key: 'UpdateSpeed' },
+        { title: '预计完成时间', key: 'PreFinishedTime' },
         { title: '操作',
           key: 'operation',
           render: (h, params) => {
@@ -78,9 +68,7 @@ export default {
     }
   },
   created () {
-    getLoad({ PageSize: 4, CurrentPage: 1 }).then((response) => {
-      this.tableData = response.data.games
-    })
+    this.HandleGetLoadQueue(0, 10, 'name')
   },
   computed: {
     routes () {
@@ -88,83 +76,37 @@ export default {
     }
   },
   methods: {
-    handleButtonStart (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        alert('val')
-      }
+    /**
+     * 获取下载队列
+     */
+    HandleGetLoadQueue (offset, limit, orderby) {
+      getLoad(offset, limit, orderby).then(response => {
+        console.log('获取下载队列')
+        console.log(response)
+        console.log('获取下载队列')
+        if (response.data.data) {
+          let temp = response.data.data
+          for (let i = 0; i < temp.length; i++) {
+            temp[i].Progress = Math.round(temp[i].UpdateBytes / temp[i].TotalBytes * 10000) / 100.00 + '%'
+            temp[i].TotalBytes = bytesToSize2(temp[i].TotalBytes)
+          }
+          this.tableData = response.data.data
+        }
+      })
     },
-    handleButtonStop (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        alert('val')
-      }
+    /**
+     *
+    */
+    handleCheckBox () {
+
     },
-    handleButtonDelete (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        alert('val')
-      }
-    },
-    handleButtonTop (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        alert('val')
-      }
-    },
-    handleButtonMove (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        alert('val')
-      }
-    },
-    handleButtonSet (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        this.$router.push({
-          path: 'subtype2-set',
-          query: { id: this.getCheckboxVal }
-        })
-      }
-    },
-    handleCheckBox (arr) {
-      var data = arr
-      var list = []
-      for (var i in arr) {
-        list.push(data[i].id)
-      }
-      this.getCheckboxVal = list.join(',')
-      console.log(this.getCheckboxVal)
-      return this.getCheckboxVal
-    },
-    handleTableDelete (index) {
-      this.tableData.splice(index, 1)
-    },
-    handleTableMove (index) {},
-    handleTableTop (index) {
-      var currId = index.id
-      alert(currId)
-    },
-    handleTableSort (data) {
-      alert(data)
-    },
-    changePage (key, type) {
-      console.log('排序字段:' + key)
-      console.log('排序规则:' + type)
-    }
+    handleTableTop () {},
+    handleTableSort () {},
+    handleButtonStart () {},
+    handleButtonStop () {},
+    changePage () {}
   }
+
 }
 </script>
 
