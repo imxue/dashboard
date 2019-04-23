@@ -17,10 +17,10 @@
       </Row>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleTableEdit" stripe></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
-      <i-col span="20"><Page :current="currentPage" :page-size="pageSize" :total="totalPageNumber" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
+      <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
+      <i-col span="24"><Page :current="currentPage" :page-size="pageSize" :total="totalPageNumber" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
     </Row>
   </div>
 </template>
@@ -220,10 +220,10 @@
        * 编辑游戏
       */
       handleTableEdit (index) {
-        // this.$router.push({
-        //   path: 'subtype3-1-edit',
-        //   query: { data: index }
-        // })
+        this.$router.push({
+          path: 'BarGamesEditMain',
+          query: { data: index }
+        })
       },
       handleTableFix (index) {
         this.getCheckboxVal = this.tableSelectVal.push(index.Id)

@@ -10,7 +10,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonRemove">本地移除</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
       <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
       <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>

@@ -163,9 +163,10 @@ export default {
             var datalist = a.data.result.list
             if (datalist && a.data.error === null) {
               this.spinShow = false
-              this.serverList = a.data.result.list
+              this.serverList = datalist
               this.handleGetCurrMasterServerIp(datalist)
             } else {
+              localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
           })

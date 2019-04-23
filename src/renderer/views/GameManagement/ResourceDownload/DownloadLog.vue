@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="topItem">
-      <DatePicker size="large" type="date" placeholder="请选择日期" @on-change="handleChangeDate"></DatePicker>
+      <DatePicker size="large" type="date" placeholder="请选择日期" @on-change="handleChangeDate" ></DatePicker>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe></Table>
     <Row style="margin-top:10px; ">
       <Page :total="100" style=" float:right;"/>
     </Row>

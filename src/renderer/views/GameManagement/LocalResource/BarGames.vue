@@ -14,7 +14,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonEdit">编辑</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonSync">同步</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonMore">批量操作</Button> -->
-      <Button type="primary" class="topColumn" @click="handleButtonDelete">修复</Button>
+      <Button type="primary" class="topColumn" @click="HandleRepairGame">修复</Button>
       <Button type="error" class="topColumn" @click="handleButtonDelete">删除</Button>
     </div>
     <!-- table -->
@@ -24,6 +24,8 @@
       :columns="tableColumns"
       :data="tableData"
       @on-selection-change="handleCheckBox"
+      @on-row-dblclick="handleTableEdit"
+      stripe
     ></Table>
     <Row style="margin-top:10px; ">
       <i-col span="24">
@@ -44,7 +46,8 @@
 import {
   netbarMultiSync,
   getAllLocalGames,
-  deleteLocalGame
+  deleteLocalGame,
+  repairGame
 } from '@/api/localGame'
 
 export default {
@@ -145,7 +148,6 @@ export default {
         .then(e => {
           this.tableData = e.data.data
           this.pageInfo = e.data.pageino
-          console.log(e.data.data)
         })
         .catch(error => {
           this.$Notice.open({
@@ -163,17 +165,11 @@ export default {
         this.$Message.error('操作失败：' + res.data.Msg)
       }
     },
+    /*
+    添加游戏
+    */
     handleButtonAdd () {
       this.$router.push({ path: 'subtype3-2-add' })
-      // val = this.getCheckboxVal.length
-      // if (val === 0) {
-      //   this.$Message.error('请至少选择列表中的一项')
-      // } else {
-      //   this.$router.push({
-      //     path: 'subtype3-2-add',
-      //     query: { id: this.getCheckboxVal }
-      //   })
-      // }
     },
     handleButtonEdit (val) {
       val = this.getCheckboxVal.length
@@ -219,8 +215,6 @@ export default {
       */
     handleCheckBox (arr) {
       this.getCheckboxVal = arr
-
-      console.log(this.getCheckboxVal)
       return this.getCheckboxVal
     },
 
@@ -260,12 +254,26 @@ export default {
             }
           )
         },
-
         onCancel: () => {
           this.$Modal.remove()
         }
 
       })
+    },
+    /**
+     * 修复游戏
+     */
+    HandleRepairGame (id) {
+      if (this.getCheckboxVal.length !== 0) {
+        // repairGame(this.getCheckboxVal[0].Id).then((e) => {
+        //   console.log(e)
+        // })
+        repairGame('02a6997c612f418790538f0ba8d70f48').then((e) => {
+          this.$Message.success(e.data)
+        })
+      } else {
+        this.$Message.error('请至少选择列表中的一项')
+      }
     }
   }
 }

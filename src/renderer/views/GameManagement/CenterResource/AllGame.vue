@@ -23,7 +23,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonRemove">本地移除</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
       <i-col span="4">资源：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;已下载：{{DownLoadCount}}</i-col>
       <i-col span="20"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="2" @on-change="handleGetTableList" style=" float:right;"/></i-col>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getAllGame, getLogicalDrives, downloadGame } from '@/api/localGame'
+import { getAllGame, getLogicalDrives, downloadGame, repairGame } from '@/api/localGame'
 export default {
   name: 'allGame',
   data () {
@@ -182,6 +182,9 @@ export default {
         this.$Message.error('请至少选择列表中的一项')
       } else {
         this.$Message.info('修复中，请耐心等待……')
+        repairGame(this.getCheckboxVal[0].Id).then((e) => {
+          this.$Message.info(e.data)
+        })
       }
     },
     handleButtonRemove (val) {
@@ -202,14 +205,11 @@ export default {
     handleReset () {
       this.DownloadGameUp = false
     },
+    /**
+     * 获取选取的表格数据
+    */
     handleCheckBox (arr) {
-      var data = arr
-      var list = []
-      for (var i in arr) {
-        list.push(data[i].id)
-      }
-      this.getCheckboxVal = list.join(',')
-      console.log(this.getCheckboxVal)
+      this.getCheckboxVal = arr
       return this.getCheckboxVal
     },
     handleTableDw (index) {

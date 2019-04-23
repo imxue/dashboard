@@ -268,3 +268,16 @@ export function downloadGame (CenterGameId, DiskSymbol) {
     data
   })
 }
+/*
+* 修复游戏
+*/
+export function repairGame (id) {
+  const data = {
+    id
+  }
+  return request({
+    url: `/v1/centerresource/repairGame?CenterGameId=${data.id}`,
+    method: 'post',
+    data
+  })
+}

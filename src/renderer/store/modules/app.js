@@ -4,7 +4,6 @@ const state = {
 
 const mutations = {
   SAVE_Master_IP (state, masterip) {
-    debugger
     state.masterip = masterip
   }
 
