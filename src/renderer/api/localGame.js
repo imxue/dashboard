@@ -281,3 +281,19 @@ export function repairGame (id) {
     data
   })
 }
+/**
+ * 日志下载
+ */
+
+export function getDownloadLogs (offset, limit, SearchDate) {
+  const data = {
+    offset,
+    limit,
+    SearchDate
+  }
+  return request({
+    url: `/v1/centerresource/getDownloadLogs?offset=${data.offset}&limit=${data.limit}SearchDate=${data.SearchDate}`,
+    method: 'get',
+    data
+  })
+}

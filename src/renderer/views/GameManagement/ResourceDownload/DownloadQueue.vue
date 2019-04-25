@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonStart">开始</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonStop">暂停</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonStart">{{$t('Start')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
       <!-- <Button type="error"   class="topColumn" @click="handleButtonDelete">删除任务</Button>
       <Button type="primary" class="topColumn" @click="handleButtonTop">置顶</Button>
       <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { getLoad } from '@/api/localGame'
+import { getLoad, deleteLocalGame } from '@/api/localGame'
 import { bytesToSize2 } from '@/utils/index'
 export default {
   name: 'subType2-1',
@@ -32,29 +32,29 @@ export default {
           title: '当前状态',
           key: 'Status'
         },
-        { title: '游戏类型', key: 'TypeName' },
-        { title: '游戏名称', key: 'Name' },
+        { title: '游戏类型', key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { title: '游戏名称', key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         // { title: '当前热度', key: 'hot' },
-        { title: '更新量', key: 'UpdateBytes' },
-        { title: '已更新', key: 'UpdateBytes' },
-        { title: '进度', key: 'Progress' },
-        { title: '更新速度', key: 'UpdateSpeed' },
-        { title: '预计完成时间', key: 'PreFinishedTime' },
-        { title: '操作',
+        { title: '更新量', key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+        { title: '已更新', key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('updatedVolume')) } },
+        { title: '进度', key: 'Progress', renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
+        { title: '更新速度', key: 'UpdateSpeed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+        { title: '预计完成时间', key: 'PreFinishedTime', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
+        { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           render: (h, params) => {
             let type = params.row.id
             let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              on: { click: () => { this.handleTableDelete(params.index) } }
-            }, '删除')
+              on: { click: () => { this.handleTableDelete(params.row.CenterGameId) } }
+            }, this.$t('Delete'))
             let b = h('span', {
               style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
               on: { click: () => { this.handleTableMove(params.row) } }
-            }, '上移')
+            }, this.$t('MoveUp'))
             let c = h('span', {
               style: { color: '#2d8cf0', textDecoration: 'underline' },
               on: { click: () => { this.handleTableTop(params.row) } }
-            }, '置顶')
+            }, this.$t('Topping'))
             switch (type) {
               case 0:
                 return h('div', [a])
@@ -91,6 +91,19 @@ export default {
             temp[i].TotalBytes = bytesToSize2(temp[i].TotalBytes)
           }
           this.tableData = response.data.data
+        }
+      })
+    },
+    /**
+     * 删除
+     */
+    handleTableDelete (id) {
+      this.$Modal.confirm({
+        title: this.$t('DeleteTip'),
+        okText: this.$t('confirm'),
+        cancelText: this.$t('cancelText'),
+        onOk: () => {
+          deleteLocalGame(id).then((e) => { console.log(e) }, (e) => { console.log(e) }).catch((e) => { console.log(e) })
         }
       })
     },

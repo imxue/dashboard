@@ -7,33 +7,35 @@
       :label-width="90"
       :rules="ruleValidate"
     >
-      <FormItem label="机器名前缀" prop="prefix">
+      <FormItem :label="this.$t('MachineNamePrefix')" prop="prefix">
         <Input v-model="DHCPTable.prefix"/>
       </FormItem>
-      <FormItem label="编号长度" prop="numbetLength">
+      <FormItem :label="this.$t('Numberlength')" prop="numbetLength">
         <Input v-model="DHCPTable.numbetLength"/>
       </FormItem>
-      <FormItem label="起始编号" prop="numberBegin">
+      <FormItem :label="this.$t('StartingNumber')" prop="numberBegin">
         <Input v-model="DHCPTable.numberBegin"/>
       </FormItem>
-      <FormItem label="起始IP" prop="ipBegin">
+      <FormItem :label="this.$t('StartingIP')" prop="ipBegin">
         <Input v-model="DHCPTable.ipBegin"/>
       </FormItem>
 
-      <FormItem label="添加方式" prop="addMode">
+      <FormItem :label="this.$t('AddMode')" prop="addMode">
         <Select v-model="DHCPTable.addMode" style="width:200px">
-          <Option value="disable">禁用客户机添加</Option>
-          <Option value="inputNumber">输入编号添加</Option>
-          <Option value="inputEnter">回车添加</Option>
+          <Option value="disable">{{$t('DisableClientAdd')}}</Option>
+          <Option value="inputNumber">{{$t('InputNumberAdded')}}</Option>
+          <Option value="inputEnter">{{$t('CarriageReturn')}}</Option>
         </Select>
       </FormItem>
 
-      <FormItem label="启动方案" prop="pcGp">
-        <Input v-model="DHCPTable.pcGp"/>
+      <FormItem :label="this.$t('StartUpPlan')" prop="pcGp">
+        <Select v-model="DHCPTable.pcGp" style="width:200px">
+          <Option v-for="item in pcGpList" v-bind:key = "item.name" v-bind:value="item.name">{{item.name}}</Option>
+        </Select>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('DHCPTable')" :loading="loading">应用</Button>
-        <Button @click="handleReset('DHCPTable')" style="margin-left: 8px">重置</Button>
+        <Button type="primary" @click="handleSubmit('DHCPTable')" :loading="loading">{{$t('apply')}}</Button>
+        <Button @click="handleReset('DHCPTable')" style="margin-left: 8px">{{$t('Reset')}}</Button>
       </FormItem>
     </Form>
   </div>
@@ -42,12 +44,13 @@
 import {
   editDHCPConfigx,
   getPcConfig,
-  getPcGroup,
+  getPcGroupx,
   getDHCPConfig
 } from '@/api/wupan'
 export default {
   data () {
     return {
+      pcGpList: '',
       showPopup: false,
       loading: false,
       DHCPTable: {
@@ -60,67 +63,67 @@ export default {
       },
       ruleValidate: {
         prefix: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }
         ],
         numbetLength: [
           {
             required: true,
-            message: '不能为空',
+            message: this.$t('Thisfieldcannotbeempty'),
             trigger: 'blur'
           }
         ],
         numberBegin: [
           {
             required: true,
-            message: '不能为空',
+            message: this.$t('Thisfieldcannotbeempty'),
             trigger: 'blur'
           }
         ],
         ipBegin: [
           {
             required: true,
-            message: '不能为空',
+            message: this.$t('Thisfieldcannotbeempty'),
             trigger: 'blur'
           }
         ],
         addMode: [
           {
             required: true,
-            message: '不能为空',
+            message: this.$t('Thisfieldcannotbeempty'),
             trigger: 'blur'
           }
         ],
         pcGp: [
           {
             required: true,
-            message: '不能为空',
+            message: this.$t('Thisfieldcannotbeempty'),
             trigger: 'blur'
           }
         ]
       },
       clientTable: [
         {
-          title: '机器名前缀',
+          renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) },
           key: 'prefix'
         },
         {
-          title: '编号长度',
+          renderHeader: (h, params) => { return h('span', this.$t('Numberlength')) },
           key: 'numbetLength'
         },
         {
-          title: '起始编号',
+          renderHeader: (h, params) => { return h('span', this.$t('StartingNumber')) },
           key: 'numberBegin'
         },
         {
-          title: '起始IP',
+          renderHeader: (h, params) => { return h('span', this.$t('StartingIP')) },
           key: 'ipBegin'
         },
         {
-          title: '客户机添加方式 ',
+          renderHeader: (h, params) => { return h('span', this.$t('AddMode')) },
           key: 'addMode'
         },
         {
-          title: '启动方案',
+          renderHeader: (h, params) => { return h('span', this.$t('StartupScenario')) },
           key: 'pcGp'
         }
       ]
@@ -139,11 +142,11 @@ export default {
           editDHCPConfigx(that.DHCPTable, localStorage.getItem('masterip'))
             .then(e => {
               this.loading = false
-              that.$Message.success('DPCP设置成功')
+              that.$Message.success('DPCP' + this.$t('SetSucess'))
             })
             .catch(() => {
               this.loading = false
-              that.$Message.error('网络出问题了')
+              that.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
             })
         } else {
           this.loading = false
@@ -155,7 +158,6 @@ export default {
     },
     handleGetPcConf (mac) {
       getPcConfig(mac)
-      getPcGroup()
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
@@ -170,6 +172,11 @@ export default {
   created () {
     let ip = localStorage.getItem('masterip')
     this.getDHCP(ip)
+    getPcGroupx(ip).then((e) => {
+      this.pcGpList = e.data.result.list
+      console.log(this.pcGpList)
+    },
+    (e) => { this.$Message.error(e.data.error) })
   }
 }
 </script>

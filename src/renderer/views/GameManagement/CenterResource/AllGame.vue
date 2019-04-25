@@ -1,32 +1,32 @@
 <template>
   <div>
-    <Modal v-model="DownloadGameUp" draggable scrollable title="下载游戏" footer-hide>
+    <Modal v-model="DownloadGameUp" draggable scrollable :title="$t('DownloadGames')" footer-hide>
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
-          <FormItem label="请选择盘符">
-            <Select v-model="Dg.data" placeholder="请选择盘符">
+          <FormItem :label="$t('DiskSymbol')" label-position="left">
+            <Select v-model="Dg.data" :placeholder="$t('Search')" >
               <Option v-for='item in disk' v-bind:value='item' v-bind:key='item'>{{item}}</Option>
             </Select>
             </FormItem> 
               <FormItem>
-            <Button type="primary" @click="handleSubmit('Dg')">下载游戏</Button>
-            <Button @click="handleReset()" style="margin-left: 8px">取消</Button>
+            <Button type="primary" @click="handleSubmit('Dg')">{{$t('DownloadGames')}}</Button>
+            <Button @click="handleReset()" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
         </Form>
     </Modal>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:150px;">
-        <Option v-for="item in gameList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ item.label }}</Option>
+        <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
       </Select>
-      <Input class="topColumn" search enter-button="搜索" placeholder="请输入游戏首字母..." clearable style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonDW">下载</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonFixGame">修复</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRemove">本地移除</Button>
+      <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;已下载：{{DownLoadCount}}</i-col>
-      <i-col span="20"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="2" @on-change="handleGetTableList" style=" float:right;"/></i-col>
+      <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：{{DownLoadCount}}</i-col>
+      <i-col span="20"><Page :total="this.pageInfo.count" :current="pageInfo.page_size" :page-size="2" @on-change="handleGetTableList" style=" float:right;"/></i-col>
     </Row>
   </div>
 </template>
@@ -50,16 +50,16 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        { Id: 0, value: '热门游戏', label: '热门游戏' },
-        { Id: 1, value: '网络游戏', label: '网络游戏' },
-        { Id: 2, value: '单机游戏', label: '单机游戏' },
-        { Id: 3, value: '休闲游戏', label: '休闲游戏' },
-        { Id: 4, value: '辅助游戏', label: '辅助游戏' }
+        { Id: 0, value: 'HotGame', label: 'HotGame' },
+        { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
+        { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
+        { Id: 3, value: 'CasualGame', label: 'CasualGame' },
+        { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
       ],
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          title: '当前状态',
+          renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
           render: (h, params) => {
             let type = params.row.State
@@ -77,28 +77,28 @@ export default {
             }
           }
         },
-        { title: '游戏类型', key: 'TypeName' },
-        { title: '游戏名称', key: 'Name' },
-        { title: '当前热度', key: 'Popularity' },
-        { title: '游戏大小', key: 'Size' },
-        { title: '中心游戏版本', key: 'CenterVersion' },
-        { title: '本地游戏版本', key: 'LocalVersion' },
-        { title: '操作',
+        { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('Name')) } },
+        { key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           render: (h, params) => {
             let type = params.row.State
             let a = h('Button',
               { style: { color: '#2d8cf0', marginRight: '10px' },
                 on: { click: () => { this.handleFixGame(params.row) } }
-              }, '修复游戏')
+              }, this.$t('RepairGame'))
             let b = h('Button', {
               style: { color: '#2d8cf0' },
               on: { click: () => { this.handleRemove(params.row) } }
-            }, '本地移除')
+            }, this.$t('LocalRemoval'))
             let c = h('Button', {
               style: { color: '#2d8cf0', textDecoration: 'underline' },
               on: { click: () => { this.handleDownGame(params.row.Id) } }
-            }, '下载游戏')
+            }, this.$t('DownloadGames'))
             switch (type) {
               case 0:
                 return h('div', [c])
@@ -146,7 +146,7 @@ export default {
     handleButtonDW (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         this.$router.push({
           path: 'subtype1-download',
@@ -174,12 +174,12 @@ export default {
       this.deleteid = id
       getLogicalDrives().then(response => {
         this.disk = response.data
-      }).catch(() => { this.$Message.info('获取磁盘信息错误') })
+      }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
     },
     handleButtonFixGame (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         this.$Message.info('修复中，请耐心等待……')
         repairGame(this.getCheckboxVal[0].Id).then((e) => {
@@ -190,7 +190,7 @@ export default {
     handleButtonRemove (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         this.$router.push({
           path: 'subtype1-remove',

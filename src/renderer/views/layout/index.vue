@@ -13,7 +13,7 @@
             <Breadcrumb :style="{margin: '10px 0'}">
               <template v-for="item  in levelList" >                
                 <BreadcrumbItem :key="item.path">
-                  {{item.meta.title}}
+                  {{$t(item.meta.title)}}
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>

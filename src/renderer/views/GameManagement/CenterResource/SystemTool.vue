@@ -1,15 +1,16 @@
 <template>
   <div>
     <div class="topItem">
-      <Input class="topColumn" search enter-button="搜索" placeholder="请输入游戏首字母..." clearable style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonDW">下载</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonFixGame">修复</Button>
+      <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
-      <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>
+      <i-col span="4">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
+       <!-- <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}}{{$t('Downloaded')}}：{{DownLoadCount}}</i-col> -->
+      <i-col span="20"><Page :total="10"  style=" float:right;"/></i-col>
     </Row>
     
   </div>
@@ -43,12 +44,12 @@
               }
             }
           },
-          { title: '类型', key: 'type' },
-          { title: '工具名称', key: 'name' },
-          { title: '工具大小', key: 'size' },
-          { title: '中心版本', key: 'versionCenter' },
-          { title: '本地版本', key: 'versionLocal' },
-          { title: '本地游路径', key: 'path' }
+          { key: 'type', renderHeader: (h, params) => { return h('span', this.$t('Type')) } },
+          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
+          { key: 'size', renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) } },
+          { key: 'versionCenter', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+          { key: 'versionLocal', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+          { key: 'path', renderHeader: (h, params) => { return h('span', this.$t('localPath')) } }
         ],
         tableData: [
           { id: 0, state: 0, type: '菜单工具', name: '游戏组件库', size: '10.85 GB', versionCenter: '20181010153501', versionLocal: '20181010153501', path: 'xxxxxxxxxxxx' },
@@ -58,11 +59,7 @@
         ]
       }
     },
-    created () {
-      // console.log(this.$route.matched[0])
-      // console.log('hello', JSON.stringify(this.routes))
-      // this.test()
-    },
+    created () {},
     computed: {
       routes () {
         return this.$router.options.routes

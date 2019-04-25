@@ -1,47 +1,39 @@
 <template>
   <div>
-         <i-input  accept="image/*" v-model="formValidate.x" />
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
-        <FormItem prop="file">
+        <!-- <FormItem prop="file">
           <Row>
             <i-col span="4">游戏图标：</i-col>
             <i-col span="8">
               <img :src="imgUrl" v-if="showIcon === false" class="imgIcon">
               <input accept="image/*" v-model="formValidate.x">
-              
             </i-col>
           </Row>
-        </FormItem>
-        <FormItem prop="name">
+        </FormItem> -->
+        <FormItem prop="Name">
           <Row>
             <i-col span="4">游戏名称：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.name"  disabled placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.Name" placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="savePath">
           <Row>
             <i-col span="4">服务端存放路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.savePath"  placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.SavePath"  placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="startPath">
+        <FormItem prop="ExePath">
           <Row>
-            <i-col span="4">客户机启动路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.startPath" placeholder="请输入游戏名称"></i-input></i-col>
-          </Row>
-        </FormItem>
-        <FormItem prop="run">
-          <Row>
-            <i-col span="4">执行程序：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.run" placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="4">客户机执行文件</i-col>
+            <i-col span="8"><i-input v-model="formValidate.ExePath" placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="updateWay">
           <Row>
-            <i-col span="4">更新方式：</i-col>
+            <i-col span="4">更新模式：</i-col>
             <i-col span="8">
-              <Select v-model="formValidate.updateWay" @on-change="handleSelectUpdataWays">
-                <Option v-for="item in updataWayList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
+              <Select v-model="formValidate.UpdateMode" @on-change="handleSelectUpdataWays">
+                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
               </Select>
             </i-col>
           </Row>
@@ -64,26 +56,19 @@
         apiUrl: 'http://10.30.18.62:1010',
         showIcon: false,
         imgUrl: '',
-        defaultList: [
-          {
-            'name': 'a42bdcc1178e62b4694c830f028db5c0',
-            'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-          }
-        ],
         imgName: '',
         formValidate: {
-          x: '',
           file: [],
           show: '全部显示',
           name: '',
-          savePath: '',
+          SavePath: '',
           startPath: '',
-          run: '',
-          updateWay: '自动更新'
+          ExePath: '',
+          UpdateMode: ''
         },
         updataWayList: [
-          { Id: 0, value: '自动更新' },
-          { Id: 1, value: '手动更新' }
+          { Id: 1, value: '自动更新' },
+          { Id: 0, value: '手动更新' }
         ],
         checkAll: false,
         ruleValidate: {
@@ -112,17 +97,11 @@
       handleCheckQuery () {
         if (this.$route.query.data) {
           var data = this.$route.query.data
-          this.formValidate.name = data.Name
-          this.formValidate.savePath = data.Localpath
-          this.formValidate.startPath = data.RunPath
-          this.formValidate.run = data.RunPath
-          this.imgUrl = this.apiUrl + data.IconPath
+          this.formValidate.Name = data.Name
+          this.formValidate.SavePath = data.SavePath
+          this.formValidate.ExePath = data.ExePath
+          this.formValidate.UpdateMode = data.UpdateMode
           this.autoupdate = data.IsAutoupdate
-          if (data.IsAutoupdate === true) {
-            this.formValidate.updateWay = '自动更新'
-          } else {
-            this.formValidate.updateWay = '手动更新'
-          }
         }
       },
       handleSelectUpdataWays (index) {

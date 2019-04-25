@@ -6,23 +6,23 @@
         <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}}</Option>
       </Select>
         
-      <Button type="primary" class="topColumn" @click="handleButtonRefresh">刷新</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
 
       <Divider type="vertical"/>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button> -->
       <!-- <Divider type="vertical"/> -->
       <!-- <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button> -->
  
-      <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">删除</Button>
+      <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">{{$t('Delete')}}</Button>
     </div>
 
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
 
 
     <Row style="margin:20px 0;">
-      <h3>网卡设置</h3>
+      <h3>{{$t('NetworkSetting')}}</h3>
       <Divider/>
-      <Button type="primary" class="topColumn" @click="handleLoadNICx">设置负载网卡</Button>
+      <Button type="primary" class="topColumn" @click="handleLoadNICx">{{$t('SetTheLoadNetworkCard')}}</Button>
     </Row>
     <Table
       border
@@ -32,7 +32,7 @@
       @on-selection-change="handleCheckBox"
     ></Table>
     <Row style="margin:20px 0;">
-      <h3>磁盘设置</h3>
+      <h3>{{$t('DiskSetting')}}</h3>
       <Divider/>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </Row>
@@ -50,22 +50,21 @@
         <p class="textAlign">设置磁盘中</p>
       </Modal>
     </div>
-
-    <Modal title="磁盘设置" v-model="showPopup02" width="500" footer-hide>
+    <Modal :title="this.$t('DiskSetting')" v-model="showPopup02" width="500" footer-hide>
       <Row class="rowlist">
-        <i-col span="4">设备路径：</i-col>
+        <i-col span="4">{{$t('DevicePath')}}：</i-col>
         <i-col span="16">{{rowData.path}}</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">磁盘大小：</i-col>
+        <i-col span="4">{{$t('DiskSize')}}：</i-col>
         <i-col span="16">{{rowData.size}} KB</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">可用空间：</i-col>
+        <i-col span="4">{{$t('AvailableSpace')}}：</i-col>
         <i-col span="16">{{rowData.availableSize}} KB</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">磁盘作用：</i-col>
+        <i-col span="4">{{$t('DiskEffect')}}：</i-col>
         <i-col span="20">
           <Select
             v-model="selecteDisk"
@@ -75,10 +74,10 @@
             style="width:200px;"
             placeholder="---请选择负载网卡---"
           >
-            <Option value="imageDisk">镜像盘</Option>
-            <Option value="dataDisk">数据盘</Option>
-            <Option value="writebackDisk">回写盘</Option>
-            <Option value="unUsed">未使用</Option>
+            <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
+            <Option value="dataDisk">{{$t('DataDisk')}}</Option>
+            <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
+            <Option value="unUsed">{{$t('Unused')}}</Option>
           </Select>
         </i-col>
       </Row>
@@ -101,7 +100,7 @@
         </i-col>
       </Row>
       <Row v-show="this.selecteDisk === 'dataDisk'" class="rowlist">
-        <i-col span="4">映射盘符：</i-col>
+        <i-col span="4">{{$t('MappingDiskSymbol')}}：</i-col>
         <i-col span="20">
           <Select
             v-model="selecteDiskF"
@@ -119,8 +118,8 @@
         </i-col>
       </Row>
       <div class="buttonList" style="margin-top:20px;">
-        <Button type="primary" @click="handleSetCard">保存</Button>
-        <Button @click="handleResetCard" style="margin-left: 8px">取消</Button>
+        <Button type="primary" @click="handleSetCard">{{$t('Save')}}</Button>
+        <Button @click="handleResetCard" style="margin-left: 8px">{{$t('cancelText')}}</Button>
       </div>
     </Modal>
   </div>
@@ -162,7 +161,7 @@ export default {
       tableColumns1: [
         // { type: 'selection', width: 60, align: 'center' },
         {
-          title: '服务状态',
+          renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'online',
           render: (h, params) => {
             let type = params.row.online
@@ -171,12 +170,12 @@ export default {
               switch (type) {
                 case '0':
                   return h('div', [
-                    h('span', { style: { color: '#999999' } }, '离线'),
-                    h('Tag', { props: { color: 'red' } }, '主服务器')
+                    h('span', { style: { color: '#999999' } }, this.$t('Offline')),
+                    h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))
                   ])
                 case '1':
                   return h('div', [
-                    h('span', { style: { color: '#0ecf1f' } }, '在线'),
+                    h('span', { style: { color: '#0ecf1f' } }, this.$t('online')),
                     h(
                       'Tag',
                       {
@@ -185,13 +184,13 @@ export default {
                           marginLeft: '8px'
                         }
                       },
-                      '主服务器'
+                      this.$t('MasterIp')
                     )
                   ])
                 case '2':
                   return h('div', [
-                    h('span', { style: { color: '#f90' } }, '在线异常'),
-                    h('Tag', { props: { color: 'red' } }, '主服务器')
+                    h('span', { style: { color: '#f90' } }, this.$t('OnlineException')),
+                    h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))
                   ])
                 default:
                   return '-'
@@ -199,58 +198,58 @@ export default {
             } else {
               switch (type) {
                 case '0':
-                  return h('span', { style: { color: '#999999' } }, '离线')
+                  return h('span', { style: { color: '#999999' } }, this.$t('Offline'))
                 case '1':
-                  return h('span', { style: { color: '#0ecf1f' } }, '在线')
+                  return h('span', { style: { color: '#0ecf1f' } }, this.$t('online'))
                 case '2':
-                  return h('span', { style: { color: '#f90' } }, '在线异常')
+                  return h('span', { style: { color: '#f90' } }, this.$t('OnlineException'))
                 default:
                   return '-'
               }
             }
           }
         },
-        { title: '服务器IP', key: 'serverIp' },
-        { title: '服务版本', key: 'dataVer' }
+        { key: 'serverIp', renderHeader: (h, params) => { return h('span', this.$t('ServerIP')) } },
+        { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } }
       ],
       tableData1: [],
       tableColumns2: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          title: '状态',
+          renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'linkStatic',
           disabled: 'true',
           render: (h, params) => {
             let type = params.row.linkStatic
             switch (type) {
               case 'offline':
-                return h('span', { style: { color: '#999999' } }, '离线')
+                return h('span', { style: { color: '#999999' } }, this.$t('Offline'))
               case 'online':
-                return h('span', '在线')
+                return h('span', this.$t('online'))
               default:
                 return '-'
             }
           }
         },
         {
-          title: '数据负载',
+          renderHeader: (h, params) => { return h('span', this.$t('DataLoad')) },
           key: 'vdiskSet',
           render: (h, params) => {
             let type = params.row.vdiskSet
             switch (type) {
               case 'yes':
-                return h('span', { style: { color: '#f6521f' } }, '是')
+                return h('span', { style: { color: '#f6521f' } }, this.$t('Yes'))
               case 'no':
-                return h('span', '否')
+                return h('span', this.$t('No'))
               default:
                 return '-'
             }
           }
         },
-        { title: '网络设备名', key: 'name' },
-        { title: 'IP地址', key: 'ip' },
+        { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('NetwokDeviceName')) } },
+        { key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('IPAddress')) } },
         {
-          title: '网卡速率',
+          renderHeader: (h, params) => { return h('span', this.$t('NICSpeed')) },
           key: 'linkRate',
           render: (h, params) => {
             var a = params.row.linkRate / 1000 + ' G'
@@ -260,16 +259,16 @@ export default {
       ],
       tableData2: [], // 网卡信息
       tableColumns3: [
-        { title: '设备', key: 'path' },
+        { key: 'path', renderHeader: (h, params) => { return h('span', this.$t('Device')) } },
         {
-          title: '磁盘大小',
+          renderHeader: (h, params) => { return h('span', this.$t('DiskSize')) },
           key: 'size',
           render: (h, params) => {
             return h('span', bytesToSize(params.row.size))
           }
         },
         {
-          title: '可用空间',
+          renderHeader: (h, params) => { return h('span', this.$t('AvailableSpace')) },
           key: 'availableSize',
           render: (h, params) => {
             var value = params.row.availableSize
@@ -281,62 +280,60 @@ export default {
           }
         },
         {
-          title: '作用',
+          renderHeader: (h, params) => { return h('span', this.$t('Effect')) },
           key: 'fun',
           render: (h, params) => {
             let type = params.row.fun
             switch (type) {
               case 'osDisk':
-                return h('span', '系统盘')
+                return h('span', this.$t('SystemDisk'))
               case 'imageDisk':
-                return h('span', '镜像盘')
+                return h('span', this.$t('MirrorDisk'))
               case 'dataDisk':
-                return h('span', '数据盘')
+                return h('span', this.$t('DataDisk'))
               case 'writebackDisk':
-                return h('span', '回写盘')
+                return h('span', this.$t('WriteBackDisk'))
               case 'unUsed':
-                return h('span', '未使用')
+                return h('span', this.$t('Unused'))
               case 'raidMember':
-                return h('span', '阵列成员')
+                return h('span', this.$t('ArrayMember'))
               default:
                 return '-'
             }
           }
         },
-        { title: '映射盘符', key: 'mountVol' },
+        { title: '映射盘符', key: 'mountVol', renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) } },
         {
-          title: 'IO读速率',
+          renderHeader: (h, params) => { return h('span', this.$t('IOReadRate')) },
           key: 'readRate',
           render: (h, params) => {
             return h('span', bytesToRate(params.row.readRate))
           }
         },
         {
-          title: 'IO写速率',
+          renderHeader: (h, params) => { return h('span', this.$t('IOWriteRate')) },
           key: 'writeRate',
           render: (h, params) => {
             return h('span', bytesToRate(params.row.writeRate))
           }
         },
         {
-          title: '累计IO读取',
+          renderHeader: (h, params) => { return h('span', this.$t('CumulativeIORead')) },
           key: 'readTotal',
           render: (h, params) => {
             return h('span', bytesToSize(params.row.readTotal))
           }
         },
         {
-          title: '累计IO写入',
+          renderHeader: (h, params) => { return h('span', this.$t('CumulativeIOWrite')) },
           key: 'writeTotal',
           render: (h, params) => {
-            //  return h('span', bytesToSize(params.row.writeRate))
             return h('span', bytesToSize(Number(params.row.writeTotal)))
           }
         },
-        // { title: '累计IO写入', key: 'writeTotal' },
-        { title: '健康度', key: 'isHealth' },
+        { key: 'isHealth', renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
         {
-          title: '操作',
+          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           width: 140,
           align: 'center',
@@ -351,14 +348,14 @@ export default {
                   }
                 }
               },
-              '设置磁盘作用'
+              this.$t('SetDiskRole')
             )
             let b = h(
               'Button',
               {
                 props: { type: 'info', disabled: true }
               },
-              '设置磁盘作用'
+              this.$t('SetDiskRole')
             )
             if (params.row.fun === 'osDisk') {
               return b
@@ -448,12 +445,12 @@ export default {
      */
     handleButtonDelete (ip) {
       this.$Modal.confirm({
-        title: '删除警告',
-        content: '<p>后果很严重</p>',
-        okText: '删除',
+        title: this.$t('DeleteTip'),
+        content: this.$t('DeleteDec'),
+        okText: this.$t('Delete'),
         onOk: () => {
           deleteserverx(ip, this.tempMasterServerIp).then(() => {
-            this.$Message.success('删除成功')
+            this.$Message.success(this.$t('DeleteSucess'))
             this.$router.push({
               path: 'DisklessServerList'
             })
@@ -463,7 +460,7 @@ export default {
           }
           deleteserverConfig(ip)
         },
-        cancelTexxt: '取消'
+        cancelTexxt: this.$t('cancelText')
       })
     },
     handleButtonSetSever () {
@@ -472,7 +469,7 @@ export default {
         this.$route.query.tempMasterServerIp &&
         this.tempMasterServerIp === this.rowData.serverIP
       ) {
-        this.$Message.info('当前服务器为主服务器')
+        this.$Message.info(this.$t('masterismaster'))
       } else {
         // 提交data:
         // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
@@ -495,7 +492,7 @@ export default {
         this.rowData.serverIp
       ).then(a => {
         if (a.data.error === null) {
-          this.$Message.sucess('设置成功')
+          this.$Message.sucess(this.$t('DeleteDec'))
         } else {
           this.$Message.error(a.data.error)
         }
@@ -536,7 +533,7 @@ export default {
       setVdiskEthernetx(this.getCheckboxVal, this.ServerIp).then(() => {
         this.spanShow = false
         this.$Notice.success({
-          title: '设置负载网卡成功'
+          title: this.$t('SetSucess')
         })
         this.handleGetNetwork()
       })

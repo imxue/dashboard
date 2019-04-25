@@ -1,22 +1,22 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
     <Modal
-      title="添加镜像"
+      :title="this.$t('AddMirror')"
       v-model="showPopup"
       width= "500"
       class-name="vertical-center-modal">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        <FormItem label="镜像名称:" prop="nameVal">
-          <Input v-model="formValidate.nameVal" placeholder="请输入镜像名称..." clearable  />
+        <FormItem :label="this.$t('MirrorName') + '：'" prop="nameVal">
+          <Input v-model="formValidate.nameVal" :placeholder="this.$t('pleaseInputMirror')" clearable  />
         </FormItem>
         <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">分配</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
+            <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Assign')}}</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
      </Modal>
@@ -31,9 +31,9 @@
       return {
         showPopup: false,
         tableColumns: [
-          { title: '启动方案名称', key: 'name' },
+          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('StartupScenarioName')) } },
           {
-            title: '可用镜像',
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) },
             key: 'imgG',
             render: (h, params) => {
               var list = params.row.imgG
@@ -45,53 +45,40 @@
             }
           },
           {
-            title: '状态',
+            renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'disable',
             render: (h, params) => {
               switch (params.row.disable) {
                 case '1':
                   return h('span', {
                     style: { color: '#bcbcbc' }
-                  }, '禁用')
+                  }, this.$t('Disable'))
                 case '0':
-                  return h('span', '启用')
+                  return h('span', this.$t('Enable'))
                 default:
                   return h('span', '-')
               }
             }
           },
-          { title: '操作',
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 300,
             key: 'operation',
             render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
               let a = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleEdit(params.row) } }
-              }, '编辑')
-              // let b = h('Button', {
-              //   props: { type: 'primary' },
-              //   style: { marginRight: '10px' },
-              //   on: { click: () => { this.handleStart(params.row) } }
-              // }, '启用')
-              // let c = h('Button', {
-              //   props: { type: 'primary' },
-              //   style: { marginRight: '10px' },
-              //   on: { click: () => { this.handleStop(params.row) } }
-              // }, '停用')
+              }, this.$t('Edit'))
               let d = h('Button', { props: { type: 'error' },
                 on: { click: () => { this.handleDelete(params) } }
-              }, '删除')
-              // return [a, b, c, d]
-
+              }, this.$t('Delete'))
               return [a, d]
             }
           }
         ],
         tableData: [],
         formValidate: { nameVal: '' },
-        ruleValidate: { nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }] }
+        ruleValidate: { nameVal: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }] }
       }
     },
     created () {
@@ -144,8 +131,8 @@
       handleDelete (row) {
         if (row.row.name === 'default') {
           this.$Modal.confirm({
-            title: '警告',
-            content: '<p>不允许删除默认方案</p>',
+            title: this.$t('DeleteTip'),
+            content: this.$t('NotDeleteDefaultPlan'),
             onOk: () => {
   
             },
@@ -155,8 +142,8 @@
           })
         } else {
           this.$Modal.confirm({
-            title: '警告',
-            content: '<p>删除会导致使用该方案的客户机无法使用</p>',
+            title: this.$t('DeleteTip'),
+            content: this.$t('DeletingWillCauseClientsUsingThisSchemetoBeUnavailable'),
             onOk: () => {
               deleteItem(row.row.name).then((response) => {
                 this.handleGetPcGroup()

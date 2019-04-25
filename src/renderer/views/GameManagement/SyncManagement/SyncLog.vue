@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
@@ -25,36 +25,36 @@
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
           {
-            title: '结果',
+            renderHeader: (h, params) => { return h('span', this.$t('result')) },
             key: 'state',
             render: (h, params) => {
               let type = params.row.state
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#25da30' } }, '完成')
+                  return h('span', { style: { color: '#25da30' } }, this.$t('success'))
                 case 1:
-                  return h('span', { style: { color: '#ff0000' } }, '失败')
+                  return h('span', { style: { color: '#ff0000' } }, 'this.$t("fail")')
                 default:
                   return '-'
               }
             }
           },
-          { title: '游戏类型', key: 'Type' },
-          { title: '游戏名称', key: 'Dispalyname' },
-          { title: '热度', key: 'Centerpopularity' },
-          { title: '目标服务器地址', key: 'Localpath' },
-          { title: '源路径', key: 'Ip' },
-          { title: '目标路径', key: 'Dir' },
-          { title: '开始时间', key: 'BeginSyncTime' },
-          { title: '结束时间', key: 'EndSyncTime' },
-          { title: '错误信息', key: 'ErrorInfo' },
-          { title: '操作',
+          { title: '游戏类型', key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'Dispalyname', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Ip', renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '开始时间', key: 'BeginSyncTime', renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) } },
+          { title: '结束时间', key: 'EndSyncTime', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
+          { title: '错误信息', key: 'ErrorInfo', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } },
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             render: (h, params) => {
               let type = params.row.id
               let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
                 on: { click: () => { this.handleTableResync(params.row) } }
-              }, '重新同步')
+              }, this.$t('Resync'))
               switch (type) {
                 // case 0:
                 //   return h('div', [a])
@@ -94,7 +94,7 @@
             this.$Message.error(a.data.Msg)
           }
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         })
       },
       hanbleChangePage (num) {
@@ -117,7 +117,7 @@
         resync(index.Id).then((res) => {
           this.handleCallBackVaild(res)
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         })
       },
       changePage (key, type) {

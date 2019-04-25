@@ -1,21 +1,21 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonStart">开始</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonStop">暂停</Button>
-      <Button type="error"   class="topColumn" @click="handleButtonDelete">删除任务</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonTop">置顶</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonStart">{{$t('Start')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
+      <Button type="error"   class="topColumn" @click="handleButtonDelete">{{$t('DeleteTask')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonTop">{{$t('Topping')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonMove">{{$t('MoveUp')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
     <!-- 删除提示 -->
         <Modal
         v-model="showDeleteBox"
-        title="删除提示"
+        title="$t('DeleteTip')"
         @on-ok="handleConfirmDelete"
         @on-cancel="handleCancel"
         width = "300">
@@ -41,7 +41,7 @@
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
           {
-            title: '当前状态',
+            renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
             key: 'state',
             render: (h, params) => {
               let type = params.row.state
@@ -59,16 +59,16 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type' },
-          { title: '游戏名称', key: 'Dispalyname' },
-          { title: '热度', key: 'Centerpopularity' },
-          { title: '目标服务器地址', key: 'ip' },
-          { title: '源路径', key: 'Localpath' },
-          { title: '目标路径', key: 'Dir' },
-          { title: '更新量', key: 'updateSize' },
-          { title: '已更新', key: 'updatedSize' },
-          { title: '更新速度', key: 'speed' },
-          { title: '预计完成时间', key: 'time' }
+          { title: '游戏类型', key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'Dispalyname', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '更新量', key: 'updateSize', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          { title: '已更新', key: 'updatedSize', renderHeader: (h, params) => { return h('span', this.$t('updated')) } },
+          { title: '更新速度', key: 'speed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+          { title: '预计完成时间', key: 'time', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {

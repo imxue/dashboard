@@ -1,46 +1,46 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="mirroringInfo"></Table>
     <Modal
-      title="添加镜像"
+      :title="this.$t('AddMirror')"
       v-model="showPopup"
       width= "500"
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="135">
-        <FormItem label="镜像名称：" prop="nameVal">
-          <Input v-model="formValidate.nameVal" placeholder="请输入镜像名称..." />
+        <FormItem :label="this.$t('MirrorName')+'：'" prop="nameVal">
+          <Input v-model="formValidate.nameVal" :placeholder="this.$t('pleaseInputMirror')" />
         </FormItem>
-         <FormItem label="镜像大小：" prop="size">
-          <Row><Input v-model="formValidate.size" placeholder="请输入镜像大小..." />* 单位：GB</Row>
+         <FormItem :label="this.$t('MirrorSize')+'：'" prop="size">
+          <Row><Input v-model="formValidate.size" :placeholder="this.$t('pleaseInputMirrorSize') + ' GB'" /></Row>
         </FormItem>
-        <FormItem label="保存路径：" prop="path">
-          <Select v-model="formValidate.path" placeholder="——请选择保存路径——"  >
+        <FormItem :label="this.$t('SavePath')+'：'" prop="path">
+          <Select v-model="formValidate.path" :placeholder="this.$t('pleaseInputSavePath')"  >
          
               <Tooltip placement="right"  v-for="(item, index) in diskList" :key="index">
       <Option  :value="item.path" >{{item.path}}</Option>
         <div slot="content">
-            <p>可用容量{{item.availableSize}}</p>
+            <p>{{$t('AvailableSpace')}} {{item.availableSize}}</p>
         </div>
 
     </Tooltip>
           </Select>
         </FormItem>
-        <FormItem label="映射盘符：" prop="mountVol">
-          <Input v-model="formValidate.mountVol" disabled placeholder="请输入映射盘符..." />
+        <FormItem :label="this.$t('MappingDiskSymbol')+'：'" prop="mountVol">
+          <Input v-model="formValidate.mountVol" disabled :placeholder="this.$t('pleaseInput')" />
         </FormItem>
-         <FormItem label="是否从主服务器导入：" prop="isImportFormMaster">
-             <Select v-model="formValidate.isImportFormMaster" disabled placeholder="——请选择——">
+         <FormItem :label="this.$t('importPrimaryServer')+'：'" prop="isImportFormMaster">
+             <Select v-model="formValidate.isImportFormMaster" disabled :placeholder="this.$t('pleaseInputSavePath')">
               <Option value="yes">yes</Option>
               <Option value="no">no</Option>
             </Select>
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-             <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
+             <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
+             <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
      </Modal>
@@ -58,16 +58,16 @@
         diskList: [],
         serverlist: '',
         tableColumns: [
-          { title: '镜像名称', key: 'name' },
+          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
           {
-            title: '镜像大小',
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
             key: 'size',
             render: (h, params) => {
               return h('span', params.row.size + 'GB')
             }
           },
           {
-            title: '占用空间',
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
             key: 'fileSizeB',
             render: (h, params) => {
               var value = params.row.fileSizeB
@@ -79,8 +79,8 @@
             }
           },
           {
-            title: '配置个点数',
-            // key: 'profileList',
+            renderHeader: (h, params) => { return h('span', this.$t('ConfigurePoints')) },
+            key: 'profileList',
             render: (h, params) => {
               var arr = params.row.profileList
               if (arr !== null || arr !== undefined) {
@@ -96,35 +96,28 @@
               }
             }
           },
-          // { title: '状态', key: 'state' },
-          { title: '操作',
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 400,
             key: 'operation',
             render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
               let a = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
-              }, '配置')
-              // let b = h('Button', {
-              //   props: { type: 'primary' },
-              //   style: { marginRight: '10px' },
-              //   on: { click: () => { this.handleCopy(params.row) } }
-              // }, '复制')
+              }, this.$t('Configure'))
               let c = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleImport(params.row) } }
-              }, '导入')
+              }, this.$t('Import'))
               let d = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleExport(params.row) } }
-              }, '导出')
+              }, this.$t('Export'))
               let e = h('Button', { props: { type: 'error' },
                 on: { click: () => { this.handleDelete(params.row) } }
-              }, '删除')
+              }, this.$t('Delete'))
               return [a, c, d, e]
             }
           }
@@ -142,9 +135,9 @@
         },
   
         ruleValidate: {
-          nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          size: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          path: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          nameVal: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          size: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          path: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
         }
       }
     },

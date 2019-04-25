@@ -4,7 +4,7 @@
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
       <FormItem prop>
         <Row>
-          <i-col span="4">游戏图标：</i-col>
+          <i-col span="4">{{$t('GameIcon')}}：</i-col>
           <i-col span="8">
             <template v-if="this.localimgUrl">
               <img :src="this.localimgUrl">
@@ -107,12 +107,12 @@ export default {
       ],
       checkAll: false,
       ruleValidate: {
-        Name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        SavePath: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        RunPath: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        RunExe: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        Name: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        SavePath: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        RunPath: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        RunExe: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
         IsEnableSync: [
-          { required: true, type: 'number', message: '至少选择一个', trigger: 'change' }
+          { required: true, type: 'number', message: this.$t('ChooseAtLeastOne'), trigger: 'change' }
         ]
       }
     }

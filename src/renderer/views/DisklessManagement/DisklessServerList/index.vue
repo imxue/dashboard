@@ -2,30 +2,30 @@
   <div>
      <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
-      <Input class="topColumn" v-model="searchVal" search enter-button="搜索" @on-search="handleSearch"  placeholder="请输入服务器IP..." style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonAdd" >添加服务器</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">刷新</Button>
+      <Input class="topColumn" v-model="searchVal" search :enter-button="$t('Search')" @on-search="handleSearch"  :placeholder="$t('pleaseInputServerIp')" style="width: 200px;" />
+      <Button type="primary" class="topColumn" @click="handleButtonAdd" >{{$t('AddServer')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">{{$t('Refresh')}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
     <!-- table -->
-    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail"></Table>
+    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
-      title="添加服务器"
+      :title="$t('AddServer')"
       v-model="showPopup"
       width= "500"
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
-        <FormItem label="服务器IP:" prop="serverIP">
-          <Input @on-change='ResetError' v-model="formValidate.serverIP" placeholder="请输入服务器IP"  />
+        <FormItem :label="$t('ServerIP')" prop="serverIP">
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  />
         </FormItem>   
         
-        <FormItem label="服务器密码:" prop="password">
-            <div class="ivu-form-item-error-tip" v-if="NetWork">网络连接不上</div>
-          <Input v-model="formValidate.password" placeholder="请输入服务器密码"  />
+        <FormItem :label="$t('ServerPW')" prop="password">
+            <div class="ivu-form-item-error-tip" v-if="NetWork">{{$t("NetworkError")}}</div>
+          <Input v-model="formValidate.password" :placeholder="$t('pleaseInputServerPW')"  />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>保存</Button>
-             <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">取消</Button>
+             <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>{{$t("Save")}}</Button>
+             <Button @click="handleAddReset('formValidate')" style="margin-left: 8px">{{$t("cancelText")}}</Button>
             
         </FormItem>
       </Form>
@@ -34,11 +34,11 @@
     </Row>
     <Modal
         v-model="modal4"
-        title="该服务器可能已属于其他节点"
+        title="this.$t('Theservermayalreadybelongtoanothernode')"
         ok-text="OK"
         @on-ok="remove"
         cancel-text="Cancel">
-        <p>需要清除信息，你确定吗</p>
+        <p>{{$t("Needtocleartheinformationcontinue")}}</p>
     </Modal>
   </div>
 </template>
@@ -63,7 +63,7 @@ export default {
         tableColumns: [
           // { type: 'selection', width: 60, align: 'center' },
           {
-            title: '状态',
+            renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
             key: 'online',
             render: (h, params) => {
               let type = params.row.online
@@ -71,40 +71,40 @@ export default {
               if (isMaster === '1') {
                 switch (type) {
                   case '0':
-                    return h('div', [h('span', { style: { color: '#999999' } }, '离线'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                    return h('div', [h('span', { style: { color: '#999999' } }, this.$t('Offline')), h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))])
                   case '1':
-                    return h('div', [h('span', { style: { color: '#0ecf1f' } }, '在线'), h('Tag', { props: { color: 'red' },
+                    return h('div', [h('span', { style: { color: '#0ecf1f' } }, this.$t('online')), h('Tag', { props: { color: 'red' },
                       style: {
                         marginLeft: '8px'
-                      } }, '主服务器')])
+                      } }, this.$t('MasterIp'))])
                   case '2':
-                    return h('div', [h('span', { style: { color: '#f90' } }, '在线异常'), h('Tag', { props: { color: 'red' } }, '主服务器')])
+                    return h('div', [h('span', { style: { color: '#f90' } }, this.$t('OnlineException')), h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))])
                   default:
                     return '-'
                 }
               } else {
                 switch (type) {
                   case '0':
-                    return h('span', { style: { color: '#999999' } }, '离线')
+                    return h('span', { style: { color: '#999999' } }, this.$t('Offline'))
                   case '1':
-                    return h('span', { style: { color: '#0ecf1f' } }, '在线')
+                    return h('span', { style: { color: '#0ecf1f' } }, this.$t('online'))
                   case '2':
-                    return h('span', { style: { color: '#f90' } }, '在线异常')
+                    return h('span', { style: { color: '#f90' } }, this.$t('OnlineException'))
                   default:
                     return '-'
                 }
               }
             }
           },
-          { title: '服务器IP', key: 'serverIp' },
-          { title: '服务版本', key: 'dataVer' },
-          { title: '操作',
+          { key: 'serverIp', renderHeader: (h, params) => { return h('span', this.$t('ServerIP')) } },
+          { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } },
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             render: (h, params) => {
               let a = h('Button', {
                 props: { type: 'info', ghost: true },
                 on: { click: () => { this.handleSeeDetail(params.row) } }
-              }, '查看')
+              }, this.$t('View'))
               return a
             }
           }
@@ -112,8 +112,8 @@ export default {
         serverList: [],
         formValidate: { serverIP: '', password: '' },
         ruleValidate: {
-          serverIP: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          password: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          serverIP: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          password: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
         }
       }
     },
@@ -242,6 +242,7 @@ export default {
               this.$store.dispatch('saveMaster', this.formValidate.serverIP)
             }
           } else {
+            this.loadingBtn = false
           }
         })
       },

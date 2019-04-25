@@ -87,7 +87,6 @@
             //     }, type)
             //   })
             // )}
-            // 原文：https://blog.csdn.net/qq_42894952/article/details/83658969
             render: (h, params) => {
               return h('Select', {
                 props: {

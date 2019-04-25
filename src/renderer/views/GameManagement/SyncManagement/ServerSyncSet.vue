@@ -2,29 +2,29 @@
   <div>
     <div class="topItem">
       <Row>
-        <i-col span="16">
-          <Input class="topColumn" v-model="inputVal"  placeholder="请输入游戏名称..." clearable style="width: 200px;" />
-          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" style="width:150px;" placeholder="---全部服务器---">
+        <i-col span="13">
+          <Input class="topColumn" v-model="inputVal"  :placeholder="this.$t('pleaseInputGameName')" clearable style="width: 200px;" />
+          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" style="width:150px;" :placeholder="this.$t('pleaseInputMirror')">
             <Option v-for="item in serversIpList" :value="item.Ip" :key="item.Id">{{ item.Ip }}</Option>
           </Select>
-          <Select v-model="diskValue" clearable class="topColumn" style="width:150px;" placeholder="---全部盘符---">
+          <Select v-model="diskValue" clearable class="topColumn" style="width:150px;" :placeholder="this.$t('AllDiskSymbol')">
             <Option v-for="item in diskListOption" :value="item.DriverId" :key="item.index" >{{ item.Name }}</Option>
           </Select>
-          <Button type="primary" class="topColumn" @click="handleButtonSearch">搜索</Button>
+          <Button type="primary" class="topColumn" @click="handleButtonSearch">{{$t('Search')}}</Button>
           </i-col>
-          <i-col span="8">
-            <Button type="primary" class="topColumn" @click="handleButtonAllowe">分配游戏</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">取消分配</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonAddTask">添加同步任务</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonRules">默认分配规则</Button>
+          <i-col span="11">
+            <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
+            <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
+            <Button type="primary" class="topColumn" @click="handleButtonAddTask">{{$t('AddSynchronizationTask')}}</Button>
+            <Button type="primary" class="topColumn" @click="handleButtonRules">{{$t('DefaultAssignmentRule')}}</Button>
         </i-col>
       </Row>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
-      <i-col span="20"><Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/></i-col>
+      <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
+      <i-col span="17"><Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/></i-col>
     </Row>
     
   </div>
@@ -58,13 +58,13 @@
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
           {
-            title: '状态',
+            renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'State',
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#999999' } }, '未分配')
+                  return h('span', { style: { color: '#999999' } }, this.$t('Unallocated'))
                 case 1:
                   return h('span', '最新')
                 // case 2:
@@ -74,29 +74,29 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type' },
-          { title: '游戏名称', key: 'Name' },
-          { title: '游戏热度', key: 'Centerpopularity' },
-          { title: '游戏大小', key: 'Size' },
-          { title: '目标服务器IP', key: 'Ip' },
-          { title: '目标盘符', key: 'Drive' },
-          { title: '盘符容量', key: 'Drivesize' },
-          { title: '操作',
+          { key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'Ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
+          { key: 'Drive', renderHeader: (h, params) => { return h('span', this.$t('TargetDiskSymbol')) } },
+          { key: 'Drivesize', renderHeader: (h, params) => { return h('span', this.$t('DiskSymbolVolume')) } },
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             width: 170,
             render: (h, params) => {
               let type = params.row.state
               let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
                 on: { click: () => { this.handleTableAllowe(params.row) } }
-              }, '分配游戏')
+              }, this.$t('AssignGame'))
               let b = h('span', {
                 style: { color: '#2d8cf0', marginRight: '10px', textDecoration: 'underline' },
                 on: { click: () => { this.handleTableCancel(params.row) } }
-              }, '取消分配')
+              }, this.$t('CancelAssign'))
               let c = h('span', {
                 style: { color: '#2d8cf0', textDecoration: 'underline' },
                 on: { click: () => { this.handleTableAdd(params.row) } }
-              }, '添加同步任务')
+              }, this.$t('AddSynchronizationTask'))
               switch (type) {
                 case 0:
                   return h('span', [a])

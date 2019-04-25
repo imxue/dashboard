@@ -5,10 +5,10 @@
         <Submenu :name="index + ''" :key="index">
           <template slot="title">
             <Icon type="ios-keypad"></Icon>
-            {{ item.meta.title }}
+            {{ $t(item.meta.title) }}
           </template>
-          <template v-for="(subItem,subIndex) in item.children" >
-            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ subItem.meta.title }} </Menu-item>
+          <template v-for="(subItem) in item.children" >
+            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ $t(subItem.meta.title) }} </Menu-item>
           </template>
         </Submenu>
       </template>

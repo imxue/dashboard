@@ -9,8 +9,10 @@ import moment from 'moment'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import './router/Hook'
-
+import '../language'
+import '../renderer/components/test'
 Vue.use(iView)
+
 Vue.use(moment)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

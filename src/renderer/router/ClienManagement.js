@@ -6,19 +6,19 @@ export default {
   name: '3',
   component: Layout,
   redirect: '/type3/subType1/subType1-1',
-  meta: { title: '客户机管理', icon: 'example' },
+  meta: { title: 'ClientManagement', icon: 'example' },
   children: [
     {
       path: 'subType1',
       name: 'type3-SubType1',
-      meta: { title: '客户机管理', hidden: true },
+      meta: { title: 'ClientManagement', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'subType1-1',
           name: 'type3-SubType1-1',
           alias: '/disklesslist',
-          meta: { title: '客户机列表' },
+          meta: { title: 'ClientList' },
           component: () => import('@/views/type3/subtype1/subtype1-1')
         },
         {

@@ -25,7 +25,7 @@
           <Row>
             <i-col span="2">服务器分配：</i-col>
             <i-col span="8">
-              <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+              <Table border ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
             </i-col>
           </Row>
         </FormItem>
@@ -72,7 +72,6 @@
             //     }, type)
             //   })
             // )}
-            // 原文：https://blog.csdn.net/qq_42894952/article/details/83658969
             render: (h, params) => {
               return h('Select', {
                 props: {

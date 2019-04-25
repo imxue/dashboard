@@ -6,30 +6,30 @@ export default {
   name: '游戏管理',
   component: Layout,
   redirect: '/game/subType1/subType1-1',
-  meta: { title: '游戏管理', icon: 'example' },
+  meta: { title: 'GameManagement', icon: 'example' },
   children: [
     {
       path: 'subtype1',
       name: '中心资源',
-      meta: { title: '中心资源', hidden: true },
+      meta: { title: 'CenterResource', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'subType1-1',
           name: '全部游戏',
-          meta: { title: '全部游戏' },
+          meta: { title: 'AllGame' },
           component: () => import('@/views/GameManagement/CenterResource/AllGame')
         },
         {
           path: 'subType1-2',
           name: '今日更新',
-          meta: { title: '今日更新' },
+          meta: { title: 'TodyaUpdate' },
           component: () => import('@/views/GameManagement/CenterResource/TodyaUpdate')
         },
         {
           path: 'subType1-3',
           name: '系统工具',
-          meta: { title: '系统工具' },
+          meta: { title: 'SystemTool' },
           component: () => import('@/views/GameManagement/CenterResource/SystemTool')
         },
         // {
@@ -65,19 +65,19 @@ export default {
     {
       path: 'subType2',
       name: '资源下载',
-      meta: { title: '资源下载', hidden: true },
+      meta: { title: 'ResourceDownload', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'subType2-1',
           name: '下载队列',
-          meta: { title: '下载队列' },
+          meta: { title: 'DownloadQueue' },
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadQueue')
         },
         {
           path: 'subType2-2',
           name: 'GameManagement-SubType2-2',
-          meta: { title: '下载日志' },
+          meta: { title: 'DownloadLog' },
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadLog')
         },
         {
@@ -92,19 +92,19 @@ export default {
     {
       path: 'subType3',
       name: 'GameManagement-SubType3',
-      meta: { title: '本地资源', hidden: true },
+      meta: { title: 'LocalResource', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'SubType3-1',
           name: '已下载游戏',
-          meta: { title: '已下载游戏' },
+          meta: { title: 'DownloadedGame' },
           component: () => import('@/views/GameManagement/LocalResource/DownloadedGame')
         },
         {
           path: 'BarGames',
           name: 'GameManagement-SubType3-2',
-          meta: { title: '本吧游戏' },
+          meta: { title: 'BarGames' },
           component: () => import('@/views/GameManagement/LocalResource/BarGames')
         },
         {
@@ -150,10 +150,10 @@ export default {
           hidden: true
         },
         {
-          path: 'SubType3-delete',
+          path: 'DownloadedGameEdit',
           name: 'GameManagement-SubType3-delete',
           meta: { title: '编辑', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-delete'),
+          component: () => import('@/views/GameManagement/LocalResource/DownloadedGameEdit'),
           hidden: true
         }
       ]
@@ -161,31 +161,31 @@ export default {
     {
       path: 'subType4',
       name: 'GameManagement-SubType4',
-      meta: { title: '同步管理', hidden: true },
+      meta: { title: 'SyncManagement', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'SubType4-1',
           name: 'GameManagement-SubType4-1',
-          meta: { title: '服务器同步设置' },
+          meta: { title: 'ServerSyncSet' },
           component: () => import('@/views/GameManagement/SyncManagement/ServerSyncSet')
         },
         {
           path: 'SubType4-2',
           name: 'GameManagement-SubType4-2',
-          meta: { title: '同步任务' },
+          meta: { title: 'SyncTask' },
           component: () => import('@/views/GameManagement/SyncManagement/SyncTask')
         },
         {
           path: 'SubType4-3',
           name: 'GameManagement-SubType4-3',
-          meta: { title: '同步日志' },
+          meta: { title: 'SyncLog' },
           component: () => import('@/views/GameManagement/SyncManagement/SyncLog')
         },
         {
           path: 'SubType4-allowe',
           name: 'GameManagement-SubType4-allowe',
-          meta: { title: '默认分配规则', hidden: true },
+          meta: { title: 'DefaultRule', hidden: true },
           component: () => import('@/views/GameManagement/SyncManagement/DefaultRule'),
           hidden: true
         }

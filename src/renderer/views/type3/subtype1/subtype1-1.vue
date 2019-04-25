@@ -9,7 +9,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
-      <Button type="primary" class="topColumn" @click="handleButtonReStart">刷新</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
     </div>
     <!-- table -->
     <Table
@@ -36,21 +36,21 @@
     <!-- 删除提示 -->
     <Modal
       v-model="showDeleteBox"
-      title="删除提示"
+      :title="this.$t('DeleteTip')"
       @on-ok="handleConfirmDelete"
       @on-cancel="handleCancel"
     >
-      <p>是否删除当前数据？</p>
+      <p>{{$t('DeleteCurrentData')}}</p>
     </Modal>
-    <Modal title="设置超级工作站" v-model="adddetail" footer-hide width="500">
+    <Modal :title="this.$t('SetSuperWorkstation')" v-model="adddetail" footer-hide width="500">
       <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
         <FormItem label="镜像" prop="imglistVal">
-          <Select v-model="formValidatex.imglist" placeholder="默认当前(方案)">
+          <Select v-model="formValidatex.imglist" :placeholder="this.$t('pleaseInput')">
             <Option v-for="item in imglist" :value="item.name" :key="item.name">{{ item.name }}</Option>
           </Select>
         </FormItem>
         <FormItem label="配置" prop="profileListVal">
-          <Select v-model="formValidatex.profileList" placeholder="默认当前(方案)">
+          <Select v-model="formValidatex.profileList" :placeholder="this.$t('pleaseInput')">
             <template v-if="profileList">
               <Option
                 v-for="item in profileList"
@@ -59,10 +59,10 @@
               >{{ item.name }}</Option>
             </template>
           </Select>
-             <div class="ivu-form-item-error-tip" v-if="err">获取虚拟盘信息失败</div>
+             <div class="ivu-form-item-error-tip" v-if="err">{{$t('FailedToGetVirtualdiskInformation')}}</div>
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleSubmitx('formValidatex')">设置为超级工作站</Button>
+          <Button type="primary" @click="handleSubmitx('formValidatex')">{{$t('SetSuperWorkstation')}}</Button>
           <!-- <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button> -->
         </FormItem>
       </Form>
@@ -71,16 +71,16 @@
       <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
         <FormItem label="操作" prop="plan">
           <Select v-model="formValidate1.action" placeholder="默认当前(方案)">
-            <Option value="apply">保存</Option>
-            <Option value="discard">取消保存</Option>
+            <Option value="apply">{{$t('apply')}}</Option>
+            <Option value="discard">{{$t('cancelText')}}</Option>
           </Select>
         </FormItem>
         <FormItem label="备注" prop="comment">
           <input v-model="formValidate1.comment" type="text" />
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleCancelaction('formValidate1')">取消当前超级工作站</Button>
-          <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button>
+          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('cancelText')}}</Button>
+          <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">{{$t('Reset')}}</Button>
         </FormItem>
       </Form>
     </Modal>
@@ -125,7 +125,7 @@ export default {
       tableDataList: [], // 批量编辑时，传值到下一页
       tableColumns: [
         // { type: 'selection', width: 50, align: 'center' },
-        { title: '状态',
+        { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
           width: 60,
           render: (h, params) => {
@@ -143,11 +143,11 @@ export default {
           }
 
         },
-        { title: '客户机IP', key: 'ip' },
-        { title: '客户机MAC', key: 'mac' },
-        { title: '配置方案', key: 'pcGp' },
+        { key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'mac', renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
+        { key: 'pcGp', renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
         {
-          title: '超级工作站',
+          renderHeader: (h, params) => { return h('span', this.$t('SuperWorkstation')) },
           key: 'super',
           render: (h, params) => {
             let that = this
@@ -155,7 +155,7 @@ export default {
             if (that.currentSuperip) {
               if (params.row.ip === that.currentSuperip) {
                 a = h('div', [
-                  h('Tag', { props: { color: 'magenta' } }, '超级工作站'),
+                  h('Tag', { props: { color: 'magenta' } }, this.$t('SuperWorkstation')),
                   h(
                     'Button',
                     {
@@ -167,7 +167,7 @@ export default {
                         }
                       }
                     },
-                    '取消'
+                    this.$t('cancelText')
                   ),
                   h(
                     'Button',
@@ -180,7 +180,7 @@ export default {
                         }
                       }
                     },
-                    '删除'
+                    this.$t('Delete')
                   )
                 ])
               }
@@ -195,7 +195,7 @@ export default {
                     }
                   }
                 },
-                '设置超级工作站'
+                this.$t('SetSuperWorkstation')
               ), h(
                 'Button',
                 {
@@ -207,7 +207,7 @@ export default {
                     }
                   }
                 },
-                '删除'
+                this.$t('Delete')
               )])
             }
 
@@ -215,11 +215,7 @@ export default {
           }
         }
       ],
-      nameList: [
-        { Id: 1, value: '大厅A001', label: '大厅A001-A050' },
-        { Id: 2, value: '大厅A002', label: '大厅A002-A050' },
-        { Id: 3, value: '大厅A003', label: '大厅A003-A050' }
-      ],
+      nameList: [],
       formValidate: { nameVal: '' },
       formValidatex: {
         imglist: '',
@@ -232,20 +228,20 @@ export default {
       ruleValidatex: {
         formValidatex: {
           imglistVal: [
-            { required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
           ],
           profileListVal: [
-            { required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
           ]
         }
       },
       ruleValidatex1: {
         formValidate1: {
           plan: [
-            { required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
           ],
           comment: [
-            { required: true, message: '请至少选择一个', trigger: 'blur' }
+            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
           ]
         }
       }
@@ -319,7 +315,7 @@ export default {
             }, 0)
           })
         } else {
-          this.$Message.error('表单验证失败!')
+          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },
@@ -329,7 +325,7 @@ export default {
 
     handDetele (data) {
       this.$Modal.confirm({
-        title: '删除提示',
+        title: "this.$t('DeleteTip')",
         onOk: () => {
           deletePcsConfigx([data.mac], localStorage.getItem('masterip')).then(respon => {
             this.handgetClienList()
@@ -364,9 +360,9 @@ export default {
     handleCallBackVaild (res) {
       var code = res.data.Code
       if (code === 0 || res.data.state === 'OK') {
-        this.$Message.success('操作成功')
+        this.$Message.success(this.$t('OperationSuccessful'))
       } else {
-        this.$Message.error('操作失败：' + res.data.Msg)
+        this.$Message.error(this.$t('OperationFail') + res.data.Msg)
       }
     },
     handleGetClientList (offset, limit) {
@@ -388,7 +384,7 @@ export default {
           }
         },
         () => {
-          this.$Message.error('请求出错，请稍后再试')
+          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }
       )
     },
@@ -449,11 +445,11 @@ export default {
       deleteClient(this.getCheckboxVal).then(
         res => {
           // console.log('res:' + JSON.stringify(res))
-          this.$Message.success('操作成功')
+          this.$Message.success(this.$t('OperationSuccessful'))
           this.handleGetClientList()
         },
         () => {
-          this.$Message.error('请求出错，请稍后再试')
+          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }
       )
     },
@@ -485,11 +481,11 @@ export default {
               self.handleCallBackVaild(res)
             },
             () => {
-              this.$Message.error('请求出错，请稍后再试')
+              this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
             }
           )
         } else {
-          this.$Message.error('表单验证失败!')
+          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },
@@ -516,11 +512,11 @@ export default {
               self.handleCallBackVaild(res)
             },
             () => {
-              this.$Message.error('请求出错，请稍后再试')
+              this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
             }
           )
         } else {
-          this.$Message.error('表单验证失败!')
+          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },
@@ -553,7 +549,7 @@ export default {
             self.$Message.error(err + '')
           })
         } else {
-          this.$Message.error('表单验证失败!')
+          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },

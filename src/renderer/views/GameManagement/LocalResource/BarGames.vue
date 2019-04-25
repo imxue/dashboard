@@ -5,17 +5,17 @@
         class="topColumn"
         v-model="searchVal"
         search
-        enter-button="搜索"
+        :enter-button="$t('Search')"
         placeholder="请输入游戏首字母..."
         clearable
         style="width: 200px;"
       />
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t("Add")}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonEdit">编辑</Button> -->
-      <Button type="primary" class="topColumn" @click="handleButtonSync">同步</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t("Synchronize")}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonMore">批量操作</Button> -->
-      <Button type="primary" class="topColumn" @click="HandleRepairGame">修复</Button>
-      <Button type="error" class="topColumn" @click="handleButtonDelete">删除</Button>
+      <Button type="primary" class="topColumn" @click="HandleRepairGame">{{$t("repair")}}</Button>
+      <Button type="error" class="topColumn" @click="handleButtonDelete">{{$t("Delete")}}</Button>
     </div>
     <!-- table -->
     <Table
@@ -26,11 +26,12 @@
       @on-selection-change="handleCheckBox"
       @on-row-dblclick="handleTableEdit"
       stripe
+      :no-data-text="this.$t('Nodata')"
     ></Table>
     <Row style="margin-top:10px; ">
       <i-col span="24">
         <Page
-          :current="pageInfo.page_index"
+          :current="pageInfo.page_size"
           :page-size="10"
           :total="this.pageInfo.count"
           show-total
@@ -66,31 +67,32 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          title: '图标',
+          renderHeader: (h, params) => { return h('span', this.$t('Icon')) },
           key: 'IconUrl',
           render: (h, params) => {
             return h('img', { attrs: { src: params.row.IconUrl }, style: { width: '40px', height: '40px', display: 'flex' } })
           }
         },
-        { title: '游戏名称', key: 'DisplayName' },
-        { title: '游戏热度', key: 'CenterPopularity' },
-        { title: '服务器路径', key: 'LocalPath' },
-        { title: '执行文件', key: 'RunExe' },
-        { title: '客户机执行文件', key: 'Size' },
+        { title: '游戏名称', key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '游戏热度', key: 'CenterPopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { title: '服务器路径', key: 'LocalPath', renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
+        { title: '执行文件', key: 'RunExe', renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
+        { title: '大小', key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
         {
           title: '服务器同步',
+          renderHeader: (h, params) => { return h('span', this.$t('ServerSyncSet')) },
           key: 'IsEnableSync',
           render: (h, params) => {
             switch (params.row.IsEnableSync) {
               case 0:
-                return h('span', '禁用')
+                return h('span', this.$t('Disable'))
               case 1:
-                return h('span', '启用')
+                return h('span', this.$t('Enable'))
             }
           }
         },
         {
-          title: '操作',
+          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           render: (h, params) => {
             let a = h(
@@ -104,7 +106,7 @@ export default {
                   }
                 }
               },
-              '编辑'
+              this.$t('Edit')
             )
             let b = h(
               'Button',
@@ -116,7 +118,7 @@ export default {
                   }
                 }
               },
-              '删除'
+              this.$t('Delete')
             )
             switch (params) {
               default:
@@ -148,6 +150,7 @@ export default {
         .then(e => {
           this.tableData = e.data.data
           this.pageInfo = e.data.pageino
+          console.log(this.pageInfo)
         })
         .catch(error => {
           this.$Notice.open({

@@ -4,86 +4,86 @@
         <Row>
           <i-col span="10" offset="2">
      
-          <FormItem prop="name" label="方案名称：">
+          <FormItem prop="name" :label="this.$t('StartupScenarioName') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.name" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="netMk"  label="网关：">
+        <FormItem prop="netMk"  :label="this.$t('SubnetMask') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.netMk" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="netGW"  label="子网淹码：">
+        <FormItem prop="netGW"  :label="this.$t('Gateway') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.netGW" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="dns1"  label="首选dns：">
+        <FormItem prop="dns1"  :label="this.$t('PreferreDNS') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.dns1" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="dns2" label="备用dns：">
+        <FormItem prop="dns2" :label="this.$t('AlternateDNS') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.dns2" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
      
-        <FormItem prop="bala"  label="负载均衡：">
+        <FormItem prop="bala"  :label="this.$t('LoadBalancing') + '：'">
           <Row>
             <i-col span="10">
               <Select v-model="formValidate.bala">
-                <Option value="0">启用</Option>
-                <Option value="1">禁用</Option>
+                <Option value="0">{{$t('Enable')}}</Option>
+                <Option value="1">{{$t('Disable')}}</Option>
               </Select>
             </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="disable" label="启用状态：">
+        <FormItem prop="disable" :label="this.$t('EnabledState') + '：'">
           <Row>
             <i-col span="10">
               <Select v-model="formValidate.disable">
-                 <Option value="0">启用</Option>
-                <Option value="1">禁用</Option>
+                 <Option value="0">{{$t('Enable')}}</Option>
+                <Option value="1">{{$t('Disable')}}</Option>
               </Select>
             </i-col>
           </Row>
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG"  label="回写总量限制：">
+        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="gTim"  label="方案切换等待：">
+        <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'">
           <Row>
             <i-col span="16"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input>&nbsp;&nbsp;秒，后启动默认方案，单镜像单配置时无需等待。
             </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="cach" label="缓存大小：">
+        <FormItem prop="cach" :label="this.$t('CacheSize') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; * 单位M</i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" label="分辨率宽：">
+        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="hith" label="分辨率高：">
+        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.hith" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="resh" label="刷新率：">
+        <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.resh" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="deps" label="色彩：">
+        <FormItem prop="deps" :label="this.$t('Color') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.deps" placeholder=""></i-input></i-col>
           </Row>
@@ -91,53 +91,48 @@
 
         </i-col>
         </Row>
-        <!-- <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">返回</Button>
-        </FormItem> -->
     </Form>
     <Row style="margin-bottom:20px;">
-      <!-- <Divider /> -->
-      <Button type="primary"  @click="handleButtonAdd">添加镜像</Button>
+      <Button type="primary"  @click="handleButtonAdd">{{$t('AddMirror')}}</Button>
     </Row>
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
     <Modal
-      title="添加镜像"
+      :title="this.$t('AddMirror')"
       v-model="showPopup"
       width= "500"
       footer-hide
       class-name="vertical-center-modal">
       <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="100">
-        <FormItem label="镜像名称:" prop="schemeName">
-          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue" clearable style="width:200px;" placeholder="---请选择镜像---">
-            <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="数据服务器：" prop="daSV">
-           <Select v-model="formValidate2.daSV" style="width:200px;" placeholder="---请选择数据库---">
+         <FormItem :label="this.$t('DatabaseServer')" prop="daSV">
+           <Select v-model="formValidate2.daSV" @on-change="handleGetImageList" style="width:200px;" :placeholder="this.$t('pleaseSelectDatabaseServer')">
               <Option v-for="item in serverlist" v-bind:key="item.serverIp" v-bind:value="item.serverIp">{{item.serverIp}}</Option>
             </Select>
         </FormItem>
-        <FormItem label="配置名称:" prop="configName">
-          <Select v-model="formValidate2.configName" clearable style="width:200px;" placeholder="---请选择配置名称---">
+        <FormItem :label="this.$t('MirrorName')" prop="schemeName">
+          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue" clearable style="width:200px;" :placeholder="this.$t('pleaseInputMirror')">
+            <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
+          </Select>
+        </FormItem>
+        <FormItem :label="this.$t('ConfigurationName')" prop="configName">
+          <Select v-model="formValidate2.configName" clearable style="width:200px;" :placeholder="this.$t('pleaseInputConfigurationName')">
             <Option v-for="item in imageProList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
         <FormItem class="buttonList">
-            <Button type="primary" @click="handleAddProject('formValidate2')">添加</Button>
-            <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">取消</Button>
+            <Button type="primary" @click="handleAddProject('formValidate2')">{{$t('Add')}}</Button>
+            <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
     </Modal>
     <div class="buttonList" style="margin-top: 20px">
-        <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-        <Button @click="handleReset('formValidate')" style="margin-left: 8px">返回</Button>
+        <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
+        <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('return')}}</Button>
     </div>
   </div>
 </template>
 
 <script>
-  import { getImageList, editPcGroup, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroup, getServersx } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -148,10 +143,10 @@
         name02: '',
         serverlist: '',
         tableColumns1: [
-          { title: '镜像名称', key: 'img' },
-          { title: '数据库服务器', key: 'daSV' },
-          { title: '配置名称', key: 'prof' },
-          { title: '操作',
+          { key: 'img', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
+          { key: 'daSV', renderHeader: (h, params) => { return h('span', this.$t('DatabaseServer')) } },
+          { key: 'prof', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationName')) } },
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 400,
             key: 'operation',
             render: (h, params) => {
@@ -159,17 +154,17 @@
                 props: { type: 'error', ghost: true },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMove(params.index) } }
-              }, '移除')
+              }, this.$t('Remove'))
               let b = h('Button', {
                 props: { type: 'info', ghost: true },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMoveTop(params.index) } }
-              }, '上移')
+              }, this.$t('MoveUp'))
               let c = h('Button', {
                 props: { type: 'primary', ghost: true },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMoveBottom(params.index) } }
-              }, '下移')
+              }, this.$t('MoveDown'))
               let index = params.index
               if (index === 0 && this.imgCount > index) {
                 return [a, c]
@@ -180,7 +175,7 @@
               }
             }
           },
-          { title: '备注', key: 'info' }
+          { renderHeader: (h, params) => { return h('span', this.$t('Remarks')) }, key: 'info' }
         ],
         tableData1: [],
         formValidate: {
@@ -205,28 +200,29 @@
         // 验证添加方案字段
         ruleValidate: {
           name: [
-            { required: true, message: '不能为空', trigger: 'blur' } ],
-          netMk: [ { required: true, message: '不能为空', trigger: 'blur' }
+            { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
+          netMk: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }
           ],
-          netGW: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          dns1: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          dns2: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          daSV: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          bala: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          disable: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          wrLimG: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          gTim: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          cach: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          wieh: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          hith: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          resh: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          deps: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          netGW: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          dns1: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          dns2: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          daSV: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          bala: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          wrLimG: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          gTim: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          cach: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          wieh: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          hith: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          resh: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          deps: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
   
         },
-        formValidate2: { schemeName: '', configName: '' },
+        formValidate2: { schemeName: '', daSV: '', configName: '' },
         ruleValidate2: {
-          schemeName: [{ required: true, message: '不能为空', trigger: 'change' }],
-          configName: [{ required: true, message: '不能为空', trigger: 'change' }]
+          daSV: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+          schemeName: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+          configName: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }]
         },
         imageList: [],
         imageProList: []
@@ -264,7 +260,8 @@
         })
       },
       handleGetImageList () {
-        getImageList().then((a) => {
+        let x = this.formValidate2.daSV
+        getImageListx(x).then((a) => {
           var arr = a.data.result.list
           if (a.data.error === null && arr.length !== null) {
             this.imageList = arr
@@ -281,7 +278,6 @@
       },
       handleButtonAdd () {
         this.showPopup = true
-        this.handleGetImageList()
       },
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)
@@ -301,14 +297,14 @@
         this.$refs[name].validate(valid => {
           if (valid) {
             if (that.tableData1 && that.tableData1.length === 0) {
-              this.$Message.error('请至少添加一个镜像')
+              this.$Message.error(this.$t('PleaseAddOneMirror'))
             } else {
               that.formValidate.imgG = that.tableData1
               editPcGroup(
                 that.formValidate
               ).then((a) => {
                 if (a.data.error === null) {
-                  that.$Message.success('保存成功！')
+                  that.$Message.success(this.$t('SetSucess'))
                   that.$router.push('subType3-1') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(a.data.error)
@@ -337,7 +333,7 @@
             // console.log('tableData1::' + JSON.stringify(this.tableData1))
             // this.handleSubmitProject()
           } else {
-            this.$Message.error('验证失败!')
+            this.$Message.error(this.$t('ValidationFailure'))
           }
         })
       },

@@ -2,17 +2,17 @@
   <div>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:150px;">
-        <Option v-for="item in gameList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ item.label }}</Option>
+        <Option v-for="item in gameList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ $t(item.label) }}</Option>
       </Select>
-      <Input class="topColumn" search enter-button="搜索" placeholder="请输入游戏首字母..." clearable style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonDW">下载</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonFixGame">修复</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRemove">本地移除</Button>
+      <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t("Download")}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t("repair")}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
+      <i-col span="4">{{$t("Resource")}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t("Downloaded")}}：1000</i-col>
       <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>
     </Row>
     
@@ -29,16 +29,16 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        { Id: 0, value: '热门游戏', label: '热门游戏' },
-        { Id: 1, value: '网络游戏', label: '网络游戏' },
-        { Id: 2, value: '单机游戏', label: '单机游戏' },
-        { Id: 3, value: '休闲游戏', label: '休闲游戏' },
-        { Id: 4, value: '辅助游戏', label: '辅助游戏' }
+        { Id: 0, value: 'HotGame', label: 'HotGame' },
+        { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
+        { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
+        { Id: 3, value: 'CasualGame', label: 'CasualGame' },
+        { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
       ],
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          title: '当前状态',
+          renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'state',
           render: (h, params) => {
             let type = params.row.state
@@ -54,13 +54,13 @@ export default {
             }
           }
         },
-        { title: '游戏类型', key: 'type' },
-        { title: '游戏名称', key: 'name' },
-        { title: '当前热度', key: 'hot' },
-        { title: '游戏大小', key: 'size' },
-        { title: '中心游戏版本', key: 'versionCenter' },
-        { title: '本地游戏版本', key: 'versionLocal' },
-        { title: '操作',
+        { title: '游戏类型', key: 'type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { title: '游戏名称', key: 'name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '当前热度', key: 'hot', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { title: '游戏大小', key: 'size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { title: '中心游戏版本', key: 'versionCenter', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { title: '本地游戏版本', key: 'versionLocal', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           render: (h, params) => {
             let type = params.row.state

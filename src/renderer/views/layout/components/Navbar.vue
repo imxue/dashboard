@@ -1,24 +1,38 @@
 <template>
   <div class="myheader">
     <Row class="ivu-menu-dark ivu-menu-horizontal">
-        <i-col span="12">
+        <div class="wrapper">
           <Menu mode="horizontal" theme="dark" active-name="1">
             <template v-for="item in routes">
               <template  v-if="!item.hidden&&item.children">
               <router-link :to="item.redirect||item.path+'/'+item.children[0].path" :key="item.children[0].name">
                 <Menu-item :name="item.name" >
                   <Icon type="ios-paper" />
-                  {{ item.meta.title }}
+                  {{ $t(item.meta.title) }}
                   <span v-if="item.meta&&item.meta.title" slot="title">{{item.meta.title}}</span>
                 </Menu-item>
               </router-link>
               </template>
             </template>
           </Menu>
-        </i-col>
-        <i-col span="10" style="color:#fff; text-align:right; padding-right:10px;
-        ">网吧ID：{{netBarId}} &nbsp;&nbsp;&nbsp; 在线终端 / 全部终端：{{onlineNetBar}} / {{totalNetBar}} &nbsp;&nbsp;&nbsp;授权有效期至： <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{expireTime}}</span></i-col>
-        <i-col span="2"><Button @click="handleExit"  style="float:right; margin:15px 15px 0 0;">退出</Button></i-col>
+      <div class="headerFooter">
+
+   
+        <span>{{ $t("BarId") }}：{{netBarId}}</span><span>{{ $t("OnlineTerminal") }} / {{ $t("AuxiliaryGame") }} {{onlineNetBar}} / {{totalNetBar}}</span><span>{{ $t("AuthorizationIsValidUntil") }}： <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{expireTime}}</span></span>
+ 
+        <Dropdown trigger="click" @on-click="ChangeLanguage">
+            <a href="javascript:void(0)">
+            {{$t('Language')}}
+            <Icon type="ios-arrow-down"></Icon>
+           </a>
+          <DropdownMenu slot="list">
+               <DropdownItem  v-if="!(this.localLanguage === 'zh-CN')" name="zh-CN">中文简体</DropdownItem>
+               <DropdownItem  v-if="!(this.localLanguage === 'en-US')" name="en-US">English</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+          <Button @click="handleExit">{{$t('logout')}}</Button>
+          </div>
+      </div>
     </Row>
   </div>
 </template>
@@ -31,11 +45,13 @@
         expireTimeState: 0,
         netBarId: '0000001',
         onlineNetBar: '1000',
-        totalNetBar: '2000'
+        totalNetBar: '2000',
+        localLanguage: ''
       }
     },
     created () {
       this.handleExpireTime()
+      this.localLanguage = localStorage.getItem('language')
     },
     methods: {
       handleExpireTime () { // 到期时间 AppExpireTime
@@ -51,6 +67,22 @@
         } else {
           this.expireTime = this.expireTime
         }
+      },
+      ChangeLanguage (name) {
+        console.log(name)
+        this.$Modal.confirm({
+          title: this.$t('SelectLanguage'),
+          content: this.$t('LanguageSucessAndRestart'),
+          okText: 'Save',
+          cancelText: 'Cancel',
+          onOk: () => {
+            localStorage.setItem('language', name)
+            this.localLanguage = name
+          },
+          onCancel: () => {
+            this.$Modal.remove()
+          }
+        })
       },
       handleExit () {
         localStorage.setItem('Flag', '')
@@ -68,10 +100,24 @@
 
 
 <style scoped>
- .redColor{color: #ff4d43;}
+.redColor{color: #ff4d43;}
+.wrapper {
+  display: flex;
+  color: white;
+  justify-content: space-between
+}
+.wrapper span{
+ margin-right: 15px;
+}
 .myheader{
      min-width: 1250px;
    }
+.headerFooter {
+  margin-right: 15px;
+}
+.headerFooter button{
+  margin-left: 15px;
+}
  @media screen and (max-width: 1280px) {
    .myheader{
      min-width: 1250px;
