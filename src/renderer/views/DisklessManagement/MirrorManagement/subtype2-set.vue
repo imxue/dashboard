@@ -3,7 +3,7 @@
     <div class="topItem">
       <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>
       <Button type="primary" class="topColumn" @click="handleButtonExport">导出</Button> -->
-      <Button type="error" class="topColumn" @click="handleButtonDelete">删除</Button>
+      <Button type="error" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button>
       <!-- <Divider type="vertical" />
       <Button type="primary" class="topColumn" @click="handleButtonBuild">施工状态</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStandby">待机状态</Button> -->
@@ -12,28 +12,28 @@
     <Table border :columns="tableColumns1" :data="tableData1"></Table>
     <Divider />
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonCreate">创建</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonCreate">{{$t('Create')}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
     <Modal
-      :title="modalTitle"
+      :title="this.$t('CreateConfigurationPointName')"
       v-model="showImgPopup"
       width= "500"
       footer-hide
       class-name="vertical-center-modal">
       <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="100">
         <FormItem :label="labelName" prop="nameVal">
-          <Input v-model="formValidate2.nameVal" placeholder="请输入配置点名称..." clearable  />
+          <Input v-model="formValidate2.nameVal" :placeholder="this.$t('PleaseEnterConfigurationPointName')" clearable  />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleSetImage('formValidate2')">保存</Button>
-             <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">取消</Button>
+             <Button type="primary" @click="handleSetImage('formValidate2')">{{$t('Save')}}</Button>
+             <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
      </Modal>
     <Modal
-      title="还原配置点"
+      :title="this.$t('RestoreConfigurationPoint')"
       v-model="showPopup"
       width="800"
       style="padding-bottom:50px"
@@ -46,14 +46,15 @@
 <script>
   import moment from 'moment'
   import {
-    getImageList,
+    getImageListx,
     deleteImage,
     createImageProject,
     getImageRestore,
     deleteImageProject,
     editImageProject,
     revertImageRestore,
-    deleteImageRestore
+    deleteImageRestore,
+    createImageProjectx
   } from '@/api/wupan'
   export default {
     name: 'subType2-1',
@@ -70,35 +71,35 @@
         restoreListIndexValue: '', // 当前还原点 row value
         ImageDataList: [],
         tableColumns1: [
-          { title: '镜像名称', key: 'name' },
+          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
           {
-            title: '镜像大小',
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
             key: 'size',
             render: (h, params) => {
               return h('span', params.row.size + 'GB')
             }
           },
-          { title: '占用空间', key: 'fileSizeB' },
+          { title: '占用空间', key: 'fileSizeB', renderHeader: (h, params) => { return h('span', this.$t('TakeupSpace')) } },
           {
-            title: '配置个点数',
+            renderHeader: (h, params) => { return h('span', this.$t('ConfigurePoints')) },
             key: 'profileList',
             render: (h, params) => {
               let arr = params.row.profileList
               if (arr !== null || arr !== '') {
-                // console.log(JSON.stringify(arr) + arr.length)
                 return h('span', arr.length)
               } else {
                 return h('span', '-')
               }
             }
           }
-          // { title: '状态', key: 'state' }
+
         ],
         tableData1: [],
         tableColumns: [
-          { title: '配置点名称', key: 'name' },
-          { title: '配置包大小', key: 'fileSizeB' },
-          { title: '操作',
+          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
+          { key: 'fileSizeB', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) } },
+          {
+            renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 400,
             key: 'operation',
             render: (h, params) => {
@@ -107,20 +108,20 @@
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
-              }, '还原点')
+              }, this.$t('RestorePoint'))
               let b = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleCopy(params.row) } }
-              }, '复制')
+              }, this.$t('Copy'))
               let c = h('Button', {
                 props: { type: 'error' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleDelete(params.row) } }
-              }, '删除')
+              }, this.$t('Detele'))
               let d = h('Button', { props: { type: 'info' },
                 on: { click: () => { this.handleFix(params.row) } }
-              }, '修改')
+              }, this.$t('modify'))
               return [a, b, c, d]
             }
           }
@@ -131,30 +132,29 @@
         formValidate: { config: '' },
         ruleValidate: { config: [{ required: true, message: '不能为空', trigger: 'change' }] },
         tableColumns3: [
-          { title: '还原点名', key: 'no' },
-          { title: '还原点备注', key: 'comment' },
+          { key: 'no', renderHeader: (h, params) => { return h('span', this.$t('RestorePpointName')) } },
+          { key: 'comment', renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) } },
           {
-            title: '修改时间',
+            renderHeader: (h, params) => { return h('span', this.$t('ChangeTime')) },
             key: 'dataModifyTime',
             render: (h, params) => {
               return h('span', moment(params.row.dataModifyTime).format('YYYY-MM-DD HH:mm:ss'))
             }
           },
-          { title: '操作',
+          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 400,
             key: 'operation',
             render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
               let a = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSetRestore(params.row) } }
-              }, '还原')
+              }, this.$t('Revert'))
               let b = h('Button', {
                 props: { type: 'error' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleDeleteRestore(params.row) } }
-              }, '删除')
+              }, this.$t('Delete'))
               return [a, b]
             }
           }
@@ -175,8 +175,7 @@
     },
     methods: {
       handleGetImageList () {
-        // this.tableData = []
-        getImageList().then((a) => {
+        getImageListx(localStorage.getItem('masterip')).then((a) => {
           var arr = a.data.result.list
           if (a.data.error === null && arr.length !== null) {
             var newArr = arr.filter(item => item.name === this.tableData1[0].name)
@@ -221,7 +220,6 @@
       handleButtonBuild () {},
       handleButtonStandby () {},
       handleButtonCreate () {
-        this.modalTitle = '创建配置点'
         this.modalType = 'create'
         this.showImgPopup = true
       },
@@ -236,11 +234,23 @@
           this.handleSubmitRestore()
         }
       },
+      /**
+       * 创建配置点
+       */
       handleSetImage (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showImgPopup = false
-            this.handeCheckModalSubmitType()
+            let image = this.$route.query.data.name
+            let name = this.formValidate2.nameVal
+            let data = { image, name }
+            createImageProjectx(data, localStorage.getItem('masterip')).then((e) => {
+              if (e.error == null) {
+                this.handleGetImageList()
+              }
+            }, (err) => {
+              console.log(err)
+            })
           } else {
             this.showImgPopup = true
           }

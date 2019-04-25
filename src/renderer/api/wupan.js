@@ -167,6 +167,12 @@ export function createImageProject (image, projectNO, restoreNo, name, title) {
     })
   }
 }
+/**
+ * 创建配置方案
+*/
+export function createImageProjectx (data, ip) {
+  return makeRequestx('Cre_ImgPro', { ...data }, ip)
+}
 
 export function deleteImageProject (image, projectNO) {
   return makeRequest('Del_ImgPro', {
