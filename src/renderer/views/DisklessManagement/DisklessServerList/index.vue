@@ -8,7 +8,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
     <!-- table -->
-    <Table :loading="loading" border ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail" :no-data-text="this.$t('Nodata')"></Table>
+    <Table :loading="loading" border stripe ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
       :title="$t('AddServer')"
       v-model="showPopup"

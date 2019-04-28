@@ -1,5 +1,6 @@
 export const login = {
   path: '/login',
+  name: 'login',
   component: () => import('@/views/login/index')
 }
 export const login1 = {
@@ -9,6 +10,11 @@ export const login1 = {
 export const login2 = {
   path: '/login/reset',
   component: () => import('@/views/login/reset')
+}
+export const enroll = {
+  path: '/enroll',
+  name: 'enroll',
+  component: () => import('@/views/login/enroll')
 }
 
 export const login3 = {

@@ -11,11 +11,13 @@
 </script>
 
 <style>
-  /* CSS */
   * {
     box-sizing: border-box;
   }
   html,body{
+    height: 100%;
+  }
+  #app{
     height: 100%;
   }
   .topItem{ height: 60px;line-height: 32px;}

@@ -29,17 +29,17 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          title: '当前状态',
+          renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'Status'
         },
-        { title: '游戏类型', key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         // { title: '当前热度', key: 'hot' },
-        { title: '更新量', key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-        { title: '已更新', key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('updatedVolume')) } },
-        { title: '进度', key: 'Progress', renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
-        { title: '更新速度', key: 'UpdateSpeed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-        { title: '预计完成时间', key: 'PreFinishedTime', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
+        { key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+        { key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('updatedVolume')) } },
+        { key: 'Progress', renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
+        { key: 'UpdateSpeed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+        { key: 'PreFinishedTime', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           render: (h, params) => {

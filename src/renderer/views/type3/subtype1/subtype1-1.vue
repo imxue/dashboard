@@ -14,6 +14,7 @@
     <!-- table -->
     <Table
       border
+      stripe
       ref="selection"
       :columns="tableColumns"
       :data="tableData"
@@ -44,12 +45,12 @@
     </Modal>
     <Modal :title="this.$t('SetSuperWorkstation')" v-model="adddetail" footer-hide width="500">
       <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
-        <FormItem label="镜像" prop="imglistVal">
+        <FormItem :label="this.$t('Mirror')" prop="imglistVal">
           <Select v-model="formValidatex.imglist" :placeholder="this.$t('pleaseInput')">
             <Option v-for="item in imglist" :value="item.name" :key="item.name">{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem label="配置" prop="profileListVal">
+        <FormItem :label="this.$t('Configure')" prop="profileListVal">
           <Select v-model="formValidatex.profileList" :placeholder="this.$t('pleaseInput')">
             <template v-if="profileList">
               <Option
@@ -325,7 +326,10 @@ export default {
 
     handDetele (data) {
       this.$Modal.confirm({
-        title: "this.$t('DeleteTip')",
+        title: this.$t('DeleteTip'),
+        content: this.$t('DeleteCurrentData'),
+        okText: this.$t('Confirm'),
+        cancelText: this.$t('cancelText'),
         onOk: () => {
           deletePcsConfigx([data.mac], localStorage.getItem('masterip')).then(respon => {
             this.handgetClienList()

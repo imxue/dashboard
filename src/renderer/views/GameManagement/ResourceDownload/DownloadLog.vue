@@ -20,7 +20,7 @@ export default {
     return {
       tableColumns: [
         {
-          title: '状态',
+          renderHeader: (h, params) => { return h('span', this.$t('State')) },
           key: 'state',
           render: (h, params) => {
             let type = params.row.state

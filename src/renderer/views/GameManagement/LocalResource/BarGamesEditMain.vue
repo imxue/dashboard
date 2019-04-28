@@ -4,59 +4,55 @@
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
       <FormItem prop>
         <Row>
-          <i-col span="4">{{$t('GameIcon')}}：</i-col>
-          <i-col span="8">
-            <template v-if="this.localimgUrl">
-              <img :src="this.localimgUrl">
-            </template>
-            <template v-else>
-              <img :src="formValidate.IconUrl">
-            </template>
-            <input
-              type="file"
-              accept="image/*"
-              v-on:change="imgUpload"
-              placeholder="Upload files"
-              style="opacity:0.8;"
-            >
-          </i-col>
-        </Row>
+            <i-col span="4">{{$t('GameIcon')}}：</i-col>
+            <i-col span="8">
+              <div style='border: 1px solid #ccc!important;  border-radius: 16px; '>
+          <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
+            <img v-if="this.formValidate.IconUrl" :src='this.formValidate.IconUrl' style='margin-top:-35px;margin-left:10px;'>
+              </div>
+                 
+           <p style='margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here to upload</p>
+           
+            <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="!(this.formValidate.IconUrl)">Click here to upload</p>
+              <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
+            </i-col>
+          </Row>
       </FormItem>
       <FormItem prop="Name">
         <Row>
-          <i-col span="4">游戏名称：</i-col>
+          <i-col span="4">{{$t("gameName")}}：</i-col>
           <i-col span="8">
-            <i-input v-model="formValidate.Name" placeholder="请输入游戏名称"></i-input>
+            <i-input v-model="formValidate.Name" :placeholder="$t('pleaseInput')"></i-input>
           </i-col>
         </Row>
       </FormItem>
       <FormItem prop="SavePath">
         <Row>
-          <i-col span="4">服务端路径：</i-col>
+          <i-col span="4">{{$t("ServerPath")}}</i-col>
           <i-col span="8">
-            <i-input v-model="formValidate.SavePath" placeholder="请输入游戏名称"></i-input>
+            <i-input v-model="formValidate.SavePath" :placeholder="$t('pleaseInput')"></i-input>
           </i-col>
         </Row>
       </FormItem>
       <FormItem prop="RunPath">
         <Row>
-          <i-col span="4">客户机启动路径：</i-col>
+          <i-col span="4">{{$t("ClientStartup")}}：</i-col>
           <i-col span="8">
-            <i-input v-model="formValidate.RunPath" placeholder="请输入游戏名称"></i-input>
+            <i-input v-model="formValidate.RunPath" :placeholder="$t('pleaseInput')"></i-input>
           </i-col>
         </Row>
       </FormItem>
       <FormItem prop="RunExe">
         <Row>
-          <i-col span="4">执行程序：</i-col>
+          <i-col span="4">{{$t("ExecuteProgram")}}：</i-col>
           <i-col span="8">
-            <i-input v-model="formValidate.RunExe" placeholder="请输入游戏名称"></i-input>
+            <i-input v-model="formValidate.RunExe" :placeholder="$t('pleaseInput')"></i-input>
           </i-col>
         </Row>
       </FormItem>
       <FormItem prop="IsEnableSync">
         <Row>
-          <i-col span="4">服务器同步：</i-col>
+          <i-col span="4">{{$t("ServerSyncSet")}}：</i-col>
           <i-col span="8">
             <Select v-model="formValidate.IsEnableSync" @on-change="handleSelectUpdataWays">
               <Option

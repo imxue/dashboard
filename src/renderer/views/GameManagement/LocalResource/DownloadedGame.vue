@@ -8,23 +8,22 @@
           </Select>
            <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
         </i-col>
-        <i-col span="4" offset="10">
+        <i-col span="2" offset="10">
           <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('Synchronize')}}</Button>
-          <Button type="primary" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button>
+          <!-- <Button type="primary" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button> -->
         </i-col>
       </Row>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleTableEdit" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
       <i-col span="24"><Page :current="currentPage" :page-size="pageSize" :total="totalPageNumber" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
     </Row>
   </div>
 </template>
 
 <script>
-  import { localMultiSync, getDownloadedGames } from '@/api/localGame'
+  import { localMultiSync, getDownloadedGames, deleteLocalGame } from '@/api/localGame'
   import { getDrivers } from '@/api/sync'
   export default {
     name: 'subType3-1',
@@ -73,7 +72,6 @@
             }
           },
           {
-            title: '游戏类型',
             renderHeader: (h, params) => { return h('span', this.$t('TypeName')) },
             key: 'TypeName'
           },
@@ -85,7 +83,7 @@
             tooltip: true,
             width: 140
           },
-          { title: '执行程序', key: 'ExePath', renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
+          { key: 'ExePath', renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             render: (h, params) => {
@@ -222,11 +220,26 @@
         })
       },
       handleTableDelete (index) {
-        var list = []
-        this.tableSelectVal = list.concat(index.Id)
-        this.$router.push({
-          path: 'subtype3-delete',
-          query: { ids: this.tableSelectVal }
+        this.$Modal.confirm({
+          title: this.$t('DeleteTip'),
+          content: this.$t('DeleteCurrentData'),
+          cancelText: this.$t('cancelText'),
+          okText: this.$t('confirm'),
+          onOk: () => {
+            deleteLocalGame(index.Id).then(
+              resp => {
+                this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
+              },
+              () => {
+                this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
+                this.$Message.error('请求出错，请稍后再试')
+              }
+            )
+          },
+          onCancel: () => {
+            this.$Modal.remove()
+          }
+
         })
       }
     }

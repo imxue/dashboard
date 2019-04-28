@@ -9,12 +9,15 @@
 
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
-          <Row>
-            <i-col span="4">游戏图标：</i-col>
+         <Row>
+            <i-col span="4">{{$t('GameIcon')}}：</i-col>
             <i-col span="8">
-           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
-             <img :src='imgUrlxx'>
-            <p>Click or drag files here to upload</p>
+              <div style='border: 1px solid #ccc!important;  border-radius: 16px; '>
+          <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
+            <img  :src='this.imgUrl' style='margin-top:-35px;margin-left:10px;'>
+              </div>             
+           <p style='margin-top:-35px; text-align:center' v-if="!this.formValidate.IconUrl">Click here to upload</p>   
+            <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here1 to upload</p>
               <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
             </i-col>
           </Row>
@@ -22,41 +25,41 @@
   
         <FormItem prop="name">
           <Row>
-            <i-col span="4">游戏名称：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.name"  placeholder=""></i-input></i-col>
+            <i-col span="4">{{$t('GameName')}}：</i-col>
+            <i-col span="8"><i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="path">
           <Row>
-            <i-col span="4">游戏路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.path" placeholder=""></i-input></i-col>
+            <i-col span="4">{{$t('GamePath')}}：</i-col>
+            <i-col span="8"><i-input v-model="formValidate.path" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="exepath">
           <Row>
-            <i-col span="4">客户机启动路径：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.exepath" placeholder=""></i-input></i-col>
+            <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
+            <i-col span="8"><i-input v-model="formValidate.exepath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="exename">
           <Row>
-            <i-col span="4">执行程序：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.exename" placeholder=""></i-input></i-col>
+            <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
+            <i-col span="8"><i-input v-model="formValidate.exename" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="isServerSync">
           <Row>
-            <i-col span="4">服务器同步：</i-col>
+            <i-col span="4">{{$t('ServerSyncSet')}}：</i-col>
             <i-col span="8">
-              <Select v-model="formValidate.isEnableSync" @on-change="handleSelectUpdataWays">
-                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
+              <Select v-model="formValidate.isEnableSync" @on-change="handleSelectUpdataWays" :placeholder="$t('ChooseAtLeastOne')">
+                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id">{{ item.value }}</Option>
               </Select>
             </i-col>
           </Row>
         </FormItem>
         <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">返回</Button>
+            <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('Return')}}</Button>
         </FormItem>
     </Form>
   </div>
@@ -69,7 +72,6 @@
     name: 'subType3-1-edit',
     data () {
       return {
-        imgUrlxx: '',
         showIcon: false,
         temp: '', // 临时存放icon
         msg: '',
@@ -86,73 +88,36 @@
           isEnableSync: '自动更新'
         },
         updataWayList: [
-          { Id: 1, value: '启用' },
-          { Id: 0, value: '禁用' }
+          { Id: 1, value: this.$t('Enable') },
+          { Id: 0, value: this.$t('Disable') }
         ],
         showList: [
           { Id: 0, value: '全部显示' },
           { Id: 1, value: '按客户机分组显示' }
         ],
-        checkAll: false,
         ruleValidate: {
-          // starterScheme: [ { required: true, message: '至少选择一个', trigger: 'change' } ],
-          name: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          path: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          exepath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          exename: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          isEnableSync: [ { required: true, message: '至少选择一个', trigger: 'change' } ]
+          name: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
+          path: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
+          exepath: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
+          exename: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
+          isEnableSync: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' } ]
         },
         isSync: false
       }
     },
     mounted () {
     },
-    created () {
-      // this.handleCheckQuery()
-      // console.log('this.$route.query.data= ' + JSON.stringify(this.$route.query.data))
-    },
+    created () {},
     methods: {
-      handleUploadSuccess (res, file) {
-        // console.log('handleUploadSuccess::' + JSON.stringify(res))
-        if (res.Code === 1) {
-          this.showIcon = false
-          this.msg = res.Msg
-          this.$Message.error('handleUploadSuccess::' + res.Msg)
-        } else {
-          this.imgUrl = 'http://10.30.18.62:1010' + res.Data
-          // this.imgUrl = res.Data
-          this.iconPath = res.Data
-          this.showIcon = true
-        }
-        // this.formValidate.imgUrl = file.url
-        // this.showIcon = true
-      },
       imgUpload (data) {
         console.log(data)
         let file = data.target.files[0]
-        this.imgUrlxx = file.path
+        this.imgUrl = file.path
         this.temp = file
       },
       handleFormatError (res) {
         this.$Message.error('handleFormatError::' + res.Msg)
       },
-      // handleCheckQuery () {
-      //   if (this.$route.query.data) {
-      //     var data = this.$route.query.data
-      //     this.formValidate.name = data.Name
-      //     this.formValidate.gamePath = data.Localpath
-      //     this.formValidate.startPath = data.RunPath
-      //     this.formValidate.run = data.RunPath
-      //     if (data.IsAutoupdate === true) {
-      //       this.formValidate.isServerSync = '自动更新'
-      //     } else {
-      //       this.formValidate.isServerSync = '手动更新'
-      //     }
-      //   }
-      // },
-      // handleSelectShow (index) {
-      //   this.formValidate.starterScheme = index
-      // },
       handleSelectUpdataWays (index) {
         if (index === '禁用') {
           this.isSync = false
@@ -192,14 +157,15 @@
             }
           })
         }, (e) => {
-          that.$Message.error('failed' + e)
+          that.$Message.error(this.$t('GameIconUnAdd'))
         }).catch((err) => {
           that.$Message.error('failed' + err)
         })
       },
+      /**
+       * 返回
+       */
       handleReset (name) {
-        this.checkAll = true
-        this.selectVal = []
         this.$refs[name].resetFields()
         this.$router.go(-1)
       }

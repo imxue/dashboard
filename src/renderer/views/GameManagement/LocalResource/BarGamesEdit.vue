@@ -4,17 +4,18 @@
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
         <FormItem prop="file">
           <Row>
-            <i-col span="4">游戏图标：</i-col>
+            <i-col span="4">{{$t('GameIcon')}}：</i-col>
             <i-col span="8">
-              <img :src="imgUrl" v-if="showIcon === false" class="imgIcon">
-              <input accept="image/*" v-model="formValidate.x">
-              
+           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
+             <img :src='this.formValidate.apiUrl'>
+            <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' >Click here to upload</p>
+              <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
             </i-col>
           </Row>
         </FormItem>
         <FormItem prop="name">
           <Row>
-            <i-col span="4">游戏名称：</i-col>
+            <i-col span="4">游戏11名称：</i-col>
             <i-col span="8"><i-input v-model="formValidate.name"  disabled placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
@@ -86,14 +87,7 @@
           { Id: 1, value: '手动更新' }
         ],
         checkAll: false,
-        ruleValidate: {
-          // starterScheme: [ { required: true, message: '至少选择一个', trigger: 'change' } ],
-          // // name: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          // savePath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          // startPath: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          // run: [ { required: true, message: '不能为空', trigger: 'blur' } ],
-          // updateWay: [ { required: true, message: '至少选择一个', trigger: 'change' } ]
-        },
+        ruleValidate: {},
         autoupdate: false
       }
     },

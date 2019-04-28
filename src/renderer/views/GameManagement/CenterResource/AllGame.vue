@@ -14,7 +14,7 @@
         </Form>
     </Modal>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:150px;">
+      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
         <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
       </Select>
       <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
@@ -96,7 +96,7 @@ export default {
               on: { click: () => { this.handleRemove(params.row) } }
             }, this.$t('LocalRemoval'))
             let c = h('Button', {
-              style: { color: '#2d8cf0', textDecoration: 'underline' },
+              style: { color: '#2d8cf0' },
               on: { click: () => { this.handleDownGame(params.row.Id) } }
             }, this.$t('DownloadGames'))
             switch (type) {

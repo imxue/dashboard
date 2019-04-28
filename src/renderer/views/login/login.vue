@@ -68,7 +68,7 @@
 <style scoped>
   h3{ font-size: 18px; text-align: center; }
   .login{
-    background-color: #edeff0;
+    background-color: #3B4759;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -78,7 +78,7 @@
     right: 0;
   }
   .box{
-    background-color:#fff;
+    background-color:#3B4759;
     padding:20px;
     width: 320px;
     height: 350px;

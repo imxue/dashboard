@@ -6,7 +6,7 @@
         v-model="searchVal"
         search
         :enter-button="$t('Search')"
-        placeholder="请输入游戏首字母..."
+        :placeholder="this.$t('PleaseInputGameName')"
         clearable
         style="width: 200px;"
       />
@@ -73,13 +73,12 @@ export default {
             return h('img', { attrs: { src: params.row.IconUrl }, style: { width: '40px', height: '40px', display: 'flex' } })
           }
         },
-        { title: '游戏名称', key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { title: '游戏热度', key: 'CenterPopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { title: '服务器路径', key: 'LocalPath', renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
-        { title: '执行文件', key: 'RunExe', renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
-        { title: '大小', key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'CenterPopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { key: 'LocalPath', renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
+        { key: 'RunExe', renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
+        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
         {
-          title: '服务器同步',
           renderHeader: (h, params) => { return h('span', this.$t('ServerSyncSet')) },
           key: 'IsEnableSync',
           render: (h, params) => {
@@ -242,10 +241,10 @@ export default {
      */
     handleTableDelete (index) {
       this.$Modal.confirm({
-        title: '删除提示',
-        content: '确定嘛',
-        cancelText: '取消',
-        okText: '确定',
+        title: this.$t('DeleteTip'),
+        content: this.$t('DeleteCurrentData'),
+        cancelText: this.$t('cancelText'),
+        okText: this.$t('confirm'),
         onOk: () => {
           deleteLocalGame(index.Id).then(
             resp => {
