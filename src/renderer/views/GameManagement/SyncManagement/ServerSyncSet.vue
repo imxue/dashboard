@@ -77,7 +77,7 @@
           { key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
           { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           { key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'Size', width: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
           { key: 'Ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
           { key: 'Drive', renderHeader: (h, params) => { return h('span', this.$t('TargetDiskSymbol')) } },
           { key: 'Drivesize', renderHeader: (h, params) => { return h('span', this.$t('DiskSymbolVolume')) } },

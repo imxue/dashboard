@@ -40,10 +40,10 @@
             }
           },
           { title: '游戏类型', key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'Dispalyname', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '游戏名称', key: 'Dispalyname', width: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           { title: '热度', key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'Ip', renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标服务器地址', width: 120, key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Ip', width: 120, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
           { title: '目标路径', key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
           { title: '开始时间', key: 'BeginSyncTime', renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) } },
           { title: '结束时间', key: 'EndSyncTime', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },

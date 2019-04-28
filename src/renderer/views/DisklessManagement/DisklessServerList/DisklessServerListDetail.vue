@@ -455,6 +455,9 @@ export default {
               path: 'DisklessServerList'
             })
           })
+          this.$router.push({
+            path: 'DisklessServerList'
+          })
           if (ip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
           }

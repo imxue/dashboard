@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:150px;">
-        <Option v-for="item in gameList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ $t(item.label) }}</Option>
+      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
+        <Option v-for="item in gameList" :value="item.value" :key="item.value" >{{ $t(item.label) }}</Option>
       </Select>
       <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
       <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t("Download")}}</Button>

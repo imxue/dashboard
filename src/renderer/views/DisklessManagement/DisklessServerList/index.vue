@@ -3,7 +3,7 @@
      <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Input class="topColumn" v-model="searchVal" search :enter-button="$t('Search')" @on-search="handleSearch"  :placeholder="$t('pleaseInputServerIp')" style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonAdd" >{{$t('AddServer')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd" :disabled="loading">{{$t('AddServer')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">{{$t('Refresh')}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
@@ -16,12 +16,12 @@
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem :label="$t('ServerIP')" prop="serverIP">
-          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  />
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  :disabled="loadingBtn"/>
         </FormItem>   
         
         <FormItem :label="$t('ServerPW')" prop="password">
             <div class="ivu-form-item-error-tip" v-if="NetWork">{{$t("NetworkError")}}</div>
-          <Input v-model="formValidate.password" :placeholder="$t('pleaseInputServerPW')"  />
+          <Input type="password" v-model="formValidate.password" :placeholder="$t('pleaseInputServerPW')"  :disabled="loadingBtn" />
         </FormItem>
         <FormItem class="buttonList">
              <Button type="primary" @click="handleAddServer('formValidate')" :loading='loadingBtn'>{{$t("Save")}}</Button>
@@ -156,6 +156,7 @@ export default {
         获取列表
       */
       handleGetServerList () {
+        this.loading = true
         let d = localStorage.getItem('masterip')
         if (d) {
           getServersx(d).then((a) => {
@@ -164,12 +165,23 @@ export default {
             if (datalist && a.data.error === null) {
               this.spinShow = false
               this.serverList = datalist
+              this.loading = false
               this.handleGetCurrMasterServerIp(datalist)
             } else {
               localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
+          }, () => {
+            this.serverList.push({
+              'serverIp': localStorage.getItem('masterip'),
+              'online': '0',
+              'dataVer': '-',
+              'isMaster': '1'
+            })
+            this.loading = false
           })
+        } else {
+          this.loading = false
         }
       },
       handleGetCurrMasterServerIp (data) {
