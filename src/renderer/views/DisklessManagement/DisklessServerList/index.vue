@@ -3,7 +3,7 @@
      <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Input class="topColumn" v-model="searchVal" search :enter-button="$t('Search')" @on-search="handleSearch"  :placeholder="$t('pleaseInputServerIp')" style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonAdd" >{{$t('AddServer')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd" :disabled="loading">{{$t('AddServer')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonRefesh" :disabled="refesh">{{$t('Refresh')}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
     </div>
@@ -16,7 +16,7 @@
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem :label="$t('ServerIP')" prop="serverIP">
-          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  />
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')" />
         </FormItem>   
         
         <FormItem :label="$t('ServerPW')" prop="password">
@@ -156,6 +156,7 @@ export default {
         获取列表
       */
       handleGetServerList () {
+        this.loading = true
         let d = localStorage.getItem('masterip')
         if (d) {
           getServersx(d).then((a) => {
@@ -163,13 +164,26 @@ export default {
             var datalist = a.data.result.list
             if (datalist && a.data.error === null) {
               this.spinShow = false
+              this.loading = false
               this.serverList = datalist
+              console.log(this.serverList)
               this.handleGetCurrMasterServerIp(datalist)
             } else {
               localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
+          }, (e) => {
+            console.log(e)
+            let x = {
+              'serverIp': localStorage.getItem('masterip'),
+              'online': '0',
+              'dataVer': '-'
+            }
+            this.serverList.push(x)
+            this.loading = false
           })
+        } else {
+          this.loading = false
         }
       },
       handleGetCurrMasterServerIp (data) {
@@ -222,7 +236,6 @@ export default {
             let cookiesMasterIp = localStorage.getItem('masterip')
             if (cookiesMasterIp) { // 本地保存
               getServersNode(this.formValidate.serverIP).then(res => {
-                this.loadingBtn = false
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
@@ -232,7 +245,7 @@ export default {
             } else { // 没有
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.showPopup = false
-                this.loadingBtn = false
+  
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
@@ -248,9 +261,12 @@ export default {
       },
       handleSubmitAddServer (guid, masterIp, selfip) {
         // this.showPopup = false
-        editServersNode(masterIp, selfip) // 设置主服务器
+        editServersNode(masterIp, selfip).then(() => {}, () => {
+          this.$Message.sucess(this.$t('主服务器失效1'))
+        }) // 设置主服务器
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
+            this.loadingBtn = false
             localStorage.setItem('masterip', masterIp)
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
@@ -258,11 +274,17 @@ export default {
               this.handleGetServerList()
             }, 1000)
           } else {
+            this.loadingBtn = false
             this.showPopup02 = true
             if (a.data.error.indexOf('重复添加') !== '-1') {
               this.modal4 = true
             }
           }
+        }, () => {
+          this.$Notice.error({
+            title: '主服务器连接不上'
+          })
+          this.loadingBtn = false
         })
       },
       handleAddReset (name) {

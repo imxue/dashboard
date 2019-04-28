@@ -455,8 +455,12 @@ export default {
               path: 'DisklessServerList'
             })
           })
+
           if (ip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
+            this.$router.push({
+              path: 'DisklessServerList'
+            })
           }
           deleteserverConfig(ip)
         },
