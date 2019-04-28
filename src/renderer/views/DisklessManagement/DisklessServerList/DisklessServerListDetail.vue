@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Select style="width:200px; marginRight:10px;" v-model="model1" @on-change="listTypeChange">
@@ -64,7 +64,7 @@
         <i-col span="16">{{rowData.availableSize}} KB</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">{{$t('DiskEffect')}}：</i-col>
+        <i-col span="4" style="width:200px;">{{$t('DiskEffect')}}：</i-col>
         <i-col span="20">
           <Select
             v-model="selecteDisk"
@@ -282,6 +282,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('Effect')) },
           key: 'fun',
+          width: 140,
           render: (h, params) => {
             let type = params.row.fun
             switch (type) {
@@ -591,6 +592,9 @@ export default {
 </script>
 
 <style scoped>
+.container{
+  min-width: 1200px;
+}
 .topColumn {
   float: none;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
@@ -129,6 +129,9 @@
 </script>
 
 <style scoped>
+  .container{
+    min-width: 1300px;
+  }
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
