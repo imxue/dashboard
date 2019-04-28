@@ -8,9 +8,9 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
+      <i-col span="8">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
        <!-- <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}}{{$t('Downloaded')}}：{{DownLoadCount}}</i-col> -->
-      <i-col span="20"><Page :total="10"  style=" float:right;"/></i-col>
+      <i-col span="16"><Page :total="10"  style=" float:right;"/></i-col>
     </Row>
     
   </div>
@@ -26,7 +26,7 @@
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
           {
-            title: '当前状态',
+            renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'state',
             render: (h, params) => {
               let type = params.row.state

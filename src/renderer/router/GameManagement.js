@@ -145,14 +145,14 @@ export default {
         {
           path: 'BarGamesEditMain', // 编辑游戏
           name: 'GameManagement-SubType3-edit',
-          meta: { title: '编辑', hidden: true },
+          meta: { title: 'Edit', hidden: true },
           component: () => import('@/views/GameManagement/LocalResource/BarGamesEditMain'),
           hidden: true
         },
         {
           path: 'DownloadedGameEdit',
           name: 'GameManagement-SubType3-delete',
-          meta: { title: '编辑', hidden: true },
+          meta: { title: 'Edit', hidden: true },
           component: () => import('@/views/GameManagement/LocalResource/DownloadedGameEdit'),
           hidden: true
         }

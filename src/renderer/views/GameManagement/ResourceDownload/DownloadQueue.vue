@@ -9,7 +9,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonSet">下载设置</Button> -->
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :total="100" :current="1" @on-change="changePage"  style=" float:right;"/>
     </Row>

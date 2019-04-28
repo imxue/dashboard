@@ -10,10 +10,10 @@
       <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">{{$t("Resource")}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t("Downloaded")}}：1000</i-col>
-      <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>
+      <i-col span="8">{{$t("Resource")}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t("Downloaded")}}：1000</i-col>
+      <i-col span="16"><Page :total="100"  style=" float:right;"/></i-col>
     </Row>
     
   </div>

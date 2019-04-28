@@ -259,5 +259,6 @@
     "Login":"登录",
     "bar":"网吧登录系统",
     "ThirdPartyLogin":"第三方登录",
-    "PhoneNumber":"手机号码"
+    "PhoneNumber":"手机号码",
+    "tip":"秒，后启动默认方案，单镜像单配置时无需等待"
 }

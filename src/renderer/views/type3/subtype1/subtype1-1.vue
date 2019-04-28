@@ -21,6 +21,7 @@
       @on-selection-change="handleCheckBox"
       @on-select="handleGetTableRowInfo"
       @on-select-cancel="handleRemoveTableRowInfo"
+      :no-data-text="this.$t('Nodata')"
     ></Table>
     <Row style="margin-top:10px; ">
       <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
@@ -128,7 +129,7 @@ export default {
         // { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          width: 60,
+          width: 80,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {

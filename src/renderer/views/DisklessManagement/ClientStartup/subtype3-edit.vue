@@ -59,13 +59,13 @@
         </FormItem>
         <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'">
           <Row>
-            <i-col span="16"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input>&nbsp;&nbsp;秒，后启动默认方案，单镜像单配置时无需等待。
+            <i-col span="20"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input>{{$t('tip')}}
             </i-col>
           </Row>
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; * 单位M</i-col>
+            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; *M</i-col>
           </Row>
         </FormItem>
         <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'">

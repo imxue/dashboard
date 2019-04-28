@@ -43,6 +43,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
             key: 'state',
+            width: 80,
             render: (h, params) => {
               let type = params.row.state
               switch (type) {
@@ -59,16 +60,16 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'Dispalyname', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '热度', key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '更新量', key: 'updateSize', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-          { title: '已更新', key: 'updatedSize', renderHeader: (h, params) => { return h('span', this.$t('updated')) } },
-          { title: '更新速度', key: 'speed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-          { title: '预计完成时间', key: 'time', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
+          { title: '游戏类型', key: 'Type', width: 120, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'Dispalyname', width: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', key: 'Centerpopularity', width: 120, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'ip', width: 120, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Localpath', width: 110, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'Dir', width: 110, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '更新量', key: 'updateSize', width: 110, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          { title: '已更新', key: 'updatedSize', width: 90, renderHeader: (h, params) => { return h('span', this.$t('updated')) } },
+          { title: '更新速度', key: 'speed', width: 80, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+          { title: '预计完成时间', key: 'time', width: 120, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {

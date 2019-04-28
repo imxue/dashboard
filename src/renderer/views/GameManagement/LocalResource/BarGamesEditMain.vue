@@ -66,8 +66,8 @@
         </Row>
       </FormItem>
       <FormItem class="buttonList">
-        <Button type="primary" @click.stop.prevent="handleSubmit('formValidate')">保存</Button>
-        <Button @click="handleReset('formValidate')" style="margin-left: 8px">返回</Button>
+        <Button type="primary" @click.stop.prevent="handleSubmit('formValidate')">{{$t('Save')}}</Button>
+        <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('return')}}</Button>
       </FormItem>
     </Form>
   </div>
@@ -96,7 +96,7 @@ export default {
         RunExe: '',
         IsEnableSync: ''
       },
-      IsEnableSyncList: [{ Id: 1, value: '启用' }, { Id: 0, value: '禁用' }],
+      IsEnableSyncList: [{ Id: 1, value: this.$t('Enable') }, { Id: 0, value: this.$t('Disable') }],
       showList: [
         { Id: '0', value: '全部显示' },
         { Id: '1', value: '按客户机分组显示' }

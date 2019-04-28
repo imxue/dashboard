@@ -18,7 +18,7 @@
       <div class="headerFooter">
 
    
-        <span>{{ $t("BarId") }}：{{netBarId}}</span><span>{{ $t("OnlineTerminal") }} / {{ $t("AuxiliaryGame") }} {{onlineNetBar}} / {{totalNetBar}}</span><span>{{ $t("AuthorizationIsValidUntil") }}： <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{expireTime}}</span></span>
+        <span>{{ $t("BarId") }}：{{netBarId}}</span><span>{{ $t("OnlineTerminal") }} / {{ $t("AllTerminal") }} {{onlineNetBar}} / {{totalNetBar}}</span><span>{{ $t("AuthorizationIsValidUntil") }}： <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{expireTime}}</span></span>
  
         <Dropdown trigger="click" @on-click="ChangeLanguage">
             <a href="javascript:void(0)">

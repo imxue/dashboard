@@ -12,25 +12,25 @@
         </FormItem> -->
         <FormItem prop="Name">
           <Row>
-            <i-col span="4">游戏名称：</i-col>
+            <i-col span="4">{{$t("gameName")}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.Name" placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="savePath">
           <Row>
-            <i-col span="4">服务端存放路径：</i-col>
+            <i-col span="4">{{$t("ServerPath")}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.SavePath"  placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="ExePath">
           <Row>
-            <i-col span="4">客户机执行文件</i-col>
+            <i-col span="4">{{$t("executableFile")}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.ExePath" placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="updateWay">
           <Row>
-            <i-col span="4">更新模式：</i-col>
+            <i-col span="4">{{$t("UpdateMode")}}：</i-col>
             <i-col span="8">
               <Select v-model="formValidate.UpdateMode" @on-change="handleSelectUpdataWays">
                 <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
@@ -39,8 +39,8 @@
           </Row>
         </FormItem>
         <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">返回</Button>
+            <Button type="primary" @click="handleSubmit('formValidate')">{{$t("Save")}}</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t("return")}}</Button>
         </FormItem>
     </Form>
   </div>
@@ -52,8 +52,6 @@
     name: 'subType3-1-edit',
     data () {
       return {
-        // apiUrl: 'http://10.30.11.6:8080',
-        apiUrl: 'http://10.30.18.62:1010',
         showIcon: false,
         imgUrl: '',
         imgName: '',
@@ -67,8 +65,8 @@
           UpdateMode: ''
         },
         updataWayList: [
-          { Id: 1, value: '自动更新' },
-          { Id: 0, value: '手动更新' }
+          { Id: 1, value: this.$t('AutoUpdate') },
+          { Id: 0, value: this.$t('ManualUpdate') }
         ],
         checkAll: false,
         ruleValidate: {
