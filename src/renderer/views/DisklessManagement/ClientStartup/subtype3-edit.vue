@@ -132,7 +132,7 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroup, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -240,14 +240,20 @@
     },
     methods: {
       handleGetDataLength () {
-        this.imgCount = this.tableData1.length
+        if (this.tableData1) {
+          this.imgCount = this.tableData1.length
+        } else {
+          this.imgCount = 0
+        }
       },
       handleCheckData () {
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
           // 镜像列表
-          this.tableData1 = data.imgG
+          if (data.imgG) {
+            this.tableData1 = data.imgG
+          }
         }
       },
       /*
@@ -281,17 +287,8 @@
       },
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)
-        // alert('提交数据::' + this.formValidate2.schemeName + '&&' + this.formValidate2.configName)
       },
-      // handleFormatValue () {
-      //   var value = []
-      //   value = this.schemeNameList.filter(item => item.name === this.formValidate2.schemeName)
-      //   this.name01 = value[0].id
-
-      //   var value2 = []
-      //   value2 = this.configNameList.filter(item => item.name === this.formValidate2.configName)
-      //   this.name02 = value2[0].id
-      // },
+  
       handleSubmit (name) {
         let that = this
         this.$refs[name].validate(valid => {
@@ -300,8 +297,8 @@
               this.$Message.error(this.$t('PleaseAddOneMirror'))
             } else {
               that.formValidate.imgG = that.tableData1
-              editPcGroup(
-                that.formValidate
+              editPcGroupx(
+                that.formValidate, localStorage.getItem('masterip')
               ).then((a) => {
                 if (a.data.error === null) {
                   that.$Message.success(this.$t('SetSucess'))
@@ -323,6 +320,9 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showPopup = false
+            if (this.tableData1 === null) {
+              this.tableData1 = []
+            }
             this.tableData1.push({
               img: this.formValidate2.schemeName,
               prof: this.formValidate2.configName,
@@ -330,8 +330,6 @@
               item: this.formValidate2.schemeName
             })
             this.handleGetDataLength()
-            // console.log('tableData1::' + JSON.stringify(this.tableData1))
-            // this.handleSubmitProject()
           } else {
             this.$Message.error(this.$t('ValidationFailure'))
           }

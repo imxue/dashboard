@@ -142,7 +142,7 @@ export default {
           editDHCPConfigx(that.DHCPTable, localStorage.getItem('masterip'))
             .then(e => {
               this.loading = false
-              that.$Message.success('DPCP' + this.$t('SetSucess'))
+              that.$Message.success('DHCP' + this.$t('SetSucess'))
             })
             .catch(() => {
               this.loading = false
