@@ -16,11 +16,7 @@
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem :label="$t('ServerIP')" prop="serverIP">
-<<<<<<< HEAD
           <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  :disabled="loadingBtn"/>
-=======
-          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')" />
->>>>>>> onlydiskLessy
         </FormItem>   
         
         <FormItem :label="$t('ServerPW')" prop="password">

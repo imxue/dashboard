@@ -9,10 +9,6 @@
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
 
       <Divider type="vertical"/>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonSetSever">设置为主服务器</Button> -->
-      <!-- <Divider type="vertical"/> -->
-      <!-- <Button type="info" class="topColumn" @click="handleButtonBack">返回列表</Button> -->
- 
       <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">{{$t('Delete')}}</Button>
     </div>
 
