@@ -82,20 +82,19 @@
         </i-col>
       </Row>
       <Row
-        v-show="this.selecteDisk === 'writebackDisk' || this.selecteDisk === 'imageDisk'"
         class="rowlist"
       >
-        <i-col span="4">是否格式化：</i-col>
+        <i-col span="4">{{$t('isFormat')}}：</i-col>
         <i-col span="20">
           <Select
             v-model="selecteFormatValue"
             clearable
             class="topColumn"
             style="width:200px;"
-            placeholder="---请选择---"
+            :placeholder="this.$t('pleaseInput')"
           >
-            <Option value="yes">是</Option>
-            <Option value="no">否</Option>
+            <Option value="yes">{{$t('Yes')}}</Option>
+            <Option value="no">{{$t('No')}}</Option>
           </Select>
         </i-col>
       </Row>
@@ -107,7 +106,7 @@
             clearable
             class="topColumn"
             style="width:200px;"
-            placeholder="---请选择---"
+            :placeholder="this.$t('pleaseInput')"
           >
             <Option value="E">E</Option>
             <Option value="F">F</Option>
@@ -138,8 +137,6 @@ import {
   deleteserverConfig
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
-// import Cookies from 'js-cookie'
-// import { formatSize, bytesToSize, bytesToRate } from '@/utils/index'
 export default {
   name: 'subType1-detail',
   data () {
@@ -154,12 +151,11 @@ export default {
       rowData: '',
       ServerIp: '',
       selecteDiskF: '',
-      selecteDisk: '',
+      selecteDisk: 'imageDisk',
       getCheckboxVal: [], // 勾选复选框值
       showPopup02: false,
       selecteFormatValue: 'no',
       tableColumns1: [
-        // { type: 'selection', width: 60, align: 'center' },
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'online',
@@ -375,7 +371,10 @@ export default {
     this.handleGetServerInfo()
     this.GetServerList()
     this.handleGetNetworkx(this.ServerIp)
-    this.handleGetDiskStatusx(this.ServerIp)
+    let masterip = localStorage.getItem('masterip')
+    if (masterip) {
+      this.handleGetDiskStatusx(masterip)
+    }
   },
   computed: {
     routes () {
@@ -387,7 +386,7 @@ export default {
       let that = this
       let ip = localStorage.getItem('masterip')
       if (ip) {
-        getServersx().then(response => {
+        getServersx(ip).then(response => {
           if (response.data.error === null) {
             that.serverList = response.data.result.list
           }
@@ -456,11 +455,18 @@ export default {
               path: 'DisklessServerList'
             })
           })
+<<<<<<< HEAD
           this.$router.push({
             path: 'DisklessServerList'
           })
+=======
+
+>>>>>>> onlydiskLessy
           if (ip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
+            this.$router.push({
+              path: 'DisklessServerList'
+            })
           }
           deleteserverConfig(ip)
         },
@@ -503,28 +509,63 @@ export default {
       })
     },
     handleSetCard () {
-      this.showPopup02 = false
-      this.modal6 = true
-      this.spinShow = true
-      // path, diskFunctionType, cacheSizeMB, isFormat, volume
-      setDiskFunctionx(
-        this.rowData.path,
-        this.selecteDisk,
-        '512',
-        this.selecteFormatValue,
-        this.selecteDiskF,
-        this.ServerIp
-      ).then(a => {
-        // var result = a.data.result
-        if (a.data.error === null) {
-          this.modal6 = false
+      if (this.selecteFormatValue === 'yes') {
+        this.$Modal.confirm({
+          title: this.$t('DeleteClear'),
+          content: this.$t('Clear'),
+          okText: this.$t('Yes'),
+          cancelText: this.$t('No'),
+          onOk: () => {
+            this.showPopup02 = false
+            this.modal6 = true
+            this.spinShow = true
+            setDiskFunctionx(
+              this.rowData.path,
+              this.selecteDisk,
+              '512',
+              this.selecteFormatValue,
+              this.selecteDiskF,
+              this.ServerIp
+            ).then(a => {
+              // var result = a.data.result
+              if (a.data.error === null) {
+                this.modal6 = false
+                this.spinShow = false
+                this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
+              } else {
+                this.$Message.error(a.data.error)
+              }
+              this.spinShow = false
+            }, e => {
+              console.log(e)
+            })
+          },
+          onCancel: () => {
+            this.$Modal.remove()
+          }
+        })
+      } else {
+        this.showPopup02 = false
+        this.modal6 = true
+        this.spinShow = true
+        setDiskFunctionx(
+          this.rowData.path,
+          this.selecteDisk,
+          '512',
+          this.selecteFormatValue,
+          this.selecteDiskF,
+          this.ServerIp
+        ).then(a => {
+          if (a.data.error === null) {
+            this.modal6 = false
+            this.spinShow = false
+            this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
+          } else {
+            this.$Message.error(a.data.error)
+          }
           this.spinShow = false
-          this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
-        } else {
-          this.$Message.error(a.data.error)
-        }
-        this.spinShow = false
-      })
+        })
+      }
     },
     handleResetCard () {
       this.showPopup02 = false

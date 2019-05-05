@@ -27,6 +27,11 @@ Vue.use(VueI18n)
 Vue.locale('zh-CN', Object.assign(zh, appZh))
 Vue.locale('en-US', Object.assign(en, appEn))
 
+// const messages = {
+//   zh: Object.assign(zh, appZh),
+//   en: Object.assign(en, appEn)
+// }
+
 // 自动设置语言
 // 获取本机系统语言
 const navLang = navigator.language
@@ -42,5 +47,14 @@ const lang = window.localStorage.getItem('language') || localLang || 'zh-CN'
 // Vue.config.lang = 'zh-CN'; 默认为中文
 // Vue.config.lang = 'en-US'; 默认为英文
 Vue.config.lang = lang
+
+/**
+ * 多语言配置
+ * Object.assign(zh,app_zh)
+ * zh       : iview 语言包
+ * app_zh   : App json语言包
+ */
+Vue.locale('zh-CN', Object.assign(zh, appZh))
+Vue.locale('en-US', Object.assign(en, appEn))
 
 export default{}

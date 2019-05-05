@@ -240,12 +240,20 @@
     },
     methods: {
       handleGetDataLength () {
-        this.imgCount = this.tableData1.length
+        if (this.tableData1) {
+          this.imgCount = this.tableData1.length
+        } else {
+          this.imgCount = 0
+        }
       },
       handleCheckData () {
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
+<<<<<<< HEAD
+=======
+          // 镜像列表
+>>>>>>> onlydiskLessy
           if (data.imgG) {
             this.tableData1 = data.imgG
           }
@@ -283,6 +291,10 @@
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)
       },
+<<<<<<< HEAD
+=======
+  
+>>>>>>> onlydiskLessy
       handleSubmit (name) {
         let that = this
         this.$refs[name].validate(valid => {
@@ -314,6 +326,9 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showPopup = false
+            if (this.tableData1 === null) {
+              this.tableData1 = []
+            }
             this.tableData1.push({
               img: this.formValidate2.schemeName,
               prof: this.formValidate2.configName,
@@ -321,8 +336,6 @@
               item: this.formValidate2.schemeName
             })
             this.handleGetDataLength()
-            // console.log('tableData1::' + JSON.stringify(this.tableData1))
-            // this.handleSubmitProject()
           } else {
             this.$Message.error(this.$t('ValidationFailure'))
           }

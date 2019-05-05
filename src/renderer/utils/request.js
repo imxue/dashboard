@@ -1,5 +1,5 @@
 import axios from 'axios'
-import qs from 'qs'
+// import qs from 'qs'
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
 
@@ -14,18 +14,18 @@ const service = axios.create({
 
 service.interceptors.request.use(
 
-  (request) => {
-    console.log(request)
-    let x = request.url.indexOf('startHttpRequest')
-    if (x === -1) {
-      return request
-    }
-    let data = qs.parse(request.data)
-    console.log(typeof data)
-    request.data.method = 'POST'
-    request.data.param = data
-    return request
-  },
+  // (request) => {
+  //   console.log(request)
+  //   let x = request.url.indexOf('startHttpRequest')
+  //   if (x === -1) {
+  //     return request
+  //   }
+  //   let data = qs.parse(request.data)
+  //   console.log(typeof data)
+  //   request.data.method = 'POST'
+  //   request.data.param = data
+  //   return request
+  // },
   (error) => {
     console.log('===')
     console.log(error)

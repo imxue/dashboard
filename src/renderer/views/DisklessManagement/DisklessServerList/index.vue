@@ -16,7 +16,11 @@
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem :label="$t('ServerIP')" prop="serverIP">
+<<<<<<< HEAD
           <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  :disabled="loadingBtn"/>
+=======
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')" />
+>>>>>>> onlydiskLessy
         </FormItem>   
         
         <FormItem :label="$t('ServerPW')" prop="password">
@@ -164,6 +168,7 @@ export default {
             var datalist = a.data.result.list
             if (datalist && a.data.error === null) {
               this.spinShow = false
+              this.loading = false
               this.serverList = datalist
               this.loading = false
               this.handleGetCurrMasterServerIp(datalist)
@@ -171,6 +176,7 @@ export default {
               localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
+<<<<<<< HEAD
           }, () => {
             this.serverList.push({
               'serverIp': localStorage.getItem('masterip'),
@@ -178,6 +184,15 @@ export default {
               'dataVer': '-',
               'isMaster': '1'
             })
+=======
+          }, (e) => {
+            let x = {
+              'serverIp': localStorage.getItem('masterip'),
+              'online': '0',
+              'dataVer': '-'
+            }
+            this.serverList.push(x)
+>>>>>>> onlydiskLessy
             this.loading = false
           })
         } else {
@@ -234,7 +249,6 @@ export default {
             let cookiesMasterIp = localStorage.getItem('masterip')
             if (cookiesMasterIp) { // 本地保存
               getServersNode(this.formValidate.serverIP).then(res => {
-                this.loadingBtn = false
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
@@ -244,7 +258,7 @@ export default {
             } else { // 没有
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.showPopup = false
-                this.loadingBtn = false
+  
                 this.handleSubmitAddServer(res.data.result.guid, this.formValidate.serverIP, this.formValidate.serverIP)
               }, () => {
                 this.loadingBtn = false
@@ -260,9 +274,12 @@ export default {
       },
       handleSubmitAddServer (guid, masterIp, selfip) {
         // this.showPopup = false
-        editServersNode(masterIp, selfip) // 设置主服务器
+        editServersNode(masterIp, selfip).then(() => {}, () => {
+          this.$Message.sucess(this.$t('主服务器失效1'))
+        }) // 设置主服务器
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
+            this.loadingBtn = false
             localStorage.setItem('masterip', masterIp)
             this.showPopup = false
             this.handleGetServerList() // 刷新列表
@@ -270,11 +287,17 @@ export default {
               this.handleGetServerList()
             }, 1000)
           } else {
+            this.loadingBtn = false
             this.showPopup02 = true
             if (a.data.error.indexOf('重复添加') !== '-1') {
               this.modal4 = true
             }
           }
+        }, () => {
+          this.$Notice.error({
+            title: '主服务器连接不上'
+          })
+          this.loadingBtn = false
         })
       },
       handleAddReset (name) {
