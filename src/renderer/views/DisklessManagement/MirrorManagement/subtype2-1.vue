@@ -177,8 +177,10 @@
        */
       handleGetImageList () {
         getImageListx(localStorage.getItem('masterip')).then((a) => {
-          var arr = a.data.result.list
-          this.mirroringInfo = arr
+          if (a.data.error === null) {
+            var arr = a.data.result.list
+            this.mirroringInfo = arr
+          }
         })
       },
       handleButtonAdd (val) {
@@ -195,7 +197,7 @@
             createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((a) => {
               if (a.data.error === null) {
                 self.$Notice.success({
-                  title: `${self.formValidate.nameVal} 镜像 添加 成功`
+                  title: `${self.formValidate.nameVal} sucess`
                 })
                 self.handleGetImageList()
                 this.$refs[name].resetFields()
@@ -237,8 +239,10 @@
       */
       handleDelete (name) {
         this.$Modal.confirm({
-          title: '删除确认',
-          content: '<p>确认删除</p>',
+          title: this.$t('DeleteTip'),
+          content: this.$t('DeleteDec'),
+          okText: this.$t('Confirm'),
+          cancelText: this.$t('cancelText'),
           onOk: () => {
             let ip = localStorage.getItem('masterip')
             deleteImagex(name.name, ip).then(() => {

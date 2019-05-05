@@ -9,13 +9,13 @@
       <Button type="primary" class="topColumn" @click="handleButtonStandby">待机状态</Button> -->
     </div>
     <!-- table -->
-    <Table border :columns="tableColumns1" :data="tableData1"></Table>
+    <Table border :columns="tableColumns1" :data="tableData1" :no-data-text="this.$t('Nodata')"></Table>
     <Divider />
     <div class="topItem">
       <Button type="primary" class="topColumn" @click="handleButtonCreate">{{$t('Create')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
       :title="this.$t('CreateConfigurationPointName')"
       v-model="showImgPopup"
@@ -38,7 +38,7 @@
       width="800"
       style="padding-bottom:50px"
       footer-hide>
-      <Table border :columns="tableColumns3" :data="tableData3"></Table>
+      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
      </Modal>
   </div>
 </template>

@@ -70,6 +70,7 @@ export default {
           renderHeader: (h, params) => { return h('span', this.$t('Icon')) },
           key: 'IconUrl',
           render: (h, params) => {
+            if (!params.row.IconUrl) { return h('span', 'unused') }
             return h('img', { attrs: { src: params.row.IconUrl }, style: { width: '40px', height: '40px', display: 'flex' } })
           }
         },

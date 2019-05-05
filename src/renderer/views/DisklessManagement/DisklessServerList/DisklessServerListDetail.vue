@@ -12,7 +12,7 @@
       <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">{{$t('Delete')}}</Button>
     </div>
 
-    <Table border :columns="tableColumns1" :data="tableData1"></Table>
+    <Table border :columns="tableColumns1" :data="tableData1" :no-data-text="this.$t('Nodata')"></Table>
 
 
     <Row style="margin:20px 0;">
@@ -26,6 +26,7 @@
       :columns="tableColumns2"
       :data="tableData2"
       @on-selection-change="handleCheckBox"
+      :no-data-text="this.$t('Nodata')"
     ></Table>
     <Row style="margin:20px 0;">
       <h3>{{$t('DiskSetting')}}</h3>
@@ -33,7 +34,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </Row>
     <Row>
-      <Table border :columns="tableColumns3" :data="tableData3"></Table>
+      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
     </Row>
     <div class="dig">
       <Modal
@@ -43,25 +44,25 @@
         :styles="{top: '400px'}"
         :closable="false"
       >
-        <p class="textAlign">设置磁盘中</p>
+        <p class="textAlign">{{$t('DiskSetting')}}</p>
       </Modal>
     </div>
     <Modal :title="this.$t('DiskSetting')" v-model="showPopup02" width="500" footer-hide>
       <Row class="rowlist">
-        <i-col span="4">{{$t('DevicePath')}}：</i-col>
+        <i-col span="5">{{$t('DevicePath')}}：</i-col>
         <i-col span="16">{{rowData.path}}</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">{{$t('DiskSize')}}：</i-col>
+        <i-col span="5">{{$t('DiskSize')}}：</i-col>
         <i-col span="16">{{rowData.size}} KB</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4">{{$t('AvailableSpace')}}：</i-col>
+        <i-col span="5">{{$t('AvailableSpace')}}：</i-col>
         <i-col span="16">{{rowData.availableSize}} KB</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="4" style="width:200px;">{{$t('DiskEffect')}}：</i-col>
-        <i-col span="20">
+        <i-col span="24">
+          <i-col span='5'>{{$t('DiskEffect')}}：</i-col>
           <Select
             v-model="selecteDisk"
             @on-change="handleSelect"
@@ -77,11 +78,9 @@
           </Select>
         </i-col>
       </Row>
-      <Row
-        class="rowlist"
-      >
-        <i-col span="4">{{$t('isFormat')}}：</i-col>
-        <i-col span="20">
+      <Row class="rowlist">
+        <i-col span="24">
+           <i-col span='5'>{{$t('isFormat')}}：</i-col>
           <Select
             v-model="selecteFormatValue"
             clearable
@@ -95,8 +94,8 @@
         </i-col>
       </Row>
       <Row v-show="this.selecteDisk === 'dataDisk'" class="rowlist">
-        <i-col span="4">{{$t('MappingDiskSymbol')}}：</i-col>
-        <i-col span="20">
+        <i-col span="24" >
+         <i-col span='5'>{{$t('MappingDiskSymbol')}}：</i-col> 
           <Select
             v-model="selecteDiskF"
             clearable
@@ -444,6 +443,7 @@ export default {
         title: this.$t('DeleteTip'),
         content: this.$t('DeleteDec'),
         okText: this.$t('Delete'),
+        cancelText: this.$t('cancelText'),
         onOk: () => {
           deleteserverx(ip, this.tempMasterServerIp).then(() => {
             this.$Message.success(this.$t('DeleteSucess'))

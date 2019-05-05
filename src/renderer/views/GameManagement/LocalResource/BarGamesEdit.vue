@@ -15,7 +15,7 @@
         </FormItem>
         <FormItem prop="name">
           <Row>
-            <i-col span="4">游戏11名称：</i-col>
+            <i-col span="4">游戏名称：</i-col>
             <i-col span="8"><i-input v-model="formValidate.name"  disabled placeholder="请输入游戏名称"></i-input></i-col>
           </Row>
         </FormItem>

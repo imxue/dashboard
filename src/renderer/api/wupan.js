@@ -95,10 +95,6 @@ export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat,
   }, ip)
 }
 
-export function getImageList () {
-  return makeRequest('Get_ImgList', {
-  })
-}
 export function getImageListx (ip) {
   return makeRequestx('Get_ImgList', {
   }, ip)

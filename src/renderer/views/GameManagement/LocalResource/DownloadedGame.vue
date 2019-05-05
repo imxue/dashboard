@@ -3,7 +3,7 @@
     <div class="topItem">
       <Row>
         <i-col span="10">
-          <Select v-model="optionVal" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange">
+          <Select v-model="optionVal" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
             <Option v-for="item in gameList" :value="item.Id" :key="item.Name" >{{ item.Name }}</Option>
           </Select>
            <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
