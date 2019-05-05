@@ -6,22 +6,23 @@
       label-position="left"
       :label-width="90"
       :rules="ruleValidate"
+      :label-in-value="true"
     >
       <FormItem :label="this.$t('MachineNamePrefix')" prop="prefix">
-        <Input v-model="DHCPTable.prefix"/>
+        <Input v-model="DHCPTable.prefix" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('Numberlength')" prop="numbetLength">
-        <Input v-model="DHCPTable.numbetLength"/>
+        <Input v-model="DHCPTable.numbetLength" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('StartingNumber')" prop="numberBegin">
-        <Input v-model="DHCPTable.numberBegin"/>
+        <Input v-model="DHCPTable.numberBegin" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('StartingIP')" prop="ipBegin">
-        <Input v-model="DHCPTable.ipBegin"/>
+        <Input v-model="DHCPTable.ipBegin" :placeholder="$t('pleaseInput')"/>
       </FormItem>
 
       <FormItem :label="this.$t('AddMode')" prop="addMode">
-        <Select v-model="DHCPTable.addMode" style="width:200px">
+        <Select v-model="DHCPTable.addMode" style="width:200px" :placeholder="$t('pleaseInput')">
           <Option value="disable">{{$t('DisableClientAdd')}}</Option>
           <Option value="inputNumber">{{$t('InputNumberAdded')}}</Option>
           <Option value="inputEnter">{{$t('CarriageReturn')}}</Option>
@@ -29,7 +30,7 @@
       </FormItem>
 
       <FormItem :label="this.$t('StartUpPlan')" prop="pcGp">
-        <Select v-model="DHCPTable.pcGp" style="width:200px">
+        <Select v-model="DHCPTable.pcGp" style="width:200px" :placeholder="$t('pleaseInput')" :not-found-text="$t('Nodata')">
           <Option v-for="item in pcGpList" v-bind:key = "item.name" v-bind:value="item.name">{{item.name}}</Option>
         </Select>
       </FormItem>

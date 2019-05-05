@@ -4,7 +4,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="mirroringInfo"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="mirroringInfo" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"

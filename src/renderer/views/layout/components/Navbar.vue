@@ -26,8 +26,11 @@
             <Icon type="ios-arrow-down"></Icon>
            </a>
           <DropdownMenu slot="list">
-               <DropdownItem  v-if="!(this.localLanguage === 'zh-CN')" name="zh-CN">中文简体</DropdownItem>
-               <DropdownItem  v-if="!(this.localLanguage === 'en-US')" name="en-US">English</DropdownItem>
+               <template  v-for="item in localLanguage" :name='item.value' >
+               <DropdownItem v-if="item.value !== localStorageLang" v-bind:key="item.value"  :name='item.value'> 
+                 {{item.name}}
+               </DropdownItem>
+               </template>
           </DropdownMenu>
         </Dropdown>
           <Button @click="handleExit">{{$t('logout')}}</Button>
@@ -38,6 +41,7 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   export default {
     data () {
       return {
@@ -46,12 +50,23 @@
         netBarId: '0000001',
         onlineNetBar: '1000',
         totalNetBar: '2000',
-        localLanguage: ''
+        localStorageLang: localStorage.getItem('language'),
+        localLanguage: [
+          {
+            value: 'zh-CN',
+            name: '中文简体'
+          },
+          {
+            value: 'en-US',
+            name: 'English'
+          }
+        ]
+  
       }
     },
     created () {
       this.handleExpireTime()
-      this.localLanguage = localStorage.getItem('language')
+      Vue.config.lang = this.localStorageLang
     },
     methods: {
       handleExpireTime () { // 到期时间 AppExpireTime
@@ -69,20 +84,9 @@
         }
       },
       ChangeLanguage (name) {
-        console.log(name)
-        this.$Modal.confirm({
-          title: this.$t('SelectLanguage'),
-          content: this.$t('LanguageSucessAndRestart'),
-          okText: 'Save',
-          cancelText: 'Cancel',
-          onOk: () => {
-            localStorage.setItem('language', name)
-            this.localLanguage = name
-          },
-          onCancel: () => {
-            this.$Modal.remove()
-          }
-        })
+        Vue.config.lang = name
+        localStorage.setItem('language', name)
+        this.localStorageLang = localStorage.getItem('language')
       },
       handleExit () {
         localStorage.setItem('Flag', '')

@@ -166,14 +166,12 @@ export default {
               this.spinShow = false
               this.loading = false
               this.serverList = datalist
-              console.log(this.serverList)
               this.handleGetCurrMasterServerIp(datalist)
             } else {
               localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
           }, (e) => {
-            console.log(e)
             let x = {
               'serverIp': localStorage.getItem('masterip'),
               'online': '0',

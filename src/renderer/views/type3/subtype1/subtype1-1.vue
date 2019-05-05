@@ -271,14 +271,18 @@ export default {
     handleGetSuper () {
       let ip = localStorage.getItem('masterip')
       getSuper(ip).then(response => {
-        this.currentSuperip = response.data.result.ip
+        if (!response.data.err) {
+          this.currentSuperip = response.data.result.ip
+        }
       })
     },
     handgetClienList () {
       if (localStorage.getItem('masterip')) {
         let ip = localStorage.getItem('masterip')
         getPcListConfigx(ip).then(response => {
-          this.tableData = response.data.result.list
+          if (response.data.result.list) {
+            this.tableData = response.data.result.list
+          }
         })
       }
     },

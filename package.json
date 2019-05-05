@@ -2,7 +2,7 @@
   "name": "kx",
   "version": "0.0.1",
   "author": "admin@admin.com",
-  "description": "An electron-vue project",
+  "description": "",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -54,6 +54,9 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
+      "icon": "build/icons/icon.ico"
+    },
+    "nsisWeb": {
       "icon": "build/icons/icon.ico"
     },
     "linux": {

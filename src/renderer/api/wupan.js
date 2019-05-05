@@ -90,7 +90,7 @@ export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat,
     path: path,
     fun: diskFunctionType,
     cacheSize: cacheSizeMB,
-    isFormat: isFormat ? 'yes' : 'no',
+    isFormat: isFormat,
     vol: volume
   }, ip)
 }
