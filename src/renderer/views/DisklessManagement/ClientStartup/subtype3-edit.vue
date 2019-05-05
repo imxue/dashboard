@@ -250,10 +250,7 @@
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
-<<<<<<< HEAD
-=======
           // 镜像列表
->>>>>>> onlydiskLessy
           if (data.imgG) {
             this.tableData1 = data.imgG
           }
@@ -291,10 +288,6 @@
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)
       },
-<<<<<<< HEAD
-=======
-  
->>>>>>> onlydiskLessy
       handleSubmit (name) {
         let that = this
         this.$refs[name].validate(valid => {

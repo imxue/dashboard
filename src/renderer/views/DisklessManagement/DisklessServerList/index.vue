@@ -176,23 +176,13 @@ export default {
               localStorage.removeItem('masterip')
               this.$Message.error(a.data.Msg)
             }
-<<<<<<< HEAD
           }, () => {
-            this.serverList.push({
-              'serverIp': localStorage.getItem('masterip'),
-              'online': '0',
-              'dataVer': '-',
-              'isMaster': '1'
-            })
-=======
-          }, (e) => {
             let x = {
               'serverIp': localStorage.getItem('masterip'),
               'online': '0',
               'dataVer': '-'
             }
             this.serverList.push(x)
->>>>>>> onlydiskLessy
             this.loading = false
           })
         } else {
