@@ -41,13 +41,13 @@ function createWindow () {
     mainWindow = null
   })
 }
-
+mainWindow.webContents.openDevTools()
 app.on('ready', createWindow)
 
 app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
-
+mainWindow.webContents.openDevTools()
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -64,8 +64,10 @@ function sendStatusToWindow (text) {
   mainWindow.webContents.send('message', text)
 }
 autoUpdater.on('update-downloaded', () => {
+  console.log('update-downloaded')
   autoUpdater.quitAndInstall()
 })
 autoUpdater.on('update-available', (info) => {
+  console.log('update-available')
   sendStatusToWindow('Update available.')
 })
