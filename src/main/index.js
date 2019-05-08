@@ -26,15 +26,18 @@ function createWindow () {
     height: 900,
     useContentSize: true,
     width: 1500,
+
     webPreferences: { webSecurity: false }
   })
-
+  mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
-app.on('ready', createWindow)
+app.on('ready', function () {
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -47,7 +50,10 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
+function sendStatusToWindow (text) {
+  log.info(text)
+  mainWindow.webContents.send('message', text)
+}
 /**
  * Auto Updater
  *
@@ -60,9 +66,9 @@ app.on('ready', function () {
   autoUpdater.checkForUpdatesAndNotify()
 })
 autoUpdater.on('checking-for-update', () => {
-  console.log('checking-for-update')
+  sendStatusToWindow('Checking for update...')
 })
 autoUpdater.on('update-downloaded', () => {
-  console.log('update-downloaded')
+  sendStatusToWindow('Update downloaded')
   autoUpdater.quitAndInstall()
 })
