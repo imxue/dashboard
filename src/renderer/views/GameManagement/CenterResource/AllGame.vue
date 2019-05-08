@@ -10,6 +10,7 @@
               <FormItem>
             <Button type="primary" @click="handleSubmit('Dg')">{{$t('DownloadGames')}}</Button>
             <Button @click="handleReset()" style="margin-left: 8px">{{$t('cancelText')}}</Button>
+            <Button @click="handleReset()" style="margin-left: 8px">xxxxxx</Button>
         </FormItem>
         </Form>
     </Modal>

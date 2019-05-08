@@ -1,17 +1,9 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-import { autoUpdater } from 'electron-updater'
 const log = require('electron-log')
+const { autoUpdater } = require('electron-updater')
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -29,6 +21,7 @@ function createWindow () {
   /**
    * Initial window options
    */
+  log.info('App starting...')
   mainWindow = new BrowserWindow({
     height: 900,
     useContentSize: true,
@@ -41,13 +34,8 @@ function createWindow () {
     mainWindow = null
   })
 }
-mainWindow.webContents.openDevTools()
 app.on('ready', createWindow)
 
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
-mainWindow.webContents.openDevTools()
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -59,15 +47,22 @@ app.on('activate', () => {
     createWindow()
   }
 })
-function sendStatusToWindow (text) {
-  log.info(text)
-  mainWindow.webContents.send('message', text)
-}
+
+/**
+ * Auto Updater
+ *
+ * Uncomment the following code below and install `electron-updater` to
+ * support auto updating. Code Signing with a valid certificate is required.
+ * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
+ */
+log.info('App starting...')
+app.on('ready', function () {
+  autoUpdater.checkForUpdatesAndNotify()
+})
+autoUpdater.on('checking-for-update', () => {
+  console.log('checking-for-update')
+})
 autoUpdater.on('update-downloaded', () => {
   console.log('update-downloaded')
   autoUpdater.quitAndInstall()
-})
-autoUpdater.on('update-available', (info) => {
-  console.log('update-available')
-  sendStatusToWindow('Update available.')
 })
