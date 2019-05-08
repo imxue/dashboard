@@ -500,7 +500,10 @@ export default {
     },
     handleButtonAwaken () {},
     handleButtonShutdown () {},
-    handleButtonReStart () {},
+    handleButtonReStart () {
+      this.handgetClienList()
+      this.handleGetSuper()
+    },
     handleTableEdit (index) {
       // alert(JSON.stringify(index))
       this.$router.push({

@@ -10,13 +10,14 @@
     <!-- table -->
     <Table :loading="loading" border stripe ref="selection" :columns="tableColumns" :data="serverList" @on-selection-change="handleCheckBox" @on-row-dblclick="handleSeeDetail" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
+      :mask-closable = false
       :title="$t('AddServer')"
       v-model="showPopup"
       width= "500"
       footer-hide>
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100" @keydown.native.enter.prevent ="handleAddServer('formValidate')">
         <FormItem :label="$t('ServerIP')" prop="serverIP">
-          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  :disabled="loadingBtn"/>
+          <Input @on-change='ResetError' v-model="formValidate.serverIP" :placeholder="$t('pleaseInputServerIp')"  :disabled="loadingBtn" autofocus/>
         </FormItem>   
         
         <FormItem :label="$t('ServerPW')" prop="password">
@@ -34,7 +35,7 @@
     </Row>
     <Modal
         v-model="modal4"
-        title="this.$t('Theservermayalreadybelongtoanothernode')"
+        :title="this.$t('Theservermayalreadybelongtoanothernode')"
         ok-text="OK"
         @on-ok="remove"
         cancel-text="Cancel">
@@ -233,7 +234,7 @@ export default {
         this.$refs[name].validate((valid) => {
           if (valid) {
             let cookiesMasterIp = localStorage.getItem('masterip')
-            if (cookiesMasterIp) { // 本地保存
+            if (cookiesMasterIp) {
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.handleSubmitAddServer(res.data.result.guid, cookiesMasterIp, this.formValidate.serverIP)
               }, () => {
@@ -241,7 +242,7 @@ export default {
                 this.NetWork = true
               })
               this.$store.dispatch('saveMaster', cookiesMasterIp)
-            } else { // 没有
+            } else {
               getServersNode(this.formValidate.serverIP).then(res => {
                 this.showPopup = false
   
@@ -261,7 +262,7 @@ export default {
       handleSubmitAddServer (guid, masterIp, selfip) {
         // this.showPopup = false
         editServersNode(masterIp, selfip).then(() => {}, () => {
-          this.$Message.sucess(this.$t('主服务器失效1'))
+          this.$Message.sucess(this.$t('主服务器失效'))
         }) // 设置主服务器
         addServersx(selfip, guid, masterIp).then((a) => {
           if (a.data.error === null) {
@@ -289,6 +290,8 @@ export default {
       handleAddReset (name) {
         this.showPopup = false
         this.$refs[name].resetFields()
+        this.error = false
+        this.$Modal.remove()
       }
     }
   }

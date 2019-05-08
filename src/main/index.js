@@ -3,6 +3,16 @@
 import { app, BrowserWindow } from 'electron'
 
 /**
+ * Auto Updater
+ *
+ * Uncomment the following code below and install `electron-updater` to
+ * support auto updating. Code Signing with a valid certificate is required.
+ * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
+ */
+
+import { autoUpdater } from 'electron-updater'
+const log = require('electron-log')
+/**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
@@ -34,6 +44,10 @@ function createWindow () {
 
 app.on('ready', createWindow)
 
+app.on('ready', () => {
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -45,23 +59,13 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
+function sendStatusToWindow (text) {
+  log.info(text)
+  mainWindow.webContents.send('message', text)
+}
 autoUpdater.on('update-downloaded', () => {
   autoUpdater.quitAndInstall()
 })
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available.')
 })
- */

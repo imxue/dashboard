@@ -17,25 +17,9 @@ import appZh from './zh-CN.json'
 import appEn from './en-US.json'
 
 Vue.use(VueI18n)
-
-/**
- * 多语言配置
- * Object.assign(zh,app_zh)
- * zh       : iview 语言包
- * app_zh   : App json语言包
- */
-Vue.locale('zh-CN', Object.assign(zh, appZh))
-Vue.locale('en-US', Object.assign(en, appEn))
-
-// const messages = {
-//   zh: Object.assign(zh, appZh),
-//   en: Object.assign(en, appEn)
-// }
-
 // 自动设置语言
 // 获取本机系统语言
 const navLang = navigator.language
-
 const localLang = (navLang === 'zh-CN' || navLang === 'en-US') ? navLang : false
 /**
  * localStorage.getItem(key):获取指定key本地存储的值
@@ -56,5 +40,3 @@ Vue.config.lang = lang
  */
 Vue.locale('zh-CN', Object.assign(zh, appZh))
 Vue.locale('en-US', Object.assign(en, appEn))
-
-export default{}

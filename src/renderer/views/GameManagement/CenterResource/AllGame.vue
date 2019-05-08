@@ -18,15 +18,15 @@
         <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
       </Select>
       <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：{{DownLoadCount}}</i-col>
-      <i-col span="20"><Page :total="this.pageInfo.count" :current="pageInfo.page_size" :page-size="2" @on-change="handleGetTableList" style=" float:right;"/></i-col>
+      <i-col span="5">{{$t('Resource')}}：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：{{DownLoadCount}}</i-col>
+      <i-col span="19"><Page :total="this.pageInfo.count" :current="pageInfo.page_size" :page-size="10" @on-change="handleGetTableList" style=" float:right;"/></i-col>
     </Row>
   </div>
 </template>
@@ -116,7 +116,7 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, 2, 'Name')
+    this.handgetAllGame(0, 10, 'Name')
   },
   computed: {
     routes () {
@@ -181,7 +181,7 @@ export default {
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        this.$Message.info('修复中，请耐心等待……')
+        // this.$Message.info('修复中，请耐心等待……')
         repairGame(this.getCheckboxVal[0].Id).then((e) => {
           this.$Message.info(e.data)
         })

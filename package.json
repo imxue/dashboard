@@ -1,11 +1,12 @@
 {
   "name": "kx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "admin@admin.com",
   "description": "",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
+    "publish": "build -p always",
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
@@ -35,6 +36,13 @@
     "files": [
       "dist/electron/**/*"
     ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "imxue",
+        "repo": "CONSOLE"
+      }
+    ],
     "dmg": {
       "contents": [
         {
@@ -62,6 +70,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "electron-log": "^3.0.5",
+    "electron-updater": "^4.0.6",
     "iview": "^3.1.5",
     "js-cookie": "^2.2.0",
     "moment": "^2.24.0",

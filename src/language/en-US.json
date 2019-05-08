@@ -258,5 +258,10 @@
     "PleaseAddOneMirror":"Add an image at lest!",
     "Login":"Login",
     "bar":"Icafe Login System",
-    "ThirdPartyLogin":"Other Login Type"
+    "ThirdPartyLogin":"Other Login Type",
+    "PhoneNumber":"Mobile",
+    "tip":"secs later to enable default scheme!",
+    "DeleteClear": "Format Tips",
+    "Clear":"All data will be empty!",
+    "isFormat":"Format"
 }

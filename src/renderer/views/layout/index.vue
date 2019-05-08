@@ -3,12 +3,11 @@
     <header>
       <Navbar></Navbar>
     </header>
-    <article>
-      <Layout>
-        <Sider hide-trigger :style="{background: '#fff'}" class="mySider">
+    <div class="main">
+        <div class="mySider">
           <Sidebar></Sidebar>
-        </Sider>
-        <Layout>
+        </div>
+   
           <Content :style="{padding: '0 10px 10px'}">
             <Breadcrumb :style="{margin: '10px 0'}">
               <template v-for="item  in levelList" >                
@@ -21,9 +20,9 @@
               <AppMain></AppMain>
             </Card>
           </Content>
-        </Layout>
-      </Layout>
-    </article>
+ 
+ 
+    </div>
   </div>
 </template>
 
@@ -83,12 +82,15 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-width: 1250px;
+    min-width: 1460px;
   }
   .mySider{
     min-height: calc(100vh - 62px);
+    background: #f5f7f9;
   }
-  
+  .main{
+    display: flex;
+  }
 </style>
 
 

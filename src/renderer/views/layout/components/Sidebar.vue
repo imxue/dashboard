@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu">
+  <div class="nav">
+    <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu" >
       <template v-for="(item,index) in routes.children">
         <Submenu :name="index + ''" :key="index">
           <template slot="title">
@@ -54,15 +54,16 @@
         })
         console.log(matched)
       }
-    },
-    watch: {
-      // '$route': function (to) {
-      //    console.log(to.matched[1])
-      //    this.activeName = to.matched[1]
-      // }
     }
   }
 </script>
 
 <style scoped>
+  .nav{
+    min-width: 220px;
+    height: 100%;
+  }
+  .ivu-menu{
+    height: 100%;
+  }
 </style>
