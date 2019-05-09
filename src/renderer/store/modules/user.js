@@ -1,5 +1,6 @@
 const state = {
-  Netcafe: '' // 获取网吧信息
+  Netcafe: '', // 获取网吧信息
+  main: 0
 }
 
 const mutations = {
@@ -12,10 +13,10 @@ const mutations = {
 }
 
 const actions = {
-  someAsyncTask ({ commit }) {
-    // do something async
-    commit('INCREMENT_MAIN_COUNTER')
-  }
+  // someAsyncTask ({ commit }) {
+  //   // do something async
+  //   commit('INCREMENT_MAIN_COUNTER')
+  // }
 }
 
 export default {

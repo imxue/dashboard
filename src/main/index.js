@@ -1,15 +1,22 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, dialog } from 'electron'
 const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
 
+autoUpdater.logger = log
+autoUpdater.logger.transports.file.level = 'info'
+log.info('App starting...')
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
+function sendStatusToWindow (text) {
+  log.info(text)
+  mainWindow.webContents.send('message', text)
 }
 
 let mainWindow
@@ -21,22 +28,46 @@ function createWindow () {
   /**
    * Initial window options
    */
-  log.info('App starting...')
   mainWindow = new BrowserWindow({
     height: 900,
     useContentSize: true,
     width: 1500,
-
     webPreferences: { webSecurity: false }
   })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...')
+})
+autoUpdater.on('update-available', (info) => {
+  dialog.showErrorBox('update-available', '' + info)
+  sendStatusToWindow('Update available.')
+})
+autoUpdater.on('update-not-available', (info) => {
+  dialog.showErrorBox('update-not-available', '' + info)
+  sendStatusToWindow('Update not available.')
+})
+autoUpdater.on('error', (err) => {
+  dialog.showErrorBox('An Error Message', '' + err)
+  sendStatusToWindow('Error in auto-updater. ' + err)
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
+  logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
+  logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+  sendStatusToWindow(logMessage)
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Update downloaded')
+})
+
 app.on('ready', function () {
   createWindow()
+  autoUpdater.checkForUpdatesAndNotify()
 })
 
 app.on('window-all-closed', () => {
@@ -50,25 +81,16 @@ app.on('activate', () => {
     createWindow()
   }
 })
-function sendStatusToWindow (text) {
-  log.info(text)
-  mainWindow.webContents.send('message', text)
-}
+
 /**
  * Auto Updater
  *
  * Uncomment the following code below and install `electron-updater` to
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
+ *
  */
-log.info('App starting...')
-app.on('ready', function () {
-  autoUpdater.checkForUpdatesAndNotify()
-})
-autoUpdater.on('checking-for-update', () => {
-  sendStatusToWindow('Checking for update...')
-})
-autoUpdater.on('update-downloaded', () => {
-  sendStatusToWindow('Update downloaded')
-  autoUpdater.quitAndInstall()
-})
+
+// app.on('ready', function () {
+//   autoUpdater.checkForUpdatesAndNotify()
+// })
