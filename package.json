@@ -1,12 +1,12 @@
 {
   "name": "kx",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "author": "admin@admin.com",
   "description": "electron-updater example project",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
-    "publish": "build -p always",
+    "publish": "node .electron-vue/build.js && build -p always",
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
