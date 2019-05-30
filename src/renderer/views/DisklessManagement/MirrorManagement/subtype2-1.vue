@@ -4,7 +4,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="mirroringInfo" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirroringInfo" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"
@@ -154,21 +154,19 @@
        * 获取磁盘
        */
       handleGetDiskStatus () {
-        getDiskStatusx(localStorage.getItem('masterip')).then((a) => {
-          var arr = a.data.result.list
-          let temp = []
-          if (a.data.error === null && arr.length !== null) {
+        getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
+          if (response.data.ok) {
+            let temp = []
+            var arr = response.data.data.result.list || []
             var newArr = arr.filter(item => item.fun === 'imageDisk')
             for (var i in newArr) {
               temp.push({
                 path: newArr[i].path,
-                availableSize: bytesToSize(newArr[i].availableSize)
+                availableSize: bytesToSize(Number(newArr[i].availableSize))
               })
               this.diskList = temp
               temp = []
             }
-          } else {
-            this.$Message.error(a.data.error)
           }
         })
       },
@@ -176,10 +174,9 @@
        * 获取镜像列表
        */
       handleGetImageList () {
-        getImageListx(localStorage.getItem('masterip')).then((a) => {
-          if (a.data.error === null) {
-            var arr = a.data.result.list
-            this.mirroringInfo = arr
+        getImageListx(localStorage.getItem('masterip')).then((response) => {
+          if (response.data.ok) {
+            this.mirroringInfo = response.data.data.result.list || []
           }
         })
       },
@@ -194,15 +191,10 @@
           if (valid) {
             this.showPopup = false
             // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
-            createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((a) => {
-              if (a.data.error === null) {
-                self.$Notice.success({
-                  title: `${self.formValidate.nameVal} sucess`
-                })
+            createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((response) => {
+              if (response.data.ok) {
                 self.handleGetImageList()
                 this.$refs[name].resetFields()
-              } else {
-                self.$Message.error(a.data.error)
               }
             })
           } else {
@@ -221,17 +213,6 @@
           query: { data: index }
         })
       },
-      // handleCopy (index) {
-      //   // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
-      //   createImage(index.image, index.size, index.menuItemName, index.path, index.cacheSize, index.mountVol, index.isImportFormMaster).then((a) => {
-      //     if (a.data.error === null) {
-      //       this.$Message.success('复制成功')
-      //       this.handleGetImageList()
-      //     } else {
-      //       this.$Message.error(a.data.error)
-      //     }
-      //   })
-      // },
       handleImport () {},
       handleExport () {},
       /*

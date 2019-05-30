@@ -44,13 +44,31 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'State',
+            minWidth: 120,
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
                 case 0:
                   return h('span', this.$t('NotUpdated'))
                 case 1:
-                  return h('span', { style: { color: '#008000' } }, this.$t('updated'))
+                  return h('span', { style: { color: '#008000' } }, this.$t('Updated'))
+                default:
+                  return '-'
+              }
+            }
+          },
+          { key: 'Name', minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          {
+            key: `TypeName`,
+            minWidth: 110,
+            renderHeader: (h, params) => { return h('span', this.$t('TypeName')) },
+            render: (h, params) => {
+              let type = params.row.UpdateMode
+              switch (type) {
+                case '':
+                  return h('span', this.$t('OnlineGame'))
+                case 1:
+                  return h('span', this.$t('AutoUpdate'))
                 default:
                   return '-'
               }
@@ -59,6 +77,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('UpdateMode')) },
             key: 'UpdateMode',
+            minWidth: 120,
             render: (h, params) => {
               let type = params.row.UpdateMode
               switch (type) {
@@ -71,25 +90,22 @@
               }
             }
           },
-          {
-            renderHeader: (h, params) => { return h('span', this.$t('TypeName')) },
-            key: 'TypeName'
-          },
-          { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'Popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'Size', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('ServerStoragePath')) },
             key: 'SavePath',
             tooltip: true,
-            width: 140
+            minWidth: 130
           },
-          { key: 'ExePath', renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
+          { key: 'ExePath', minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
+            minWidth: 180,
+            fixed: 'right',
             render: (h, params) => {
               let a = h('Button', {
                 props: { type: 'primary', size: 'small' },
-                style: {},
+                style: { 'margin-right': '10px' },
                 on: { click: () => { this.handleTableEdit(params.row) } }
               }, this.$t('Edit'))
               let b = h('Button', {
@@ -145,8 +161,10 @@
        * 获取已下载游戏
       */
       handleGetTableList () {
-        getDownloadedGames(0, 10, 'name').then((a) => {
-          this.tableData = a.data.data
+        getDownloadedGames(0, 10, 'name').then((response) => {
+          if (response.data.ok) {
+            this.tableData = response.data.data.data
+          }
         }, () => {
           this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }).catch((e) => {

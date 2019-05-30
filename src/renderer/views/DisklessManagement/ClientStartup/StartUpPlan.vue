@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { getPcGroupx, deleteItem } from '@/api/wupan'
+  import { getPcGroupx, deletePcGroup } from '@/api/wupan'
   export default {
     name: 'subType3-1',
     data () {
@@ -92,18 +92,19 @@
     methods: {
       handleGetPcGroup () {
         let mip = localStorage.getItem('masterip')
-        getPcGroupx(mip).then((a) => {
-          var arr = a.data.result.list
-          if (a.data.error === null) {
-            this.tableData = arr
-          } else {
-            this.$Message.error(a.data.error)
+        getPcGroupx(mip).then((resp) => {
+          if (resp.data.ok) {
+            var arr = resp.data.data.result.list
+            if (!resp.data.error) {
+              this.tableData = arr
+            } else {
+              this.$Message.error(resp.data.error)
+            }
           }
         })
       },
       handleButtonAdd (val) {
         this.$router.push({ path: 'subtype3-edit' })
-        // this.showPopup = true
       },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
@@ -124,7 +125,6 @@
           path: 'subtype3-edit',
           query: { data: index }
         })
-        console.dir(index)
       },
       handleStart () {},
       handleStop () {},
@@ -145,8 +145,10 @@
             title: this.$t('DeleteTip'),
             content: this.$t('DeletingWillCauseClientsUsingThisSchemetoBeUnavailable'),
             onOk: () => {
-              deleteItem(row.row.name).then((response) => {
-                this.handleGetPcGroup()
+              deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
+                if (response.data.ok) {
+                  this.handleGetPcGroup()
+                }
               })
             },
             onCancel: () => {

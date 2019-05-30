@@ -1,16 +1,5 @@
 import request from '@/utils/request'
 
-// export function loginByUsername (username, password) {
-//   const data = {
-//     username,
-//     password
-//   }
-//   return request({
-//     url: '/login/login',
-//     method: 'post',
-//     data
-//   })
-// }
 function makeRequestx (method, param, ip) {
   const data = {
     method: method,
@@ -19,7 +8,9 @@ function makeRequestx (method, param, ip) {
     ]
   }
   return request({
-    url: `http://${ip}:13302/jsonrpc`,
+    // Forwardflag: true,
+    url: `/v1/sysbase/startHttpRequest`,
+    url1: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })
@@ -102,6 +93,61 @@ export function changeSchema (id, startSchema) { // 移动至方案
   }
   return request({
     url: '/v1/client/changeSchema',
+    method: 'POST',
+    data
+  })
+}
+export function setSchemeBasics (info) {
+  const data = { ...info }
+  return request({
+    url: '/v1/scheme/setSchemeBasics',
+    method: 'POST',
+    data
+  })
+}
+/**
+ * 获取设置
+ * */
+export function getSchemeBasics () {
+  return request({
+    url: '/v1/scheme/getSchemeBasics',
+    method: 'GET'
+  })
+}
+/**
+ * 获取客户机启动方案
+ */
+export function getAllScheme () {
+  return request({
+    url: '/v1/scheme/getAllScheme',
+    method: 'GET'
+  })
+}
+/**
+ * 获取图标
+ */
+export function getSchemeIcon (info) {
+  return request({
+    url: `/v1/scheme/getSchemeIcon${info.global ? `?is_global=${info.global}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
+    method: 'GET'
+  })
+}
+/**
+ * 获取批处理
+ */
+export function getSchemeBatch (info) {
+  return request({
+    url: `/v1/scheme/getSchemeBatch${info.global ? `?is_global=${info.global}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
+    method: 'GET'
+  })
+}
+/**
+ * 设置批处理
+ */
+export function setSchemeBatch (info) {
+  const data = { ...info }
+  return request({
+    url: `/v1/scheme/setSchemeBatch`,
     method: 'post',
     data
   })

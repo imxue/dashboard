@@ -162,10 +162,8 @@ export default {
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
-        if (resp.data.error === null && resp.data.result) {
-          this.DHCPTable = resp.data.result
-        } else {
-          this.$Message.error(resp.data.error)
+        if (resp.data.ok) {
+          this.DHCPTable = resp.data.data.result
         }
       })
     }
@@ -174,10 +172,10 @@ export default {
     let ip = localStorage.getItem('masterip')
     this.getDHCP(ip)
     getPcGroupx(ip).then((e) => {
-      this.pcGpList = e.data.result.list
-      console.log(this.pcGpList)
+      this.pcGpList = e.data.data.result.list
     },
     (e) => { this.$Message.error(e.data.error) })
+    console.log(this.pcGpList)
   }
 }
 </script>

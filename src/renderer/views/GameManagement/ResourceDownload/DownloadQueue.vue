@@ -19,7 +19,7 @@
 
 <script>
 import { getLoad, deleteLocalGame } from '@/api/localGame'
-import { bytesToSize2 } from '@/utils/index'
+// import { bytesToSize2 } from '@/utils/index'
 export default {
   name: 'subType2-1',
   data () {
@@ -29,19 +29,21 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
+          minWidth: 100,
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'Status'
         },
-        { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'TypeName', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { key: 'Name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         // { title: '当前热度', key: 'hot' },
-        { key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-        { key: 'UpdateBytes', renderHeader: (h, params) => { return h('span', this.$t('updatedVolume')) } },
-        { key: 'Progress', renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
-        { key: 'UpdateSpeed', renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-        { key: 'PreFinishedTime', renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
+        { key: 'UpdateBytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+        { key: 'UpdateBytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdatedVolume')) } },
+        { key: 'Progress', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
+        { key: 'UpdateSpeed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+        { key: 'PreFinishedTime', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
+          minWidth: 130,
           render: (h, params) => {
             let type = params.row.id
             let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
@@ -84,14 +86,17 @@ export default {
         console.log('获取下载队列')
         console.log(response)
         console.log('获取下载队列')
-        if (response.data.data) {
-          let temp = response.data.data
-          for (let i = 0; i < temp.length; i++) {
-            temp[i].Progress = Math.round(temp[i].UpdateBytes / temp[i].TotalBytes * 10000) / 100.00 + '%'
-            temp[i].TotalBytes = bytesToSize2(temp[i].TotalBytes)
-          }
+        if (response.data.ok) {
           this.tableData = response.data.data
-        }
+        } else {}
+        // if (response.data.data) {
+        //   let temp = response.data.data
+        //   for (let i = 0; i < temp.length; i++) {
+        //     temp[i].Progress = Math.round(temp[i].UpdateBytes / temp[i].TotalBytes * 10000) / 100.00 + '%'
+        //     temp[i].TotalBytes = bytesToSize2(temp[i].TotalBytes)
+        //   }
+        //   this.tableData = response.data.data
+        // }
       })
     },
     /**

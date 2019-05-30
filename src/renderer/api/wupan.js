@@ -22,7 +22,9 @@ function makeRequestx (method, param, ip) {
     ]
   }
   return request({
-    url: `http://${ip}:13302/jsonrpc`,
+    // Forwardflag: true,
+    url: `/v1/sysbase/startHttpRequest`,
+    url1: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })
@@ -42,18 +44,6 @@ export function login (password) {
     rootPwd: password
   })
 }
-
-// var ControlServer_Type = {
-//   vdisk: 'vdisk',
-//   boot: 'boot',
-//   machine: 'machine'
-// }
-
-// var ControlServer_Action = {
-//   restart: 'restart',
-//   start: 'start',
-//   stop: 'stop'
-// }
 
 export function controllServer (controlServerType, controlServerAction) {
   return makeRequest('Ctrl_Srv', {
@@ -170,43 +160,43 @@ export function createImageProjectx (data, ip) {
   return makeRequestx('Cre_ImgPro', { ...data }, ip)
 }
 
-export function deleteImageProject (image, projectNO) {
-  return makeRequest('Del_ImgPro', {
+export function deleteImageProject (image, projectNO, ip) {
+  return makeRequestx('Del_ImgPro', {
     image: image,
     pno: projectNO
-  })
+  }, ip)
 }
 
-export function editImageProject (image, projectNO, name, title) {
-  return makeRequest('Set_ImgPro', {
+export function editImageProject (image, projectNO, name, title, ip) {
+  return makeRequestx('Set_ImgPro', {
     image: image,
     pno: projectNO,
     name: name,
     menuItemName: title
-  })
+  }, ip)
 }
 
-export function mergeImageProject (image, projectNO) {
-  return makeRequest('Mer_ImgPor', {
+export function mergeImageProject (image, projectNO, ip) {
+  return makeRequestx('Mer_ImgPor', {
     image: image,
     pno: projectNO
-  })
+  }, ip)
 }
 
-export function deleteImageRestore (image, projectNO, restoreNO) {
-  return makeRequest('Del_ImgBol', {
+export function deleteImageRestore (image, projectNO, restoreNO, ip) {
+  return makeRequestx('Del_ImgBol', {
     image: image,
     pno: projectNO,
     rno: restoreNO
-  })
+  }, ip)
 }
 
-export function revertImageRestore (image, projectNO, restoreNO) {
-  return makeRequest('To_ImgBol', {
+export function revertImageRestore (image, projectNO, restoreNO, ip) {
+  return makeRequestx('To_ImgBol', {
     image: image,
     pno: projectNO,
     rno: restoreNO
-  })
+  }, ip)
 }
 
 export function editImageRestore (image, projectNO, restoreNO, comment) {
@@ -218,11 +208,11 @@ export function editImageRestore (image, projectNO, restoreNO, comment) {
   })
 }
 
-export function getImageRestore (image, projectNO) {
-  return makeRequest('Get_ImgBol', {
+export function getImageRestore (image, projectNO, ip) {
+  return makeRequestx('Get_ImgBol', {
     image: image,
     pno: projectNO
-  })
+  }, ip)
 }
 
 export function imageMount (image, projectNO, volume) {
@@ -368,27 +358,30 @@ export function deletePcsConfigx (macList, ip) {
     macList: macList
   }, ip)
 }
-
-export function deletePcGroup (list) {
-  return makeRequest('Del_PcGp', {
+/**
+ * 删除启动方案
+ * @param {*} list
+ */
+export function deletePcGroup (list, ip) {
+  return makeRequestx('Del_PcGp', {
     list: list
-  })
+  }, ip)
 }
 
 export function editPcGroupx ({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip) {
   return makeRequestx('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip)
 }
-/**
- * 删除启动方案
- * @param {*} list
- */
-export function deleteItem (list) {
-  return makeRequest('Del_PcGp', {
-    list: [
-      list
-    ]
-  })
-}
+// /**
+//  * 删除启动方案
+//  * @param {*} list
+//  */
+// export function deleteItem (list) {
+//   return makeRequest('Del_PcGp', {
+//     list: [
+//       list
+//     ]
+//   })
+// }
 /**
  * 从主服务器删除服务器
  */
@@ -411,10 +404,6 @@ export function deleteserverConfig (ip) {
 /**
  * 获取启动方案类别
  */
-export function getPcGroup () { // 客户机方案
-  return makeRequest('Get_PcGp', {
-  })
-}
 export function getPcGroupx (ip) { // 客户机方案
   return makeRequestx('Get_PcGp', {
   }, ip)
@@ -579,60 +568,35 @@ export function getErrorStringList () {
   })
 }
 /**
- * 获取guid
+ * 设置节点
  */
-export function getServersNode (url) {
-  return makeGuid(url)
-}
-
-function makeGuid (url) {
-  const data = {
-    method: 'Get_Servers_Node',
-    params: [
-      {}
-    ]
-  }
-  return request({
-    method: 'post',
-    url: `http://${url}:13302/jsonrpc`,
-    data
-  })
-}
-
 export function editServersNode (masterIp, ip, isSyncImage, isOverload) {
-  return makeServersNode('Set_Servers_Node', {
+  return makeRequestx('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',
     auba: isOverload ? '1' : '0'
   }, ip)
 }
 
-function makeServersNode (method, param, ip) {
-  const data = {
-    method: method,
-    params: [
-      param
-    ]
-  }
-  return request({
-    url: `http://${ip}:13302/jsonrpc`,
-    method: 'post',
-    data
-  })
-}
+// function makeServersNode (method, param, ip) {
+//   const data = {
+//     method: method,
+//     params: [
+//       param
+//     ]
+//   }
+//   return request({
+//     url: `http://${ip}:13302/jsonrpc`,
+//     method: 'post',
+//     data
+//   })
+// }
 
 /**
  * 添加服务器
  * @param {*} serverIp
  * @param {*} guid
  */
-export function addServers (serverIp, guid) {
-  return makeRequest('Add_Servers', {
-    serverIp: serverIp,
-    guid: guid
-  })
-}
-
 export function addServersx (serverIp, guid, ip) {
   return makeRequestx('Add_Servers', {
     serverIp: serverIp,
@@ -640,18 +604,39 @@ export function addServersx (serverIp, guid, ip) {
   }, ip)
 }
 
-export function delServers (serverIp) {
-  return makeRequest('Del_Servers', {
-    serverIp: serverIp
-  })
+/**
+ * 获取guid
+ */
+export function getServersNode (ip) {
+  return makeRequestx('Get_Servers_Node', {}, ip)
 }
 
-export function clearServersNode () {
-  return makeRequest('Cls_Servers_Node', {
-  })
-}
+// function makeGuid (url) {
+//   const data = {
+//     method: 'Get_Servers_Node',
+//     params: [
+//       {}
+//     ]
+//   }
+//   return request({
+//     method: 'post',
+//     url: `http://${url}:13302/jsonrpc`,
+//     data
+//   })
+// }
 
-export function getServersStatus () {
-  return makeRequest('Get_Servers_Stat', {
-  })
-}
+// export function delServers (serverIp) {
+//   return makeRequest('Del_Servers', {
+//     serverIp: serverIp
+//   })
+// }
+
+// export function clearServersNode () {
+//   return makeRequest('Cls_Servers_Node', {
+//   })
+// }
+
+// export function getServersStatus () {
+//   return makeRequest('Get_Servers_Stat', {
+//   })
+// }

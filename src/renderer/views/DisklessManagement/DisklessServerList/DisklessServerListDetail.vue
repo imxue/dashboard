@@ -2,20 +2,20 @@
   <div class="container">
     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
-      <Select style="width:200px; marginRight:10px;" v-model="model1" @on-change="listTypeChange">
+      <Select style="width:200px; marginRight:10px;" v-model="currentPageServerip" @on-change="listTypeChange">
         <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}}</Option>
       </Select>
         
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
 
       <Divider type="vertical"/>
-      <Button type="error" class="topColumn" @click="handleButtonDelete(ServerIp)">{{$t('Delete')}}</Button>
+      <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
     </div>
 
-    <Table border :columns="tableColumns1" :data="tableData1" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" :no-data-text="this.$t('Nodata')"></Table>
 
 
-    <Row style="margin:20px 0;">
+    <Row style="margin:10px 0;">
       <h3>{{$t('NetworkSetting')}}</h3>
       <Divider/>
       <Button type="primary" class="topColumn" @click="handleLoadNICx">{{$t('SetTheLoadNetworkCard')}}</Button>
@@ -28,17 +28,17 @@
       @on-selection-change="handleCheckBox"
       :no-data-text="this.$t('Nodata')"
     ></Table>
-    <Row style="margin:20px 0;">
+    <div style="margin:10px 0; ">
       <h3>{{$t('DiskSetting')}}</h3>
       <Divider/>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
-    </Row>
-    <Row>
+    </div>
+   
       <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
-    </Row>
+    
     <div class="dig">
       <Modal
-        v-model="modal6"
+        v-model="DiskSettingDialog"
         :loading="loading"
         footer-hide
         :styles="{top: '400px'}"
@@ -47,7 +47,7 @@
         <p class="textAlign">{{$t('DiskSetting')}}</p>
       </Modal>
     </div>
-    <Modal :title="this.$t('DiskSetting')" v-model="showPopup02" width="500" footer-hide>
+    <Modal :title="this.$t('DiskSetting')" v-model="DiskSetDialog" width="500" footer-hide>
       <Row class="rowlist">
         <i-col span="5">{{$t('DevicePath')}}：</i-col>
         <i-col span="16">{{rowData.path}}</i-col>
@@ -69,7 +69,6 @@
             clearable
             class="topColumn"
             style="width:200px;"
-            placeholder="---请选择负载网卡---"
           >
             <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
             <Option value="dataDisk">{{$t('DataDisk')}}</Option>
@@ -123,9 +122,9 @@
 import {
   setDiskFunctionx,
   addServers,
+  getServersx,
   editServersNode,
   deleteserverx,
-  getServersx,
   getNetworkx,
   getDiskStatusx,
   setVdiskEthernetx,
@@ -136,10 +135,10 @@ export default {
   name: 'subType1-detail',
   data () {
     return {
-      model1: '',
+      currentPageServerip: '',
       loading: '',
       serverList: '',
-      modal6: false,
+      DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
       tempMasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
@@ -148,7 +147,7 @@ export default {
       selecteDiskF: '',
       selecteDisk: 'imageDisk',
       getCheckboxVal: [], // 勾选复选框值
-      showPopup02: false,
+      DiskSetDialog: false, // 磁盘设置弹窗
       selecteFormatValue: 'no',
       tableColumns1: [
         {
@@ -203,7 +202,7 @@ export default {
         { key: 'serverIp', renderHeader: (h, params) => { return h('span', this.$t('ServerIP')) } },
         { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } }
       ],
-      tableData1: [],
+      CurrentPageserverInfo: [],
       tableColumns2: [
         { type: 'selection', width: 60, align: 'center' },
         {
@@ -250,10 +249,11 @@ export default {
       ],
       tableData2: [], // 网卡信息
       tableColumns3: [
-        { key: 'path', renderHeader: (h, params) => { return h('span', this.$t('Device')) } },
+        { key: 'path', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Device')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('DiskSize')) },
           key: 'size',
+          minWidth: 90,
           render: (h, params) => {
             return h('span', bytesToSize(params.row.size))
           }
@@ -261,6 +261,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('AvailableSpace')) },
           key: 'availableSize',
+          minWidth: 110,
           render: (h, params) => {
             var value = params.row.availableSize
             if (value === '0' || value === 'undefined' || value === 'null') {
@@ -273,7 +274,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('Effect')) },
           key: 'fun',
-          width: 140,
+          minWidth: 100,
           render: (h, params) => {
             let type = params.row.fun
             switch (type) {
@@ -294,10 +295,11 @@ export default {
             }
           }
         },
-        { title: '映射盘符', key: 'mountVol', renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) } },
+        { title: '映射盘符', key: 'mountVol', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('IOReadRate')) },
           key: 'readRate',
+          minWidth: 110,
           render: (h, params) => {
             return h('span', bytesToRate(params.row.readRate))
           }
@@ -305,6 +307,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('IOWriteRate')) },
           key: 'writeRate',
+          minWidth: 110,
           render: (h, params) => {
             return h('span', bytesToRate(params.row.writeRate))
           }
@@ -312,6 +315,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CumulativeIORead')) },
           key: 'readTotal',
+          minWidth: 100,
           render: (h, params) => {
             return h('span', bytesToSize(params.row.readTotal))
           }
@@ -319,15 +323,16 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CumulativeIOWrite')) },
           key: 'writeTotal',
+          minWidth: 100,
           render: (h, params) => {
             return h('span', bytesToSize(Number(params.row.writeTotal)))
           }
         },
-        { key: 'isHealth', renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
+        { key: 'isHealth', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          width: 140,
+          minWidth: 140,
           align: 'center',
           render: (h, params) => {
             let a = h(
@@ -362,10 +367,9 @@ export default {
   },
   created () {
     this.tempMasterServerIp = this.$route.query.tempMasterServerIp
-    this.ServerIp = this.$route.query.data.serverIp
-    this.handleGetServerInfo()
-    this.GetServerList()
-    this.handleGetNetworkx(this.ServerIp)
+    this.serverList = this.$route.query.serverList
+    this.handleGetCurrentPageServerInfo()
+    this.handleGetNetworkx(this.currentPageServerip)
     let masterip = localStorage.getItem('masterip')
     if (masterip) {
       this.handleGetDiskStatusx(masterip)
@@ -377,31 +381,19 @@ export default {
     }
   },
   methods: {
-    GetServerList () {
-      let that = this
-      let ip = localStorage.getItem('masterip')
-      if (ip) {
-        getServersx(ip).then(response => {
-          if (response.data.error === null) {
-            that.serverList = response.data.result.list
-          }
-          console.log(that.serverList)
-        })
-      }
-    },
-    handleGetServerInfo () {
+    handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
-      this.model1 = data.serverIp
-      this.tableData1.push(data)
-      this.isMaster = this.tableData1[0].isMaster
+      this.currentPageServerip = data.serverIp
+      this.CurrentPageserverInfo.push(data)
+      this.isMaster = this.CurrentPageserverInfo[0].isMaster
     },
     /**
      * 获取网卡信息
      */
     handleGetNetworkx (ip) {
-      getNetworkx(ip).then(a => {
-        var arr = a.data.result.list
-        if (a.data.error === null && arr !== null) {
+      getNetworkx(ip).then(resp => {
+        if (resp.data.ok) {
+          var arr = resp.data.data.result.list
           arr.map(item => {
             if (item.vdiskSet === 'yes') {
               item['_checked'] = true
@@ -409,8 +401,6 @@ export default {
             }
           })
           this.tableData2 = arr
-        } else {
-          this.$Message.error(a.data.error)
         }
       })
     },
@@ -419,12 +409,9 @@ export default {
    */
     handleGetDiskStatusx (ip) {
       let that = this
-      getDiskStatusx(ip).then(a => {
-        var arr = a.data.result.list
-        if (a.data.error === null && arr !== null) {
-          this.tableData3 = arr
-        } else {
-          this.$Message.error(a.data.error)
+      getDiskStatusx(ip).then(resp => {
+        if (resp.data.ok) {
+          this.tableData3 = resp.data.data.result.list || []
         }
       })
       that.spinShow = false
@@ -438,28 +425,31 @@ export default {
     /**
      * 删除ip
      */
-    handleButtonDelete (ip) {
+    handleSelect () {},
+    handleButtonDelete () {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         content: this.$t('DeleteDec'),
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          deleteserverx(ip, this.tempMasterServerIp).then(() => {
-            this.$Message.success(this.$t('DeleteSucess'))
-            this.$router.push({
-              path: 'DisklessServerList'
-            })
+          console.log(this.tempMasterServerIp)
+          deleteserverx(this.currentPageServerip, this.tempMasterServerIp).then((resp) => {
+            if (resp.data.ok) {
+              this.$Message.success(this.$t('DeleteSucess'))
+              this.$router.push({
+                path: 'DisklessServerList'
+              })
+            }
           })
-          if (ip === localStorage.getItem('masterip')) {
+          if (this.currentPageServerip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
             this.$router.push({
               path: 'DisklessServerList'
             })
           }
-          deleteserverConfig(ip)
-        },
-        cancelTexxt: this.$t('cancelText')
+          deleteserverConfig(this.currentPageServerip)
+        }
       })
     },
     handleButtonSetSever () {
@@ -497,7 +487,11 @@ export default {
         }
       })
     },
+    /**
+     * 设置磁盘
+     */
     handleSetCard () {
+      // this.selecteFormatValue === 'yes' ?
       if (this.selecteFormatValue === 'yes') {
         this.$Modal.confirm({
           title: this.$t('DeleteClear'),
@@ -505,76 +499,61 @@ export default {
           okText: this.$t('Yes'),
           cancelText: this.$t('No'),
           onOk: () => {
-            this.showPopup02 = false
-            this.modal6 = true
-            this.spinShow = true
-            setDiskFunctionx(
-              this.rowData.path,
-              this.selecteDisk,
-              '512',
-              this.selecteFormatValue,
-              this.selecteDiskF,
-              this.ServerIp
-            ).then(a => {
-              // var result = a.data.result
-              if (a.data.error === null) {
-                this.modal6 = false
-                this.spinShow = false
-                this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
-              } else {
-                this.$Message.error(a.data.error)
-              }
-              this.spinShow = false
-            }, e => {
-              console.log(e)
-            })
+            this.HandleSetDisk()
           },
           onCancel: () => {
             this.$Modal.remove()
           }
         })
       } else {
-        this.showPopup02 = false
-        this.modal6 = true
-        this.spinShow = true
-        setDiskFunctionx(
-          this.rowData.path,
-          this.selecteDisk,
-          '512',
-          this.selecteFormatValue,
-          this.selecteDiskF,
-          this.ServerIp
-        ).then(a => {
-          if (a.data.error === null) {
-            this.modal6 = false
-            this.spinShow = false
-            this.handleGetDiskStatusx(this.ServerIp) // 刷新列表
-          } else {
-            this.$Message.error(a.data.error)
-          }
-          this.spinShow = false
-        })
+        this.HandleSetDisk()
       }
     },
-    handleResetCard () {
-      this.showPopup02 = false
+    /**
+     * 设置磁盘
+     */
+    HandleSetDisk () {
+      this.DiskSetDialog = false
+      this.DiskSettingDialog = true
+      this.spinShow = true
+      setDiskFunctionx(
+        this.rowData.path,
+        this.selecteDisk,
+        '512',
+        this.selecteFormatValue,
+        this.selecteDiskF,
+        this.currentPageServerip
+      ).then(response => {
+        if (response.data.ok) {
+          this.handleGetDiskStatusx(this.currentPageServerip)
+        } else {
+          this.$Message.error(response.data.data.error)
+        }
+        this.DiskSettingDialog = false
+        this.spinShow = false
+      })
     },
-    /*
-设置网卡
-*/
+    handleResetCard () {
+      this.DiskSetDialog = false
+    },
+    /**
+     * 设置网卡
+     */
     handleLoadNICx () {
       this.spanShow = true
-      setVdiskEthernetx(this.getCheckboxVal, this.ServerIp).then(() => {
+      setVdiskEthernetx(this.getCheckboxVal, this.currentPageServerip).then((resp) => {
         this.spanShow = false
-        this.$Notice.success({
-          title: this.$t('SetSucess')
-        })
-        this.handleGetNetwork()
+        if (resp.data.ok) {
+          this.$Notice.success({
+            title: this.$t('SetSucess')
+          })
+        }
+        this.handleGetNetworkx(this.ServerIp)
       })
     },
     handleSetDisk (index) {
       this.rowData = index
-      this.showPopup02 = true
+      this.DiskSetDialog = true
     },
     /**
      * 获取网卡设置选项
@@ -589,16 +568,6 @@ export default {
 
       return this.getCheckboxVal
     },
-    test () {
-      let matched = this.$route.matched.filter(item => item.name)
-      console.log(matched)
-    },
-    handleSelect () {
-      // alert(this.selecteDisk)
-      // if ( this.selecteDisk === '无作用') {
-      //   this.showState = true
-      // }
-    },
     /*
       刷新
       */
@@ -610,21 +579,22 @@ export default {
     /*
     列表选择
     */
-    listTypeChange () {
-      this.tableData1 = this.serverList.filter(item => {
-        return item.serverIp === this.model1
+    listTypeChange (serverip) {
+      this.serverIp = serverip
+      getServersx(serverip).then((resp) => {
+        if (resp.data.ok) {
+          this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
+        }
       })
-      this.handleGetNetworkx(this.model1)
-      this.handleGetDiskStatusx(this.model1)
+      this.handleGetNetworkx(serverip)
+      this.handleGetDiskStatusx(serverip)
     }
   }
 }
 </script>
 
 <style scoped>
-.container{
-  min-width: 1200px;
-}
+
 .topColumn {
   float: none;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="nav">
-    <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu" >
+    <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu" class="nav">
       <template v-for="(item,index) in routes.children">
         <Submenu :name="index + ''" :key="index">
           <template slot="title">
@@ -59,11 +59,5 @@
 </script>
 
 <style scoped>
-  .nav{
-    min-width: 220px;
-    height: 100%;
-  }
-  .ivu-menu{
-    height: 100%;
-  }
+
 </style>

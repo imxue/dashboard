@@ -59,7 +59,7 @@
         </FormItem>
         <FormItem class="buttonList">
             <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('Return')}}</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('return')}}</Button>
         </FormItem>
     </Form>
   </div>

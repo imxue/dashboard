@@ -1,5 +1,5 @@
 <template>
-  <div style="min-height: 700px">
+  <div class="container">
       <Button v-if="this.showBackBtn === true"><Icon type="ios-arrow-back" /> 返回上一页</Button>
     <router-view v-if="isRouterAlive"></router-view>
   </div>
@@ -37,4 +37,5 @@
 
 <style>
   .ivu-table-tbody .ivu-table-row td:last-child span {cursor: pointer;}
+  
 </style>

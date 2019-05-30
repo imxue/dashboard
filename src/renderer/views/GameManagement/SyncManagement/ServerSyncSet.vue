@@ -2,26 +2,35 @@
   <div>
     <div class="topItem">
       <Row>
-        <i-col span="13">
-          <Input class="topColumn" v-model="inputVal"  :placeholder="this.$t('pleaseInputGameName')" clearable style="width: 200px;" />
-          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" style="width:150px;" :placeholder="this.$t('pleaseInputMirror')">
+        <Col :lg="{ span: 3, offset: 0 }">
+          <Input class="topColumn" v-model="inputVal"  :placeholder="this.$t('pleaseInputGameName')" clearable />
+          </Col>
+          <Col :lg="{ span: 4, offset: 0 }">
+          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" :placeholder="this.$t('pleaseInputMirror')">
             <Option v-for="item in serversIpList" :value="item.Ip" :key="item.Id">{{ item.Ip }}</Option>
           </Select>
-          <Select v-model="diskValue" clearable class="topColumn" style="width:150px;" :placeholder="this.$t('AllDiskSymbol')">
+           </Col>
+            <Col :lg="{ span: 6, offset: 0 }">
+          <Select v-model="diskValue" clearable class="topColumn" style="width:140px;" :placeholder="this.$t('AllDiskSymbol')">
             <Option v-for="item in diskListOption" :value="item.DriverId" :key="item.index" >{{ item.Name }}</Option>
           </Select>
           <Button type="primary" class="topColumn" @click="handleButtonSearch">{{$t('Search')}}</Button>
-          </i-col>
-          <i-col span="11">
+           </Col>
+          
+           <Col :lg="{ span: 11, offset: 0 }">
             <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonAddTask">{{$t('AddSynchronizationTask')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonRules">{{$t('DefaultAssignmentRule')}}</Button>
-        </i-col>
+        </Col>
       </Row>
     </div>
     <!-- table -->
+    <Row>
+        <Col span="24">
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
+        </Col>
+    </Row>
     <Row style="margin-top:10px; ">
       <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
       <i-col span="17"><Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/></i-col>
@@ -60,6 +69,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'State',
+            minWidth: 120,
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
@@ -74,16 +84,16 @@
               }
             }
           },
-          { key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'Size', width: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
-          { key: 'Ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
-          { key: 'Drive', renderHeader: (h, params) => { return h('span', this.$t('TargetDiskSymbol')) } },
-          { key: 'Drivesize', renderHeader: (h, params) => { return h('span', this.$t('DiskSymbolVolume')) } },
+          { key: 'Type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { key: 'Name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'Centerpopularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'Size', minWidth: 70, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'Ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
+          { key: 'Drive', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetDiskSymbol')) } },
+          { key: 'Drivesize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('DiskSymbolVolume')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
-            width: 170,
+            minWidth: 160,
             render: (h, params) => {
               let type = params.row.state
               let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
@@ -301,8 +311,8 @@
 </script>
 
 <style scoped>
-  .topItem{ height: 60px;}
-  .topColumn{ float:left; margin-right:10px;}
+  .topItem{ padding:10px 0;}
+  .topColumn{ float:left; margin-right:2px;}
   .ivu-input-icon{right:55px;}
 </style>
 

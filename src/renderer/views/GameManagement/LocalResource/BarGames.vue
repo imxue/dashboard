@@ -47,7 +47,7 @@
 import {
   netbarMultiSync,
   getAllLocalGames,
-  deleteLocalGame,
+  deleteGame,
   repairGame
 } from '@/api/localGame'
 
@@ -68,22 +68,24 @@ export default {
         { type: 'selection', width: 60, align: 'center' },
         {
           renderHeader: (h, params) => { return h('span', this.$t('Icon')) },
-          key: 'IconUrl',
+          key: 'icon_url',
+          minWidth: 120,
           render: (h, params) => {
-            if (!params.row.IconUrl) { return h('span', 'unused') }
-            return h('img', { attrs: { src: params.row.IconUrl }, style: { width: '40px', height: '40px', display: 'flex' } })
+            if (!params.row.icon_url) { return h('span', 'unused') }
+            return h('img', { attrs: { src: params.row.icon_url }, style: { width: '40px', height: '40px', display: 'flex' } })
           }
         },
-        { key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { key: 'CenterPopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { key: 'LocalPath', renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
-        { key: 'RunExe', renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
-        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'display_name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'center_popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { key: 'local_path', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
+        { key: 'run_exe', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
+        { key: 'size', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('ServerSyncSet')) },
-          key: 'IsEnableSync',
+          key: 'is_auto_update',
+          minWidth: 130,
           render: (h, params) => {
-            switch (params.row.IsEnableSync) {
+            switch (params.row.is_auto_update) {
               case 0:
                 return h('span', this.$t('Disable'))
               case 1:
@@ -94,6 +96,7 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
+          minWidth: 180,
           render: (h, params) => {
             let a = h(
               'Button',
@@ -134,7 +137,7 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, 10, 'CenterPopularity')
+    this.handgetAllGame(0, 10, 'Name')
   },
   computed: {
     routes () {
@@ -143,14 +146,15 @@ export default {
   },
   methods: {
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * 10, 10, 'CenterPopularity')
+      this.handgetAllGame((e - 1) * 10, 10, 'Name')
     },
     handgetAllGame (offset, limit, orderby) {
       getAllLocalGames(offset, limit, orderby)
         .then(e => {
-          this.tableData = e.data.data
-          this.pageInfo = e.data.pageino
-          console.log(this.pageInfo)
+          if (e.data.ok) {
+            this.tableData = e.data.data.data
+            this.pageInfo = e.data.data.pageino
+          }
         })
         .catch(error => {
           this.$Notice.open({
@@ -205,7 +209,6 @@ export default {
       if (val === 0) {
         this.$Message.error('请至少选择列表中的一项')
       } else {
-        // this.handleGetIds()
         this.$router.push({
           path: 'subtype3-delete',
           query: { ids: this.getCheckboxVal }
@@ -241,19 +244,19 @@ export default {
      * 删除游戏
      */
     handleTableDelete (index) {
+      debugger
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         content: this.$t('DeleteCurrentData'),
         cancelText: this.$t('cancelText'),
-        okText: this.$t('confirm'),
+        okText: this.$t('Confirm'),
         onOk: () => {
-          deleteLocalGame(index.Id).then(
+          deleteGame(index.id).then(
             resp => {
-              this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
+              this.handgetAllGame(0, this.currlimit, 'Name')
             },
             () => {
-              this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
-              this.$Message.error('请求出错，请稍后再试')
+              this.handgetAllGame(0, this.currlimit, 'Name')
             }
           )
         },

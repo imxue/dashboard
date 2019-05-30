@@ -1,29 +1,35 @@
 <template>
-  <div class="layout"> 
-    <header>
+  <div class="layout">
+    <Row>
+      <Col :xxl="{ span: 24, offset: 0 }" :xl="{ span: 24, offset: 0 }" :lg="{span: 24, offset: 0 }"	:xs='{span:24,offset: 0}'>
       <Navbar></Navbar>
-    </header>
-    <div class="main">
-        <div class="mySider">
-          <Sidebar></Sidebar>
-        </div>
+    </Col>
+    </Row>
    
-          <Content :style="{padding: '0 10px 10px'}">
-            <Breadcrumb :style="{margin: '10px 0'}">
+      <div style="flex-grow:1" class="xx">
+        <Col  style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 5, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
+          <Sidebar ></Sidebar>
+        </Col>
+        <Col :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 19, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'>
+
+            <Breadcrumb :style="{margin: '10px 10px'}">
               <template v-for="item  in levelList" >                
                 <BreadcrumbItem :key="item.path">
-                  {{$t(item.meta.title)}}
+               {{$t(item.meta.title)}}
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-            <Card dis-hover>
+            <Card dis-hover :style="{margin: '0 10px',height: '95%'}">
               <AppMain></AppMain>
             </Card>
-          </Content>
- 
- 
-    </div>
-  </div>
+       
+        </col>
+
+
+      </div>
+   
+  </div>  
+
 </template>
 
 <script>
@@ -70,27 +76,17 @@
 </script>
 
 <style scoped>
-  article {
-    flex: auto;
-   
-  }
   .layout{
-    border: 1px solid #d7dde4;
-    background: #f5f7f9;
-    position: relative;
-    overflow: hidden;
-    min-height: 100vh;
+    min-width: 1190px;
+    min-height: 760px;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    min-width: 1460px;
   }
-  .mySider{
-    min-height: calc(100vh - 62px);
-    background: #f5f7f9;
-  }
-  .main{
+  .xx {
     display: flex;
   }
+
 </style>
 
 

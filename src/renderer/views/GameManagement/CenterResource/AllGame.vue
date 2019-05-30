@@ -4,7 +4,7 @@
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
             <Select v-model="Dg.data" :placeholder="$t('Search')" >
-              <Option v-for='item in disk' v-bind:value='item' v-bind:key='item'>{{item}}</Option>
+              <Option v-for='item in disk' v-bind:value='item.name' v-bind:key='item.name'>{{item.name}} \ 可用空间 {{item.free_space}}</Option>
             </Select>
             </FormItem> 
               <FormItem>
@@ -17,33 +17,46 @@
       <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
         <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
       </Select>
-      <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+      <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
+
+   
+    <Table size="small"   width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
+   
+
     <Row style="margin-top:10px; ">
-      <i-col span="5">{{$t('Resource')}}：{{this.pageInfo.count}} &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：{{DownLoadCount}}</i-col>
-      <i-col span="19"><Page :total="this.pageInfo.count" :current="pageInfo.page_size" :page-size="10" @on-change="handleGetTableList" style=" float:right;"/></i-col>
+      <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col>
+      <Col span="18"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
   </div>
 </template>
 
 <script>
-import { getAllGame, getLogicalDrives, downloadGame, repairGame } from '@/api/localGame'
+import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
+import { bytesToSize2 } from '../../../utils/index'
+import Vue from 'vue'
 export default {
   name: 'allGame',
   data () {
     return {
       pageCount: '',
       disk: '',
+      GameName: [], // 游戏名提示
+      value1: '',
+      temp: [],
+      tempx: [],
+      tableDataAll: [],
       pageInfo: '',
+      Pagelimit: 10, // 页面展示的数量
       DownLoadCount: '0', // 已下载的数
       Dg: {
         data: ''
       },
+      TypeName: '',
       deleteid: '',
       DownloadGameUp: false,
       model1: '',
@@ -57,46 +70,59 @@ export default {
         { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
       ],
       tableColumns: [
-        { type: 'selection', width: 60, align: 'center' },
+        { type: 'selection', width: '50px', align: 'center' },
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
+          minWidth: 130,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {
               case 0:
-                return h('span', '未下载')
+                return h('span', this.$t('Undownload'))
               case 1:
-                return h('span', { style: { color: '#999999' } }, '待更新')
+                return h('span', { style: { color: '#999999' } }, this.$t('PendingUpgrade'))
               case 2:
-                return h('span', { style: { color: '#008000' } }, '更新中')
+                return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
               case 3:
-                return h('span', { style: { color: '#008000' } }, '最新版本')
+                return h('span', { style: { color: '#008000' } }, this.$t('LatestVersion'))
               default:
                 return '-'
             }
           }
         },
-        { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('Name')) } },
-        { key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
-        { key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { key: 'TypeName',
+          minWidth: 130,
+          renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
+        },
+        { key: 'Name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'Popularity',
+          minWidth: 120,
+          sortable: true,
+          renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
+        },
+        { key: 'Size', minWidth: 80, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'CenterVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
+          fixed: 'right',
+          minWidth: 190,
           render: (h, params) => {
             let type = params.row.State
             let a = h('Button',
-              { style: { color: '#2d8cf0', marginRight: '10px' },
+              { style: { marginRight: '5px', width: '70px' },
+                props: { type: 'primary', size: 'small' },
                 on: { click: () => { this.handleFixGame(params.row) } }
               }, this.$t('RepairGame'))
             let b = h('Button', {
-              style: { color: '#2d8cf0' },
+              style: { width: '70px' },
+              props: { type: 'error', size: 'small' },
               on: { click: () => { this.handleRemove(params.row) } }
             }, this.$t('LocalRemoval'))
             let c = h('Button', {
-              style: { color: '#2d8cf0' },
+              style: { width: '70px' },
+              props: { type: 'primary', size: 'small' },
               on: { click: () => { this.handleDownGame(params.row.Id) } }
             }, this.$t('DownloadGames'))
             switch (type) {
@@ -105,6 +131,8 @@ export default {
               case 1:
                 return h('span', [a, b])
               case 2:
+                return h('span', [b])
+              case 3:
                 return h('span', [b])
               default:
                 return '-'
@@ -116,7 +144,8 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, 10, 'Name')
+    this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
+    this.handgetAllGame(0, this.Pagelimit, 'Name')
   },
   computed: {
     routes () {
@@ -124,15 +153,33 @@ export default {
     }
   },
   methods: {
+    ChangeValue () {
+      if (this.value1) {
+        this.tempx = []
+        this.GameName = this.temp.slice(0, 6)
+        let r = new RegExp(`${this.value1}`)
+        this.tempx = this.GameAllName.filter(item => {
+          return r.test(item)
+        })
+        this.GameName = this.tempx.slice(0, 6)
+      } else {
+        this.GameName = this.temp.slice(0, 6)
+        this.handgetAllGame(0, 10, 'Name')
+      }
+    },
+    showItem (name) {
+      this.searchByGameName(name)
+    },
     /**
-     * 获取全部游戏
+     * 通过游戏名称搜索游戏
      */
-    handgetAllGame (offset, limit, orderby) {
-      getAllGame(offset, limit, orderby).then(response => {
-        if (response.data.data instanceof Array) {
-          this.tableData = response.data.data
-          this.pageInfo = response.data.pageino
-          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
+    searchByGameName (name) {
+      getAllGame(0, 1000000, 'Size').then(response => {
+        if (response.data.ok) {
+          this.tableDataAll = response.data.data.data
+          this.tableData = this.tableDataAll.filter(item => {
+            return item.Name === name
+          })
         }
       }, (e) => {
         this.$Notice.error({ desc: '' + e, duration: 0 })
@@ -140,8 +187,35 @@ export default {
         this.$Notice.error({ desc: '' + e, duration: 0 })
       })
     },
+    /**
+     * 获取全部游戏
+     */
+    handgetAllGame (offset, limit, orderby) {
+      getAllGame(offset, limit, orderby).then(response => {
+        if (response.data.ok) {
+          this.tableData = response.data.data.data
+          response.data.data.data.filter(item => {
+            if (item.Name) {
+              this.GameName.push(item.Name)
+            }
+            this.GameAllName = Array.from(this.GameName)
+            this.GameName = this.GameName.slice(0, 6)
+            this.temp = Array.from(this.GameAllName)
+          })
+          this.pageInfo = response.data.data.pageino
+          this.pageInfo.page_index++
+          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
+        }
+      }, (e) => {
+        // 这里执行reject状态的
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
+      }).catch((e) => {
+        // 在发送代码错误时执行这里
+        this.$Message.error(this.$t('kxLinuxErr.10'))
+      })
+    },
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * 2, 2, 'Name')
+      this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
     },
     handleButtonDW (val) {
       val = this.getCheckboxVal.length
@@ -159,11 +233,17 @@ export default {
     */
     handleSubmit () {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
-      downloadGame(info.CenterGameId, info.DiskSymbol).then(() => {
-        this.DownloadGameUp = false
-        getAllGame()
+      downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
+        if (response.data.ok) {
+          this.DownloadGameUp = false
+        } else {
+          this.DownloadGameUp = false
+          this.$Message.error(this.$t('FileNotFound'))
+        }
+      }, () => {
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
       }).catch((e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
+        this.$Message.error({ desc: '' + e, duration: 0 })
       })
     },
     /**
@@ -173,34 +253,75 @@ export default {
       this.DownloadGameUp = true
       this.deleteid = id
       getLogicalDrives().then(response => {
-        this.disk = response.data
+        if (response.data.ok) {
+          this.disk = response.data.data
+          this.disk.map(item => {
+            item.free_space = bytesToSize2(item.free_space)
+          })
+          this.Dg.data = this.disk[0].name
+        }
+      }, () => {
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
       }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
     },
+    /**
+     * 修复多个游戏
+     */
     handleButtonFixGame (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        // this.$Message.info('修复中，请耐心等待……')
-        repairGame(this.getCheckboxVal[0].Id).then((e) => {
-          this.$Message.info(e.data)
-        })
+        if (this.getCheckboxVal.length > 1) {
+          this.getCheckboxVal.forEach((item) => {
+            this.handleFixGame(item)
+          })
+        } else {
+          this.handleFixGame(this.getCheckboxVal[0])
+        }
       }
     },
+    /**
+     * 删除多个游戏
+     */
     handleButtonRemove (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        this.$router.push({
-          path: 'subtype1-remove',
-          query: { id: this.getCheckboxVal }
-        })
+        if (this.getCheckboxVal.length > 1) {
+          this.getCheckboxVal.forEach((item) => {
+            this.handleRemove(item)
+          })
+        } else {
+          this.handleRemove(this.getCheckboxVal[0])
+        }
       }
     },
-    test () {
-      let matched = this.$route.matched.filter(item => item.name)
-      console.log(matched)
+    /**
+     * 删除游戏
+     */
+    handleRemove (index) {
+      this.$Modal.confirm({
+        title: this.$t('DeleteTip'),
+        okText: this.$t('Confirm'),
+        cancelText: this.$t('cancelText'),
+        content: this.$t('DeleteDec'),
+        'closable': true,
+        onOk: () => {
+          deleteGame(index.Id).then((e) => {
+            if (e.data.ok) {
+              this.$Message.error(this.$t('DeleteGameSucess'))
+            } else {
+              this.$Message.error(this.$t('FileNotFound'))
+            }
+          }, () => {
+            this.$Message.error(this.$t('kxLinuxErr.36873'))
+          }).catch(() => {
+            this.$Message.error(this.$t('kxLinuxErr.10'))
+          })
+        }
+      })
     },
     handleReset () {
       this.DownloadGameUp = false
@@ -219,15 +340,20 @@ export default {
         query: { id: this.getCheckboxVal }
       })
     },
+    /**
+     * 修复游戏
+     */
     handleFixGame (index) {
-      this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      this.$Message.info('id:' + this.getCheckboxVal + '修复中，请耐心等待……')
-    },
-    handleRemove (index) {
-      this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      this.$router.push({
-        path: 'subtype1-remove',
-        query: { id: this.getCheckboxVal }
+      repairGame(index.Id).then((e) => {
+        if (e.data.ok) {
+          this.$Message.error(this.$t('repairSucess'))
+        } else {
+          this.$Message.error(this.$t('FileNotFound'))
+        }
+      }, () => {
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
+      }).catch((e) => {
+        this.$Message.error({ desc: '' + e, duration: 0 })
       })
     }
   }

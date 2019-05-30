@@ -3,10 +3,10 @@
     <div class="box">
         <h3>登录</h3>
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-          <FormItem prop="user" style="width:100%;">
+          <FormItem prop="barid" style="width:100%;">
             <Row>服务器IP地址：</Row>
             <Row>
-              <i-input type="text" v-model="formInline.user" placeholder="请输入服务器IP地址" style="width:100%; dispaly:block;"></i-input>
+              <i-input type="text" v-model="formInline.barid" placeholder="请输入服务器IP地址" style="width:100%; dispaly:block;"></i-input>
             </Row>
           </FormItem>
           <FormItem prop="password" style="width:100%;">
@@ -25,44 +25,53 @@
 </template>
 
 <script>
-  export default {
-    name: 'login',
-    data () {
-      return {
-        formInline: {
-          user: '',
-          password: ''
-        },
-        ruleInline: {
-          user: [
-            { required: true, message: '请输入服务器IP地址', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入管理密码', trigger: 'blur' }
-          ]
-        }
-      }
-    },
-    watch: {},
-    computed: {},
-    created () {
-    },
-    methods: {
-      handleSubmit (name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            localStorage.setItem('Flag', 'isLogin')
-            this.$router.push('/game/subType1/subType1-1')
-          } else {
-            this.$Message.error('验证失败!')
-          }
-        })
+import { login } from '../../api/login'
+export default {
+  name: 'login',
+  data () {
+    return {
+      formInline: {
+        barid: '',
+        password: ''
       },
-      handleReset () {
-        this.$router.push('/login/reset')
+      ruleInline: {
+        barid: [
+          { required: true, message: '请输入服务器IP地址', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入管理密码', trigger: 'blur' }
+        ]
       }
     }
+  },
+  watch: {},
+  computed: {},
+  created () {
+  },
+  methods: {
+    handleSubmit (name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          this.formInline.barid = Number(this.formInline.barid)
+          login(this.formInline).then((e) => {
+            if (e.data.ok) {
+              localStorage.setItem('token', e.data.token)
+              this.$router.push('/game/subType1/subType1-1')
+            } else {
+              this.$Message.info({
+                content: e.data.data.error,
+                duration: 10
+              })
+            }
+          })
+        }
+      })
+    },
+    handleReset () {
+      this.$router.push('/login/reset')
+    }
   }
+}
 </script>
 
 <style scoped>

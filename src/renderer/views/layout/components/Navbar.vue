@@ -1,6 +1,6 @@
 <template>
   <div class="myheader">
-    <Row class="ivu-menu-dark ivu-menu-horizontal">
+    <div class="ivu-menu-dark ivu-menu-horizontal">
       <div class="wrapper">
         <Menu mode="horizontal" theme="dark" active-name="1">
           <template v-for="item in routes">
@@ -56,7 +56,7 @@
           <Button @click="handleExit">{{$t('logout')}}</Button>
         </div>
       </div>
-    </Row>
+    </div>
   </div>
 </template>
 
@@ -79,6 +79,10 @@ export default {
         {
           value: 'en-US',
           name: 'English'
+        },
+        {
+          value: 'zh-TW',
+          name: '中文繁體'
         }
       ]
     }
@@ -106,13 +110,13 @@ export default {
       }
     },
     ChangeLanguage (name) {
-      Vue.config.lang = name
+      this.$i18n.locale = name
       localStorage.setItem('language', name)
       this.localStorageLang = localStorage.getItem('language')
     },
     handleExit () {
       localStorage.setItem('Flag', '')
-      // this.$router.push('/login/login')
+      this.$router.push('/login/login')
     }
   },
   computed: {
@@ -135,23 +139,15 @@ export default {
   justify-content: space-between;
 }
 .wrapper span {
-  margin-right: 15px;
-}
-.myheader {
-  min-width: 1250px;
+  margin-right: 10px;
 }
 .headerFooter {
-  margin-right: 15px;
+  margin-right: 10px;
 }
 .headerFooter button {
   margin-left: 15px;
 }
 a {
   color: white;
-}
-@media screen and (max-width: 1280px) {
-  .myheader {
-    min-width: 1250px;
-  }
 }
 </style>

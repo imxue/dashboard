@@ -1,11 +1,9 @@
 import request from '@/utils/request'
 
-export function login (password) {
-  const data = {
-    Password: password
-  }
+export function login (info) {
+  const data = { ...info }
   return request({
-    url: '/v1/console/login',
+    url: '/v1/bar/login',
     method: 'post',
     data
   })

@@ -112,11 +112,9 @@ export function getAllGame (offset, limit, orderby) { // 本吧批量添加
  * 获取盘符
  */
 export function getLogicalDrives () { // 本吧批量添加
-  const data = {}
   return request({
     url: '/v1/sysbase/getLogicalDrives',
-    method: 'get',
-    data
+    method: 'get'
   })
 }
 
@@ -259,11 +257,11 @@ export function getShelvedGames (offset, limit, orderby) {
 
 export function downloadGame (CenterGameId, DiskSymbol) {
   const data = {
-    CenterGameId,
-    DiskSymbol
+    centergameid: CenterGameId,
+    disksymbol: DiskSymbol
   }
   return request({
-    url: `/v1/centerresource/downloadGame?CenterGameId=${data.CenterGameId}&DiskSymbol=${data.DiskSymbol}`,
+    url: `/v1/centerresource/downloadGame`,
     method: 'post',
     data
   })
@@ -273,11 +271,25 @@ export function downloadGame (CenterGameId, DiskSymbol) {
 */
 export function repairGame (id) {
   const data = {
-    id
+    centergameid: id
   }
   return request({
-    url: `/v1/centerresource/repairGame?CenterGameId=${data.id}`,
-    method: 'post',
+    url: `/v1/centerresource/repairGame`,
+    method: 'POST',
+    data
+  })
+}
+/*
+* 删除游戏
+*/
+export function deleteGame (id) {
+  const data = {
+    centergameid: id,
+    confirmdeletegame: true
+  }
+  return request({
+    url: `/v1/centerresource/deleteGame`,
+    method: 'POST',
     data
   })
 }

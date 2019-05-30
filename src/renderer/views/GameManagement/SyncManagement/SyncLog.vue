@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
@@ -26,6 +26,7 @@
           { type: 'selection', width: 60, align: 'center' },
           {
             renderHeader: (h, params) => { return h('span', this.$t('result')) },
+            width: 80,
             key: 'state',
             render: (h, params) => {
               let type = params.row.state
@@ -39,17 +40,18 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'Dispalyname', width: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '热度', key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', width: 120, key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'Ip', width: 120, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '开始时间', key: 'BeginSyncTime', renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) } },
-          { title: '结束时间', key: 'EndSyncTime', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
-          { title: '错误信息', key: 'ErrorInfo', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } },
+          { title: '游戏类型', minWidth: 130, key: 'Type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', minWidth: 130, key: 'Dispalyname', width: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', minWidth: 130, key: 'Centerpopularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', minWidth: 130, key: 'Localpath', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', minWidth: 130, key: 'Dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '开始时间', key: 'BeginSyncTime', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) } },
+          { title: '结束时间', minWidth: 130, key: 'EndSyncTime', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
+          { title: '错误信息', minWidth: 100, key: 'ErrorInfo', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
+            minWidth: 130,
             render: (h, params) => {
               let type = params.row.id
               let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
@@ -79,7 +81,9 @@
       handleGetTableList (offset, limit) {
         var listQuery = '?offset=' + offset + '&limit=' + limit
         getSyncLog(listQuery).then((a) => {
-          var datalist = a.data.Data.List
+          if (a.data.Data) {
+            var datalist = a.data.Data.List
+          }
           if (a.data.Code === 0) {
             if (datalist === null) {
               this.data = null
@@ -129,9 +133,6 @@
 </script>
 
 <style scoped>
-  .container{
-    min-width: 1300px;
-  }
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}

@@ -1,14 +1,22 @@
 
-const { remote } = require('electron')
-const { Menu, MenuItem } = remote
+import iView from 'iview'
 
-const menu = new Menu()
-menu.append(new MenuItem({ label: 'MenuItem1', click (e) { console.log(e) } }))
-menu.append(new MenuItem({ type: 'separator' }))
-menu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }))
+let ipcRenderer = require('electron').ipcRenderer
 
-window.addEventListener('contextmenu', (e) => {
-  e.preventDefault()
-  console.log(e)
-  menu.popup({ window: remote.getCurrentWindow() })
-}, false)
+iView.LoadingBar.config({
+  color: '#5cb85c',
+  failedColor: '#f0ad4e',
+  height: 5
+})
+ipcRenderer.on('start', (event, arg) => {
+  iView.LoadingBar.start(0)
+})
+ipcRenderer.on('progress', (event, arg) => {
+  iView.LoadingBar.update(arg)
+})
+ipcRenderer.on('end', (event, arg) => {
+  iView.LoadingBar.finish()
+})
+ipcRenderer.on('error', (event, arg) => {
+  iView.LoadingBar.error()
+})

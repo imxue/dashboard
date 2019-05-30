@@ -3,21 +3,21 @@
     <div class="topItem">
       <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>
       <Button type="primary" class="topColumn" @click="handleButtonExport">导出</Button> -->
-      <Button type="error" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button>
+      <Button type="error" class="topColumn" @click="handleDeleteMirrors">{{$t('Delete')}}</Button>
       <!-- <Divider type="vertical" />
       <Button type="primary" class="topColumn" @click="handleButtonBuild">施工状态</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStandby">待机状态</Button> -->
     </div>
     <!-- table -->
-    <Table border :columns="tableColumns1" :data="tableData1" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border :columns="MirrorInfoTable" :data="MirrorsInfoDate" :no-data-text="this.$t('Nodata')"></Table>
     <Divider />
     <div class="topItem">
       <Button type="primary" class="topColumn" @click="handleButtonCreate">{{$t('Create')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border  stripe @on-row-dblclick='handleSet' ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
     <Modal
-      :title="this.$t('CreateConfigurationPointName')"
+      :title="modalTitle"
       v-model="showImgPopup"
       width= "500"
       footer-hide
@@ -27,7 +27,7 @@
           <Input v-model="formValidate2.nameVal" :placeholder="this.$t('PleaseEnterConfigurationPointName')" clearable  />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleSetImage('formValidate2')">{{$t('Save')}}</Button>
+             <Button type="primary" @click="handeCheckModalSubmitType('formValidate2')">{{$t('Save')}}</Button>
              <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
@@ -36,32 +36,33 @@
       :title="this.$t('RestoreConfigurationPoint')"
       v-model="showPopup"
       width="800"
-      style="padding-bottom:50px"
       footer-hide>
-      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
+      <Table border :columns="configPointTable" :data="configPointDate" :no-data-text="this.$t('Nodata')"></Table>
      </Modal>
   </div>
 </template>
 
 <script>
   import moment from 'moment'
+  import { bytesToSize } from '@/utils/index'
   import {
     getImageListx,
-    deleteImage,
+    deleteImagex,
     createImageProject,
     getImageRestore,
     deleteImageProject,
     editImageProject,
     revertImageRestore,
     deleteImageRestore,
-    createImageProjectx
+    createImageProjectx,
+    mergeImageProject
   } from '@/api/wupan'
   export default {
     name: 'subType2-1',
     data () {
       return {
         modalType: 'create',
-        modalTitle: '创建配置点',
+        modalTitle: this.$t('CreateConfigurationPointName'),
         labelName: '配置点名称:',
         showImgPopup: false,
         showPopup: false,
@@ -70,7 +71,7 @@
         configListIndexValue: '', // 当前配置点 row value
         restoreListIndexValue: '', // 当前还原点 row value
         ImageDataList: [],
-        tableColumns1: [
+        MirrorInfoTable: [
           { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
           {
             renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
@@ -94,35 +95,49 @@
           }
 
         ],
-        tableData1: [],
+        MirrorsInfoDate: [],
         tableColumns: [
-          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
-          { key: 'fileSizeB', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) } },
+          { key: 'name', width: 200, renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
+          { key: 'fileSizeB',
+            width: 200,
+            renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) },
+            render: (h, params) => {
+              return h('span', bytesToSize(params.row.fileSizeB))
+            }
+          },
+          { key: 'dataModifyTime',
+            renderHeader: (h, params) => { return h('span', this.$t('ChangeTime')) },
+            width: 240,
+            render: (h, params) => {
+              return h('span', moment(params.row.dataModifyTime, 'YYYY-MM-DD HH:mm:ss').format('LLL'))
+            } },
           {
             renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            width: 400,
             key: 'operation',
             render: (h, params) => {
-              // let type = params.row.state<Tag closable color="blue">标签一</Tag>
-              let a = h('Button', {
+              let response = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
               }, this.$t('RestorePoint'))
-              let b = h('Button', {
-                props: { type: 'primary' },
-                style: { marginRight: '10px' },
-                on: { click: () => { this.handleCopy(params.row) } }
-              }, this.$t('Copy'))
+              // let b = h('Button', {
+              //   props: { type: 'primary' },
+              //   style: { marginRight: '10px' },
+              //   on: { click: () => { this.handleCopy(params.row) } }
+              // }, this.$t('Copy'))
               let c = h('Button', {
                 props: { type: 'error' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleDelete(params.row) } }
-              }, this.$t('Detele'))
+              }, this.$t('Delete'))
               let d = h('Button', { props: { type: 'info' },
                 on: { click: () => { this.handleFix(params.row) } }
               }, this.$t('modify'))
-              return [a, b, c, d]
+              if (params.row.name === 'default') {
+                return [response]
+              } else {
+                return [response, c, d]
+              }
             }
           }
         ],
@@ -131,21 +146,28 @@
         ruleValidate2: { nameVal: [{ required: true, message: '不能为空', trigger: 'blur' }] },
         formValidate: { config: '' },
         ruleValidate: { config: [{ required: true, message: '不能为空', trigger: 'change' }] },
-        tableColumns3: [
-          { key: 'no', renderHeader: (h, params) => { return h('span', this.$t('RestorePpointName')) } },
-          { key: 'comment', renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) } },
+        configPointTable: [
+          { key: 'no',
+            width: '150px',
+            renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
+          },
+          { key: 'comment',
+            width: '100px',
+            renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) }
+          },
           {
             renderHeader: (h, params) => { return h('span', this.$t('ChangeTime')) },
             key: 'dataModifyTime',
+            width: '200px',
             render: (h, params) => {
-              return h('span', moment(params.row.dataModifyTime).format('YYYY-MM-DD HH:mm:ss'))
+              return h('span', moment(params.row.dataModifyTime, 'YYYY-MM-DD HH:mm:ss').format('LLL'))
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            width: 400,
+            width: 300,
             key: 'operation',
             render: (h, params) => {
-              let a = h('Button', {
+              let response = h('Button', {
                 props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSetRestore(params.row) } }
@@ -155,17 +177,17 @@
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleDeleteRestore(params.row) } }
               }, this.$t('Delete'))
-              return [a, b]
+              return [response, b]
             }
           }
         ],
-        tableData3: []
+        configPointDate: []
       }
     },
     created () {
-      // console.log(JSON.stringify(this.$route.query.data))
+      moment.locale(localStorage.getItem('language').toLowerCase())
       var data = this.$route.query.data
-      this.tableData1.push(data) // 镜像信息 Get_Img
+      this.MirrorsInfoDate.push(data) // 镜像信息 Get_Img
       this.handleGetImageList()
     },
     computed: {
@@ -174,58 +196,56 @@
       }
     },
     methods: {
+      /**
+       * 删除镜像
+      */
+      handleDeleteMirrors () {
+        let name = this.MirrorsInfoDate[0].name
+        this.$Modal.confirm({
+          title: this.$t('DeleteTip'),
+          content: this.$t('DeleteDec'),
+          okText: this.$t('Confirm'),
+          cancelText: this.$t('cancelText'),
+          onOk: () => {
+            let ip = localStorage.getItem('masterip')
+            deleteImagex(name, ip).then(() => {
+              this.$router.push({
+                path: 'subType2-1'
+              })
+            })
+          },
+          onCancel: () => {
+
+          }
+        })
+      },
+      /**
+       * 获取镜像类别
+       */
       handleGetImageList () {
-        getImageListx(localStorage.getItem('masterip')).then((a) => {
-          var arr = a.data.result.list
-          if (a.data.error === null && arr.length !== null) {
-            var newArr = arr.filter(item => item.name === this.tableData1[0].name)
-            this.tableData = newArr[0].profileList
-          } else {
-            this.ImageDataList = []
+        getImageListx(localStorage.getItem('masterip')).then((response) => {
+          if (response.data.ok) {
+            var arr = response.data.data.result.list
+            if (response.data.data.error === null && arr.length !== null) {
+              var newArr = arr.filter(item => { return item.name === this.MirrorsInfoDate[0].name })
+              this.tableData = newArr[0].profileList
+            }
           }
         })
       },
       handleCheckCallBack () {},
-      handleCreatImgPro () {
-        var restoreNo = this.$route.query.data.profileList[0].rollbackList
-        if (restoreNo === null) {
-          restoreNo = ''
-        } else {
-          restoreNo = String(restoreNo.length)
-        }
-        // 创建配置点 image, projectNO, restoreNo, name, title
-        createImageProject(this.tableData1[0].name, this.tableData[0].no, restoreNo, this.formValidate2.nameVal, this.tableData1[0].menuItemName).then((a) => {
-          if (a.data.error === null && a.data.result === null) {
-            this.$Message.success('创建成功！')
-            this.tableData = []
-            this.handleGetImageList() // 创建成功 获取配置列表
-            // 创建成功 this.handleGetImgPro()
-          } else {
-            this.$Message.error(a.data.error)
-          }
-        })
-      },
       handleButtonImport () {},
       handleButtonExport () {},
-      handleButtonDelete () { // 删除镜像
-        deleteImage(this.tableData1[0].name).then((a) => {
-          if (a.data.error === null && a.data.result === null) {
-            this.$Message.success('删除成功！')
-            this.$router.go(-1)
-          } else {
-            this.$Message.error(a.data.error)
-          }
-        })
-      },
       handleButtonBuild () {},
       handleButtonStandby () {},
       handleButtonCreate () {
         this.modalType = 'create'
+        this.modalTitle = this.$t('CreateConfigurationPointName')
         this.showImgPopup = true
       },
       handeCheckModalSubmitType () {
         if (this.modalType === 'create') {
-          this.handleCreatImgPro()
+          this.handleSetImage('formValidate2')
         } else if (this.modalType === 'fix') {
           this.handleSubmitFix()
         } else if (this.modalType === 'copy') {
@@ -244,8 +264,8 @@
             let image = this.$route.query.data.name
             let name = this.formValidate2.nameVal
             let data = { image, name }
-            createImageProjectx(data, localStorage.getItem('masterip')).then((e) => {
-              if (e.error == null) {
+            createImageProjectx(data, localStorage.getItem('masterip')).then((response) => {
+              if (response.data.ok) {
                 this.handleGetImageList()
               }
             }, (err) => {
@@ -273,25 +293,25 @@
           }
         })
       },
-      handleReset (name) {
-        this.$refs[name].resetFields()
-        this.showPopup = false
-      },
+      /**
+       * 还原点
+       */
       handleSet (index) {
+        moment.locale(localStorage.getItem('language').toLowerCase())
         this.showPopup = true
-        this.restoreListIndexValue = index
+        this.restoreListIndexValue = index // 配置点
         this.handleGetRestoreList(index)
       },
+      /**
+       * 调用获取还原点Api
+       * 镜像名 配置编号 服务器
+       */
+  
       handleGetRestoreList (index) {
-        // image, projectNO
-        getImageRestore(this.tableData1[0].name, index.no).then((a) => {
-          var result = a.data.result.rollbackList
-          if (a.data.error === null) {
-            if (result !== null) {
-              this.tableData3 = result
-            }
-          } else {
-            this.$Message.error(a.data.error)
+        getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
+          debugger
+          if (resp.data.ok) {
+            this.configPointDate = resp.data.data.result.rollbackList || []
           }
         })
       },
@@ -303,13 +323,13 @@
           restoreNo = String(restoreNo.length)
         }
         // 创建配置点 image, projectNO, restoreNo, name, title
-        createImageProject(this.tableData1[0].name, this.copyIndexData.no, restoreNo, this.formValidate2.nameVal, this.tableData1[0].menuItemName).then((a) => {
-          if (a.data.error === null && a.data.result === null) {
+        createImageProject(this.MirrorsInfoDate[0].name, this.copyIndexData.no, restoreNo, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName).then((response) => {
+          if (response.data.error === null && response.data.result === null) {
             this.$Message.success('创建成功！')
             this.tableData = []
             this.handleGetImageList() // 创建成功 获取配置列表
           } else {
-            this.$Message.error(a.data.error)
+            this.$Message.error(response.data.error)
           }
         })
       },
@@ -320,74 +340,88 @@
         this.copyIndexData = index
         // console.log(JSON.stringify(index))
       },
+      /**
+       * 删除配置点
+       */
       handleDelete (index) {
         // image, projectNO
-        deleteImageProject(this.tableData1[0].name, index.no).then((a) => {
-          var result = a.data.result
-          if (a.data.error === null && result === null) {
-            this.$Message.success('成功删除配置点')
+        deleteImageProject(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((response) => {
+          if (response.data.ok) {
+            this.$Message.success(this.$t('DeleteSucess'))
             this.handleGetImageList()
-          } else {
-            this.$Message.error(a.data.error)
           }
-          this.handleGetImageList()
         })
       },
+      /**
+       * 修改配置点
+       */
       handleSubmitFix () {
-        console.log('handleSubmitFix&&&')
-        // image, projectNO, name, title
-        editImageProject(this.tableData1[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.tableData1[0].menuItemName).then((a) => {
-          var result = a.data.result
-          if (a.data.error === null && result === null) {
-            this.$Message.success('修改成功')
-            this.handleGetImageList()
-            // this.configList = result
-            // 创建成功 获取还原点列表 this.handleGetImgPro()
-          } else {
-            this.$Message.error(a.data.error)
+        editImageProject(this.MirrorsInfoDate[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName, localStorage.getItem('masterip')).then((resp) => {
+          if (resp.data.ok) {
+            if (!resp.data.error) {
+              this.$Message.success(this.$t('SetSucess'))
+              this.showImgPopup = false
+              this.handleGetImageList()
+            } else {
+              this.$Message.error(resp.data.error)
+            }
           }
         })
       },
       handleFix (index) {
-        this.modalTitle = '修改配置点'
+        this.modalTitle = this.$t('editConfigPoint')
         this.modalType = 'fix'
         this.showImgPopup = true
+        this.formValidate2 = index
+        index.nameVal = index.name
         this.configListIndexValue = index
       },
       handleRadioGroup (val) {
         alert(val)
+        mergeImageProject()
       },
+      /**
+       * 还原配置点
+       * 镜像名称 配置点 还原点
+       */
       handleSetRestore (index) { // 还原点还原
-        // image, projectNO, restoreNO
-        revertImageRestore(this.tableData1[0].name, this.restoreListIndexValue.no, String(index.no)).then((a) => {
-          var result = a.data.result
-          if (a.data.error === null && result === null) {
-            this.showPopup = true
-            this.$Message.success('修改成功')
-            this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
-          } else {
-            this.$Message.error(a.data.error)
-          }
-        })
+        let that = this
+        let length = that.configPointDate.length
+        if (length <= 1) {
+          revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((resp) => {
+            if (resp.data.error === null) {
+              that.handleGetRestoreList(that.restoreListIndexValue)
+            }
+          })
+        } else {
+          this.$Modal.confirm({
+            'title': this.$t('operationTip'),
+            'content': this.$t('RestorePointTip'),
+            'cancel-text': this.$t('cancelText'),
+            'okText': this.$t('KonwContinue'),
+            onOk () {
+              revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((resp) => {
+                if (resp.data.error === null) {
+                  that.handleGetRestoreList(that.restoreListIndexValue)
+                }
+              })
+            }
+          })
+        }
       },
       handleDeleteRestore (index) { // 删除还原点
-        // image, projectNO, restoreNO
-        deleteImageRestore(this.tableData1[0].name, this.restoreListIndexValue.no, String(index.no)).then((a) => {
-          var result = a.data.result
-          if (a.data.error === null && result === null) {
-            this.showPopup = true
-            this.$Message.success('修改成功')
-            this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
-          } else {
-            this.$Message.error(a.data.error)
+        deleteImageRestore(this.MirrorsInfoDate[0].name, this.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((response) => {
+          if (response.data.ok) {
+            var result = response.data.result
+            if (response.data.error === null && result === null) {
+              this.showPopup = true
+              this.$Message.success(this.$t('OperationSuccessful'))
+              this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
+            } else {
+              this.$Message.error(response.data.error)
+            }
           }
         })
-      },
-      handleFixRestore (index) { // 修改还原点
-        this.modalTitle = '还原点备注'
-        this.labelName = '还原点备注：'
-        this.modalType = 'restore'
-        this.showImgPopup = true
       }
     }
   }
@@ -395,7 +429,6 @@
 
 <style scoped>
   .topItem{ height: 60px;}
-  /* .topColumn{ float:left; margin-right:10px;} */
   .topColumn{ float: none;}
   .ivu-divider-vertical{margin-left: -2px;}
   .ivu-divider{background-color: #b0b0b0;}

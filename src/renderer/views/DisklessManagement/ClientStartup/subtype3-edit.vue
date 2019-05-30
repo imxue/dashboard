@@ -59,7 +59,7 @@
         </FormItem>
         <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'">
           <Row>
-            <i-col span="20"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input>{{$t('tip')}}
+            <i-col span="20"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}}
             </i-col>
           </Row>
         </FormItem>
@@ -150,7 +150,7 @@
             width: 400,
             key: 'operation',
             render: (h, params) => {
-              let a = h('Button', {
+              let resp = h('Button', {
                 props: { type: 'error', ghost: true },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMove(params.index) } }
@@ -167,11 +167,11 @@
               }, this.$t('MoveDown'))
               let index = params.index
               if (index === 0 && this.imgCount > index) {
-                return [a, c]
+                return [resp, c]
               } else if (index === this.imgCount - 1) {
-                return [a, b]
+                return [resp, b]
               } else {
-                return [a, b, c]
+                return [resp, b, c]
               }
             }
           },
@@ -262,18 +262,22 @@
       handlegetServerlist () {
         let mip = localStorage.getItem('masterip')
         getServersx(mip).then(response => {
-          this.serverlist = response.data.result.list
+          if (response.data.ok) {
+            this.serverlist = response.data.data.result.list
+          }
         })
       },
+      /*
+      获取镜像类表
+      */
       handleGetImageList () {
         let x = this.formValidate2.daSV
-        getImageListx(x).then((a) => {
-          var arr = a.data.result.list
-          if (a.data.error === null && arr.length !== null) {
+        getImageListx(x).then((resp) => {
+          if (resp.data.ok) {
+            var arr = resp.data.data.result.list
             this.imageList = arr
-            // this.tableData1 = arr
           } else {
-            this.$Message.error(a.data.error)
+            this.$Message.error(resp.data.data.error)
           }
         })
       },
@@ -288,6 +292,9 @@
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)
       },
+      /**
+       * 保存镜像
+       */
       handleSubmit (name) {
         let that = this
         this.$refs[name].validate(valid => {
@@ -298,17 +305,15 @@
               that.formValidate.imgG = that.tableData1
               editPcGroupx(
                 that.formValidate, localStorage.getItem('masterip')
-              ).then((a) => {
-                if (a.data.error === null) {
+              ).then((resp) => {
+                if (resp.data.ok) {
                   that.$Message.success(this.$t('SetSucess'))
                   that.$router.push('subType3-1') // 跳转到 全部方案首页
                 } else {
-                  that.$Message.error(a.data.error)
+                  that.$Message.error(resp.data.error)
                 }
-              }, (err) => { console.log(err) })
+              })
             }
-          } else {
-            // 为空不操作
           }
         })
       },

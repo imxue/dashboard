@@ -43,7 +43,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
             key: 'state',
-            width: 80,
+            minWidth: 130,
             render: (h, params) => {
               let type = params.row.state
               switch (type) {
@@ -60,16 +60,16 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type', width: 120, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'Dispalyname', width: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '热度', key: 'Centerpopularity', width: 120, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', key: 'ip', width: 120, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'Localpath', width: 110, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'Dir', width: 110, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '更新量', key: 'updateSize', width: 110, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-          { title: '已更新', key: 'updatedSize', width: 90, renderHeader: (h, params) => { return h('span', this.$t('updated')) } },
-          { title: '更新速度', key: 'speed', width: 80, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-          { title: '预计完成时间', key: 'time', width: 120, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
+          { title: '游戏类型', key: 'Type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'Dispalyname', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', key: 'Centerpopularity', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'Localpath', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'Dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '更新量', key: 'updateSize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          { title: '已更新', key: 'updatedSize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
+          { title: '更新速度', key: 'speed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+          { title: '预计完成时间', key: 'time', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {
@@ -109,7 +109,9 @@
       handleGetTableList (offset, limit) {
         var listQuery = '?offset=' + offset + '&limit=' + limit
         getSyncQueue(listQuery).then((a) => {
-          var datalist = a.data.Data.List
+          if (a.data.Data) {
+            var datalist = a.data.Data.List
+          }
           if (a.data.Code === 0) {
             if (datalist === null) {
               this.data = null
@@ -146,7 +148,7 @@
       handleCheckBoxNumber (name) {
         var val = this.getCheckboxVal.length
         if (val === 0 || val > 1) {
-          this.$Message.error('请选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.handlePostData(name)
         }
@@ -154,7 +156,7 @@
       handleButtonDelete (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.showDeleteBox = true
         }
@@ -199,7 +201,7 @@
       handleButtonStop (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }
@@ -207,7 +209,7 @@
       handleButtonMove (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }
@@ -228,8 +230,7 @@
 </script>
 
 <style scoped>
-  .topItem{ height: 60px;}
+  .topItem{ padding: 10px 0}
   .topColumn{ float:left; margin-right:10px;}
-  .ivu-input-icon{right:55px;}
 </style>
 

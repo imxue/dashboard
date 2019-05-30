@@ -129,7 +129,7 @@ export default {
         // { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          width: 80,
+          width: 90,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -145,12 +145,13 @@ export default {
           }
 
         },
-        { key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'ip', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
         { key: 'mac', renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
-        { key: 'pcGp', renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
+        { key: 'pcGp', minwidth: 120, renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('SuperWorkstation')) },
           key: 'super',
+          minWidth: 140,
           render: (h, params) => {
             let that = this
             let a = ''
@@ -271,8 +272,10 @@ export default {
     handleGetSuper () {
       let ip = localStorage.getItem('masterip')
       getSuper(ip).then(response => {
-        if (!response.data.err) {
-          this.currentSuperip = response.data.result.ip
+        if (response.data.ok) {
+          if (!response.data.data.error && response.data.data.result) {
+            this.currentSuperip = response.data.result.ip
+          }
         }
       })
     },
@@ -280,8 +283,10 @@ export default {
       if (localStorage.getItem('masterip')) {
         let ip = localStorage.getItem('masterip')
         getPcListConfigx(ip).then(response => {
-          if (response.data.result.list) {
-            this.tableData = response.data.result.list
+          if (response.data.ok) {
+            if (response.data.data.result.list) {
+              this.tableData = response.data.data.result.list
+            }
           }
         })
       }
@@ -295,7 +300,9 @@ export default {
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
       getImageListx(ip).then(response => {
-        this.imglist = response.data.result.list
+        if (response.data.ok) {
+          this.imglist = response.data.data.result.list
+        }
       })
       this.addedip = data.ip
     },
@@ -328,7 +335,6 @@ export default {
     /**
      * 删除客户机
     */
-
     handDetele (data) {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
@@ -548,14 +554,16 @@ export default {
             },
             cookiesMasterIp
           ).then(response => {
-            if (response.data.result.vdiskInfo && response.data.error === null) {
-              self.adddetail = false
-              self.currentSuperip = response.data.result.vdiskInfo.serverIp
-              setTimeout(() => {
-                self.reload()
-              }, 0)
-            } else {
-              this.err = true
+            if (response.data.ok) {
+              if (response.data.data.result.vdiskInfo && response.data.data.error === null) {
+                self.adddetail = false
+                self.currentSuperip = response.data.result.vdiskInfo.serverIp
+                setTimeout(() => {
+                  self.reload()
+                }, 0)
+              } else {
+                this.err = true
+              }
             }
           }, (err) => {
             self.$Message.error(err + '')

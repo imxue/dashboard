@@ -4,7 +4,7 @@
       <DatePicker size="large" type="date" :placeholder="$t('PleaseDate')" @on-change="handleChangeDate" ></DatePicker>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :total="100" style=" float:right;"/>
     </Row>
@@ -20,7 +20,7 @@ export default {
     return {
       tableColumns: [
         {
-          renderHeader: (h, params) => { return h('span', this.$t('State')) },
+          renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'state',
           render: (h, params) => {
             let type = params.row.state
@@ -42,32 +42,29 @@ export default {
           key: 'operation',
           render: (h, params) => {
             let type = params.row.state
-            let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              on: { click: () => { this.handleTableDw(params.row) } }
-            }, this.$t('DownloadAgain'))
+            // let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
+            //   on: { click: () => { this.handleTableDw(params.row) } }
+            // }, this.$t('DownloadAgain'))
+            let c = h('Button',
+              { style: { marginRight: '10px' },
+                props: { type: 'primary', size: 'small' },
+                on: { click: () => { this.handleTableDw(params.row) } }
+              }, this.$t('RepairGame'))
             switch (type) {
               case 1:
-                return h('div', [a])
+                return h('div', [c])
               default:
                 return h('div', '-')
             }
           }
         }
       ],
-      tableData: [
-        { id: 0, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 1, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 2, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 3, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 4, state: 0, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 5, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 6, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' },
-        { id: 7, state: 1, type: '网络游戏', name: '英雄联盟', version: '56.11', startTime: 'xxxxxx', endTime: 'xxxxxx', updateSize: '10.85 GB' }
-      ]
+      tableData: []
     }
   },
   created () {
     this.handTableData(0, 10, '2019-04-23 10:41:05')
+    console.log(this.$t('x'))
   },
   computed: {
     routes () {
@@ -83,8 +80,10 @@ export default {
       alert(currId)
     },
     handTableData (offset, limit, SearchDate) {
-      getDownloadLogs(offset, limit, SearchDate).then((e) => {
-        console.log(e.data)
+      getDownloadLogs(offset, limit, SearchDate).then((response) => {
+        if (response.data.ok) {
+          this.tableData = response.data.data.data
+        }
       }, (err) => {
         console.log(err)
       }).catch((err) => {

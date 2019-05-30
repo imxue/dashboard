@@ -127,12 +127,12 @@ export default {
       if (this.$route.query.data) {
         var data = this.$route.query.data
         this.Id = data.Id
-        this.formValidate.Name = data.Name
-        this.formValidate.SavePath = data.LocalPath
-        this.formValidate.RunPath = data.RunPath
-        this.formValidate.RunExe = data.RunExe
-        this.formValidate.IconUrl = data.IconUrl
-        this.formValidate.IsEnableSync = data.IsEnableSync
+        this.formValidate.Name = data.display_name
+        this.formValidate.SavePath = data.local_path
+        this.formValidate.RunPath = data.run_path
+        this.formValidate.RunExe = data.run_exe
+        this.formValidate.IconUrl = data.icon_url
+        this.formValidate.IsEnableSync = data.is_auto_update
       }
     },
     /**

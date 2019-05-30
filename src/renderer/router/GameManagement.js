@@ -107,13 +107,13 @@ export default {
           meta: { title: 'BarGames' },
           component: () => import('@/views/GameManagement/LocalResource/BarGames')
         },
-        {
-          path: 'BarGameAdd',
-          name: 'BarGameAdd',
-          meta: { title: '添加', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/BarGameAdd'),
-          hidden: true
-        },
+        // {
+        //   path: 'BarGameAdd',
+        //   name: 'BarGameAdd',
+        //   meta: { title: '添加', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/BarGameAdd'),
+        //   hidden: true
+        // },
         // {
         //   path: 'BarGamesEdit',
         //   name: 'GameManagement-SubType3-1-edit',
