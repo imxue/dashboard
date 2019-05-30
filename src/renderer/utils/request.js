@@ -24,19 +24,19 @@ service.interceptors.request.use(
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
-    console.log(request)
-    let x = request.url.indexOf('startHttpRequest')
-    if (x === -1) {
-      return request
-    } else {
-      request.data.url = request.url1
-      request.data.param = {
-        method: request.data.method,
-        params: request.data.params
-      }
-      request.data.method = 'POST'
-      return request
-    }
+    // let x = request.url.indexOf('startHttpRequest')
+    // if (x === -1) {
+    //   return request
+    // } else {
+    //   request.data.url = request.url1
+    //   request.data.param = {
+    //     method: request.data.method,
+    //     params: request.data.params
+    //   }
+    //   request.data.method = 'POST'
+    //   return request
+    // }
+    return request
   },
 
   (error) => {

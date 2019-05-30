@@ -292,11 +292,11 @@ export default {
       let d = localStorage.getItem('masterip')
       if (d) {
         getServersx(d).then(
-          response => {
-            if (response.data.ok) {
+          resp => {
+            if (!resp.data.error) {
               this.spinShow = false
               this.loading = false
-              this.serverList = response.data.data.result.list
+              this.serverList = resp.data.result.list
               this.handleGetCurrMasterServerIp(this.serverList)
             } else {
               let x = {
@@ -362,9 +362,9 @@ export default {
         if (valid) {
           let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
           getServersNode(this.formValidate.serverIP).then((res) => {
-            if (res.data.ok) {
+            if (!res.data.error) {
               this.handleSubmitAddServer(
-                res.data.data.result.guid,
+                res.data.result.guid,
                 MasterIp,
                 this.formValidate.serverIP
               )
@@ -383,14 +383,19 @@ export default {
     handleSubmitAddServer (guid, masterIp, selfip) {
       editServersNode(masterIp, selfip).then(
         (res) => {
-          if (res.data.ok) {
+          if (!res.data.error) {
             // 成功执行
+          } else {
+            this.$Notice.error({
+              desc: this.$t('NetworkError')
+            })
           }
         }
       ) // 设置主服务器
       addServersx(selfip, guid, masterIp).then(
-        res => {
-          if (res.data.ok) {
+        resp => {
+          debugger
+          if (!resp.data.error) {
             this.loadingBtn = false
             localStorage.setItem('masterip', masterIp)
             this.showPopup = false
@@ -398,11 +403,13 @@ export default {
             setTimeout(() => {
               this.handleGetServerList()
             }, 1000)
-          } else {}
+          } else {
+            this.$Notice.error({
+              desc: this.$t(`kxLinuxErr.${resp.data.error}`)
+            })
+            this.loadingBtn = false
+          }
         }, a => {
-          this.$Notice.error({
-            desc: this.$t('NetworkError')
-          })
           this.loadingBtn = false
         }
       ).catch((a) => {
