@@ -392,8 +392,8 @@ export default {
      */
     handleGetNetworkx (ip) {
       getNetworkx(ip).then(resp => {
-        if (resp.data.ok) {
-          var arr = resp.data.data.result.list
+        if (!resp.data.error) {
+          var arr = resp.data.result.list
           arr.map(item => {
             if (item.vdiskSet === 'yes') {
               item['_checked'] = true
@@ -410,8 +410,8 @@ export default {
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(resp => {
-        if (resp.data.ok) {
-          this.tableData3 = resp.data.data.result.list || []
+        if (!resp.data.error) {
+          this.tableData3 = resp.data.result.list || []
         }
       })
       that.spinShow = false
@@ -524,10 +524,10 @@ export default {
         this.selecteDiskF,
         this.currentPageServerip
       ).then(response => {
-        if (response.data.ok) {
+        if (!response.data.error) {
           this.handleGetDiskStatusx(this.currentPageServerip)
         } else {
-          this.$Message.error(response.data.data.error)
+          this.$Message.error(`kxLinuxErr.$t(response.data.error)`)
         }
         this.DiskSettingDialog = false
         this.spinShow = false
@@ -543,7 +543,7 @@ export default {
       this.spanShow = true
       setVdiskEthernetx(this.getCheckboxVal, this.currentPageServerip).then((resp) => {
         this.spanShow = false
-        if (resp.data.ok) {
+        if (!resp.data.error) {
           this.$Notice.success({
             title: this.$t('SetSucess')
           })
@@ -582,8 +582,8 @@ export default {
     listTypeChange (serverip) {
       this.serverIp = serverip
       getServersx(serverip).then((resp) => {
-        if (resp.data.ok) {
-          this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
+        if (!resp.data.error) {
+          this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
         }
       })
       this.handleGetNetworkx(serverip)

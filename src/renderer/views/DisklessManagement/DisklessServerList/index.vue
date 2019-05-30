@@ -394,7 +394,6 @@ export default {
       ) // 设置主服务器
       addServersx(selfip, guid, masterIp).then(
         resp => {
-          debugger
           if (!resp.data.error) {
             this.loadingBtn = false
             localStorage.setItem('masterip', masterIp)

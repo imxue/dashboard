@@ -283,9 +283,9 @@ export default {
       if (localStorage.getItem('masterip')) {
         let ip = localStorage.getItem('masterip')
         getPcListConfigx(ip).then(response => {
-          if (response.data.ok) {
-            if (response.data.data.result.list) {
-              this.tableData = response.data.data.result.list
+          if (!response.data.error) {
+            if (response.data.result.list) {
+              this.tableData = response.data.result.list
             }
           }
         })
@@ -300,8 +300,8 @@ export default {
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
       getImageListx(ip).then(response => {
-        if (response.data.ok) {
-          this.imglist = response.data.data.result.list
+        if (!response.data.error) {
+          this.imglist = response.data.result.list
         }
       })
       this.addedip = data.ip

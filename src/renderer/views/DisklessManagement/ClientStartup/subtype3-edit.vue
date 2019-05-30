@@ -306,7 +306,7 @@
               editPcGroupx(
                 that.formValidate, localStorage.getItem('masterip')
               ).then((resp) => {
-                if (resp.data.ok) {
+                if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
                   that.$router.push('subType3-1') // 跳转到 全部方案首页
                 } else {

@@ -224,9 +224,9 @@
        */
       handleGetImageList () {
         getImageListx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            var arr = response.data.data.result.list
-            if (response.data.data.error === null && arr.length !== null) {
+          if (!response.data.error) {
+            var arr = response.data.result.list
+            if (response.data.error === null && arr.length !== null) {
               var newArr = arr.filter(item => { return item.name === this.MirrorsInfoDate[0].name })
               this.tableData = newArr[0].profileList
             }
@@ -265,7 +265,7 @@
             let name = this.formValidate2.nameVal
             let data = { image, name }
             createImageProjectx(data, localStorage.getItem('masterip')).then((response) => {
-              if (response.data.ok) {
+              if (!response.data.error) {
                 this.handleGetImageList()
               }
             }, (err) => {
@@ -309,9 +309,8 @@
   
       handleGetRestoreList (index) {
         getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
-          debugger
-          if (resp.data.ok) {
-            this.configPointDate = resp.data.data.result.rollbackList || []
+          if (!resp.data.error) {
+            this.configPointDate = resp.data.result.rollbackList || []
           }
         })
       },
@@ -346,7 +345,7 @@
       handleDelete (index) {
         // image, projectNO
         deleteImageProject(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
+          if (!response.data.error) {
             this.$Message.success(this.$t('DeleteSucess'))
             this.handleGetImageList()
           }

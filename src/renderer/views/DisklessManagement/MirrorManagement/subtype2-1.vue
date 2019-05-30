@@ -155,9 +155,9 @@
        */
       handleGetDiskStatus () {
         getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
+          if (!response.data.error) {
             let temp = []
-            var arr = response.data.data.result.list || []
+            var arr = response.data.result.list || []
             var newArr = arr.filter(item => item.fun === 'imageDisk')
             for (var i in newArr) {
               temp.push({
@@ -175,15 +175,14 @@
        */
       handleGetImageList () {
         getImageListx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            this.mirroringInfo = response.data.data.result.list || []
+          if (!response.data.error) {
+            this.mirroringInfo = response.data.result.list || []
           }
         })
       },
       handleButtonAdd (val) {
         this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
-        this.handlegetServerlist() // 获取服务器
       },
       handleSubmit (name) {
         var self = this
@@ -192,7 +191,7 @@
             this.showPopup = false
             // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
             createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((response) => {
-              if (response.data.ok) {
+              if (!response.data.error) {
                 self.handleGetImageList()
                 this.$refs[name].resetFields()
               }

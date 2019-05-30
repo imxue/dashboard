@@ -93,8 +93,8 @@
       handleGetPcGroup () {
         let mip = localStorage.getItem('masterip')
         getPcGroupx(mip).then((resp) => {
-          if (resp.data.ok) {
-            var arr = resp.data.data.result.list
+          if (!resp.data.error) {
+            var arr = resp.data.result.list
             if (!resp.data.error) {
               this.tableData = arr
             } else {
