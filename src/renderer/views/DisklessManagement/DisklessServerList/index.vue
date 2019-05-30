@@ -390,7 +390,7 @@ export default {
       ) // 设置主服务器
       addServersx(selfip, guid, masterIp).then(
         res => {
-          if (res.data.ok) {
+          if (res.data.ok && !res.data.data.error) {
             this.loadingBtn = false
             localStorage.setItem('masterip', masterIp)
             this.showPopup = false
@@ -398,7 +398,9 @@ export default {
             setTimeout(() => {
               this.handleGetServerList()
             }, 1000)
-          } else {}
+          } else {
+            this.loadingBtn = false
+          }
         }, a => {
           this.$Notice.error({
             desc: this.$t('NetworkError')
