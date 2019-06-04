@@ -1,9 +1,6 @@
 <template>
   <div id="app">
-    
     <router-view></router-view>
-    
- 
   </div>
 </template>
 
@@ -25,7 +22,6 @@
   #app{
     height: 100%;
     background: #f5f7f9;
-    min-height: 1000px;
     width: 100%;
     min-width: 1200px
   }

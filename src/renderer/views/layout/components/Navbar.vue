@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import moment from 'moment'
 export default {
   data () {
     return {
@@ -70,7 +70,7 @@ export default {
       netBarId: '0000001',
       onlineNetBar: '1000',
       totalNetBar: '2000',
-      localStorageLang: localStorage.getItem('language'),
+      localStorageLang: localStorage.getItem('lang'),
       localLanguage: [
         {
           value: 'zh-CN',
@@ -89,9 +89,9 @@ export default {
   },
   created () {
     this.handleExpireTime()
-    if (this.localStorageLang) {
-      Vue.config.lang = this.localStorageLang
-    }
+    // if (this.localStorageLang) {
+    //   Vue.config.lang = this.localStorageLang
+    // }
   },
   methods: {
     handleExpireTime () {
@@ -111,8 +111,17 @@ export default {
     },
     ChangeLanguage (name) {
       this.$i18n.locale = name
-      localStorage.setItem('language', name)
-      this.localStorageLang = localStorage.getItem('language')
+      let lang = ''
+      if (name === 'zh-CN') {
+        lang = 'zh-cn'
+      } else if (name === 'en-US') {
+        lang = 'en'
+      } else if (name === 'zh-TW') {
+        lang = 'zh-tw'
+      }
+      moment.locale(lang)
+      localStorage.setItem('lang', name)
+      this.localStorageLang = localStorage.getItem('lang')
     },
     handleExit () {
       localStorage.setItem('Flag', '')

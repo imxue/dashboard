@@ -364,24 +364,14 @@ export function deletePcsConfigx (macList, ip) {
  */
 export function deletePcGroup (list, ip) {
   return makeRequestx('Del_PcGp', {
-    list: list
+    list: [list]
   }, ip)
 }
 
 export function editPcGroupx ({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip) {
   return makeRequestx('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip)
 }
-// /**
-//  * 删除启动方案
-//  * @param {*} list
-//  */
-// export function deleteItem (list) {
-//   return makeRequest('Del_PcGp', {
-//     list: [
-//       list
-//     ]
-//   })
-// }
+
 /**
  * 从主服务器删除服务器
  */

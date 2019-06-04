@@ -152,3 +152,14 @@ export function setSchemeBatch (info) {
     data
   })
 }
+/**
+ * 设置方案图标
+ */
+export function setSchemeIcon (info) {
+  const data = { ...info }
+  return request({
+    url: `/v1/scheme/setSchemeIcon`,
+    method: 'post',
+    data
+  })
+}

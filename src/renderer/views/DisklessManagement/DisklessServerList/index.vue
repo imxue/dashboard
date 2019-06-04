@@ -284,9 +284,9 @@ export default {
         this.handleAddServer('formValidate')
       })
     },
-    /*
-        获取列表
-      */
+    /**
+     * 获取列表
+     */
     handleGetServerList () {
       this.loading = true
       let d = localStorage.getItem('masterip')
@@ -399,6 +399,10 @@ export default {
               this.handleGetServerList()
             }, 1000)
           } else {
+            if (res.data.data.error === '20') {
+              // 服务器已经添加
+              this.modal4 = true
+            }
             this.loadingBtn = false
           }
         }, a => {
@@ -425,9 +429,7 @@ export default {
 </script>
 
 <style scoped>
-.topItem {
-  padding: 20px 0;
-}
+
 .topColumn {
   float: left;
   margin-right: 10px;

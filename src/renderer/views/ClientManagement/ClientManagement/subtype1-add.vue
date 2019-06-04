@@ -66,8 +66,7 @@
 
 <script>
   // import { editClient } from '@/api/client'
-  import { editClient, batchEditClient, getServers } from '@/api/client'
-  // getServers 启动方案
+  import { editClient, batchEditClient } from '@/api/client'
   export default {
     name: 'subType1-1',
     data () {
@@ -128,17 +127,17 @@
       }
     },
     methods: {
-      handleGetServerList () {
-        getServers().then((a) => {
-          if (a.data.error === null) {
-            var arr = a.data.result.list
-            this.projectList = arr.filter(item => item.name)
-          } else {
-            this.projectList = []
-            this.$Message.error('获取启动方案状态异常')
-          }
-        })
-      },
+      // handleGetServerList () {
+      //   getServers().then((a) => {
+      //     if (a.data.error === null) {
+      //       var arr = a.data.result.list
+      //       this.projectList = arr.filter(item => item.name)
+      //     } else {
+      //       this.projectList = []
+      //       this.$Message.error('获取启动方案状态异常')
+      //     }
+      //   })
+      // },
       handleCheckQuery (query) {
         if (query.data) {
           this.handleInputVal(query.data) // 单个编辑

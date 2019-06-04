@@ -44,7 +44,7 @@ export default {
       children: [
         {
           path: 'subType2-1',
-          name: 'type2-SubType2-1',
+          name: 'MirrorList',
           meta: { title: 'AllMirror' },
           component: () => import('@/views/DisklessManagement/MirrorManagement/subtype2-1')
         },
@@ -64,22 +64,22 @@ export default {
       component: NullLayout,
       children: [
         {
-          path: 'subType3-1',
-          name: 'type2-SubType3-1',
+          path: 'StartUpPlan',
+          name: 'StartUpPlanList',
           meta: { title: 'StartUpPlan' },
           component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlan')
         },
         {
-          path: 'subType3-2',
+          path: 'DHCPSet',
           name: 'DPCP配置',
           meta: { title: 'DHCPSet' },
           component: () => import('@/views/DisklessManagement/ClientStartup/dpcp')
         },
         {
-          path: 'subType3-edit',
-          name: 'type2-SubType3-edit',
+          path: 'StartUpPlanEdit',
+          name: 'StartUpPlanEdit',
           meta: { title: '方案编辑' },
-          component: () => import('@/views/DisklessManagement/ClientStartup/subtype3-edit'),
+          component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'),
           hidden: true
         }
       ]

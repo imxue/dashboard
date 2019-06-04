@@ -19,13 +19,10 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-            <Card dis-hover :style="{margin: '0 10px',height: '95%'}">
+            <Card dis-hover :style="{margin: '0 10px',minHeight:'700px'}">
               <AppMain></AppMain>
             </Card>
-       
         </col>
-
-
       </div>
    
   </div>  
@@ -78,7 +75,6 @@
 <style scoped>
   .layout{
     min-width: 1190px;
-    min-height: 760px;
     height: 100%;
     display: flex;
     flex-direction: column;

@@ -35,7 +35,7 @@
     <Modal
       :title="this.$t('RestoreConfigurationPoint')"
       v-model="showPopup"
-      width="800"
+      width="880"
       footer-hide>
       <Table border :columns="configPointTable" :data="configPointDate" :no-data-text="this.$t('Nodata')"></Table>
      </Modal>
@@ -148,23 +148,23 @@
         ruleValidate: { config: [{ required: true, message: '不能为空', trigger: 'change' }] },
         configPointTable: [
           { key: 'no',
-            width: '150px',
+            minWidth: 150,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
           },
           { key: 'comment',
-            width: '100px',
+            minWidth: 150,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) }
           },
           {
             renderHeader: (h, params) => { return h('span', this.$t('ChangeTime')) },
             key: 'dataModifyTime',
-            width: '200px',
+            minWidth: 150,
             render: (h, params) => {
               return h('span', moment(params.row.dataModifyTime, 'YYYY-MM-DD HH:mm:ss').format('LLL'))
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            width: 300,
+            minWidth: 300,
             key: 'operation',
             render: (h, params) => {
               let response = h('Button', {
@@ -185,7 +185,6 @@
       }
     },
     created () {
-      moment.locale(localStorage.getItem('language').toLowerCase())
       var data = this.$route.query.data
       this.MirrorsInfoDate.push(data) // 镜像信息 Get_Img
       this.handleGetImageList()
@@ -297,7 +296,7 @@
        * 还原点
        */
       handleSet (index) {
-        moment.locale(localStorage.getItem('language').toLowerCase())
+        moment.locale(localStorage.getItem('lang').toLowerCase())
         this.showPopup = true
         this.restoreListIndexValue = index // 配置点
         this.handleGetRestoreList(index)
@@ -309,7 +308,6 @@
   
       handleGetRestoreList (index) {
         getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
-          debugger
           if (resp.data.ok) {
             this.configPointDate = resp.data.data.result.rollbackList || []
           }

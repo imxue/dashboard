@@ -92,6 +92,22 @@
           </Select>
         </i-col>
       </Row>
+      /** 硬盘类型 **/
+      <Row class="rowlist">
+        <i-col span="24">
+           <i-col span='5'>{{$t('isFormat')}}：</i-col>
+          <Select
+            v-model="selecteFormatValue"
+            clearable
+            class="topColumn"
+            style="width:200px;"
+            :placeholder="this.$t('pleaseInput')"
+          >
+            <Option value="yes">{{$t('Yes')}}</Option>
+            <Option value="no">{{$t('No')}}</Option>
+          </Select>
+        </i-col>
+      </Row>
       <Row v-show="this.selecteDisk === 'dataDisk'" class="rowlist">
         <i-col span="24" >
          <i-col span='5'>{{$t('MappingDiskSymbol')}}：</i-col> 
@@ -121,7 +137,6 @@
 <script>
 import {
   setDiskFunctionx,
-  addServers,
   getServersx,
   editServersNode,
   deleteserverx,
@@ -452,26 +467,26 @@ export default {
         }
       })
     },
-    handleButtonSetSever () {
-      // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
-      if (
-        this.$route.query.tempMasterServerIp &&
-        this.tempMasterServerIp === this.rowData.serverIP
-      ) {
-        this.$Message.info(this.$t('masterismaster'))
-      } else {
-        // 提交data:
-        // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
-        // serverIp, guid
-        addServers(this.rowData.serverIp, this.rowData.guid).then(a => {
-          if (a.data.error === null) {
-            this.handleEditServersNode(this.rowData.serverIp) // 将之前的主服务器serverIp设置 为从服务器
-          } else {
-            this.$Message.error(a.data.error)
-          }
-        })
-      }
-    },
+    // handleButtonSetSever () {
+    //   // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
+    //   if (
+    //     this.$route.query.tempMasterServerIp &&
+    //     this.tempMasterServerIp === this.rowData.serverIP
+    //   ) {
+    //     this.$Message.info(this.$t('masterismaster'))
+    //   } else {
+    //     // 提交data:
+    //     // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
+    //     // serverIp, guid
+    //     addServers(this.rowData.serverIp, this.rowData.guid).then(a => {
+    //       if (a.data.error === null) {
+    //         this.handleEditServersNode(this.rowData.serverIp) // 将之前的主服务器serverIp设置 为从服务器
+    //       } else {
+    //         this.$Message.error(a.data.error)
+    //       }
+    //     })
+    //   }
+    // },
     handleEditServersNode () {
       // masterIp, syncimg, auba
       editServersNode(
@@ -594,7 +609,6 @@ export default {
 </script>
 
 <style scoped>
-
 .topColumn {
   float: none;
 }

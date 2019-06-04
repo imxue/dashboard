@@ -118,7 +118,6 @@ export default {
   },
   methods: {
     ChangeValue () {
-      debugger
       if (this.value1) {
         this.tempx = []
         this.GameName = this.temp.slice(0, 6)
@@ -127,7 +126,6 @@ export default {
           return r.test(item)
         })
         this.GameName = this.tempx.slice(0, 6)
-        debugger
       } else {
         this.GameName = this.temp.slice(0, 6)
         this.handgetAllGame(0, 10, 'Name')

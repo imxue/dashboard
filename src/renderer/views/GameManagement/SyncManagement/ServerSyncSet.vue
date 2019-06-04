@@ -21,7 +21,9 @@
             <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonAddTask">{{$t('AddSynchronizationTask')}}</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonRules">{{$t('DefaultAssignmentRule')}}</Button>
+            <router-link to="DefaultRule">
+            <Button type="primary" class="topColumn" >{{$t('DefaultAssignmentRule')}}</Button>
+            </router-link>
         </Col>
       </Row>
     </div>
@@ -170,7 +172,7 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       handleGetDriversOption () {
@@ -186,7 +188,7 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       handleGetSearch (offset, limit) {
@@ -207,7 +209,7 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       hanbleChangePage (num) {
@@ -269,7 +271,7 @@
         }
       },
       handleButtonRules (val) {
-        this.$router.push('subtype4-allowe')
+        this.$router.push('DefaultRule')
       },
       handleCheckBox (arr) {
         var data = arr

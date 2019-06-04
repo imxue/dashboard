@@ -5,7 +5,6 @@ import gamemanagement from './GameManagement'
 import clienmanagement from './ClienManagement'
 import diskmanagement from './DiskManagement'
 import { login, enroll, login1, login2, login3, all } from './others'
-// import Layout from '@/views/layout/index'
 
 Vue.use(Router)
 

@@ -1,9 +1,9 @@
 import axios from 'axios'
+
+// import router from '../router'
 // import qs from 'qs'
-// import store from '@/store'
-// import { getToken } from '@/utils/auth'
-// create an axios instance
-import i18n from '../../language'
+
+import i18n from '../language'
 import iView from 'iview'
 const service = axios.create({
   baseURL: 'http://10.88.66.153:8080/',
@@ -13,13 +13,6 @@ const service = axios.create({
 })
 
 service.interceptors.request.use(
-  // (config) => {
-  //   if (localStorage.getItem('token')) {
-  //     config.headers['Authorization'] = localStorage.getItem('token')
-  //   }
-  //   return config
-  // },
-
   (request) => {
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
@@ -68,7 +61,9 @@ service.interceptors.response.use(
   },
 
   error => {
-    // 状态码不对会执行这里，并且包装成Promise的reject状态 ，在第一个then 的第二个函数执行
+    if (error.response.status === 401) {
+      // router.push('/')
+    }
     return Promise.reject(error)
   }
 )

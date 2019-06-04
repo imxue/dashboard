@@ -132,7 +132,7 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServersx, deletePcGroup } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -216,7 +216,6 @@
           hith: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           resh: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           deps: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
-  
         },
         formValidate2: { schemeName: '', daSV: '', configName: '' },
         ruleValidate2: {
@@ -234,9 +233,6 @@
       this.handlegetServerlist()
     },
     computed: {
-      routes () {
-        return this.$router.options.routes
-      }
     },
     methods: {
       handleGetDataLength () {
@@ -247,7 +243,10 @@
         }
       },
       handleCheckData () {
-        var data = this.$route.query.data
+        if (this.$route.query.data) {
+          var data = this.$route.query.data
+          this.oldName = this.$route.query.data.name
+        }
         if (data) {
           this.formValidate = data
           // 镜像列表
@@ -297,6 +296,7 @@
        */
       handleSubmit (name) {
         let that = this
+        console.log(this.$route.query.flag)
         this.$refs[name].validate(valid => {
           if (valid) {
             if (that.tableData1 && that.tableData1.length === 0) {
@@ -308,7 +308,12 @@
               ).then((resp) => {
                 if (resp.data.ok) {
                   that.$Message.success(this.$t('SetSucess'))
-                  that.$router.push('subType3-1') // 跳转到 全部方案首页
+                  if (this.$route.query.flag) {
+                    deletePcGroup(this.oldName, localStorage.getItem('masterip')).then((response) => {
+                      if (response.data.ok) {}
+                    })
+                  }
+                  that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)
                 }
@@ -362,7 +367,7 @@
         // console.log('handleMoveBottom::after===' + JSON.stringify(this.tableData1))
       },
       handleReset () {
-        this.$router.push('subType3-1')
+        this.$router.push('StartUpPlan')
       }
     }
   }

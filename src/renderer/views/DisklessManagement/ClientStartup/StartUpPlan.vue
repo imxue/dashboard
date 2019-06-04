@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
+      <router-link to="StartUpPlanEdit">
+      <Button type="primary" class="topColumn">{{$t('Add')}}</Button>
+      </router-link>
+      
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
@@ -84,11 +87,7 @@
     created () {
       this.handleGetPcGroup()
     },
-    computed: {
-      routes () {
-        return this.$router.options.routes
-      }
-    },
+    computed: {},
     methods: {
       handleGetPcGroup () {
         let mip = localStorage.getItem('masterip')
@@ -102,9 +101,6 @@
             }
           }
         })
-      },
-      handleButtonAdd (val) {
-        this.$router.push({ path: 'subtype3-edit' })
       },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
@@ -122,8 +118,8 @@
       },
       handleEdit (index) {
         this.$router.push({
-          path: 'subtype3-edit',
-          query: { data: index }
+          path: 'StartUpPlanEdit',
+          query: { data: index, flag: 'edit' }
         })
       },
       handleStart () {},
@@ -134,7 +130,6 @@
             title: this.$t('DeleteTip'),
             content: this.$t('NotDeleteDefaultPlan'),
             onOk: () => {
-  
             },
             onCancel: () => {
   
@@ -150,9 +145,6 @@
                   this.handleGetPcGroup()
                 }
               })
-            },
-            onCancel: () => {
-              this.$Message.info('Clicked cancel')
             }
           })
         }

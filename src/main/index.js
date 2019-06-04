@@ -4,8 +4,6 @@ import { app, BrowserWindow, dialog } from 'electron'
 
 const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
-let lang = app.getLocale()
-app.commandLine.appendSwitch('lang', lang)
 autoUpdater.autoDownload = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
