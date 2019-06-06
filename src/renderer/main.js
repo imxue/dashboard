@@ -17,7 +17,7 @@ Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+// if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 
 Vue.config.productionTip = false
 
