@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonDW">下载</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonBack">返回</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Save')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonBack">{{$t('return')}}</Button>
     </div>
     <!-- table -->
     <div class="mainCenter">
@@ -12,18 +12,18 @@
       <Form :model="formItem" :label-width="80">
         <FormItem label="">
           <Row>
-            <i-col span="2">下载磁盘：</i-col>
+            <i-col span="4">{{$t('DownloadDisk')}}：</i-col>
             <i-col span="4">
               <Select v-model="formItem.select1"  class="topColumn" style="width:150px;" @on-change="handleSelect1Value">
                 <Option v-for="item in gameList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
               </Select>
             </i-col>
-            <i-col span="14">下载盘可用空间： 250.55 GB  游戏占用空间：10.00 GB</i-col>
+            <!-- <i-col span="14">下载盘可用空间： 250.55 GB  游戏占用空间：10.00 GB</i-col> -->
           </Row>
         </FormItem>
         <FormItem label="">
           <Row>
-            <i-col span="2">服务器同步方式：</i-col>
+            <i-col span="4">{{$t('ServerSynchronizationMode')}}：</i-col>
             <i-col span="4">
               <Select v-model="formItem.select2"  class="topColumn" style="width:150px;" @on-change="handleSelect2Value(item.id)">
                 <Option v-for="item in serverList" :value="item.value" :key="item.value" placeholder="全部游戏类型">{{ item.value }}</Option>
@@ -33,7 +33,7 @@
         </FormItem>
         <FormItem label="">
           <Row>
-            <i-col span="2">服务器分配：</i-col>
+            <i-col span="4">{{$t('DefaultDownloadPaht')}}：</i-col>
             <i-col span="8">
               <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
             </i-col>
@@ -66,10 +66,11 @@
         ],
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
-          { title: '服务器IP', key: 'ip' },
+          { title: '服务器IP', key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
           {
             title: '同步磁盘',
             key: 'disk',
+            renderHeader: (h, params) => { return h('span', this.$t('SynchronizeDisk')) },
             // render: (h, params) => {
             //   return h('Select', {
             //     props:{

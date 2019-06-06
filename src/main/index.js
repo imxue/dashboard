@@ -33,9 +33,9 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 900,
+    height: 801,
     useContentSize: true,
-    width: 1400,
+    width: 1380,
     webPreferences: { webSecurity: false }
   })
   // mainWindow.webContents.openDevTools()

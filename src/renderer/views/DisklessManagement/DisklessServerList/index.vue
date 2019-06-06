@@ -53,11 +53,12 @@
       >
         <FormItem :label="$t('ServerIP')" prop="serverIP">
           <Input
+            ref="input"
+            autofocus
             @on-change="ResetError"
             v-model="formValidate.serverIP"
             :placeholder="$t('pleaseInputServerIp')"
             :disabled="loadingBtn"
-            autofocus
           />
         </FormItem>
 
@@ -108,6 +109,22 @@ import {
 export default {
   name: 'subType1-1',
   data () {
+    var checkpassword = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+      } else {
+        let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+        let regexp = new RegExp(reg)
+        if (regexp.test(value)) {
+          callback()
+        } else {
+          return callback(new Error(this.$t('IPAddressIsIncorrect')))
+        }
+      }
+    }
     return {
       NetWork: false,
       spinShow: false,
@@ -236,7 +253,7 @@ export default {
         serverIP: [
           {
             required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
+            validator: checkpassword,
             trigger: 'blur'
           }
         ],
@@ -329,6 +346,9 @@ export default {
       this.showPopup = true
       this.NetWork = false
       this.loadingBtn = false
+      this.$nextTick(() => {
+        this.$refs.input.focus()
+      })
     },
     handleButtonRefesh (val) {
       this.spinShow = true

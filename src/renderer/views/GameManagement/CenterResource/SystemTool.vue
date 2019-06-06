@@ -2,7 +2,7 @@
   <div>
     <div class="topItem">
       <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
-      <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
     </div>
     <!-- table -->
@@ -32,13 +32,13 @@
               let type = params.row.state
               switch (type) {
                 case 0:
-                  return h('span', '最新版本')
+                  return h('span', this.$t('LatestVersion'))
                 case 1:
-                  return h('span', { style: { color: '#999999' } }, '未下载')
+                  return h('span', { style: { color: '#999999' } }, this.$t('Undownload'))
                 case 2:
-                  return h('span', { style: { color: '#008000' } }, '更新中')
+                  return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
                 case 3:
-                  return h('span', { style: { color: '#ff0000' } }, '更新失败')
+                  return h('span', { style: { color: '#ff0000' } }, this.$t('UpdateFailed'))
                 default:
                   return '-'
               }
@@ -69,7 +69,7 @@
       handleButtonDW (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.$router.push({
             path: 'subtype1-download',
@@ -80,7 +80,7 @@
       handleButtonFixGame (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.$Message.info('修复中，请耐心等待……')
         }

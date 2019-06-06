@@ -165,6 +165,7 @@
                 availableSize: bytesToSize(Number(newArr[i].availableSize))
               })
               this.diskList = temp
+              this.formValidate.path = this.diskList[0].path
               temp = []
             }
           }
@@ -183,7 +184,6 @@
       handleButtonAdd (val) {
         this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
-        this.handlegetServerlist() // 获取服务器
       },
       handleSubmit (name) {
         var self = this
@@ -222,8 +222,6 @@
         this.$Modal.confirm({
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteDec'),
-          okText: this.$t('Confirm'),
-          cancelText: this.$t('cancelText'),
           onOk: () => {
             let ip = localStorage.getItem('masterip')
             deleteImagex(name.name, ip).then(() => {

@@ -65,10 +65,10 @@
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; *M</i-col>
+            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input> *M</i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'">
+        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'"  style="white-space:nowrap;">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
           </Row>
@@ -102,8 +102,8 @@
       width= "500"
       footer-hide
       class-name="vertical-center-modal">
-      <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="100">
-         <FormItem :label="this.$t('DatabaseServer')" prop="daSV">
+      <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="110" label-position="left">
+         <FormItem :label="this.$t('DatabaseServer')" prop="daSV" style="white-space:nowrap;">
            <Select v-model="formValidate2.daSV" @on-change="handleGetImageList" style="width:200px;" :placeholder="this.$t('pleaseSelectDatabaseServer')">
               <Option v-for="item in serverlist" v-bind:key="item.serverIp" v-bind:value="item.serverIp">{{item.serverIp}}</Option>
             </Select>
@@ -113,7 +113,7 @@
             <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem :label="this.$t('ConfigurationName')" prop="configName">
+        <FormItem :label="this.$t('ConfigurationName')" prop="configName" >
           <Select v-model="formValidate2.configName" clearable style="width:200px;" :placeholder="this.$t('pleaseInputConfigurationName')">
             <Option v-for="item in imageProList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
@@ -263,6 +263,8 @@
         getServersx(mip).then(response => {
           if (response.data.ok) {
             this.serverlist = response.data.data.result.list
+            this.formValidate2.daSV = this.serverlist[0].serverIp
+            this.handleGetImageList()
           }
         })
       },
@@ -270,20 +272,24 @@
       获取镜像类表
       */
       handleGetImageList () {
-        let x = this.formValidate2.daSV
-        getImageListx(x).then((resp) => {
-          if (resp.data.ok) {
-            var arr = resp.data.data.result.list
-            this.imageList = arr
-          } else {
-            this.$Message.error(resp.data.data.error)
-          }
-        })
+        let serverIp = this.formValidate2.daSV
+        if (serverIp) {
+          getImageListx(serverIp).then((resp) => {
+            if (resp.data.ok) {
+              this.imageList = resp.data.data.result.list
+              this.formValidate2.schemeName = this.imageList[0].name
+              this.handleSelectImageValue()
+            } else {
+              this.$Message.error(resp.data.data.error)
+            }
+          })
+        }
       },
       handleSelectImageValue () {
         var arr = this.imageList
         var newArr = arr.filter(item => item.name === this.formValidate2.schemeName)
         this.imageProList = newArr[0].profileList
+        this.formValidate2.configName = this.imageProList[0].name
       },
       handleButtonAdd () {
         this.showPopup = true

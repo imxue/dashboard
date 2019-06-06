@@ -51,7 +51,7 @@ export default {
         {
           path: 'subType2-set',
           name: 'type2-SubsubType2Type1-set',
-          meta: { title: '配置点' },
+          meta: { title: 'ConfigPoint' },
           component: () => import('@/views/DisklessManagement/MirrorManagement/subtype2-set'),
           hidden: true
         }
@@ -78,7 +78,7 @@ export default {
         {
           path: 'StartUpPlanEdit',
           name: 'StartUpPlanEdit',
-          meta: { title: '方案编辑' },
+          meta: { title: 'Edit' },
           component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'),
           hidden: true
         }

@@ -24,7 +24,6 @@
             </Card>
         </col>
       </div>
-   
   </div>  
 
 </template>

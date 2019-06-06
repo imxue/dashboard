@@ -5,8 +5,10 @@
       <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
       <!-- <Button type="error"   class="topColumn" @click="handleButtonDelete">删除任务</Button>
       <Button type="primary" class="topColumn" @click="handleButtonTop">置顶</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonSet">下载设置</Button> -->
+      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button> -->
+      <router-link to='DownloadSet'>
+      <Button type="primary" class="topColumn">{{$t('DownloadSetting')}}</Button> 
+      </router-link>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>

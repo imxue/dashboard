@@ -47,7 +47,7 @@ export default {
         {
           path: 'subType1-download',
           name: 'subType1-download',
-          meta: { title: '下载', hidden: true },
+          meta: { title: 'Download', hidden: true },
           // showBtn: true,
           component: () => import('@/views/GameManagement/CenterResource/subtype1-download'),
           hidden: true
@@ -81,8 +81,8 @@ export default {
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadLog')
         },
         {
-          path: 'subType2-set',
-          name: 'subType2-set',
+          path: 'DownloadSet',
+          name: 'DownloadSet',
           meta: { title: '下载设置', hidden: true },
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadSet'),
           hidden: true
@@ -138,7 +138,7 @@ export default {
         {
           path: 'SubType3-2-add',
           name: 'GameManagement-SubType3-add',
-          meta: { title: '添加', hidden: true },
+          meta: { title: 'Add', hidden: true },
           component: () => import('@/views/GameManagement/LocalResource/BarGameAddMain'),
           hidden: true
         },
@@ -183,8 +183,8 @@ export default {
           component: () => import('@/views/GameManagement/SyncManagement/SyncLog')
         },
         {
-          path: 'SubType4-allowe',
-          name: 'GameManagement-SubType4-allowe',
+          path: 'DefaultRule',
+          name: 'DefaultRule',
           meta: { title: 'DefaultRule', hidden: true },
           component: () => import('@/views/GameManagement/SyncManagement/DefaultRule'),
           hidden: true

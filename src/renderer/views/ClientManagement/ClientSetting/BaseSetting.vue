@@ -1,7 +1,7 @@
 <template>
   <div>
     <Row>
-      <Col span="8">
+      <Col span="11">
         <span>{{$t('MenuSet')}}</span>
         <Divider/>
         <div class="row">
@@ -18,12 +18,13 @@
         </div>
         <div class="row">
           <span>{{$t('GameStartupMethod')}}</span>
+    
           <i-switch v-model="form.is_single_click_startup" @on-change="is_single_click_startupChange"/>
         </div>
       </Col>
     </Row>
     <div class="main">
-      <Col span="8">
+      <Col span="11">
         <div>
           <span>{{$t('GameArchive')}}</span>
           <Divider/>

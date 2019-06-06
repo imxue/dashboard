@@ -5,7 +5,7 @@ import router from './router'
 import store from './store'
 
 // import './router/Hook'
-import i18n from './language'
+import i18n from './locale'
 import '../renderer/components/test'
 
 import iView from 'iview'

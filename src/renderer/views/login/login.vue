@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="box">
-        <h3>登录</h3>
+        <h3>{{$t('Login')}}</h3>
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem prop="barid" style="width:100%;">
             <Row>服务器IP地址：</Row>

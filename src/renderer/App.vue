@@ -20,10 +20,10 @@
     width: 100%;
   }
   #app{
-    height: 100%;
+    
     background: #f5f7f9;
     width: 100%;
-    min-width: 1200px
+    min-width: 1200px;
   }
   
   .topItem{ height: 60px;line-height: 32px;}

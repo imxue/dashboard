@@ -37,7 +37,7 @@
         </FormItem>
         <FormItem prop="exepath">
           <Row>
-            <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
+            <i-col span="4">{{$t('ExecutePath')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.exepath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>

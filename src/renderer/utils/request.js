@@ -1,9 +1,8 @@
 import axios from 'axios'
 
-// import router from '../router'
 // import qs from 'qs'
 
-import i18n from '../language'
+import i18n from '../locale'
 import iView from 'iview'
 const service = axios.create({
   baseURL: 'http://10.88.66.153:8080/',
@@ -17,7 +16,6 @@ service.interceptors.request.use(
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
-    console.log(request)
     let x = request.url.indexOf('startHttpRequest')
     if (x === -1) {
       return request
@@ -62,7 +60,7 @@ service.interceptors.response.use(
 
   error => {
     if (error.response.status === 401) {
-      // router.push('/')
+
     }
     return Promise.reject(error)
   }

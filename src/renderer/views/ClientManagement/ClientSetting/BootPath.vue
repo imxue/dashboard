@@ -1,7 +1,7 @@
 <template>
   <div>
     <Tabs type="card" :animated="false" v-model="currentTab" @on-click="HandleGetAllScheme">
-      <TabPane :label="$t('GlobalSetting')" name="GlobalSetting">
+      <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
         <div>
           <Button type="primary" v-on:click="HandEdit" v-if="disabled">{{$t('EditBootPath')}}</Button>
           <Button type="primary" v-on:click="HandSetSchemeBatch" v-if="!disabled">{{$t('SaveBootPath')}}</Button>
@@ -22,8 +22,8 @@
           <Select v-model="plan" style="width:200px" @on-change="handleGetBootBath">
             <Option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
-          <Checkbox size="large" v-model="single">{{$t('UseGlobalSetting')}}</Checkbox>
-          <Button type="primary" v-on:click="HandEdit" v-if="disabledSinger">{{$t('EditBootPath')}}</Button>
+          <Checkbox size="large" v-model="single" @on-change="setDefault">{{$t('UseDefaultSetting')}}</Checkbox>
+          <Button type="primary" v-on:click="HandEdit" v-if="disabledSinger" :disabled='flag'>{{$t('EditBootPath')}}</Button>
           <Button type="primary" v-on:click="HandSetSchemeBatch" v-if="!disabledSinger">{{$t('SaveBootPath')}}</Button>
         </div>
         <div class="footer">
@@ -49,7 +49,7 @@ export default {
   name: 'BootPath',
   data () {
     return {
-      currentTab: 'GlobalSetting',
+      currentTab: 'DefaultSetting',
       single: '',
       plan: '',
       cityList: [],
@@ -75,8 +75,15 @@ export default {
       let matched = this.$route.matched.filter(item => item.name)
       console.log(matched)
     },
+    setDefault (data) {
+      if (data) {
+        this.flag = true
+      } else {
+        this.fiag = false
+      }
+    },
     HandEdit () {
-      this.currentTab === 'GlobalSetting'
+      this.currentTab === 'DefaultSetting'
         ? (this.disabled = false)
         : (this.disabledSinger = false)
     },
@@ -85,7 +92,7 @@ export default {
      */
     handleGetBootBath () {
       let data
-      if (this.currentTab === 'GlobalSetting') {
+      if (this.currentTab === 'DefaultSetting') {
         data = {
           global: 'true'
         }
@@ -133,12 +140,12 @@ export default {
         scheme_id: '',
         batch_process: ''
       }
-      this.currentTab === 'GlobalSetting' ? info.is_global = true : info.is_global = false
-      info.scheme_id = this.currentTab === 'GlobalSetting' ? '' : this.plan
-      info.batch_process = this.currentTab === 'GlobalSetting' ? this.bootPathG : this.bootPathS
+      this.currentTab === 'DefaultSetting' ? info.is_global = true : info.is_global = false
+      info.scheme_id = this.currentTab === 'DefaultSetting' ? '' : this.plan
+      info.batch_process = this.currentTab === 'DefaultSetting' ? this.bootPathG : this.bootPathS
       setSchemeBatch(info).then(resp => {
         if (resp.data.ok) {
-          this.currentTab === 'GlobalSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
+          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
           this.$Message.info({
             content: this.$t('SetSucess')
           })

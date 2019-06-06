@@ -30,7 +30,7 @@
       </FormItem>
 
       <FormItem :label="this.$t('StartUpPlan')" prop="pcGp">
-        <Select v-model="DHCPTable.pcGp" style="width:200px" :placeholder="$t('pleaseInput')" :not-found-text="$t('Nodata')">
+        <Select v-model="DHCPTable.pcGp" style="width:200px" :not-found-text="$t('Nodata')">
           <Option v-for="item in pcGpList" v-bind:key = "item.name" v-bind:value="item.name">{{item.name}}</Option>
         </Select>
       </FormItem>

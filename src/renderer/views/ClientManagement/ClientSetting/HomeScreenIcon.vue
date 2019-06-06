@@ -1,7 +1,7 @@
 <template>
   <div>
     <Tabs type="card" @on-click="HandleGetAllScheme" :animated="false"  v-model="currentTab">
-        <TabPane :label="$t('GlobalSetting')" name="GlobalSetting">
+        <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
           <div class="main">
             <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
             <Button type="error">{{$t('DeleteIcon')}}</Button>
@@ -14,9 +14,9 @@
             <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
               <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
             </Select>
-             <Checkbox size="large" v-model="single" on-change=''>{{$t('UseGlobalSetting')}}</Checkbox>
-            <Button type="primary">{{$t('AddIcon')}}</Button>
-            <Button type="error">{{$t('DeleteIcon')}}</Button>
+             <Checkbox size="large" v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
+            <Button type="primary" :disabled='flag'>{{$t('AddIcon')}}</Button>
+            <Button type="error" :disabled='flag' >{{$t('DeleteIcon')}}</Button>
           </div>
 
 
@@ -42,7 +42,10 @@ export default {
   name: 'HomeScreenIcon',
   data () {
     return {
-      currentTab: 'GlobalSetting',
+      flag: false,
+      DefaultImgreSource: [], // 获取默认图标
+      defaultGameId: [], // 默认游戏Id
+      currentTab: 'DefaultSetting',
       SelectedDataGame: [], // 选择的游戏
       single: '',
       plan: '',
@@ -92,7 +95,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$t('i.modal'))
+    this.HandleGetDefaultHomeIcon() // 获取默认图标信息
     this.HandleGetAllHomeIcon()
     this.handleGetPcGroup()
     this.handgetAllGame()
@@ -124,7 +127,6 @@ export default {
     },
     ok () {
       console.log(this.SelectedDataGame)
-
       let info = {
         'is_global': true,
         'gameids': []
@@ -153,6 +155,24 @@ export default {
       })
     },
     /**
+     * 获取默认图标
+     */
+    HandleGetDefaultHomeIcon () {
+      let info = {
+        global: true
+      }
+      getSchemeIcon(info).then(resp => {
+        if (resp.data.ok) {
+          this.DefaultImgreSource = resp.data.data
+          this.defaultGameId = []
+          this.DefaultImgreSource.forEach(item => {
+            this.defaultGameId.push(item.game_id)
+          })
+          console.log(this.defaultGameId)
+        }
+      })
+    },
+    /**
      * 获取图标
      */
     HandleGetAllHomeIcon () {
@@ -160,8 +180,8 @@ export default {
         global: '',
         schemeId: ''
       }
-      this.currentTab === 'GlobalSetting' ? info.global = true : info.global = false
-      info.schemeId = this.currentTab === 'GlobalSetting' ? '' : this.plan
+      this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
+      info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
         if (resp.data.ok) {
           this.imgreSource = resp.data.data
@@ -179,8 +199,8 @@ export default {
         global: '',
         schemeId: ''
       }
-      this.currentTab === 'GlobalSetting' ? info.global = true : info.global = false
-      info.schemeId = this.currentTab === 'GlobalSetting' ? '' : this.plan
+      this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
+      info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(response => {
         if (response.data.ok) {
           this.imgreSource = response.data.data
@@ -205,17 +225,6 @@ export default {
       getAllGame(0, 10, 'Name').then(response => {
         if (response.data.ok) {
           this.gameSource = response.data.data.data
-          // response.data.data.data.filter(item => {
-          //   if (item.Name) {
-          //     this.GameName.push(item.Name)
-          //   }
-          //   this.GameAllName = Array.from(this.GameName)
-          //   this.GameName = this.GameName.slice(0, 6)
-          //   this.temp = Array.from(this.GameAllName)
-          // })
-          // this.pageInfo = response.data.data.pageino
-          // this.pageInfo.page_index++
-          // this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
         }
       }, (e) => {
         // 这里执行reject状态的
@@ -228,6 +237,29 @@ export default {
     hanldGetGameDate (data) {
       this.SelectedDataGame = data
       console.log(this.SelectedDataGame)
+    },
+    /**
+      使用默认设置
+    */
+    SetDefault (data) {
+      if (data) {
+        this.flag = true
+        let info = {
+          'scheme_id': 'ac4487b27bb14051a9d931651891ef8d',
+          'gameids': [],
+          'is_global': false
+        }
+        info.gameids = this.defaultGameId
+        setSchemeIcon(info).then(resp => {
+          if (resp.data.ok) {
+
+          } else {
+            this.$Message.info(resp.data.error)
+          }
+        })
+      } else {
+        this.flag = false
+      }
     }
   },
   mounted () {}
