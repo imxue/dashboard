@@ -345,7 +345,6 @@
       handleMove (index) {
         this.tableData1.splice(index, 1)
         this.handleGetDataLength()
-        // console.log('handleMove::after===' + JSON.stringify(this.tableData1))
       },
       handleMoveTop (index) {
         let temp = this.tableData1[index - 1]

@@ -185,7 +185,6 @@
       }
     },
     created () {
-      moment.locale(localStorage.getItem('language').toLowerCase())
       var data = this.$route.query.data
       this.MirrorsInfoDate.push(data) // 镜像信息 Get_Img
       this.handleGetImageList()
@@ -297,7 +296,6 @@
        * 还原点
        */
       handleSet (index) {
-        moment.locale(localStorage.getItem('language').toLowerCase())
         this.showPopup = true
         this.restoreListIndexValue = index // 配置点
         this.handleGetRestoreList(index)
@@ -356,14 +354,12 @@
        */
       handleSubmitFix () {
         editImageProject(this.MirrorsInfoDate[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName, localStorage.getItem('masterip')).then((resp) => {
-          if (resp.data.ok) {
-            if (!resp.data.error) {
-              this.$Message.success(this.$t('SetSucess'))
-              this.showImgPopup = false
-              this.handleGetImageList()
-            } else {
-              this.$Message.error(resp.data.error)
-            }
+          if (!resp.data.error) {
+            this.$Message.success(this.$t('SetSucess'))
+            this.showImgPopup = false
+            this.handleGetImageList()
+          } else {
+            this.$Message.error(resp.data.error)
           }
         })
       },
@@ -410,15 +406,13 @@
       },
       handleDeleteRestore (index) { // 删除还原点
         deleteImageRestore(this.MirrorsInfoDate[0].name, this.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            var result = response.data.result
-            if (response.data.error === null && result === null) {
-              this.showPopup = true
-              this.$Message.success(this.$t('OperationSuccessful'))
-              this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
-            } else {
-              this.$Message.error(response.data.error)
-            }
+          var result = response.data.result
+          if (response.data.error === null && result === null) {
+            this.showPopup = true
+            this.$Message.success(this.$t('OperationSuccessful'))
+            this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
+          } else {
+            this.$Message.error(response.data.error)
           }
         })
       }

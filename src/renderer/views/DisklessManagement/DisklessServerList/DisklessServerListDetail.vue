@@ -433,9 +433,8 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          console.log(this.tempMasterServerIp)
           deleteserverx(this.currentPageServerip, this.tempMasterServerIp).then((resp) => {
-            if (resp.data.ok) {
+            if (!resp.data.error) {
               this.$Message.success(this.$t('DeleteSucess'))
               this.$router.push({
                 path: 'DisklessServerList'

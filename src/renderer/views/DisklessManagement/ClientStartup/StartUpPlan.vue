@@ -146,7 +146,8 @@
             content: this.$t('DeletingWillCauseClientsUsingThisSchemetoBeUnavailable'),
             onOk: () => {
               deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
-                if (response.data.ok) {
+                if (!response.data.error) {
+                  debugger
                   this.handleGetPcGroup()
                 }
               })
