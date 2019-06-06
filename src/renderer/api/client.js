@@ -10,7 +10,7 @@ function makeRequestx (method, param, ip) {
   return request({
     // Forwardflag: true,
     // url: `/v1/sysbase/startHttpRequest`,
-    url1: `http://${ip}:13302/jsonrpc`,
+    url: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })

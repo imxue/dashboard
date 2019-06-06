@@ -64,7 +64,7 @@ export default {
       component: NullLayout,
       children: [
         {
-          path: 'subType3-1',
+          path: 'StartUpPlan',
           name: 'type2-SubType3-1',
           meta: { title: 'StartUpPlan' },
           component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlan')

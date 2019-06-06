@@ -53,7 +53,7 @@
               </template>
             </DropdownMenu>
           </Dropdown>
-          <Button @click="handleExit">{{$t('logout')}}</Button>
+          <!-- <Button @click="handleExit">{{$t('logout')}}</Button> -->
         </div>
       </div>
     </div>

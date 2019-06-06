@@ -262,8 +262,8 @@
       handlegetServerlist () {
         let mip = localStorage.getItem('masterip')
         getServersx(mip).then(response => {
-          if (response.data.ok) {
-            this.serverlist = response.data.data.result.list
+          if (!response.data.error) {
+            this.serverlist = response.data.result.list
           }
         })
       },
@@ -273,11 +273,11 @@
       handleGetImageList () {
         let x = this.formValidate2.daSV
         getImageListx(x).then((resp) => {
-          if (resp.data.ok) {
-            var arr = resp.data.data.result.list
+          if (!resp.data.error) {
+            var arr = resp.data.result.list
             this.imageList = arr
           } else {
-            this.$Message.error(resp.data.data.error)
+            this.$Message.error(resp.data.error)
           }
         })
       },
@@ -308,7 +308,7 @@
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
-                  that.$router.push('subType3-1') // 跳转到 全部方案首页
+                  that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)
                 }
@@ -361,7 +361,7 @@
         // console.log('handleMoveBottom::after===' + JSON.stringify(this.tableData1))
       },
       handleReset () {
-        this.$router.push('subType3-1')
+        this.$router.push('StartUpPlan')
       }
     }
   }

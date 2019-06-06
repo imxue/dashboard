@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/views/layout/index'
-import gamemanagement from './GameManagement'
+// import gamemanagement from './GameManagement'
 import clienmanagement from './ClienManagement'
 import diskmanagement from './DiskManagement'
 import { login, enroll, login1, login2, login3, all } from './others'
@@ -14,11 +14,11 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      redirect: '/game',
+      redirect: '/Diskless',
       component: Layout,
       hidden: true
     },
-    gamemanagement, // 游戏管理
+    // gamemanagement, // 游戏管理
     diskmanagement, // 无盘管理
     clienmanagement, // 客户机管理
     login,
