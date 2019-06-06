@@ -147,7 +147,6 @@
             onOk: () => {
               deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
                 if (!response.data.error) {
-                  debugger
                   this.handleGetPcGroup()
                 }
               })
