@@ -1,6 +1,6 @@
 import axios from 'axios'
 import router from '../router'
-// import qs from 'qs'
+import qs from 'qs'
 
 import i18n from '../locale'
 import iView from 'iview'
@@ -13,6 +13,9 @@ const service = axios.create({
 var xueCount
 service.interceptors.request.use(
   (request) => {
+    if (request.method === 'post') {
+      request.data = qs.stringify(request.data)
+    }
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
@@ -31,9 +34,6 @@ service.interceptors.request.use(
   },
 
   (error) => {
-    // console.log('请求错误===')
-    // console.log(error)
-    // console.log('请求结束===')
     return error
   }
 )

@@ -5,9 +5,9 @@ import en from 'iview/dist/locale/en-US'
 import zh from 'iview/dist/locale/zh-CN'
 import zhTw from 'iview/dist/locale/zh-TW'
 
-const zhCn = require('./zh-CN.json')
-const enUs = require('./en-US.json')
-const zhTW = require('./CT.json')
+import zhCn from './zh-CN.json'
+import enUs from './en-US.json'
+import zhTW from './CT.json'
 
 Vue.use(VueI18n)
 const navLang = navigator.language

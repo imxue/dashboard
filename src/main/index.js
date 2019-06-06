@@ -90,8 +90,6 @@ autoUpdater.on('update-downloaded', (info) => {
 
 app.on('ready', function () {
   createWindow()
-  let lang = app.getLocale()
-  app.commandLine.appendSwitch('lang', lang)
   autoUpdater.checkForUpdatesAndNotify()
 })
 
