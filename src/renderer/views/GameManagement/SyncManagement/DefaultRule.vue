@@ -106,8 +106,8 @@
       }
     },
     created () {
-      this.handleCheckFilterVal()
-      this.handleGetDrivers()
+      // this.handleCheckFilterVal()
+      // this.handleGetDrivers()
     },
     computed: {
       routes () {

@@ -4,7 +4,7 @@ import Layout from '@/views/layout/index'
 import gamemanagement from './GameManagement'
 import clienmanagement from './ClienManagement'
 import diskmanagement from './DiskManagement'
-import { login, enroll, login1, login2, login3, all } from './others'
+import { login, enroll, login2, login3, all } from './others'
 
 Vue.use(Router)
 
@@ -22,7 +22,6 @@ export default new Router({
     clienmanagement, // 客户机管理
     login,
     enroll,
-    login1,
     login2,
     login3,
     all

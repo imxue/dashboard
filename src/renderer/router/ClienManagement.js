@@ -1,6 +1,10 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
-
+import ClientList from '@/views/ClientManagement/ClientManagement/ClientList'
+import ClientSetting from '@/views/ClientManagement/ClientManagement/subtype1-add'
+import BaseSetting from '@/views/ClientManagement/ClientSetting/BaseSetting'
+import HomeScreenIcon from '@/views/ClientManagement/ClientSetting/HomeScreenIcon'
+import BootPath from '@/views/ClientManagement/ClientSetting/BootPath'
 export default {
   path: '/type3',
   name: 'ClientManagement',
@@ -19,13 +23,13 @@ export default {
           name: 'ClientManagementList',
           alias: '/disklesslist',
           meta: { title: 'ClientList' },
-          component: () => import('@/views/ClientManagement/ClientManagement/ClientList')
+          component: ClientList
         },
         {
           path: 'subType1-add',
           name: 'type3-SubType1-add',
           meta: { title: 'ClientSetting' },
-          component: () => import('@/views/ClientManagement/ClientManagement/subtype1-add'),
+          component: ClientSetting,
           hidden: true
         }
       ]
@@ -41,19 +45,19 @@ export default {
           path: 'subType2-1',
           name: 'type3-SubType1-1',
           meta: { title: 'BaseSetting' },
-          component: () => import('@/views/ClientManagement/ClientSetting/BaseSetting')
+          component: BaseSetting
         },
         {
           path: 'subType2-2',
           name: 'type3-SubType1-2',
           meta: { title: 'HomeScreenIcon' },
-          component: () => import('@/views/ClientManagement/ClientSetting/HomeScreenIcon')
+          component: HomeScreenIcon
         },
         {
           path: 'subType2-3',
           name: 'type3-SubType1-3',
           meta: { title: 'BootBatch' },
-          component: () => import('@/views/ClientManagement/ClientSetting/BootPath')
+          component: BootPath
         }
       ]
     }

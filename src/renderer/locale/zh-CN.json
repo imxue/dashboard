@@ -71,7 +71,7 @@
     "DownloadedGame":"已下载游戏",
     "BarGames":"本吧游戏",
     "SyncManagement":"同步管理",
-  "ServerSyncSet": "游戏分配",
+    "ServerSyncSet": "游戏分配",
     "SyncTask":"同步任务",
     "SyncLog":"同步日志",
     "MirrorManagement":"镜像管理",
@@ -237,7 +237,7 @@
     "pleaseInputMirror":"请输入镜像名称",
     "pleaseInputGameName":"请输入游戏名称",
     "pleaseInputConfigurationName":"请输入配置名称",
-  "pleaseSelectDatabaseServer": "请选择数据服务器",
+    "pleaseSelectDatabaseServer": "请选择数据服务器",
     "pleaseInputMirrorSize":"请输入镜像大小",
     "pleaseInputMapDiskSymbol":"请输入映射盘符",
     "pleaseInputSavePath":"请输入保存路径",
@@ -372,5 +372,6 @@
   "DownloadSetting": "下载设置",
   "DefaultDownloadPaht":"默认下载路径",
   "ConfigPoint":"配置点",
-  "IPAddressIsIncorrect":"请检查ip地址格式"
+  "IPAddressIsIncorrect":"请检查ip地址格式",
+  "loginTmeOut":"登录超时,请重新登录"
 }

@@ -1,10 +1,5 @@
 export const login = {
   path: '/login',
-  name: 'login',
-  component: () => import('@/views/login/index')
-}
-export const login1 = {
-  path: '/login/login',
   component: () => import('@/views/login/login')
 }
 export const login2 = {

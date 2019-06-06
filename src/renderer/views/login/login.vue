@@ -59,7 +59,7 @@ export default {
               this.$router.push('/game/subType1/subType1-1')
             } else {
               this.$Message.info({
-                content: e.data.data.error,
+                content: e.data.error,
                 duration: 10
               })
             }

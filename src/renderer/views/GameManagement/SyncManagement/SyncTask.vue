@@ -98,7 +98,7 @@
       }
     },
     created () {
-      this.handleGetTableList(this.curroffset, this.currlimit)
+      // this.handleGetTableList(this.curroffset, this.currlimit)
     },
     computed: {
       routes () {

@@ -124,8 +124,8 @@ export default {
       this.localStorageLang = localStorage.getItem('lang')
     },
     handleExit () {
-      localStorage.setItem('Flag', '')
-      this.$router.push('/login/login')
+      localStorage.removeItem('token')
+      this.$router.push('/login')
     }
   },
   computed: {

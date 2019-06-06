@@ -109,7 +109,7 @@ import {
 export default {
   name: 'subType1-1',
   data () {
-    var checkpassword = (rule, value, callback) => {
+    var checkIpformat = (rule, value, callback) => {
       if (!value) {
         return callback(new Error(this.$t('Thisfieldcannotbeempty')))
       } else {
@@ -253,7 +253,7 @@ export default {
         serverIP: [
           {
             required: true,
-            validator: checkpassword,
+            validator: checkIpformat,
             trigger: 'blur'
           }
         ],

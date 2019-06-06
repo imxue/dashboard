@@ -1,5 +1,13 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
+import DisklessServerList from '@/views/DisklessManagement/DisklessServerList/index'
+import DisklessServerListAdd from '@/views/DisklessManagement/DisklessServerList/DisklessServerListAdd'
+import DisklessServerListDetail from '@/views/DisklessManagement/DisklessServerList/DisklessServerListDetail'
+import AllMirror from '@/views/DisklessManagement/MirrorManagement/subtype2-1'
+import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/subtype2-set'
+import StartUpPlan from '@/views/DisklessManagement/ClientStartup/StartUpPlan'
+import dpcp from '@/views/DisklessManagement/ClientStartup/dpcp'
+import Edit from '@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'
 
 export default {
   path: '/Diskless',
@@ -18,20 +26,20 @@ export default {
           path: 'DisklessServerList',
           name: '无盘服务器列表',
           meta: { title: 'DisklessServerList' },
-          component: () => import('@/views/DisklessManagement/DisklessServerList/index')
+          component: DisklessServerList
         },
         {
           path: 'DisklessServerAdd',
           name: '添加',
           meta: { title: 'DisklessServerListAdd' },
-          component: () => import('@/views/DisklessManagement/DisklessServerList/DisklessServerListAdd'),
+          component: DisklessServerListAdd,
           hidden: true
         },
         {
           path: 'DisklessServerDetail',
           name: '查看详情',
           meta: { title: 'DisklessServerListDetail' },
-          component: () => import('@/views/DisklessManagement/DisklessServerList/DisklessServerListDetail'),
+          component: DisklessServerListDetail,
           hidden: true
         }
       ]
@@ -46,13 +54,13 @@ export default {
           path: 'subType2-1',
           name: 'MirrorList',
           meta: { title: 'AllMirror' },
-          component: () => import('@/views/DisklessManagement/MirrorManagement/subtype2-1')
+          component: AllMirror
         },
         {
           path: 'subType2-set',
           name: 'type2-SubsubType2Type1-set',
           meta: { title: 'ConfigPoint' },
-          component: () => import('@/views/DisklessManagement/MirrorManagement/subtype2-set'),
+          component: ConfigPoint,
           hidden: true
         }
       ]
@@ -67,19 +75,19 @@ export default {
           path: 'StartUpPlan',
           name: 'StartUpPlanList',
           meta: { title: 'StartUpPlan' },
-          component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlan')
+          component: StartUpPlan
         },
         {
           path: 'DHCPSet',
           name: 'DPCP配置',
           meta: { title: 'DHCPSet' },
-          component: () => import('@/views/DisklessManagement/ClientStartup/dpcp')
+          component: dpcp
         },
         {
           path: 'StartUpPlanEdit',
           name: 'StartUpPlanEdit',
           meta: { title: 'Edit' },
-          component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'),
+          component: Edit,
           hidden: true
         }
       ]

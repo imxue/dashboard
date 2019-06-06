@@ -1,5 +1,19 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
+import AllGame from '@/views/GameManagement/CenterResource/AllGame'
+import TodyaUpdate from '@/views/GameManagement/CenterResource/TodyaUpdate'
+import SystemTool from '@/views/GameManagement/CenterResource/SystemTool'
+import Download from '@/views/GameManagement/CenterResource/subtype1-download'
+import remove from '@/views/GameManagement/CenterResource/subtype1-remove'
+import DownloadQueue from '@/views/GameManagement/ResourceDownload/DownloadQueue'
+import DownloadLog from '@/views/GameManagement/ResourceDownload/DownloadLog'
+import DownloadSet from '@/views/GameManagement/ResourceDownload/DownloadSet'
+import DownloadedGame from '@/views/GameManagement/LocalResource/DownloadedGame'
+import BarGames from '@/views/GameManagement/LocalResource/BarGames'
+import ServerSyncSet from '@/views/GameManagement/SyncManagement/ServerSyncSet'
+import SyncTask from '@/views/GameManagement/SyncManagement/SyncTask'
+import SyncLog from '@/views/GameManagement/SyncManagement/SyncLog'
+import DefaultRule from '@/views/GameManagement/SyncManagement/DefaultRule'
 
 export default {
   path: '/game',
@@ -18,19 +32,19 @@ export default {
           path: 'subType1-1',
           name: '全部游戏',
           meta: { title: 'AllGame' },
-          component: () => import('@/views/GameManagement/CenterResource/AllGame')
+          component: AllGame
         },
         {
           path: 'subType1-2',
           name: '今日更新',
           meta: { title: 'TodyaUpdate' },
-          component: () => import('@/views/GameManagement/CenterResource/TodyaUpdate')
+          component: TodyaUpdate
         },
         {
           path: 'subType1-3',
           name: '系统工具',
           meta: { title: 'SystemTool' },
-          component: () => import('@/views/GameManagement/CenterResource/SystemTool')
+          component: SystemTool
         },
         // {
         //   path: 'subType1-4',
@@ -49,7 +63,7 @@ export default {
           name: 'subType1-download',
           meta: { title: 'Download', hidden: true },
           // showBtn: true,
-          component: () => import('@/views/GameManagement/CenterResource/subtype1-download'),
+          component: Download,
           hidden: true
         },
         {
@@ -57,7 +71,7 @@ export default {
           name: '本地移除',
           meta: { title: '本地移除', hidden: true },
           // showBtn: true,
-          component: () => import('@/views/GameManagement/CenterResource/subtype1-remove'),
+          component: remove,
           hidden: true
         }
       ]
@@ -72,19 +86,19 @@ export default {
           path: 'subType2-1',
           name: '下载队列',
           meta: { title: 'DownloadQueue' },
-          component: () => import('@/views/GameManagement/ResourceDownload/DownloadQueue')
+          component: DownloadQueue
         },
         {
           path: 'subType2-2',
           name: 'GameManagement-SubType2-2',
           meta: { title: 'DownloadLog' },
-          component: () => import('@/views/GameManagement/ResourceDownload/DownloadLog')
+          component: DownloadLog
         },
         {
           path: 'DownloadSet',
           name: 'DownloadSet',
           meta: { title: '下载设置', hidden: true },
-          component: () => import('@/views/GameManagement/ResourceDownload/DownloadSet'),
+          component: DownloadSet,
           hidden: true
         }
       ]
@@ -99,14 +113,14 @@ export default {
           path: 'SubType3-1',
           name: '已下载游戏',
           meta: { title: 'DownloadedGame' },
-          component: () => import('@/views/GameManagement/LocalResource/DownloadedGame')
+          component: DownloadedGame
         },
         {
           path: 'BarGames',
           name: 'GameManagement-SubType3-2',
           meta: { title: 'BarGames' },
-          component: () => import('@/views/GameManagement/LocalResource/BarGames')
-        },
+          component: BarGames
+        }
         // {
         //   path: 'BarGameAdd',
         //   name: 'BarGameAdd',
@@ -121,41 +135,41 @@ export default {
         //   component: () => import('@/views/GameManagement/LocalResource/BarGamesEdit'),
         //   hidden: true
         // },
-        {
-          path: 'SubType3-1-fix',
-          name: 'GameManagement-SubType3-1-fix',
-          meta: { title: '修复', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-1-fix'),
-          hidden: true
-        },
-        {
-          path: 'SubType3-1-more',
-          name: 'GameManagement-SubType3-1-more',
-          meta: { title: '批量操作', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/subtype3-1-more'),
-          hidden: true
-        },
-        {
-          path: 'SubType3-2-add',
-          name: 'GameManagement-SubType3-add',
-          meta: { title: 'Add', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/BarGameAddMain'),
-          hidden: true
-        },
-        {
-          path: 'BarGamesEditMain', // 编辑游戏
-          name: 'GameManagement-SubType3-edit',
-          meta: { title: 'Edit', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/BarGamesEditMain'),
-          hidden: true
-        },
-        {
-          path: 'DownloadedGameEdit',
-          name: 'GameManagement-SubType3-delete',
-          meta: { title: 'Edit', hidden: true },
-          component: () => import('@/views/GameManagement/LocalResource/DownloadedGameEdit'),
-          hidden: true
-        }
+        // {
+        //   path: 'SubType3-1-fix',
+        //   name: 'GameManagement-SubType3-1-fix',
+        //   meta: { title: '修复', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/subtype3-1-fix'),
+        //   hidden: true
+        // },
+        // {
+        //   path: 'SubType3-1-more',
+        //   name: 'GameManagement-SubType3-1-more',
+        //   meta: { title: '批量操作', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/subtype3-1-more'),
+        //   hidden: true
+        // },
+        // {
+        //   path: 'SubType3-2-add',
+        //   name: 'GameManagement-SubType3-add',
+        //   meta: { title: 'Add', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/BarGameAddMain'),
+        //   hidden: true
+        // },
+        // {
+        //   path: 'BarGamesEditMain', // 编辑游戏
+        //   name: 'GameManagement-SubType3-edit',
+        //   meta: { title: 'Edit', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/BarGamesEditMain'),
+        //   hidden: true
+        // },
+        // {
+        //   path: 'DownloadedGameEdit',
+        //   name: 'GameManagement-SubType3-delete',
+        //   meta: { title: 'Edit', hidden: true },
+        //   component: () => import('@/views/GameManagement/LocalResource/DownloadedGameEdit'),
+        //   hidden: true
+        // }
       ]
     },
     {
@@ -168,25 +182,25 @@ export default {
           path: 'SubType4-1',
           name: 'GameManagement-SubType4-1',
           meta: { title: 'ServerSyncSet' },
-          component: () => import('@/views/GameManagement/SyncManagement/ServerSyncSet')
+          component: ServerSyncSet
         },
         {
           path: 'SubType4-2',
           name: 'GameManagement-SubType4-2',
           meta: { title: 'SyncTask' },
-          component: () => import('@/views/GameManagement/SyncManagement/SyncTask')
+          component: SyncTask
         },
         {
           path: 'SubType4-3',
           name: 'GameManagement-SubType4-3',
           meta: { title: 'SyncLog' },
-          component: () => import('@/views/GameManagement/SyncManagement/SyncLog')
+          component: SyncLog
         },
         {
           path: 'DefaultRule',
           name: 'DefaultRule',
           meta: { title: 'DefaultRule', hidden: true },
-          component: () => import('@/views/GameManagement/SyncManagement/DefaultRule'),
+          component: DefaultRule,
           hidden: true
         }
       ]
