@@ -132,7 +132,7 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServersx, deletePcGroup } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -297,6 +297,8 @@
        */
       handleSubmit (name) {
         let that = this
+        debugger
+  
         this.$refs[name].validate(valid => {
           if (valid) {
             if (that.tableData1 && that.tableData1.length === 0) {
@@ -308,6 +310,13 @@
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
+                  if (that.$route.query.flag) {
+                    deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
+                      if (!response.data.error) {
+                        this.handleGetPcGroup()
+                      }
+                    })
+                  }
                   that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)

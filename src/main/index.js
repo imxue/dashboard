@@ -1,15 +1,14 @@
 'use strict'
 
-import { app, BrowserWindow, dialog } from 'electron'
+import { app, BrowserWindow } from 'electron'
 
 const log = require('electron-log')
 const { autoUpdater } = require('electron-updater')
-let lang = app.getLocale()
-app.commandLine.appendSwitch('lang', lang)
+
 autoUpdater.autoDownload = false
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
-log.info('App starting...')
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -17,14 +16,14 @@ log.info('App starting...')
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
-function sendStatusToWindow (text) {
-  log.info(text)
-  if (win) {
-    win.webContents.send('message', text)
-  }
-}
+// function sendStatusToWindow (text) {
+//   log.info(text)
+//   if (win) {
+//     win.webContents.send('message', text)
+//   }
+// }
 
-let win
+// let win
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`

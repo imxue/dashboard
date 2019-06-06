@@ -123,7 +123,7 @@
       handleEdit (index) {
         this.$router.push({
           path: 'subtype3-edit',
-          query: { data: index }
+          query: { data: index, flag: 'edit' }
         })
       },
       handleStart () {},
