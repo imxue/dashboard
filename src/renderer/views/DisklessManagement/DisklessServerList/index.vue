@@ -374,6 +374,11 @@ export default {
                 desc: this.$t('NetworkError')
               })
             }
+          }, () => {
+            this.loadingBtn = false
+            this.$Notice.error({
+              desc: this.$t('NetworkError')
+            })
           })
         } else {
           this.loadingBtn = false

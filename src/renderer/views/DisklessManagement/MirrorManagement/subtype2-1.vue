@@ -105,20 +105,21 @@
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
               }, this.$t('Configure'))
-              let c = h('Button', {
-                props: { type: 'primary' },
-                style: { marginRight: '10px' },
-                on: { click: () => { this.handleImport(params.row) } }
-              }, this.$t('Import'))
-              let d = h('Button', {
-                props: { type: 'primary' },
-                style: { marginRight: '10px' },
-                on: { click: () => { this.handleExport(params.row) } }
-              }, this.$t('Export'))
+              // let c = h('Button', {
+              //   props: { type: 'primary' },
+              //   style: { marginRight: '10px' },
+              //   on: { click: () => { this.handleImport(params.row) } }
+              // }, this.$t('Import'))
+              // let d = h('Button', {
+              //   props: { type: 'primary' },
+              //   style: { marginRight: '10px' },
+              //   on: { click: () => { this.handleExport(params.row) } }
+              // }, this.$t('Export'))
               let e = h('Button', { props: { type: 'error' },
                 on: { click: () => { this.handleDelete(params.row) } }
               }, this.$t('Delete'))
-              return [a, c, d, e]
+              // return [a, c, d, e]
+              return [a, e]
             }
           }
         ],
