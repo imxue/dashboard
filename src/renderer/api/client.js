@@ -98,7 +98,14 @@ export function changeSchema (id, startSchema) { // 移动至方案
   })
 }
 export function setSchemeBasics (info) {
-  const data = { ...info }
+  const data = {
+    is_display_menu: info.is_display_menu,
+    is_sync_server_time: info.is_sync_server_time,
+    is_hide_pallet_icon: info.is_hide_pallet_icon,
+    is_single_click_startup: info.is_single_click_startup,
+    is_open_game_archive: info.is_open_game_archive,
+    archive_server_ip: info.archive_server_ip
+  }
   return request({
     url: '/v1/scheme/setSchemeBasics',
     method: 'POST',

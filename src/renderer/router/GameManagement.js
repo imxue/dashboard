@@ -14,7 +14,9 @@ import ServerSyncSet from '@/views/GameManagement/SyncManagement/ServerSyncSet'
 import SyncTask from '@/views/GameManagement/SyncManagement/SyncTask'
 import SyncLog from '@/views/GameManagement/SyncManagement/SyncLog'
 import DefaultRule from '@/views/GameManagement/SyncManagement/DefaultRule'
-
+import BarGamesEditMain from '@/views/GameManagement/LocalResource/BarGamesEditMain'
+import DownloadedGameEdit from '@/views/GameManagement/LocalResource/DownloadedGameEdit'
+import BarGameAddMain from '@/views/GameManagement/LocalResource/BarGameAddMain'
 export default {
   path: '/game',
   name: '游戏管理',
@@ -120,7 +122,7 @@ export default {
           name: 'GameManagement-SubType3-2',
           meta: { title: 'BarGames' },
           component: BarGames
-        }
+        },
         // {
         //   path: 'BarGameAdd',
         //   name: 'BarGameAdd',
@@ -149,27 +151,27 @@ export default {
         //   component: () => import('@/views/GameManagement/LocalResource/subtype3-1-more'),
         //   hidden: true
         // },
-        // {
-        //   path: 'SubType3-2-add',
-        //   name: 'GameManagement-SubType3-add',
-        //   meta: { title: 'Add', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/BarGameAddMain'),
-        //   hidden: true
-        // },
-        // {
-        //   path: 'BarGamesEditMain', // 编辑游戏
-        //   name: 'GameManagement-SubType3-edit',
-        //   meta: { title: 'Edit', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/BarGamesEditMain'),
-        //   hidden: true
-        // },
-        // {
-        //   path: 'DownloadedGameEdit',
-        //   name: 'GameManagement-SubType3-delete',
-        //   meta: { title: 'Edit', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/DownloadedGameEdit'),
-        //   hidden: true
-        // }
+        {
+          path: 'BarGameAddMain',
+          name: 'GameManagement-SubType3-add',
+          meta: { title: 'Add', hidden: true },
+          component: BarGameAddMain,
+          hidden: true
+        },
+        {
+          path: 'BarGamesEditMain', // 编辑游戏
+          name: 'GameManagement-SubType3-edit',
+          meta: { title: 'Edit', hidden: true },
+          component: BarGamesEditMain,
+          hidden: true
+        },
+        {
+          path: 'DownloadedGameEdit',
+          name: 'GameManagement-SubType3-delete',
+          meta: { title: 'Edit', hidden: true },
+          component: DownloadedGameEdit,
+          hidden: true
+        }
       ]
     },
     {

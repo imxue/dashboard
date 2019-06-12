@@ -25,7 +25,7 @@
 
 <script>
   export default {
-    name: 'login',
+    name: 'reset',
     data () {
       const validatePass = (rule, value, callback) => {
         if (value === '') {

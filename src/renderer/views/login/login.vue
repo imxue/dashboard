@@ -85,6 +85,7 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
+    min-height: 700px;
   }
   .box{
     background-color:#3B4759;

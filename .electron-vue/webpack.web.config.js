@@ -10,11 +10,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let webConfig = {
-  devtool: '#cheap-module-eval-source-map',
+  // devtool: '#cheap-module-eval-source-map',
   entry: {
-    web: path.join(__dirname, '../src/renderer/main.js')
+    main: path.join(__dirname, '../src/renderer/main.js')
+  },
+  devServer: {
+    hot: true
   },
   module: {
     rules: [
@@ -25,7 +29,7 @@ let webConfig = {
         use: {
           loader: 'eslint-loader',
           options: {
-            formatter: require('eslint-friendly-formatter')
+            formatter: require('eslint-friendly-formatter')``
           }
         }
       },
@@ -91,8 +95,16 @@ let webConfig = {
       }
     ]
   },
-  // node: { fs: 'empty' },
-  
+  optimization:{
+    splitChunks:{
+      chunks:'initial',
+      name: 'common'
+    },
+    runtimeChunk: {
+      name: 'runtime',
+    },
+    minimize: true
+  },
   plugins: [
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
@@ -110,7 +122,7 @@ let webConfig = {
       'process.env.IS_WEB': 'true'
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
   ],
   output: {
     filename: '[name].js',
@@ -146,6 +158,12 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: false
+    }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),  // 不打包monent语言包
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'server',
+      generateStatsFile: true,
+      statsOptions: { source: false }
     })
   )
 }

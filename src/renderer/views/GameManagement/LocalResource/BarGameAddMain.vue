@@ -14,7 +14,7 @@
             <i-col span="8">
               <div style='border: 1px solid #ccc!important;  border-radius: 16px; '>
           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
-            <img  :src='this.imgUrl' style='margin-top:-35px;margin-left:10px;'>
+            <img :src='this.imgUrl' style='margin-top:-35px;margin-left:10px;'>
               </div>             
            <p style='margin-top:-35px; text-align:center' v-if="!this.formValidate.IconUrl">Click here to upload</p>   
             <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here1 to upload</p>
@@ -25,7 +25,7 @@
   
         <FormItem prop="name">
           <Row>
-            <i-col span="4">{{$t('GameName')}}：</i-col>
+            <i-col span="4">{{$t('gameName')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
@@ -69,7 +69,7 @@
   import { addLocalGame } from '@/api/localGame'
   import { UploadImg } from '@/utils/index'
   export default {
-    name: 'subType3-1-edit',
+    name: 'barGameAdd',
     data () {
       return {
         showIcon: false,
@@ -110,9 +110,10 @@
     created () {},
     methods: {
       imgUpload (data) {
-        console.log(data)
         let file = data.target.files[0]
         this.imgUrl = file.path
+        console.log(data)
+        console.log(this.imgUrl)
         this.temp = file
       },
       handleFormatError (res) {

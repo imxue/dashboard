@@ -176,7 +176,7 @@ export default {
     添加游戏
     */
     handleButtonAdd () {
-      this.$router.push({ path: 'subtype3-2-add' })
+      this.$router.push({ path: 'BarGameAddMain' })
     },
     handleButtonEdit (val) {
       val = this.getCheckboxVal.length

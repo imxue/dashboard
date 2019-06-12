@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <p>页面失踪了啊啊啊</p>
     <Button type="primary" @click="handleBack">返回</Button>
   </div>
@@ -28,6 +28,10 @@
 </script>
 
 <style scoped>
-
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
 

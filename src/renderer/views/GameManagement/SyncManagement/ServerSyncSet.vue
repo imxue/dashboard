@@ -126,9 +126,9 @@
       }
     },
     created () {
-      this.handleGetSearch(this.curroffset, this.currlimit) // 盘符
-      this.handlGetDrivers() // 服务器list
-      this.handleGetDriversOption()
+      // this.handleGetSearch(this.curroffset, this.currlimit) // 盘符
+      // this.handlGetDrivers() // 服务器list
+      // this.handleGetDriversOption()
     },
     computed: {
       routes () {
