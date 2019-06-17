@@ -229,12 +229,11 @@ export function editLocalGame ({ Name, SavePath, RunPath, RunExe, IsEnableSync }
 export function deleteLocalGame (Id) {
   const data = { Id }
   return request({
-    url: `/v1/localresource/deleteLocalGame/?LocalGameId=${data.Id}`,
+    url: `/v1/localresource/${data.Id}`,
     method: 'delete',
     data
   })
 }
-
 /**
  * 获取停服资源
 
@@ -280,7 +279,7 @@ export function repairGame (id) {
   })
 }
 /*
-* 删除游戏
+* 删除中心游戏
 */
 export function deleteGame (id) {
   const data = {

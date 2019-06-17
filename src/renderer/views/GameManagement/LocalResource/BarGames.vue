@@ -47,7 +47,7 @@
 import {
   netbarMultiSync,
   getAllLocalGames,
-  deleteGame,
+  deleteLocalGame,
   repairGame
 } from '@/api/localGame'
 
@@ -250,7 +250,7 @@ export default {
         cancelText: this.$t('cancelText'),
         okText: this.$t('Confirm'),
         onOk: () => {
-          deleteGame(index.id).then(
+          deleteLocalGame(index.id).then(
             resp => {
               this.handgetAllGame(0, this.currlimit, 'Name')
             },

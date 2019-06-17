@@ -40,20 +40,29 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    let x
+    // let x
+    // if (response.data.ok) {
+    //   if (response.data.data && response.data.data.error) {
+    //     x = Number(response.data.data.error)
+    //   }
+    // }
+    // if (x) {
+    //   response.data.error = i18n.t(`kxLinuxErr.${x}`)
+    //   iView.Notice.error({
+    //     desc: response.data.error
+    //   })
+    //   return response
+    // } else {
+    //   return response
+    // }
     if (response.data.ok) {
-      if (response.data.data && response.data.data.error) {
-        x = Number(response.data.data.error)
+      if (response.data.data.error) {
+        return Promise.reject(response.data.data.error)
+      } else {
+        return Promise.resolve(response)
       }
-    }
-    if (x) {
-      response.data.error = i18n.t(`kxLinuxErr.${x}`)
-      iView.Notice.error({
-        desc: response.data.error
-      })
-      return response
     } else {
-      return response
+      return Promise.reject(response)
     }
   },
 

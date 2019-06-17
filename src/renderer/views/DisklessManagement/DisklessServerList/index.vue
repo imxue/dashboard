@@ -436,9 +436,9 @@ export default {
             }
             this.loadingBtn = false
           }
-        }, a => {
+        }, error => {
           this.$Notice.error({
-            desc: this.$t('NetworkError')
+            desc: this.$t(`kxLinuxErr.${error}`)
           })
           this.loadingBtn = false
         }

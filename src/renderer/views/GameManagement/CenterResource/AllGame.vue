@@ -175,12 +175,10 @@ export default {
      */
     searchByGameName (name) {
       getAllGame(0, 1000000, 'Size').then(response => {
-        if (response.data.ok) {
-          this.tableDataAll = response.data.data.data
-          this.tableData = this.tableDataAll.filter(item => {
-            return item.Name === name
-          })
-        }
+        this.tableDataAll = response.data.data.data
+        this.tableData = this.tableDataAll.filter(item => {
+          return item.Name === name
+        })
       }, (e) => {
         this.$Notice.error({ desc: '' + e, duration: 0 })
       }).catch((e) => {
@@ -192,24 +190,22 @@ export default {
      */
     handgetAllGame (offset, limit, orderby) {
       getAllGame(offset, limit, orderby).then(response => {
-        if (response.data.ok) {
-          this.tableData = response.data.data.data
-          response.data.data.data.filter(item => {
-            if (item.Name) {
-              this.GameName.push(item.Name)
-            }
-            this.GameAllName = Array.from(this.GameName)
-            this.GameName = this.GameName.slice(0, 6)
-            this.temp = Array.from(this.GameAllName)
-          })
-          this.pageInfo = response.data.data.pageino
-          this.pageInfo.page_index++
-          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-        }
-      }, (e) => {
+        this.tableData = response.data.data.data
+        response.data.data.data.filter(item => {
+          if (item.Name) {
+            this.GameName.push(item.Name)
+          }
+          this.GameAllName = Array.from(this.GameName)
+          this.GameName = this.GameName.slice(0, 6)
+          this.temp = Array.from(this.GameAllName)
+        })
+        this.pageInfo = response.data.data.pageino
+        this.pageInfo.page_index++
+        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
+      }, () => {
         // 这里执行reject状态的
         this.$Message.error(this.$t('kxLinuxErr.36873'))
-      }).catch((e) => {
+      }).catch(() => {
         // 在发送代码错误时执行这里
         this.$Message.error(this.$t('kxLinuxErr.10'))
       })
@@ -234,14 +230,9 @@ export default {
     handleSubmit () {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
-        if (response.data.ok) {
-          this.DownloadGameUp = false
-        } else {
-          this.DownloadGameUp = false
-          this.$Message.error(this.$t('FileNotFound'))
-        }
-      }, () => {
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
+        this.DownloadGameUp = false
+      }, (e) => {
+        this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
       })
@@ -253,13 +244,11 @@ export default {
       this.DownloadGameUp = true
       this.deleteid = id
       getLogicalDrives().then(response => {
-        if (response.data.ok) {
-          this.disk = response.data.data
-          this.disk.map(item => {
-            item.free_space = bytesToSize2(item.free_space)
-          })
-          this.Dg.data = this.disk[0].name
-        }
+        this.disk = response.data.data
+        this.disk.map(item => {
+          item.free_space = bytesToSize2(item.free_space)
+        })
+        this.Dg.data = this.disk[0].name
       }, () => {
         this.$Message.error(this.$t('kxLinuxErr.36873'))
       }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
@@ -310,13 +299,9 @@ export default {
         'closable': true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            if (e.data.ok) {
-              this.$Message.error(this.$t('DeleteGameSucess'))
-            } else {
-              this.$Message.error(this.$t('FileNotFound'))
-            }
-          }, () => {
-            this.$Message.error(this.$t('kxLinuxErr.36873'))
+            this.$Message.error(this.$t('FileNotFound'))
+          }, (e) => {
+            this.$Message.error(this.$t('FileNotFound'))
           }).catch(() => {
             this.$Message.error(this.$t('kxLinuxErr.10'))
           })
@@ -345,13 +330,9 @@ export default {
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        if (e.data.ok) {
-          this.$Message.error(this.$t('repairSucess'))
-        } else {
-          this.$Message.error(this.$t('FileNotFound'))
-        }
+        this.$Message.error(this.$t('repairSucess'))
       }, () => {
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
+        this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
       })
