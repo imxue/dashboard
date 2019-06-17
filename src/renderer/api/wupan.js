@@ -75,13 +75,14 @@ export function getDiskStatusx (url) {
 //   unUsed: 'unUsed'
 // }
 
-export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat, volume, ip) {
+export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat, volume, exttype, ip) {
   return makeRequestx('Set_DiskFun', {
     path: path,
     fun: diskFunctionType,
     cacheSize: cacheSizeMB,
     isFormat: isFormat,
-    vol: volume
+    vol: volume,
+    exttype: exttype
   }, ip)
 }
 
@@ -439,18 +440,6 @@ export function deleteSuperIP (ip, superIpAction, comment) {
     action: superIpAction,
     comment: comment
   })
-}
-
-// var Master_Role = {
-//   master: 'master',
-//   salve: 'serve'
-// }
-
-export function changeMaster (masterRole, masterIP, ip) {
-  return makeRequestx('ChMaster', {
-    role: masterRole,
-    master: masterIP
-  }, ip)
 }
 
 export function getVersion () {

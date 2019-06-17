@@ -162,9 +162,7 @@ export default {
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
-        if (resp.data.ok) {
-          this.DHCPTable = resp.data.data.result
-        }
+        this.DHCPTable = resp.data.data.result
       })
     }
   },

@@ -538,11 +538,12 @@ export default {
       this.DiskSettingDialog = true
       this.spinShow = true
       setDiskFunctionx(
-        this.rowData.path,
-        this.selecteDisk,
-        '512',
-        this.selecteFormatValue,
-        this.selecteDiskF,
+        this.rowData.path, // 设备路径
+        this.selecteDisk, // 作用
+        '512', // 缓存
+        this.selecteFormatValue, // 是否格式化
+        this.selecteDiskF, // 映射磁盘
+        this.ExtendedType, // 扩展类型
         this.currentPageServerip
       ).then(response => {
         this.handleGetDiskStatusx(this.currentPageServerip)
@@ -598,11 +599,15 @@ export default {
     handleButtonRefresh () {
       this.spinShow = true
       console.log(this.currentPageServerip)
-      // getServersx(this.currentPageServerip).then((resp) => {
-      //   this.serverList = resp.data.data.result.list
-      //   this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
-      //   this.isMaster = this.CurrentPageserverInfo.isMaster
-      // })
+      getServersx(this.currentPageServerip).then((resp) => {
+        this.serverList = resp.data.data.result.list
+        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
+        this.isMaster = this.CurrentPageserverInfo.isMaster
+      }, (resp) => {
+        this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
+      }).catch((error) => {
+        console.log(error)
+      })
       this.handleGetNetworkx(this.currentPageServerip)
       this.handleGetDiskStatusx(this.currentPageServerip)
     },
@@ -615,10 +620,8 @@ export default {
           '1',
           '1',
           this.serverList[i].serverIp).then((resp) => {
-          debugger
         }, (error) => {
           console.log(error)
-          debugger
         })
       }
       localStorage.setItem('masterip', this.currentPageServerip)
