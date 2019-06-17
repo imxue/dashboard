@@ -312,20 +312,18 @@ export default {
       if (d) {
         getServersx(d).then(
           response => {
-            if (response.data.ok) {
-              this.spinShow = false
-              this.loading = false
-              this.serverList = response.data.data.result.list
-              this.handleGetCurrMasterServerIp(this.serverList)
-            } else {
-              let x = {
-                serverIp: localStorage.getItem('masterip'),
-                online: '0',
-                dataVer: '-'
-              }
-              this.serverList.push(x)
-              this.loading = false
+            this.spinShow = false
+            this.loading = false
+            this.serverList = response.data.data.result.list
+            this.handleGetCurrMasterServerIp(this.serverList)
+          }, () => {
+            let x = {
+              serverIp: localStorage.getItem('masterip'),
+              online: '0',
+              dataVer: '-'
             }
+            this.serverList.push(x)
+            this.loading = false
           }
         )
       } else {
@@ -382,29 +380,19 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           login(this.formValidate.password, this.formValidate.serverIP).then((resp) => {
-            if (resp.data.ok) {
-              if (!resp.data.data.error) {
-                let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-                getServersNode(this.formValidate.serverIP).then((res) => {
-                  if (res.data.ok) {
-                    this.handleSubmitAddServer(
-                      res.data.data.result.guid,
-                      MasterIp,
-                      this.formValidate.serverIP
-                    )
-                  } else {
-                    this.loadingBtn = false
-                  }
-                })
-              } else {
-                this.loadingBtn = false
-              }
-            } else {
-              this.$Notice.error({
-                desc: this.$t('NetworkError')
-              })
+            let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
+            getServersNode(this.formValidate.serverIP).then((res) => {
+              this.handleSubmitAddServer(
+                res.data.data.result.guid,
+                MasterIp,
+                this.formValidate.serverIP
+              )
+            }, () => {
               this.loadingBtn = false
-            }
+            })
+          }, () => {
+            this.loadingBtn = false
+            this.$Notice.error({ desc: this.$t('NetworkError') })
           })
         } else {
           this.loadingBtn = false

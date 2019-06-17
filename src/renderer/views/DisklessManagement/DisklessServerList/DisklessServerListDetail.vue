@@ -3,7 +3,7 @@
     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Select style="width:200px; marginRight:10px;" v-model="currentPageServerip" @on-change="listTypeChange">
-        <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}} <Tag v-if="item.isMaster === '1'" color="red">master</Tag></Option>
+        <Option v-for="item in serverList"  v-bind:key="item.serverIp" :disabled='item.online !== "1"' :value="item.serverIp">{{item.serverIp}} <Tag v-if="item.isMaster === '1'" color="red">master</Tag></Option>
       </Select>
         
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
@@ -417,10 +417,7 @@ export default {
     this.serverList = this.$route.query.serverList
     this.handleGetCurrentPageServerInfo()
     this.handleGetNetworkx(this.currentPageServerip)
-    let masterip = localStorage.getItem('masterip')
-    if (masterip) {
-      this.handleGetDiskStatusx(masterip)
-    }
+    this.handleGetDiskStatusx(this.currentPageServerip)
   },
   computed: {
     routes () {
@@ -439,16 +436,14 @@ export default {
      */
     handleGetNetworkx (ip) {
       getNetworkx(ip).then(resp => {
-        if (resp.data.ok) {
-          var arr = resp.data.data.result.list
-          arr.map(item => {
-            if (item.vdiskSet === 'yes') {
-              item['_checked'] = true
-              this.getCheckboxVal = item
-            }
-          })
-          this.tableData2 = arr
-        }
+        var arr = resp.data.data.result.list
+        arr.map(item => {
+          if (item.vdiskSet === 'yes') {
+            item['_checked'] = true
+            this.getCheckboxVal = item
+          }
+        })
+        this.tableData2 = arr
       })
     },
     /*
@@ -457,13 +452,11 @@ export default {
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(resp => {
-        if (resp.data.ok) {
-          this.diskInfo = resp.data.data.result.list || []
-          this.diskInfo.forEach(item => {
-            item.size = bytesToSize(item.size)
-            item.availableSize = bytesToSize(item.availableSize)
-          })
-        }
+        this.diskInfo = resp.data.data.result.list || []
+        this.diskInfo.forEach(item => {
+          item.size = bytesToSize(item.size)
+          item.availableSize = bytesToSize(item.availableSize)
+        })
       })
       that.spinShow = false
     },
@@ -486,12 +479,10 @@ export default {
         onOk: () => {
           console.log(this.MasterServerIp)
           deleteserverx(this.currentPageServerip, this.MasterServerIp).then((resp) => {
-            if (resp.data.ok) {
-              this.$Message.success(this.$t('DeleteSucess'))
-              this.$router.push({
-                path: 'DisklessServerList'
-              })
-            }
+            this.$Message.success(this.$t('DeleteSucess'))
+            this.$router.push({
+              path: 'DisklessServerList'
+            })
           })
           if (this.currentPageServerip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
@@ -559,7 +550,9 @@ export default {
         this.DiskSettingDialog = false
         this.spinShow = false
       }, (response) => {
-        this.$Message.error(response.data.data.error)
+        this.spinShow = false
+        this.DiskSettingDialog = false
+        this.$Message.error(this.$t(`kxLinuxErr.${response}`))
       })
     },
     handleResetCard () {
@@ -572,12 +565,10 @@ export default {
       this.spanShow = true
       setVdiskEthernetx(this.getCheckboxVal, this.currentPageServerip).then((resp) => {
         this.spanShow = false
-        if (resp.data.ok) {
-          this.$Notice.success({
-            title: this.$t('SetSucess')
-          })
-        }
+        this.$Message.error(this.$t(`SetSucess`))
         this.handleGetNetworkx(this.currentPageServerip)
+      }, (resp) => {
+        this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
       })
     },
     /**
@@ -622,12 +613,8 @@ export default {
     列表选择
     */
     listTypeChange (serverip) {
-      // this.serverIp = serverip
-      getServersx(serverip).then((resp) => {
-        if (resp.data.ok) {
-          this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
-          this.isMaster = this.CurrentPageserverInfo[0].isMaster
-        }
+      getServersx(this.MasterServerIp).then((resp) => {
+        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)
