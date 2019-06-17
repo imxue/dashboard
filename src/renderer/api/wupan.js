@@ -560,7 +560,7 @@ export function getErrorStringList () {
 /**
  * 设置节点
  */
-export function editServersNode (masterIp, ip, isSyncImage, isOverload) {
+export function editServersNode (masterIp, isSyncImage, isOverload, ip) {
   return makeRequestx('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',

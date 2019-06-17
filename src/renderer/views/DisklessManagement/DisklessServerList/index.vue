@@ -400,42 +400,33 @@ export default {
       })
     },
     handleSubmitAddServer (guid, masterIp, selfip) {
-      editServersNode(masterIp, selfip).then(
+      // 设置服务器节点
+      editServersNode(masterIp, 1, 1, selfip).then(
         (res) => {
-          if (res.data.ok) {
-            // 成功执行
-          }
+          addServersx(selfip, guid, masterIp).then(
+            res => {
+              this.loadingBtn = false
+              localStorage.setItem('masterip', masterIp)
+              this.showPopup = false
+              this.handleGetServerList()
+              setTimeout(() => {
+                this.handleGetServerList()
+              }, 1000)
+            }, error => {
+              this.$Notice.error({ desc: this.$t(`kxLinuxErr.${error}`) })
+              this.modal4 = true // 清除服务器信息
+              this.loadingBtn = false
+            }
+          ).catch((a) => {
+            this.$Notice.error({
+              title: `catch`,
+              desc: `${a}`
+            })
+          })
+        }, (res) => {
+          debugger
         }
       ) // 设置主服务器
-      addServersx(selfip, guid, masterIp).then(
-        res => {
-          if (res.data.ok && !res.data.data.error) {
-            this.loadingBtn = false
-            localStorage.setItem('masterip', masterIp)
-            this.showPopup = false
-            this.handleGetServerList()
-            setTimeout(() => {
-              this.handleGetServerList()
-            }, 1000)
-          } else {
-            if (res.data.data.error === '20') {
-              // 服务器已经添加
-              this.modal4 = true
-            }
-            this.loadingBtn = false
-          }
-        }, error => {
-          this.$Notice.error({
-            desc: this.$t(`kxLinuxErr.${error}`)
-          })
-          this.loadingBtn = false
-        }
-      ).catch((a) => {
-        this.$Notice.error({
-          title: `catch`,
-          desc: `${a}`
-        })
-      })
     },
     handleAddReset (name) {
       this.showPopup = false

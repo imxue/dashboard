@@ -167,8 +167,7 @@ import {
   getNetworkx,
   getDiskStatusx,
   setVdiskEthernetx,
-  deleteserverConfig,
-  changeMaster
+  deleteserverConfig
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 export default {
@@ -483,6 +482,8 @@ export default {
             this.$router.push({
               path: 'DisklessServerList'
             })
+          }, (resp) => {
+            this.$Message.success(this.$t(`kxLinuxErr.${resp}`))
           })
           if (this.currentPageServerip === localStorage.getItem('masterip')) {
             localStorage.removeItem('masterip')
@@ -604,10 +605,14 @@ export default {
      * 切换主服务器
      */
     HandlechangeMaster () {
-      console.log(this.MasterServerIp)
-      changeMaster('master', this.MasterServerIp, '10.88.66.146').then((resp) => {
-        console.log(resp)
-      })
+      for (let i = 0; i < this.serverList.length; i++) {
+        editServersNode(this.currentPageServerip,
+          '1',
+          '1',
+          this.serverList[i].serverIp).then((resp) => {
+          localStorage.setItem('masterip', this.currentPageServerip)
+        })
+      }
     },
     /*
     列表选择
@@ -615,6 +620,7 @@ export default {
     listTypeChange (serverip) {
       getServersx(this.MasterServerIp).then((resp) => {
         this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
+        this.isMaster = this.CurrentPageserverInfo.isMaster
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)
