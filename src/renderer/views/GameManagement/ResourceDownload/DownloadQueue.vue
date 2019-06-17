@@ -88,9 +88,7 @@ export default {
         console.log('获取下载队列')
         console.log(response)
         console.log('获取下载队列')
-        if (response.data.ok) {
-          this.tableData = response.data.data
-        } else {}
+        this.tableData = response.data.data
         // if (response.data.data) {
         //   let temp = response.data.data
         //   for (let i = 0; i < temp.length; i++) {
@@ -99,6 +97,10 @@ export default {
         //   }
         //   this.tableData = response.data.data
         // }
+      }, (response) => {
+        console.log('获取下载队列')
+        console.log(response)
+        console.log('获取下载队列')
       })
     },
     /**

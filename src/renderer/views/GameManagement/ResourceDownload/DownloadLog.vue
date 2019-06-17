@@ -81,9 +81,7 @@ export default {
     },
     handTableData (offset, limit, SearchDate) {
       getDownloadLogs(offset, limit, SearchDate).then((response) => {
-        if (response.data.ok) {
-          this.tableData = response.data.data.data
-        }
+        this.tableData = response.data.data.data
       }, (err) => {
         console.log(err)
       }).catch((err) => {

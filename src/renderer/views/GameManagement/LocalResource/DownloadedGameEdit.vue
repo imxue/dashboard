@@ -13,19 +13,19 @@
         <FormItem prop="Name">
           <Row>
             <i-col span="4">{{$t("gameName")}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.Name" placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.Name" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="savePath">
           <Row>
             <i-col span="4">{{$t("ServerPath")}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.SavePath"  placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.SavePath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="ExePath">
           <Row>
             <i-col span="4">{{$t("executableFile")}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.ExePath" placeholder="请输入游戏名称"></i-input></i-col>
+            <i-col span="8"><i-input v-model="formValidate.ExePath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="updateWay">
@@ -33,7 +33,7 @@
             <i-col span="4">{{$t("UpdateMode")}}：</i-col>
             <i-col span="8">
               <Select v-model="formValidate.UpdateMode" @on-change="handleSelectUpdataWays">
-                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
+                <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id" :placeholder="$t('pleaseInput')">{{ item.value }}</Option>
               </Select>
             </i-col>
           </Row>

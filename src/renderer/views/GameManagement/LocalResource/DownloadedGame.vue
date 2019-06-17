@@ -162,9 +162,7 @@
       */
       handleGetTableList () {
         getDownloadedGames(0, 10, 'name').then((response) => {
-          if (response.data.ok) {
-            this.tableData = response.data.data.data
-          }
+          this.tableData = response.data.data.data
         }, () => {
           this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }).catch((e) => {
