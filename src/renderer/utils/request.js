@@ -40,21 +40,6 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    // let x
-    // if (response.data.ok) {
-    //   if (response.data.data && response.data.data.error) {
-    //     x = Number(response.data.data.error)
-    //   }
-    // }
-    // if (x) {
-    //   response.data.error = i18n.t(`kxLinuxErr.${x}`)
-    //   iView.Notice.error({
-    //     desc: response.data.error
-    //   })
-    //   return response
-    // } else {
-    //   return response
-    // }
     if (response.data.ok) {
       if (!response.data.data) {
         return response

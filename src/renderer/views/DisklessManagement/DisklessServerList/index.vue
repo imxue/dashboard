@@ -424,7 +424,7 @@ export default {
             })
           })
         }, (res) => {
-          debugger
+          console.log(res)
         }
       ) // 设置主服务器
     },

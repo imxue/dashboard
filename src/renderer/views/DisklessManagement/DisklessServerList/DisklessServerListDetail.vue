@@ -182,7 +182,6 @@ export default {
       MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
       rowData: '',
-      ServerIp: '',
       selecteDiskF: 'E',
       selecteDisk: 'imageDisk',
       getCheckboxVal: [], // 勾选复选框值
@@ -566,7 +565,7 @@ export default {
       this.spanShow = true
       setVdiskEthernetx(this.getCheckboxVal, this.currentPageServerip).then((resp) => {
         this.spanShow = false
-        this.$Message.error(this.$t(`SetSucess`))
+        this.$Message.success(this.$t(`SetSucess`))
         this.handleGetNetworkx(this.currentPageServerip)
       }, (resp) => {
         this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
@@ -598,8 +597,14 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      this.handleGetNetworkx(this.ServerIp)
-      this.handleGetDiskStatusx(this.ServerIp)
+      console.log(this.currentPageServerip)
+      // getServersx(this.currentPageServerip).then((resp) => {
+      //   this.serverList = resp.data.data.result.list
+      //   this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
+      //   this.isMaster = this.CurrentPageserverInfo.isMaster
+      // })
+      this.handleGetNetworkx(this.currentPageServerip)
+      this.handleGetDiskStatusx(this.currentPageServerip)
     },
     /**
      * 切换主服务器
@@ -610,9 +615,14 @@ export default {
           '1',
           '1',
           this.serverList[i].serverIp).then((resp) => {
-          localStorage.setItem('masterip', this.currentPageServerip)
+          debugger
+        }, (error) => {
+          console.log(error)
+          debugger
         })
       }
+      localStorage.setItem('masterip', this.currentPageServerip)
+      this.handleButtonRefresh()
     },
     /*
     列表选择
