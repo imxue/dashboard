@@ -37,6 +37,7 @@
       @on-row-dblclick="handleSeeDetail"
       :no-data-text="this.$t('Nodata')"
     ></Table>
+    <!-- 添加服务器 -->
     <Modal
       :mask-closable="false"
       :title="$t('AddServer')"
@@ -103,7 +104,8 @@ import {
   getServersNode,
   editServersNode,
   getServersx,
-  deleteserverConfig
+  deleteserverConfig,
+  login
 } from '@/api/wupan'
 // import Cookies from 'js-cookie'
 export default {
@@ -133,7 +135,7 @@ export default {
       loading: false,
       loadingBtn: false,
       showPopup: false,
-      tempMasterServerIp: '',
+      MasterServerIp: '', // 主服务器
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       tableColumns: [
@@ -272,7 +274,7 @@ export default {
   },
   computed: {
     refesh () {
-      if (this.tempMasterServerIp) {
+      if (this.MasterServerIp) {
         return false
       } else {
         return true
@@ -332,10 +334,10 @@ export default {
     },
     handleGetCurrMasterServerIp (data) {
       if (data === null) {
-        this.tempMasterServerIp = ''
+        this.MasterServerIp = ''
       } else {
         var arr = data.filter(item => item.isMaster === '1')
-        this.tempMasterServerIp = arr[0].serverIp
+        this.MasterServerIp = arr[0].serverIp
       }
       this.spinShow = false
     },
@@ -364,13 +366,12 @@ export default {
         list.push(data[i].id)
       }
       this.getCheckboxVal = list.join(',')
-      // console.log(this.getCheckboxVal)
       return this.getCheckboxVal
     },
     handleSeeDetail (index) {
       this.$router.push({
         path: 'DisklessServerDetail',
-        query: { data: index, tempMasterServerIp: this.tempMasterServerIp, serverList: this.serverList }
+        query: { data: index, MasterServerIp: this.MasterServerIp, serverList: this.serverList }
       })
     },
     /**
@@ -380,19 +381,29 @@ export default {
       this.loadingBtn = true
       this.$refs[name].validate(valid => {
         if (valid) {
-          let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-          getServersNode(this.formValidate.serverIP).then((res) => {
-            if (res.data.ok) {
-              this.handleSubmitAddServer(
-                res.data.data.result.guid,
-                MasterIp,
-                this.formValidate.serverIP
-              )
+          login(this.formValidate.password, this.formValidate.serverIP).then((resp) => {
+            if (resp.data.ok) {
+              if (!resp.data.data.error) {
+                let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
+                getServersNode(this.formValidate.serverIP).then((res) => {
+                  if (res.data.ok) {
+                    this.handleSubmitAddServer(
+                      res.data.data.result.guid,
+                      MasterIp,
+                      this.formValidate.serverIP
+                    )
+                  } else {
+                    this.loadingBtn = false
+                  }
+                })
+              } else {
+                this.loadingBtn = false
+              }
             } else {
-              this.loadingBtn = false
               this.$Notice.error({
                 desc: this.$t('NetworkError')
               })
+              this.loadingBtn = false
             }
           })
         } else {

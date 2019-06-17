@@ -373,5 +373,9 @@
   "DefaultDownloadPaht":"默认下载路径",
   "ConfigPoint":"配置点",
   "IPAddressIsIncorrect":"请检查ip地址格式",
-  "loginTmeOut":"登录超时,请重新登录"
+  "loginTmeOut":"登录超时,请重新登录",
+  "ExtendedType":"扩展类型",
+  "GameDisk":"游戏数据盘",
+  "HotGameDisk":"热门数据盘",
+  "PrivateGameDisk":"私有数据盘"
 }

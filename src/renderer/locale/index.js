@@ -20,6 +20,9 @@ const messages = {
   'zh-TW': { ...zhTw, ...zhTW }
 }
 
+if (!localStorage.getItem('lang')) {
+  localStorage.setItem('lang', lang)
+}
 const i18n = new VueI18n({
   locale: lang, // set locale
   messages, // set locale messages

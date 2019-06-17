@@ -160,11 +160,11 @@ if (process.env.NODE_ENV === 'production') {
       minimize: false
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),  // 不打包monent语言包
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'server',
-      generateStatsFile: true,
-      statsOptions: { source: false }
-    })
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode: 'server',
+    //   generateStatsFile: true,
+    //   statsOptions: { source: false }
+    // })
   )
 }
 

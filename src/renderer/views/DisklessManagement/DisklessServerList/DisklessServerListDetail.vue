@@ -3,16 +3,18 @@
     <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Select style="width:200px; marginRight:10px;" v-model="currentPageServerip" @on-change="listTypeChange">
-        <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}}</Option>
+        <Option v-for="item in serverList"  v-bind:key="item.serverIp"  :value="item.serverIp">{{item.serverIp}} <Tag v-if="item.isMaster === '1'" color="red">master</Tag></Option>
       </Select>
         
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
 
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
+      <Divider type="vertical"/>
+      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">设置为主服务器</Button>
     </div>
 
-    <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" ></Table>
 
 
     <Row style="margin:10px 0;">
@@ -26,7 +28,6 @@
       :columns="tableColumns2"
       :data="tableData2"
       @on-selection-change="handleCheckBox"
-      :no-data-text="this.$t('Nodata')"
     ></Table>
     <div style="margin:10px 0; ">
       <h3>{{$t('DiskSetting')}}</h3>
@@ -34,7 +35,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </div>
    
-      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
+      <Table border :columns="tableColumns3" :data="diskInfo" @on-row-dblclick="ShowDiskPlan"></Table>
     
     <div class="dig">
       <Modal
@@ -47,22 +48,24 @@
         <p class="textAlign">{{$t('DiskSetting')}}</p>
       </Modal>
     </div>
-    <Modal :title="this.$t('DiskSetting')" v-model="DiskSetDialog" width="500" footer-hide>
+    <Modal :title="this.$t('DiskSetting')" v-model="DiskSetDialog" width="600" footer-hide>
+      <div class="wrapper">
+      <div class="left">
       <Row class="rowlist">
-        <i-col span="5">{{$t('DevicePath')}}：</i-col>
+        <i-col span="7">{{$t('DevicePath')}}：</i-col>
         <i-col span="16">{{rowData.path}}</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="5">{{$t('DiskSize')}}：</i-col>
-        <i-col span="16">{{rowData.size}} KB</i-col>
+        <i-col span="7">{{$t('DiskSize')}}：</i-col>
+        <i-col span="16">{{rowData.size}}</i-col>
       </Row>
       <Row class="rowlist">
-        <i-col span="5">{{$t('AvailableSpace')}}：</i-col>
-        <i-col span="16">{{rowData.availableSize}} KB</i-col>
+        <i-col span="7">{{$t('AvailableSpace')}}：</i-col>
+        <i-col span="16">{{rowData.availableSize}}</i-col>
       </Row>
       <Row class="rowlist">
         <i-col span="24">
-          <i-col span='5'>{{$t('DiskEffect')}}：</i-col>
+          <i-col span='7'>{{$t('DiskEffect')}}：</i-col>
           <Select
             v-model="selecteDisk"
             @on-change="handleSelect"
@@ -79,7 +82,7 @@
       </Row>
       <Row class="rowlist">
         <i-col span="24">
-           <i-col span='5'>{{$t('isFormat')}}：</i-col>
+           <i-col span='7'>{{$t('isFormat')}}：</i-col>
           <Select
             v-model="selecteFormatValue"
             clearable
@@ -92,25 +95,9 @@
           </Select>
         </i-col>
       </Row>
-      /** 硬盘类型 **/
-      <Row class="rowlist">
-        <i-col span="24">
-           <i-col span='5'>{{$t('isFormat')}}：</i-col>
-          <Select
-            v-model="selecteFormatValue"
-            clearable
-            class="topColumn"
-            style="width:200px;"
-            :placeholder="this.$t('pleaseInput')"
-          >
-            <Option value="yes">{{$t('Yes')}}</Option>
-            <Option value="no">{{$t('No')}}</Option>
-          </Select>
-        </i-col>
-      </Row>
-      <Row v-show="this.selecteDisk === 'dataDisk'" class="rowlist">
+      <Row v-show="this.selecteDisk !== 'unUsed'" class="rowlist">
         <i-col span="24" >
-         <i-col span='5'>{{$t('MappingDiskSymbol')}}：</i-col> 
+         <i-col span='7'>{{$t('MappingDiskSymbol')}}：</i-col> 
           <Select
             v-model="selecteDiskF"
             clearable
@@ -126,6 +113,43 @@
           </Select>
         </i-col>
       </Row>
+      <Row class="rowlist" v-show="this.selecteDisk === 'dataDisk'">
+        <i-col span="24">
+           <i-col span='7'>{{$t('ExtendedType')}}：</i-col>
+          <Select
+            v-model="ExtendedType"
+            clearable
+            class="topColumn"
+            style="width:200px;"
+            :placeholder="this.$t('pleaseInput')"
+          >
+            <Option value="GameDisk">{{$t('GameDisk')}}</Option>
+            <Option value="HotGameDisk">{{$t('HotGameDisk')}}</Option>
+            <Option value="PrivateGameDisk">{{$t('PrivateGameDisk')}}</Option>
+          </Select>
+        </i-col>
+      </Row>
+      </div>
+      <div class="right">
+        <span>作用提示</span>
+        <ul>
+          <span>游戏数据盘：</span>
+          <li>1.作为无盘数据盘使用</li>
+          <li>2.支持游戏同步，自动分配除热门游戏盘已分配游戏外的其他所有游戏，并自动完成游戏同步</li>
+        </ul>
+     
+        <span>热门游戏盘：</span>
+        <ul>
+          <li>1.作为无盘数据盘使用</li>
+          <li>2.支持游戏同步，需要手动指定需要同步的游戏，指定后自动完成同步操作</li>
+        </ul>
+        <span>私有数据盘：</span>
+        <ul>
+          <li>1.非必要磁盘</li>
+          <li>2.不支持游戏同步功能</li>
+        </ul>
+      </div>
+      </div>
       <div class="buttonList" style="margin-top:20px;">
         <Button type="primary" @click="handleSetCard">{{$t('Save')}}</Button>
         <Button @click="handleResetCard" style="margin-left: 8px">{{$t('cancelText')}}</Button>
@@ -143,7 +167,8 @@ import {
   getNetworkx,
   getDiskStatusx,
   setVdiskEthernetx,
-  deleteserverConfig
+  deleteserverConfig,
+  changeMaster
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 export default {
@@ -155,15 +180,16 @@ export default {
       serverList: '',
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
-      tempMasterServerIp: '', // 主服务器Ip
+      MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
       rowData: '',
       ServerIp: '',
-      selecteDiskF: '',
+      selecteDiskF: 'E',
       selecteDisk: 'imageDisk',
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗
       selecteFormatValue: 'no',
+      ExtendedType: 'GameDisk', // 扩展类型
       tableColumns1: [
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
@@ -230,7 +256,7 @@ export default {
               case 'offline':
                 return h('span', { style: { color: '#999999' } }, this.$t('Offline'))
               case 'online':
-                return h('span', this.$t('online'))
+                return h('span', { style: { color: '#0ecf1f' } }, this.$t('online'))
               default:
                 return '-'
             }
@@ -245,7 +271,7 @@ export default {
               case 'yes':
                 return h('span', { style: { color: '#f6521f' } }, this.$t('Yes'))
               case 'no':
-                return h('span', this.$t('No'))
+                return h('span', { style: { color: '#999999' } }, this.$t('No'))
               default:
                 return '-'
             }
@@ -270,7 +296,7 @@ export default {
           key: 'size',
           minWidth: 90,
           render: (h, params) => {
-            return h('span', bytesToSize(params.row.size))
+            return h('span', params.row.size)
           }
         },
         {
@@ -282,7 +308,7 @@ export default {
             if (value === '0' || value === 'undefined' || value === 'null') {
               return h('span', '0')
             } else {
-              return h('span', bytesToSize(params.row.availableSize))
+              return h('span', params.row.availableSize)
             }
           }
         },
@@ -310,7 +336,13 @@ export default {
             }
           }
         },
-        { title: '映射盘符', key: 'mountVol', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) } },
+        { title: '映射盘符',
+          key: 'mountVol',
+          minWidth: 120,
+          renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) },
+          render: (h, params) => {
+            return h('span', params.row.mountVol || '----')
+          } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('IOReadRate')) },
           key: 'readRate',
@@ -356,7 +388,7 @@ export default {
                 props: { type: 'info', ghost: true },
                 on: {
                   click: () => {
-                    this.handleSetDisk(params.row)
+                    this.ShowDiskPlan(params.row)
                   }
                 }
               },
@@ -377,11 +409,11 @@ export default {
           }
         }
       ],
-      tableData3: [] // 磁盘信息类别
+      diskInfo: [] // 磁盘信息类别
     }
   },
   created () {
-    this.tempMasterServerIp = this.$route.query.tempMasterServerIp
+    this.MasterServerIp = this.$route.query.MasterServerIp
     this.serverList = this.$route.query.serverList
     this.handleGetCurrentPageServerInfo()
     this.handleGetNetworkx(this.currentPageServerip)
@@ -426,7 +458,11 @@ export default {
       let that = this
       getDiskStatusx(ip).then(resp => {
         if (resp.data.ok) {
-          this.tableData3 = resp.data.data.result.list || []
+          this.diskInfo = resp.data.data.result.list || []
+          this.diskInfo.forEach(item => {
+            item.size = bytesToSize(item.size)
+            item.availableSize = bytesToSize(item.availableSize)
+          })
         }
       })
       that.spinShow = false
@@ -448,8 +484,8 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          console.log(this.tempMasterServerIp)
-          deleteserverx(this.currentPageServerip, this.tempMasterServerIp).then((resp) => {
+          console.log(this.MasterServerIp)
+          deleteserverx(this.currentPageServerip, this.MasterServerIp).then((resp) => {
             if (resp.data.ok) {
               this.$Message.success(this.$t('DeleteSucess'))
               this.$router.push({
@@ -467,30 +503,10 @@ export default {
         }
       })
     },
-    // handleButtonSetSever () {
-    //   // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
-    //   if (
-    //     this.$route.query.tempMasterServerIp &&
-    //     this.tempMasterServerIp === this.rowData.serverIP
-    //   ) {
-    //     this.$Message.info(this.$t('masterismaster'))
-    //   } else {
-    //     // 提交data:
-    //     // 1.先提交到 addServers，将当前serverIp设为mastServerIp， 然后再将之前的mastServerIp设置为从服务器 editServersNode
-    //     // serverIp, guid
-    //     addServers(this.rowData.serverIp, this.rowData.guid).then(a => {
-    //       if (a.data.error === null) {
-    //         this.handleEditServersNode(this.rowData.serverIp) // 将之前的主服务器serverIp设置 为从服务器
-    //       } else {
-    //         this.$Message.error(a.data.error)
-    //       }
-    //     })
-    //   }
-    // },
     handleEditServersNode () {
       // masterIp, syncimg, auba
       editServersNode(
-        this.tempMasterServerIp,
+        this.MasterServerIp,
         '1',
         '1',
         this.rowData.serverIp
@@ -528,7 +544,6 @@ export default {
      * 设置磁盘
      */
     HandleSetDisk () {
-      this.DiskSetDialog = false
       this.DiskSettingDialog = true
       this.spinShow = true
       setDiskFunctionx(
@@ -540,7 +555,14 @@ export default {
         this.currentPageServerip
       ).then(response => {
         if (response.data.ok) {
-          this.handleGetDiskStatusx(this.currentPageServerip)
+          if (response.data.data.error) {
+            // this.$Notice.success({
+            //   title: this.$t(response.data.data.error)
+            // })
+          } else {
+            this.handleGetDiskStatusx(this.currentPageServerip)
+            this.DiskSetDialog = false
+          }
         } else {
           this.$Message.error(response.data.data.error)
         }
@@ -563,11 +585,15 @@ export default {
             title: this.$t('SetSucess')
           })
         }
-        this.handleGetNetworkx(this.ServerIp)
+        this.handleGetNetworkx(this.currentPageServerip)
       })
     },
-    handleSetDisk (index) {
+    /**
+     * 弹出设置面板
+     */
+    ShowDiskPlan (index) {
       this.rowData = index
+      this.selecteDisk = this.rowData.fun
       this.DiskSetDialog = true
     },
     /**
@@ -591,14 +617,24 @@ export default {
       this.handleGetNetworkx(this.ServerIp)
       this.handleGetDiskStatusx(this.ServerIp)
     },
+    /**
+     * 切换主服务器
+     */
+    HandlechangeMaster () {
+      console.log(this.MasterServerIp)
+      changeMaster('master', this.MasterServerIp, '10.88.66.146').then((resp) => {
+        console.log(resp)
+      })
+    },
     /*
     列表选择
     */
     listTypeChange (serverip) {
-      this.serverIp = serverip
+      // this.serverIp = serverip
       getServersx(serverip).then((resp) => {
         if (resp.data.ok) {
           this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
+          this.isMaster = this.CurrentPageserverInfo[0].isMaster
         }
       })
       this.handleGetNetworkx(serverip)
@@ -634,6 +670,25 @@ h3 {
   text-align: center;
   font-size: 14px;
   margin: -10px;
+}
+.wrapper{
+  display: flex;
+}
+ul ,li {
+  list-style: none;
+}
+li {
+  margin-left: 10px;
+}
+.left {
+  flex:1;
+}
+.right{
+  background:#F8FCE5;
+  border: 1px solid #ddd;
+  padding:8px;
+  max-width: 260px;
+  font-size: 14px;
 }
 </style>
 

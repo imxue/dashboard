@@ -39,10 +39,10 @@ export function getServersx (ip) {
   return makeRequestx('Get_Servers', {}, ip)
 }
 
-export function login (password) {
-  return makeRequest('Login', {
+export function login (password, ip) {
+  return makeRequestx('Login', {
     rootPwd: password
-  })
+  }, ip)
 }
 
 export function controllServer (controlServerType, controlServerAction) {
@@ -446,11 +446,11 @@ export function deleteSuperIP (ip, superIpAction, comment) {
 //   salve: 'serve'
 // }
 
-export function changeMaster (masterRole, masterIP) {
-  return makeRequest('ChMaster', {
+export function changeMaster (masterRole, masterIP, ip) {
+  return makeRequestx('ChMaster', {
     role: masterRole,
     master: masterIP
-  })
+  }, ip)
 }
 
 export function getVersion () {

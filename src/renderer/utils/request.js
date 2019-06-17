@@ -14,9 +14,6 @@ const service = axios.create({
 var xueCount
 service.interceptors.request.use(
   (request) => {
-    // if (request.method === 'post') {
-    //   request.data = qs.stringify(request.data)
-    // }
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
@@ -29,6 +26,7 @@ service.interceptors.request.use(
         method: request.data.method,
         params: request.data.params
       }
+      delete request.data.params
       request.data.method = 'POST'
       return request
     }

@@ -9,13 +9,13 @@
       <Button type="primary" class="topColumn" @click="handleButtonStandby">待机状态</Button> -->
     </div>
     <!-- table -->
-    <Table border :columns="MirrorInfoTable" :data="MirrorsInfoDate" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border :columns="MirrorInfoTable" :data="MirrorsInfoDate"></Table>
     <Divider />
     <div class="topItem">
       <Button type="primary" class="topColumn" @click="handleButtonCreate">{{$t('Create')}}</Button>
     </div>
     <!-- table -->
-    <Table border  stripe @on-row-dblclick='handleSet' ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border  stripe @on-row-dblclick='handleSet' ref="selection" :columns="tableColumns" :data="tableData"></Table>
     <Modal
       :title="modalTitle"
       v-model="showImgPopup"
@@ -37,7 +37,7 @@
       v-model="showPopup"
       width="880"
       footer-hide>
-      <Table border :columns="configPointTable" :data="configPointDate" :no-data-text="this.$t('Nodata')"></Table>
+      <Table border :columns="configPointTable" :data="configPointDate"></Table>
      </Modal>
   </div>
 </template>
@@ -306,8 +306,8 @@
        * 镜像名 配置编号 服务器
        */
   
-      handleGetRestoreList (index) {
-        getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
+      handleGetRestoreList (data) {
+        getImageRestore(this.MirrorsInfoDate[0].name, data.no, localStorage.getItem('masterip')).then((resp) => {
           if (resp.data.ok) {
             this.configPointDate = resp.data.data.result.rollbackList || []
           }
