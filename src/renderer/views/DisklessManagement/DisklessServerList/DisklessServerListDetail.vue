@@ -554,20 +554,12 @@ export default {
         this.selecteDiskF,
         this.currentPageServerip
       ).then(response => {
-        if (response.data.ok) {
-          if (response.data.data.error) {
-            // this.$Notice.success({
-            //   title: this.$t(response.data.data.error)
-            // })
-          } else {
-            this.handleGetDiskStatusx(this.currentPageServerip)
-            this.DiskSetDialog = false
-          }
-        } else {
-          this.$Message.error(response.data.data.error)
-        }
+        this.handleGetDiskStatusx(this.currentPageServerip)
+        this.DiskSetDialog = false
         this.DiskSettingDialog = false
         this.spinShow = false
+      }, (response) => {
+        this.$Message.error(response.data.data.error)
       })
     },
     handleResetCard () {

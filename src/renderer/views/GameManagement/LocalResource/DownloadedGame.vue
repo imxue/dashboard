@@ -24,7 +24,7 @@
 
 <script>
   import { localMultiSync, getDownloadedGames, deleteLocalGame } from '@/api/localGame'
-  import { getDrivers } from '@/api/sync'
+  // import { getDrivers } from '@/api/sync'
   export default {
     name: 'subType3-1',
     data () {
@@ -131,23 +131,24 @@
       }
     },
     methods: {
-      handleGetDrivers () {
-        getDrivers().then((res) => {
-          if (res.data.Code === 0) {
-            var arr = res.data.Data.TypeIds
-            if (arr === null) {
-              this.gameList = null // 全部游戏类型
-            } else {
-              this.gameList = arr
-              // console.log('gameTypeList::' + JSON.stringify(this.gameTypeList))
-            }
-          } else {
-            this.$Message.error(res.data.Msg)
-          }
-        }, () => {
-          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
-        })
-      },
+      // handleGetDrivers () {
+      //   getDrivers().then((res) => {
+      //     debugger
+      //     if (res.data.Code === 0) {
+      //       var arr = res.data.Data.TypeIds
+      //       if (arr === null) {
+      //         this.gameList = null // 全部游戏类型
+      //       } else {
+      //         this.gameList = arr
+      //         // console.log('gameTypeList::' + JSON.stringify(this.gameTypeList))
+      //       }
+      //     } else {
+      //       this.$Message.error(res.data.Msg)
+      //     }
+      //   }, () => {
+      //     this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
+      //   })
+      // },
       handleSelectChange (index) {
         this.optionVal = index
       },
@@ -239,16 +240,13 @@
         this.$Modal.confirm({
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteCurrentData'),
-          cancelText: this.$t('cancelText'),
-          okText: this.$t('confirm'),
           onOk: () => {
             deleteLocalGame(index.Id).then(
               resp => {
                 this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
               },
-              () => {
-                this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
-                this.$Message.error('请求出错，请稍后再试')
+              (e) => {
+                this.$Message.error(this.$t('NotDeleteCenterGame'))
               }
             )
           },
