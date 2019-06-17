@@ -139,12 +139,10 @@ export default {
      */
     searchByGameName (name) {
       getTodayUpdateGames(0, 1000000, 'Size').then(response => {
-        if (response.data.ok) {
-          this.tableDataAll = response.data.data.data
-          this.tableData = this.tableDataAll.filter(item => {
-            return item.Name === name
-          })
-        }
+        this.tableDataAll = response.data.data.data
+        this.tableData = this.tableDataAll.filter(item => {
+          return item.Name === name
+        })
       }, (e) => {
         this.$Notice.error({ desc: '' + e, duration: 0 })
       }).catch((e) => {
@@ -156,20 +154,18 @@ export default {
      */
     handgetAllHotGame (offset, limit, orderby) {
       getTodayUpdateGames(offset, limit, orderby).then(response => {
-        if (response.data.ok) {
-          this.tableData = response.data.data.data
-          response.data.data.data.filter(item => {
-            if (item.Name) {
-              this.GameName.push(item.Name)
-            }
-            this.GameAllName = Array.from(this.GameName)
-            this.GameName = this.GameName.slice(0, 6)
-            this.temp = Array.from(this.GameAllName)
-          })
-          this.pageInfo = response.data.data.pageino
-          this.pageInfo.page_index++
-          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-        }
+        this.tableData = response.data.data.data
+        response.data.data.data.filter(item => {
+          if (item.Name) {
+            this.GameName.push(item.Name)
+          }
+          this.GameAllName = Array.from(this.GameName)
+          this.GameName = this.GameName.slice(0, 6)
+          this.temp = Array.from(this.GameAllName)
+        })
+        this.pageInfo = response.data.data.pageino
+        this.pageInfo.page_index++
+        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       }, (e) => {
         // 这里执行reject状态的
         this.$Message.error(this.$t('kxLinuxErr.36873'))
@@ -183,20 +179,18 @@ export default {
      */
     handgetAllGame (offset, limit, orderby) {
       getTodayUpdateGames(offset, limit, orderby).then((response) => {
-        if (response.data.ok) {
-          this.tableData = response.data.data.data
-          response.data.data.data.filter(item => {
-            if (item.Name) {
-              this.GameName.push(item.Name)
-            }
-            this.GameAllName = Array.from(this.GameName)
-            this.GameName = this.GameName.slice(0, 6)
-            this.temp = Array.from(this.GameAllName)
-          })
-          this.pageInfo = response.data.data.pageino
-          this.pageInfo.page_index++
-          this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-        }
+        this.tableData = response.data.data.data
+        response.data.data.data.filter(item => {
+          if (item.Name) {
+            this.GameName.push(item.Name)
+          }
+          this.GameAllName = Array.from(this.GameName)
+          this.GameName = this.GameName.slice(0, 6)
+          this.temp = Array.from(this.GameAllName)
+        })
+        this.pageInfo = response.data.data.pageino
+        this.pageInfo.page_index++
+        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       })
     },
     /**
@@ -237,13 +231,9 @@ export default {
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        if (e.data.ok) {
-          this.$Message.error(this.$t('repairSucess'))
-        } else {
-          this.$Message.error(this.$t('FileNotFound'))
-        }
+        this.$Message.error(this.$t('repairSucess'))
       }, () => {
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
+        this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
       })
@@ -260,13 +250,9 @@ export default {
         'closable': true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            if (e.data.ok) {
-              this.$Message.error(this.$t('DeleteGameSucess'))
-            } else {
-              this.$Message.error(this.$t('FileNotFound'))
-            }
+            this.$Message.error(this.$t('DeleteGameSucess'))
           }, () => {
-            this.$Message.error(this.$t('kxLinuxErr.36873'))
+            this.$Message.error(this.$t('FileNotFound'))
           }).catch(() => {
             this.$Message.error(this.$t('kxLinuxErr.10'))
           })
