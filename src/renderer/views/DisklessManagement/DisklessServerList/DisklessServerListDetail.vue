@@ -616,15 +616,13 @@ export default {
      */
     HandlechangeMaster () {
       for (let i = 0; i < this.serverList.length; i++) {
-        editServersNode(this.currentPageServerip,
-          '1',
-          '1',
-          this.serverList[i].serverIp).then((resp) => {
+        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
         }, (error) => {
           console.log(error)
         })
       }
       localStorage.setItem('masterip', this.currentPageServerip)
+      debugger
       this.handleButtonRefresh()
     },
     /*

@@ -3,8 +3,8 @@ import Layout from '@/views/layout/index'
 import DisklessServerList from '@/views/DisklessManagement/DisklessServerList/index'
 import DisklessServerListAdd from '@/views/DisklessManagement/DisklessServerList/DisklessServerListAdd'
 import DisklessServerListDetail from '@/views/DisklessManagement/DisklessServerList/DisklessServerListDetail'
-import AllMirror from '@/views/DisklessManagement/MirrorManagement/subtype2-1'
-import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/subtype2-set'
+import AllMirror from '@/views/DisklessManagement/MirrorManagement/index'
+import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/MirrorConfig'
 import StartUpPlan from '@/views/DisklessManagement/ClientStartup/StartUpPlan'
 import dpcp from '@/views/DisklessManagement/ClientStartup/dpcp'
 import Edit from '@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'
@@ -46,19 +46,19 @@ export default {
     },
     {
       path: 'subType2',
-      name: 'type2-SubType2-1',
+      name: 'MirrorManagement',
       meta: { title: 'MirrorManagement', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'subType2-1',
+          path: 'AllMirror',
           name: 'MirrorList',
           meta: { title: 'AllMirror' },
           component: AllMirror
         },
         {
           path: 'subType2-set',
-          name: 'type2-SubsubType2Type1-set',
+          name: 'ConfigPoint',
           meta: { title: 'ConfigPoint' },
           component: ConfigPoint,
           hidden: true

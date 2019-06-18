@@ -11,27 +11,27 @@
       width= "500"
       footer-hide>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="135">
-        <FormItem :label="this.$t('MirrorName')+'：'" prop="nameVal">
-          <Input v-model="formValidate.nameVal" :placeholder="this.$t('pleaseInputMirror')" />
+        <FormItem :label="this.$t('MirrorName')+'：'" prop="name">
+          <Input v-model="formValidate.name" :placeholder="this.$t('pleaseInputMirror')" />
         </FormItem>
          <FormItem :label="this.$t('MirrorSize')+'：'" prop="size">
           <Row><Input v-model="formValidate.size" :placeholder="this.$t('pleaseInputMirrorSize') + ' GB'" /></Row>
         </FormItem>
         <FormItem :label="this.$t('SavePath')+'：'" prop="path">
           <Select v-model="formValidate.path" :placeholder="this.$t('pleaseInputSavePath')"  >
-         
-              <Tooltip placement="right"  v-for="(item, index) in diskList" :key="index">
-      <Option  :value="item.path" >{{item.path}}</Option>
-        <div slot="content">
-            <p>{{$t('AvailableSpace')}} {{item.availableSize}}</p>
-        </div>
-
-    </Tooltip>
+        
+                   <Option  :value="item.path" v-for="(item, index) in diskList" :key="index" >{{item.path}}
+              <Poptip title="Title" content="content">
+                  <p>{{$t('AvailableSpace')}} {{item.availableSize}}</p>
+                   </Poptip>
+                   </Option>        
           </Select>
         </FormItem>
         <FormItem :label="this.$t('MappingDiskSymbol')+'：'" prop="mountVol">
-          <Input v-model="formValidate.mountVol" disabled :placeholder="this.$t('pleaseInput')" />
+          <Input v-model="mountVol" disabled :placeholder="this.$t('pleaseInput')" />
         </FormItem>
+
+
          <FormItem :label="this.$t('importPrimaryServer')+'：'" prop="isImportFormMaster">
              <Select v-model="formValidate.isImportFormMaster" disabled :placeholder="this.$t('pleaseInputSavePath')">
               <Option value="yes">yes</Option>
@@ -51,7 +51,7 @@
   import { getImageListx, createImagex, getDiskStatusx, deleteImagex } from '@/api/wupan'
   import { bytesToSize } from '@/utils/index'
   export default {
-    name: 'subType2-1',
+    name: 'mirrorManagement',
     data () {
       return {
         showPopup: false,
@@ -124,18 +124,18 @@
         ],
         mirroringInfo: [],
         formValidate: {
-          nameVal: '',
+          name: '',
           size: '',
           diskSize: '',
           path: '',
           menuItemName: '',
-          cacheSize: '',
+          cacheSize: '512',
           mountVol: 'z',
           isImportFormMaster: 'yes'
         },
   
         ruleValidate: {
-          nameVal: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          name: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           size: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           path: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
         }
@@ -145,8 +145,11 @@
       this.handleGetImageList()
     },
     computed: {
-      routes () {
-        return this.$router.options.routes
+      mountVol () {
+        let temp = this.diskList.filter(item => {
+          return this.formValidate.path === item.path
+        })
+        return temp[0] ? temp[0].vol : ''
       }
     },
     methods: {
@@ -155,20 +158,18 @@
        */
       handleGetDiskStatus () {
         getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            let temp = []
-            var arr = response.data.data.result.list || []
-            var newArr = arr.filter(item => item.fun === 'imageDisk')
-            for (var i in newArr) {
-              temp.push({
-                path: newArr[i].path,
-                availableSize: bytesToSize(Number(newArr[i].availableSize))
-              })
-              this.diskList = temp
-              this.formValidate.path = this.diskList[0].path
-              temp = []
-            }
+          let temp = []
+          var arr = response.data.data.result.list || []
+          var newArr = arr.filter(item => item.fun === 'imageDisk')
+          for (var i in newArr) {
+            temp.push({
+              path: newArr[i].path,
+              availableSize: bytesToSize(Number(newArr[i].availableSize)),
+              vol: newArr[i].vol
+            })
           }
+          this.diskList = temp
+          this.formValidate.path = this.diskList[0].path
         })
       },
       /**
@@ -176,9 +177,7 @@
        */
       handleGetImageList () {
         getImageListx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            this.mirroringInfo = response.data.data.result.list || []
-          }
+          this.mirroringInfo = response.data.data.result.list || []
         })
       },
       handleButtonAdd (val) {
@@ -191,11 +190,11 @@
           if (valid) {
             this.showPopup = false
             // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
-            createImagex(this.formValidate.nameVal, this.formValidate.size, this.formValidate.menuItemName, this.formValidate.path, this.formValidate.cacheSize, this.formValidate.mountVol, this.formValidate.isImportFormMaster, localStorage.getItem('masterip')).then((response) => {
-              if (response.data.ok) {
-                self.handleGetImageList()
-                this.$refs[name].resetFields()
-              }
+            this.formValidate.mountVol = this.mountVol
+            createImagex(localStorage.getItem('masterip'), self.formValidate).then((response) => {
+              self.handleGetImageList()
+              this.$refs[name].resetFields()
+            }, (e) => {
             })
           } else {
             this.showPopup = true

@@ -1,28 +1,27 @@
 <template>
   <div class="main">
     <Form
-      ref="DHCPTable"
-      :model="DHCPTable"
+      ref="formValidate"
+      :model="formValidate"
       label-position="left"
       :label-width="90"
       :rules="ruleValidate"
-      :label-in-value="true"
     >
       <FormItem :label="this.$t('MachineNamePrefix')" prop="prefix">
-        <Input v-model="DHCPTable.prefix" :placeholder="$t('pleaseInput')"/>
+        <Input v-model="formValidate.prefix" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('Numberlength')" prop="numbetLength">
-        <Input v-model="DHCPTable.numbetLength" :placeholder="$t('pleaseInput')"/>
+        <Input v-model="formValidate.numbetLength" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('StartingNumber')" prop="numberBegin">
-        <Input v-model="DHCPTable.numberBegin" :placeholder="$t('pleaseInput')"/>
+        <Input v-model="formValidate.numberBegin" :placeholder="$t('pleaseInput')"/>
       </FormItem>
       <FormItem :label="this.$t('StartingIP')" prop="ipBegin">
-        <Input v-model="DHCPTable.ipBegin" :placeholder="$t('pleaseInput')"/>
+        <Input v-model="formValidate.ipBegin" :placeholder="$t('pleaseInput')"/>
       </FormItem>
 
       <FormItem :label="this.$t('AddMode')" prop="addMode">
-        <Select v-model="DHCPTable.addMode" style="width:200px" :placeholder="$t('pleaseInput')">
+        <Select v-model="formValidate.addMode" style="width:200px" :placeholder="$t('pleaseInput')">
           <Option value="disable">{{$t('DisableClientAdd')}}</Option>
           <Option value="inputNumber">{{$t('InputNumberAdded')}}</Option>
           <Option value="inputEnter">{{$t('CarriageReturn')}}</Option>
@@ -30,13 +29,13 @@
       </FormItem>
 
       <FormItem :label="this.$t('StartUpPlan')" prop="pcGp">
-        <Select v-model="DHCPTable.pcGp" style="width:200px" :not-found-text="$t('Nodata')">
+        <Select v-model="formValidate.pcGp" style="width:200px">
           <Option v-for="item in pcGpList" v-bind:key = "item.name" v-bind:value="item.name">{{item.name}}</Option>
         </Select>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('DHCPTable')" :loading="loading">{{$t('apply')}}</Button>
-        <Button @click="handleReset('DHCPTable')" style="margin-left: 8px">{{$t('Reset')}}</Button>
+        <Button type="primary" @click="handleSubmit('formValidate')" :loading="loading">{{$t('apply')}}</Button>
+        <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('Reset')}}</Button>
       </FormItem>
     </Form>
   </div>
@@ -52,9 +51,8 @@ export default {
   data () {
     return {
       pcGpList: '',
-      showPopup: false,
       loading: false,
-      DHCPTable: {
+      formValidate: {
         prefix: '',
         numbetLength: '',
         numberBegin: '',
@@ -63,78 +61,16 @@ export default {
         pcGp: ''
       },
       ruleValidate: {
-        prefix: [
-          { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }
-        ],
-        numbetLength: [
-          {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
-            trigger: 'blur'
-          }
-        ],
-        numberBegin: [
-          {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
-            trigger: 'blur'
-          }
-        ],
-        ipBegin: [
-          {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
-            trigger: 'blur'
-          }
-        ],
-        addMode: [
-          {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
-            trigger: 'blur'
-          }
-        ],
-        pcGp: [
-          {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
-            trigger: 'blur'
-          }
-        ]
-      },
-      clientTable: [
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) },
-          key: 'prefix'
-        },
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('Numberlength')) },
-          key: 'numbetLength'
-        },
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('StartingNumber')) },
-          key: 'numberBegin'
-        },
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('StartingIP')) },
-          key: 'ipBegin'
-        },
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('AddMode')) },
-          key: 'addMode'
-        },
-        {
-          renderHeader: (h, params) => { return h('span', this.$t('StartupScenario')) },
-          key: 'pcGp'
-        }
-      ]
+        prefix: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        numbetLength: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        numberBegin: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        ipBegin: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        addMode: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+        pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
+      }
     }
   },
   methods: {
-    handUp () {
-      this.showPopup = true
-    },
-
     handleSubmit (name) {
       this.loading = true
       let that = this
@@ -162,7 +98,7 @@ export default {
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
-        this.DHCPTable = resp.data.data.result
+        this.formValidate = resp.data.data.result ? resp.data.data.result : {}
       })
     }
   },
@@ -173,7 +109,6 @@ export default {
       this.pcGpList = e.data.data.result.list
     },
     (e) => { this.$Message.error(e.data.error) })
-    console.log(this.pcGpList)
   }
 }
 </script>

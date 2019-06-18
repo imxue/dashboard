@@ -90,28 +90,13 @@ export function getImageListx (ip) {
   return makeRequestx('Get_ImgList', {
   }, ip)
 }
-
-export function createImage (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster) {
-  return makeRequest('Create_Img', {
-    name: name,
-    size: sizeGB,
-    menuItemName: title,
-    path: path,
-    cacheSize: cacheSizeMB,
-    mountVol: mountVolume,
-    isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
-  })
-}
-export function createImagex (name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster, ip) {
-  return makeRequestx('Create_Img', {
-    name: name,
-    size: sizeGB,
-    menuItemName: title,
-    path: path,
-    cacheSize: cacheSizeMB,
-    mountVol: mountVolume,
-    isImportFormMaster: isImportFormMaster ? 'yes' : 'no'
-  }, ip)
+/**
+ * 创建镜像
+ * @param {*} ip ip
+ * @param {*} mirrorData 镜像信息
+ */
+export function createImagex (ip, mirrorData) {
+  return makeRequestx('Create_Img', { ...mirrorData }, ip)
 }
 
 export function editImage (name, title, mountVolume) {
@@ -556,21 +541,6 @@ export function editServersNode (masterIp, isSyncImage, isOverload, ip) {
     auba: isOverload ? '1' : '0'
   }, ip)
 }
-
-// function makeServersNode (method, param, ip) {
-//   const data = {
-//     method: method,
-//     params: [
-//       param
-//     ]
-//   }
-//   return request({
-//     url: `http://${ip}:13302/jsonrpc`,
-//     method: 'post',
-//     data
-//   })
-// }
-
 /**
  * 添加服务器
  * @param {*} serverIp
@@ -589,33 +559,3 @@ export function addServersx (serverIp, guid, ip) {
 export function getServersNode (ip) {
   return makeRequestx('Get_Servers_Node', {}, ip)
 }
-
-// function makeGuid (url) {
-//   const data = {
-//     method: 'Get_Servers_Node',
-//     params: [
-//       {}
-//     ]
-//   }
-//   return request({
-//     method: 'post',
-//     url: `http://${url}:13302/jsonrpc`,
-//     data
-//   })
-// }
-
-// export function delServers (serverIp) {
-//   return makeRequest('Del_Servers', {
-//     serverIp: serverIp
-//   })
-// }
-
-// export function clearServersNode () {
-//   return makeRequest('Cls_Servers_Node', {
-//   })
-// }
-
-// export function getServersStatus () {
-//   return makeRequest('Get_Servers_Stat', {
-//   })
-// }

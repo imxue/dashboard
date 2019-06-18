@@ -58,7 +58,7 @@
     mergeImageProject
   } from '@/api/wupan'
   export default {
-    name: 'subType2-1',
+    name: 'MirrorConfig',
     data () {
       return {
         modalType: 'create',
