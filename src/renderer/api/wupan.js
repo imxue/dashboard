@@ -67,23 +67,13 @@ export function getDiskStatusx (url) {
   return makeRequestx('Get_DiskStatus', {
   }, url)
 }
-
-// var DiskFunction_Type = {
-//   imageDisk: 'imageDisk',
-//   dataDisk: 'dataDisk',
-//   writebackDisk: 'writebackDisk',
-//   unUsed: 'unUsed'
-// }
-
-export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat, volume, exttype, ip) {
-  return makeRequestx('Set_DiskFun', {
-    path: path,
-    fun: diskFunctionType,
-    cacheSize: cacheSizeMB,
-    isFormat: isFormat,
-    vol: volume,
-    exttype: exttype
-  }, ip)
+/**
+ * 设置磁盘作用
+ * @param {*} DiskDate
+ * @param {*} ip
+ */
+export function setDiskFunctionx (DiskDate, ip) {
+  return makeRequestx('Set_DiskFun', { ...DiskDate }, ip)
 }
 
 export function getImageListx (ip) {

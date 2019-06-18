@@ -188,6 +188,7 @@ export default {
       DiskSetDialog: false, // 磁盘设置弹窗
       selecteFormatValue: 'no',
       ExtendedType: 'GameDisk', // 扩展类型
+      DiskData: {}, // 磁盘信息
       tableColumns1: [
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
@@ -458,12 +459,6 @@ export default {
       })
       that.spinShow = false
     },
-    handleButtonStandby () {},
-    handleButtonWorking () {},
-    handleButtonOff () {},
-    handleButtonRestart () {},
-    handleButtonRemote () {},
-    handleButtonUpgrade () {},
     /**
      * 删除ip
      */
@@ -495,7 +490,6 @@ export default {
       })
     },
     handleEditServersNode () {
-      // masterIp, syncimg, auba
       editServersNode(
         this.MasterServerIp,
         '1',
@@ -537,15 +531,15 @@ export default {
     HandleSetDisk () {
       this.DiskSettingDialog = true
       this.spinShow = true
-      setDiskFunctionx(
-        this.rowData.path, // 设备路径
-        this.selecteDisk, // 作用
-        '512', // 缓存
-        this.selecteFormatValue, // 是否格式化
-        this.selecteDiskF, // 映射磁盘
-        this.ExtendedType, // 扩展类型
-        this.currentPageServerip
-      ).then(response => {
+      this.DiskData = {
+        path: this.rowData.path, // 设备路径
+        fun: this.selecteDisk, // 磁盘作用
+        cacheSize: '512',
+        isFormat: this.selecteFormatValue,
+        exttype: this.selecteDisk === 'dataDisk' ? this.ExtendedType : '',
+        vol: this.selecteDiskF // 映射磁盘
+      }
+      setDiskFunctionx(this.DiskData, this.currentPageServerip).then(response => {
         this.handleGetDiskStatusx(this.currentPageServerip)
         this.DiskSetDialog = false
         this.DiskSettingDialog = false
@@ -622,7 +616,6 @@ export default {
         })
       }
       localStorage.setItem('masterip', this.currentPageServerip)
-      debugger
       this.handleButtonRefresh()
     },
     /*
