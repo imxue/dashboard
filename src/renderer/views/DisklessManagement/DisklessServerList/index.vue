@@ -316,6 +316,7 @@ export default {
     handleGetCurrMasterServerIp (data) {
       if (data === null) {
         this.tempMasterServerIp = ''
+        localStorage.removeItem('masterip')
       } else {
         var arr = data.filter(item => item.isMaster === '1')
         this.tempMasterServerIp = arr[0].serverIp
