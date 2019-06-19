@@ -156,7 +156,6 @@
        */
       handleGetDiskStatus () {
         getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
-          debugger
           if (!response.data.error) {
             let temp = []
             var arr = response.data.result.list || []
