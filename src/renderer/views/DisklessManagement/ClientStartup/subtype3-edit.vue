@@ -297,8 +297,6 @@
        */
       handleSubmit (name) {
         let that = this
-        debugger
-  
         this.$refs[name].validate(valid => {
           if (valid) {
             if (that.tableData1 && that.tableData1.length === 0) {
@@ -311,7 +309,7 @@
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
                   if (that.$route.query.flag) {
-                    deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
+                    deletePcGroup(name, localStorage.getItem('masterip')).then((response) => {
                       if (!response.data.error) {
                         this.handleGetPcGroup()
                       }
