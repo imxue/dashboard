@@ -2,13 +2,6 @@
 
 import { app, BrowserWindow } from 'electron'
 
-const log = require('electron-log')
-const { autoUpdater } = require('electron-updater')
-
-autoUpdater.autoDownload = false
-autoUpdater.logger = log
-autoUpdater.logger.transports.file.level = 'info'
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
