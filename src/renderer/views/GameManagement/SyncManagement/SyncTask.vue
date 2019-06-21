@@ -98,7 +98,7 @@
       }
     },
     created () {
-      // this.handleGetTableList(this.curroffset, this.currlimit)
+      this.handleGetTableList()
     },
     computed: {
       routes () {
@@ -106,27 +106,19 @@
       }
     },
     methods: {
-      handleGetTableList (offset, limit) {
-        var listQuery = '?offset=' + offset + '&limit=' + limit
-        getSyncQueue(listQuery).then((a) => {
-          if (a.data.Data) {
-            var datalist = a.data.Data.List
-          }
-          if (a.data.Code === 0) {
-            if (datalist === null) {
-              this.data = null
-              this.tableData = []
-            } else {
-              this.tableData = a.data.Data.List
-              this.totalPageNumber = Number(a.data.Data.TotalCount)
-              this.currentPage = Number(a.data.Data.PageNo)
-              this.pageSize = Number(a.data.Data.TotalPage)
-            }
-          } else {
-            this.$Message.error(a.data.Msg)
-          }
-        }, () => {
-          this.$Message.error('请求出错，请稍后再试')
+      /**
+      * 获取同步任务
+      */
+      handleGetTableList () {
+        var info = {
+          offset: 0,
+          limit: 10
+        }
+        getSyncQueue(info).then((resp) => {
+          console.log(resp.data.data.data)
+          this.tableData = resp.data.data.data
+        }, (error) => {
+          console.log(error)
         })
       },
       hanbleChangePage (num) {

@@ -86,12 +86,6 @@ export function resync (id) { // 重新同步
     data
   })
 }
-export function getSyncQueue (query) { // 同步任务
-  return request({
-    url: '/v1/sync/syncQueue' + query,
-    method: 'get'
-  })
-}
 
 export function deleteSyncQueue (id) { // 删除同步任务
   const data = {
@@ -121,3 +115,30 @@ export function deleteSyncQueue (id) { // 删除同步任务
 //     data
 //   })
 // }
+/**
+ * 获取同步任务
+ */
+export function getSyncQueue (info) {
+  return request({
+    url: `/v1/gamesync/getAllSyncTask?offset=${info.offset}0&limit=${info.limit}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 设置数据扩展盘
+ */
+export function setDiskAttribute (info) {
+  const data = {
+    'server_id': info.ip,
+    'device_path': info.devicePath,
+    'disk_type': 1,
+    'extend_disk_type': info.extend,
+    'disk_symbol': info.disk + ':'
+  }
+  return request({
+    url: `/v1/serverdisk/setDiskAttribute`,
+    method: 'post',
+    data
+  })
+}

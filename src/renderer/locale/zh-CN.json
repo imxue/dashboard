@@ -378,5 +378,7 @@
   "GameDisk":"游戏数据盘",
   "HotGameDisk":"热门数据盘",
   "PrivateGameDisk":"私有数据盘",
-  "NotDeleteCenterGame":"不能删除中心游戏"
+  "NotDeleteCenterGame":"不能删除中心游戏",
+  "ExtendedTypeSuccess":"扩展类型设置成功",
+  "ExtendedTypeFail":"扩展类型设置失败"
 }

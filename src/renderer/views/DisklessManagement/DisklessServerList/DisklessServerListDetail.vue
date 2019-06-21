@@ -18,7 +18,7 @@
 
 
     <Row style="margin:10px 0;">
-      <h3>{{$t('NetworkSetting')}}</h3>
+      <span>{{$t('NetworkSetting')}}</span>
       <Divider/>
       <Button type="primary" class="topColumn" @click="handleLoadNICx">{{$t('SetTheLoadNetworkCard')}}</Button>
     </Row>
@@ -30,11 +30,9 @@
       @on-selection-change="handleCheckBox"
     ></Table>
     <div style="margin:10px 0; ">
-      <h3>{{$t('DiskSetting')}}</h3>
+      <span >{{$t('DiskSetting')}}</span>
       <Divider/>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </div>
-   
       <Table border :columns="tableColumns3" :data="diskInfo" @on-row-dblclick="ShowDiskPlan"></Table>
     
     <div class="dig">
@@ -123,9 +121,9 @@
             style="width:200px;"
             :placeholder="this.$t('pleaseInput')"
           >
-            <Option value="GameDisk">{{$t('GameDisk')}}</Option>
-            <Option value="HotGameDisk">{{$t('HotGameDisk')}}</Option>
-            <Option value="PrivateGameDisk">{{$t('PrivateGameDisk')}}</Option>
+            <Option value="0">{{$t('GameDisk')}}</Option>
+            <Option value="1">{{$t('HotGameDisk')}}</Option>
+            <Option value="2">{{$t('PrivateGameDisk')}}</Option>
           </Select>
         </i-col>
       </Row>
@@ -170,6 +168,7 @@ import {
   deleteserverConfig
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
+import { setDiskAttribute } from '@/api/sync'
 export default {
   name: 'subType1-detail',
   data () {
@@ -187,7 +186,7 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗
       selecteFormatValue: 'no',
-      ExtendedType: 'GameDisk', // 扩展类型
+      ExtendedType: '0', // 扩展类型
       DiskData: {}, // 磁盘信息
       tableColumns1: [
         {
@@ -540,14 +539,28 @@ export default {
         vol: this.selecteDiskF // 映射磁盘
       }
       setDiskFunctionx(this.DiskData, this.currentPageServerip).then(response => {
-        this.handleGetDiskStatusx(this.currentPageServerip)
         this.DiskSetDialog = false
         this.DiskSettingDialog = false
         this.spinShow = false
+        if (this.selecteDisk === 'dataDisk') {
+          let info = {
+            ip: this.currentPageServerip,
+            devicePath: this.rowData.path,
+            disk: this.selecteDiskF,
+            extend: parseInt(this.ExtendedType)
+          }
+          setDiskAttribute(info).then((resp) => {
+            this.$Message.error(this.$t(`ExtendedTypeSuccess`))
+          }, () => {
+            this.$Message.error(this.$t(`ExtendedTypeFail`))
+          })
+        }
       }, (response) => {
         this.spinShow = false
         this.DiskSettingDialog = false
         this.$Message.error(this.$t(`kxLinuxErr.${response}`))
+      }).finally(() => {
+        this.handleGetDiskStatusx(this.currentPageServerip)
       })
     },
     handleResetCard () {
@@ -646,7 +659,7 @@ export default {
 .ivu-modal-body {
   padding-left: 50px;
 }
-h3 {
+span {
   margin-bottom: -20px;
 }
 .rowlist {
@@ -671,6 +684,10 @@ li {
 }
 .left {
   flex:1;
+}
+.ivu-divider-horizontal{
+  margin:15px 0;
+  font-weight: bold;
 }
 .right{
   background:#F8FCE5;
