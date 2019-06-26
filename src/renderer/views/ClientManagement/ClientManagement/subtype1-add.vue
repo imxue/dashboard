@@ -61,7 +61,7 @@
         gatewayState: 0,
         startSchemaState: 0,
         subnetState: 0,
-  
+        pcGpList: [], // 启动方案
         dataList: [],
         enableList: [
           { id: 1, value: '0', label: '启用' },
@@ -194,7 +194,6 @@
       },
       handleSubmit (name) {
         this.$refs[name].validate(valid => {
-          debugger
           if (valid) {
             let masterip = localStorage.getItem('masterip')
             setPcConf(this.formValidate, masterip).then((resp) => {

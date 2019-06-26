@@ -70,7 +70,7 @@
     </Modal>
     <Modal title="取消超级工作站" v-model="cancleup" footer-hide width="500">
       <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
-        <FormItem label="操作" prop="plan">
+        <FormItem label="操作" prop="action">
           <Select v-model="formValidate1.action" placeholder="默认当前(方案)">
             <Option value="apply">{{$t('apply')}}</Option>
             <Option value="discard">{{$t('cancelText')}}</Option>
@@ -235,7 +235,7 @@ export default {
         ]
       },
       ruleValidatex1: {
-        plan: [
+        action: [
           { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
         ],
         comment: [
@@ -257,7 +257,7 @@ export default {
         let xx = this.imglist.filter(item => {
           return item.name === this.formValidatex.imglist
         })
-
+        this.formValidatex.profileList = xx[0].profileList[0].name
         return xx[0].profileList
       }
     }
@@ -290,9 +290,8 @@ export default {
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
       getImageListx(ip).then(response => {
-        if (response.data.ok) {
-          this.imglist = response.data.data.result.list
-        }
+        this.imglist = response.data.result.list
+        this.formValidatex.imglist = this.imglist[0].name
       })
       this.addedip = data.ip
     },
@@ -545,16 +544,14 @@ export default {
             },
             cookiesMasterIp
           ).then(response => {
-            if (response.data.ok) {
-              if (response.data.data.result.vdiskInfo && response.data.data.error === null) {
-                self.adddetail = false
-                self.currentSuperip = response.data.result.vdiskInfo.serverIp
-                setTimeout(() => {
-                  self.reload()
-                }, 0)
-              } else {
-                this.err = true
-              }
+            if (response.data.result.vdiskInfo && response.data.error === null) {
+              self.adddetail = false
+              self.currentSuperip = response.data.result.vdiskInfo.serverIp
+              setTimeout(() => {
+                self.reload()
+              }, 0)
+            } else {
+              this.err = true
             }
           }, (err) => {
             self.$Message.error(this.$t(`kxLinuxErr.${err}`))
