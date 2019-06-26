@@ -26,7 +26,6 @@
       @on-selection-change="handleCheckBox"
       @on-row-dblclick="handleTableEdit"
       stripe
-      :no-data-text="this.$t('Nodata')"
     ></Table>
     <Row style="margin-top:10px; ">
       <i-col span="24">
@@ -67,21 +66,60 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          renderHeader: (h, params) => { return h('span', this.$t('Icon')) },
+          renderHeader: (h, params) => {
+            return h('span', this.$t('Icon'))
+          },
           key: 'icon_url',
           minWidth: 120,
           render: (h, params) => {
-            if (!params.row.icon_url) { return h('span', 'unused') }
-            return h('img', { attrs: { src: params.row.icon_url }, style: { width: '40px', height: '40px', display: 'flex' } })
+            if (!params.row.icon_url) {
+              return h('span', 'unused')
+            }
+            return h('img', {
+              attrs: { src: params.row.icon_url },
+              style: { width: '40px', height: '40px', display: 'flex' }
+            })
           }
         },
-        { key: 'display_name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { key: 'center_popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { key: 'local_path', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ServerPath')) } },
-        { key: 'run_exe', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('executableFile')) } },
-        { key: 'size', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
         {
-          renderHeader: (h, params) => { return h('span', this.$t('ServerSyncSet')) },
+          key: 'display_name',
+          minWidth: 120,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('gameName'))
+          }
+        },
+        {
+          key: 'center_popularity',
+          minWidth: 100,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('Popularity'))
+          }
+        },
+        {
+          key: 'local_path',
+          minWidth: 120,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('ServerPath'))
+          }
+        },
+        {
+          key: 'run_exe',
+          minWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('executableFile'))
+          }
+        },
+        {
+          key: 'size',
+          minWidth: 80,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('Size'))
+          }
+        },
+        {
+          renderHeader: (h, params) => {
+            return h('span', this.$t('ServerSyncSet'))
+          },
           key: 'is_auto_update',
           minWidth: 130,
           render: (h, params) => {
@@ -94,7 +132,9 @@ export default {
           }
         },
         {
-          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
+          renderHeader: (h, params) => {
+            return h('span', this.$t('operation'))
+          },
           key: 'operation',
           minWidth: 180,
           render: (h, params) => {
@@ -150,12 +190,13 @@ export default {
     },
     handgetAllGame (offset, limit, orderby) {
       getAllLocalGames(offset, limit, orderby)
-        .then(e => {
-          if (e.data.ok) {
+        .then(
+          e => {
             this.tableData = e.data.data.data
             this.pageInfo = e.data.data.pageino
-          }
-        })
+          },
+          () => {}
+        )
         .catch(error => {
           this.$Notice.open({
             title: '错误',
@@ -262,7 +303,6 @@ export default {
         onCancel: () => {
           this.$Modal.remove()
         }
-
       })
     },
     /**
@@ -273,7 +313,7 @@ export default {
         // repairGame(this.getCheckboxVal[0].Id).then((e) => {
         //   console.log(e)
         // })
-        repairGame('02a6997c612f418790538f0ba8d70f48').then((e) => {
+        repairGame('02a6997c612f418790538f0ba8d70f48').then(e => {
           this.$Message.success(e.data)
         })
       } else {

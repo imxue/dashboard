@@ -89,3 +89,23 @@ export function downloadTodayGame (centerId, dir) {
     data
   })
 }
+/**
+ * 获取下载游戏设置
+ */
+export function getDownloadSettings () {
+  return request({
+    url: '/v1/downloadsetting/getDownloadSettings',
+    method: 'get'
+  })
+}
+/**
+ * 获取下载游戏设置
+ */
+export function setDownloadSettings (info) {
+  const data = { ...info }
+  return request({
+    url: '/v1/downloadsetting/setDownloadSettings',
+    method: 'post',
+    data
+  })
+}

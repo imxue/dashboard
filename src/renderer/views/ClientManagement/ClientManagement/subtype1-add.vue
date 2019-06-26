@@ -1,75 +1,56 @@
 <template>
-  <div style="margin-top:50px;">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-        
-        <Row>
-          <i-col span="6" offset="2">
-            <FormItem label="客户机MAC:" prop="mac">
-              <Input v-model="formValidate.mac" placeholder="..." :disabled="disabledMAC"/>
+  <div>
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80" style="width:400px; margin-top:20px;">
+        <FormItem label="客户机MAC:" prop="mac" :label-width="100">
+              <Input v-model.trim="formValidate.mac" placeholder="输入mac地址"/>
             </FormItem>
-            <FormItem label="IP:" prop="ip">
-              <Input v-model="formValidate.ip" placeholder="..." :disabled="disabledIP"/>
+
+            <FormItem label="机器名:" prop="pc" :label-width="100">
+              <Input v-model="formValidate.pc" placeholder="输入机器名" />
             </FormItem>
-            <FormItem label="子网:" prop="subnet">
-              <Input v-model="formValidate.subnet" placeholder="..."  @input="handleGetSubnetVal"/>
+
+            <FormItem label="服务器地址:" prop="ip" :label-width="100">
+              <Input v-model="formValidate.ip" placeholder="输入服务器地址"/>
             </FormItem>
-            <FormItem label="网关:" prop="gateway">
-              <Input v-model="formValidate.gateway" placeholder="..."  @input="handleGetGatewayVal"/>
-            </FormItem>
-            <FormItem label="首选DNS:" prop="dns01">
-              <Input v-model="formValidate.dns01" placeholder="..." @input="handleGetActiveDnsVal"/>
-            </FormItem>
-            <FormItem label="备用DNS:" prop="dns02">
-              <Input v-model="formValidate.dns02" placeholder="..." @input="handleGetBackupDnsVal"/>
-            </FormItem>
-            <FormItem label="状态:" prop="enable">
-                <Select v-model="formValidate.enable"  class="topColumn"  placeholder="全部游戏类型"   @on-change="handleGetEnableVal">
+
+            <FormItem label="启动客户机:" prop="disable" :label-width="100">
+                <Select v-model="formValidate.disable"  placeholder="是否启用客户机"   @on-change="handleGetEnableVal">
                   <Option v-for="item in enableList" :value="item.value" :key="item.label">{{ item.label }}</Option>
                 </Select>
             </FormItem>
-          </i-col>
-          <i-col span="8">
-            <FormItem label="CPU:">
-              <Input v-model="formValidate.cpu" placeholder="..."  style="width:250px;" disabled/>
-              <span class="text">//只读</span>
-            </FormItem>
-            <FormItem label="主板:">
-              <Input v-model="formValidate.mainBord" placeholder="" style="width:250px;" disabled/>
-              <span class="text">//只读</span>
-            </FormItem>
-            <FormItem label="网卡">
-              <Input  v-model="formValidate.netCard" placeholder="..." style="width:250px;" disabled/>
-              <span class="text">//只读</span>
-            </FormItem>
-            <FormItem label="显卡:">
-              <Input v-model="formValidate.graphicsCard" placeholder="..." style="width:250px;" disabled/>
-              <span class="text">//只读</span>
-            </FormItem>
-            <FormItem label="声卡:">
-              <Input v-model="formValidate.soundCard" placeholder="..." style="width:250px;" disabled/>
-              <span class="text">//只读</span>
-            </FormItem>
-            <FormItem label="方案:" prop="project">
-                <Select v-model="formValidate.project" @on-change="handleGetStartSchemaVal"  class="topColumn" placeholder="默认启动方案" style="width:250px;">
-                  <Option v-for="item in projectList" :value="item.value" :key="item.label" >{{ item.label }}</Option>
+
+            <FormItem label="启动方案:" prop="pcGp" :label-width="100">
+                <Select v-model="formValidate.pcGp"  placeholder="选择客户机方案"   @on-change="handleGetEnableVal">
+                  <Option v-for="item in pcGpList" :value="item.name" :key="item.label">{{ item.name }}</Option>
                 </Select>
             </FormItem>
-          </i-col>
-        </Row>
-        <FormItem class="buttonList">
-            <Button type="primary" @click="handleSubmit('formValidate')">确认</Button>
-            <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
-        </FormItem>
-      </Form>
+
+            <FormItem class="buttonList">
+                <Button type="primary" @click="handleSubmit('formValidate')">确认</Button>
+                <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
+            </FormItem>
+    </Form>
   </div>
 </template>
 
 <script>
   // import { editClient } from '@/api/client'
-  import { editClient, batchEditClient } from '@/api/client'
+  import { setPcConf } from '@/api/client'
+  import { getPcGroupx } from '@/api/wupan'
   export default {
-    name: 'subType1-1',
+    name: 'addClient',
     data () {
+      var checkmacAddressformat = (rule, macAddress, callback) => {
+        if (!macAddress) {
+          return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+        }
+        var regex = '(([A-Fa-f0-9]{2}-){5}[A-Fa-f0-9]{2})|(([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2})'
+        var regexp = new RegExp(regex)
+        if (!regexp.test(macAddress)) {
+          return callback(new Error(this.$t('MacAddressFormat')))
+        }
+        callback()
+      }
       return {
         data: '',
         currEnable: '',
@@ -80,46 +61,33 @@
         gatewayState: 0,
         startSchemaState: 0,
         subnetState: 0,
-        disabledMAC: false,
-        disabledIP: false,
+  
         dataList: [],
         enableList: [
           { id: 1, value: '0', label: '启用' },
           { id: 2, value: '1', label: '停用' }
         ],
-        projectList: [
-          // { id: 1, value: '默认启动方案', label: '默认启动方案' },
-          // { id: 2, value: 'windos', label: 'windos' }
-        ],
+        projectList: [],
+
         formValidate: {
           mac: '',
           ip: '',
-          subnet: '',
-          gateway: '',
-          dns01: '',
-          dns02: '',
-          enable: '',
-          cpu: '',
-          mainBord: '',
-          netCrad: '',
-          graphicsCard: '',
-          soundCard: '',
-          project: ''
+          pc: '',
+          pcGp: '',
+          disable: '0'
         },
         ruleValidate: {
-          // mac: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // ip: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // subnet: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // gateway: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // dns01: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // dns02: [{ required: true, message: '不能为空', trigger: 'blur' }],
-          // enable: [{ required: true, message: '请至少选择一个', trigger: 'change' }],
-          // project: [{ required: true, message: '请至少选择一个', trigger: 'change' }]
+          mac: [{ required: true, validator: checkmacAddressformat, trigger: 'blur' }],
+          ip: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          pc: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
         }
       }
     },
     created () {
-      this.handleCheckQuery(this.$route.query)
+      // this.handleCheckQuery(this.$route.query)
+      this.getClientPlan()
     },
     computed: {
       routes () {
@@ -127,27 +95,18 @@
       }
     },
     methods: {
-      // handleGetServerList () {
-      //   getServers().then((a) => {
-      //     if (a.data.error === null) {
-      //       var arr = a.data.result.list
-      //       this.projectList = arr.filter(item => item.name)
-      //     } else {
-      //       this.projectList = []
-      //       this.$Message.error('获取启动方案状态异常')
-      //     }
-      //   })
-      // },
-      handleCheckQuery (query) {
-        if (query.data) {
-          this.handleInputVal(query.data) // 单个编辑
-        }
-        if (query.dataList) {
-          this.disabledMAC = true
-          this.disabledIP = true
-          this.handleEditMore(query.dataList) // 批量编辑
-        }
+      /**
+       * 获取客户机启动方案
+       */
+      getClientPlan () {
+        let masterip = localStorage.getItem('masterip')
+        getPcGroupx(masterip).then((e) => {
+          this.pcGpList = e.data.data.result.list
+          this.formValidate.pcGp = this.pcGpList[0].name
+        },
+        (e) => { this.$Message.error(e.data.error) })
       },
+  
       handleFormatEnable () {
         var currVal = this.formValidate.enable
         if (currVal === 0) {
@@ -234,7 +193,17 @@
         this.subnetState = 1
       },
       handleSubmit (name) {
-        this.handleCheckSubmit(name)
+        this.$refs[name].validate(valid => {
+          if (valid) {
+            let masterip = localStorage.getItem('masterip')
+            this.formValidate.pcGp = 'default'
+            setPcConf(this.formValidate, masterip).then((resp) => {
+              this.$router.go(-1)
+            }, (error) => {
+              console.log(error)
+            })
+          }
+        })
       },
       handleCheckSubmit (name) {
         this.handleFormatEnable()
@@ -243,52 +212,6 @@
         } else {
           this.handleSubmitBatchEdit(name) // 批量编辑
         }
-      },
-      handleSubmitSingleEdit (name) {
-        editClient(this.formValidate.dns01, this.formValidate.dns02, this.currEnable, this.formValidate.gateway, this.currId, this.formValidate.ip, this.formValidate.mac, this.formValidate.project, this.formValidate.subnet).then((res) => {
-          this.handleJsonVaild(res)
-        }, () => {
-          this.$Message.error('请求出错，请稍后再试')
-        })
-      },
-      handleCheckInputState () {
-        var newList = []
-        var arr = this.$route.query.dataList
-        // console.log('arr:::' + JSON.stringify(arr))
-        var curActiveDns, curBackupDns, curEnable, curGateway, curStartSchema, curSubnet
-        for (var i in arr) {
-          curActiveDns = arr[i].ActiveDns
-          curBackupDns = arr[i].BackupDns
-          curEnable = arr[i].Enable
-          curGateway = arr[i].Gateway
-          curStartSchema = arr[i].StartSchema
-          curSubnet = arr[i].Subnet
-          if (this.activeDnsState === 1) { curActiveDns = this.formValidate.dns01 }
-          if (this.backupDnsState === 1) { curBackupDns = this.formValidate.dns02 }
-          if (this.gatewayState === 1) { curGateway = this.formValidate.gateway }
-          if (this.subnetState === 1) { curSubnet = this.formValidate.subnet }
-          if (this.enableState === 1) { curEnable = this.currEnable }
-          if (this.startSchemaState === 1) { curStartSchema = this.formValidate.project }
-          newList.push({
-            ActiveDns: curActiveDns,
-            BackupDns: curBackupDns,
-            Enable: curEnable,
-            Gateway: curGateway,
-            Id: arr[i].Id,
-            StartSchema: curStartSchema,
-            Subnet: curSubnet
-          })
-        }
-        this.dataList = newList
-        console.log('newData: ' + JSON.stringify(this.dataList))
-      },
-      handleSubmitBatchEdit (name) {
-        this.handleCheckInputState()
-        batchEditClient(this.dataList).then((res) => {
-          this.handleJsonVaild(res)
-        }, () => {
-          this.$Message.error('请求出错，请稍后再试')
-        })
       },
       handleReset (name) {
         this.$refs[name].resetFields()
@@ -299,8 +222,5 @@
 </script>
 
 <style scoped>
-  .ivu-input-wrapper{ float:left;}
-  .text{ float: left; margin-left: 10px; color: #666;}
-  .buttonList{margin-left: 100px;}
 </style>
 

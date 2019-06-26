@@ -380,5 +380,6 @@
   "PrivateGameDisk":"私有数据盘",
   "NotDeleteCenterGame":"不能删除中心游戏",
   "ExtendedTypeSuccess":"扩展类型设置成功",
-  "ExtendedTypeFail":"扩展类型设置失败"
+  "ExtendedTypeFail":"扩展类型设置失败",
+  "MacAddressFormat":"mac地址格式不正确"
 }

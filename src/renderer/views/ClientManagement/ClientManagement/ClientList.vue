@@ -2,7 +2,6 @@
   <div>
     <div class="topItem">
       <!-- <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
       <Button type="primary" class="topColumn" @click="handleButtonEdit">批量编辑</Button>
       <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>-->
@@ -10,6 +9,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
       <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
     </div>
     <!-- table -->
     <Table
@@ -46,12 +46,12 @@
     </Modal>
     <Modal :title="this.$t('SetSuperWorkstation')" v-model="adddetail" footer-hide width="500">
       <Form ref="formValidatex" :model="formValidatex" :rules="ruleValidatex" :label-width="100">
-        <FormItem :label="this.$t('Mirror')" prop="imglistVal">
+        <FormItem :label="this.$t('Mirror')" prop="imglist">
           <Select v-model="formValidatex.imglist" :placeholder="this.$t('pleaseInput')">
             <Option v-for="item in imglist" :value="item.name" :key="item.name">{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem :label="this.$t('Configure')" prop="profileListVal">
+        <FormItem :label="this.$t('Configure')" prop="profileList">
           <Select v-model="formValidatex.profileList" :placeholder="this.$t('pleaseInput')">
             <template v-if="profileList">
               <Option
@@ -65,7 +65,6 @@
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmitx('formValidatex')">{{$t('SetSuperWorkstation')}}</Button>
-          <!-- <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">Reset</Button> -->
         </FormItem>
       </Form>
     </Modal>
@@ -140,7 +139,6 @@ export default {
                 a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#B5B6BE' } })
                 break
             }
-
             return a
           }
 
@@ -229,24 +227,20 @@ export default {
         comment: ''
       },
       ruleValidatex: {
-        formValidatex: {
-          imglistVal: [
-            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
-          ],
-          profileListVal: [
-            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
-          ]
-        }
+        imglist: [
+          { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
+        ],
+        profileList: [
+          { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
+        ]
       },
       ruleValidatex1: {
-        formValidate1: {
-          plan: [
-            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
-          ],
-          comment: [
-            { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
-          ]
-        }
+        plan: [
+          { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
+        ],
+        comment: [
+          { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
+        ]
       }
     }
   },
@@ -543,6 +537,7 @@ export default {
     */
     handleSubmitx (name) {
       var self = this
+      console.log(this.formValidatex.imglist)
       self.$refs[name].validate(valid => {
         if (valid) {
           let cookiesMasterIp = localStorage.getItem('masterip')
@@ -566,7 +561,7 @@ export default {
               }
             }
           }, (err) => {
-            self.$Message.error(err + '')
+            self.$Message.error(this.$t(`kxLinuxErr.${err}`))
           })
         } else {
           this.$Message.error(this.$t('ValidationFailure'))

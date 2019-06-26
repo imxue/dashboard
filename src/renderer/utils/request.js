@@ -1,7 +1,6 @@
 import axios from 'axios'
 import router from '../router'
 // import qs from 'qs'
-
 import i18n from '../locale'
 import iView from 'iview'
 const service = axios.create({
@@ -11,7 +10,6 @@ const service = axios.create({
   timeout: 20000 // request timeout
 
 })
-var xueCount
 service.interceptors.request.use(
   (request) => {
     if (localStorage.getItem('token')) {
@@ -56,13 +54,10 @@ service.interceptors.response.use(
 
   error => {
     if (error.response.status === 401) {
-      window.clearTimeout(xueCount)
-      xueCount = window.setTimeout(() => {
-        iView.Notice.info({
-          desc: i18n.t('loginTmeOut'),
-          duration: 3
-        })
-      }, 0)
+      iView.Notice.info({
+        desc: i18n.t('loginTmeOut'),
+        duration: 3
+      })
       router.push('/login')
     }
     return Promise.reject(error)

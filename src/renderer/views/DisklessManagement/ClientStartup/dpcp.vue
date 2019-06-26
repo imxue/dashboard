@@ -76,7 +76,7 @@ export default {
       let that = this
       that.$refs[name].validate(valid => {
         if (valid) {
-          editDHCPConfigx(that.DHCPTable, localStorage.getItem('masterip'))
+          editDHCPConfigx(that.formValidate, localStorage.getItem('masterip'))
             .then(e => {
               this.loading = false
               that.$Message.success('DHCP' + this.$t('SetSucess'))

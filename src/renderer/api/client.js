@@ -170,3 +170,9 @@ export function setSchemeIcon (info) {
     data
   })
 }
+/**
+ * 设置客户机
+ */
+export function setPcConf (data, ip) {
+  return makeRequestx('Set_PcConf', { ...data }, ip)
+}
