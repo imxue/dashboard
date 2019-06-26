@@ -166,6 +166,7 @@
                 availableSize: bytesToSize(Number(newArr[i].availableSize))
               })
               this.diskList = temp
+              this.formValidate.path = this.diskList[0].path
               temp = []
             }
           }
@@ -179,6 +180,10 @@
           if (!response.data.error) {
             this.mirroringInfo = response.data.result.list || []
           }
+        }, (error) => {
+          this.$Notice.error({
+            desc: error
+          })
         })
       },
       handleButtonAdd (val) {

@@ -104,10 +104,25 @@ import {
   getServersx,
   deleteserverConfig
 } from '@/api/wupan'
-// import Cookies from 'js-cookie'
 export default {
   name: 'subType1-1',
   data () {
+    var checkIpformat = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+      } else {
+        let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+        let regexp = new RegExp(reg)
+        if (regexp.test(value)) {
+          callback()
+        } else {
+          return callback(new Error(this.$t('IPAddressIsIncorrect')))
+        }
+      }
+    }
     return {
       NetWork: false,
       spinShow: false,
@@ -236,7 +251,7 @@ export default {
         serverIP: [
           {
             required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
+            validator: checkIpformat,
             trigger: 'blur'
           }
         ],
@@ -307,6 +322,17 @@ export default {
               this.serverList.push(x)
               this.loading = false
             }
+          }, (error) => {
+            this.$Notice.error({
+              desc: error
+            })
+            let x = {
+              serverIp: localStorage.getItem('masterip'),
+              online: '0',
+              dataVer: '-'
+            }
+            this.serverList.push(x)
+            this.loading = false
           }
         )
       } else {
@@ -407,11 +433,8 @@ export default {
             this.handleGetServerList()
             setTimeout(() => {
               this.handleGetServerList()
-            }, 1000)
+            }, 2000)
           } else {
-            this.$Notice.error({
-              desc: this.$t(`kxLinuxErr.${resp.data.error}`)
-            })
             this.loadingBtn = false
           }
         }, a => {

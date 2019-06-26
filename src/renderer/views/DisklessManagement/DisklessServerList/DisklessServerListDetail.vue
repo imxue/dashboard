@@ -34,7 +34,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </div>
    
-      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')"></Table>
+      <Table border :columns="tableColumns3" :data="tableData3" :no-data-text="this.$t('Nodata')" @on-row-dblclick="handleSetDisk"></Table>
     
     <div class="dig">
       <Modal
@@ -54,11 +54,12 @@
       </Row>
       <Row class="rowlist">
         <i-col span="5">{{$t('DiskSize')}}：</i-col>
-        <i-col span="16">{{rowData.size}} KB</i-col>
+        <i-col span="16">{{bytesToSize1(rowData.size)}}</i-col>
+        <!-- <i-col span="16">{{rowData.size}} KB</i-col> -->
       </Row>
       <Row class="rowlist">
         <i-col span="5">{{$t('AvailableSpace')}}：</i-col>
-        <i-col span="16">{{rowData.availableSize}} KB</i-col>
+        <i-col span="16">{{bytesToSize1(rowData.availableSize)}}</i-col>
       </Row>
       <Row class="rowlist">
         <i-col span="24">
@@ -77,7 +78,7 @@
           </Select>
         </i-col>
       </Row>
-      <Row class="rowlist">
+      <Row class="rowlist" v-show="this.selecteDisk !== 'unUsed'">
         <i-col span="24">
            <i-col span='5'>{{$t('isFormat')}}：</i-col>
           <Select
@@ -135,6 +136,7 @@ export default {
   name: 'subType1-detail',
   data () {
     return {
+      bytesToSize1: bytesToSize,
       currentPageServerip: '',
       loading: '',
       serverList: '',
@@ -448,6 +450,17 @@ export default {
             })
           }
           deleteserverConfig(this.currentPageServerip)
+          /**
+           * 如果删除主服务器，其他附属服务器都删除
+           */
+          if (this.currentPageServerip === this.tempMasterServerIp) {
+            this.serverList.forEach(element => {
+              deleteserverConfig(element.serverIp).then((resp) => {
+              }, () => {
+                console.log(element.serverIp + '属性清除失败')
+              })
+            })
+          }
         }
       })
     },

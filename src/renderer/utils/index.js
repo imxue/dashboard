@@ -341,3 +341,25 @@ export function UploadImg (file) {
     }
   })
 }
+/**
+ * 验证ip
+ * @param {*} rule
+ * @param {*} value
+ * @param {*} callback
+ */
+export function checkIpformat (rule, value, callback) {
+  if (!value) {
+    return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+  } else {
+    let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+    let regexp = new RegExp(reg)
+    if (regexp.test(value)) {
+      callback()
+    } else {
+      return callback(new Error(this.$t('IPAddressIsIncorrect')))
+    }
+  }
+}
