@@ -78,7 +78,7 @@
           </Select>
         </i-col>
       </Row>
-      <Row class="rowlist">
+      <Row class="rowlist" v-show="this.selecteDisk !== 'unUsed'">
         <i-col span="24">
            <i-col span='7'>{{$t('isFormat')}}：</i-col>
           <Select

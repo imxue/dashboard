@@ -23,7 +23,7 @@
             <i-col span="4">
               <div class="x">
                 <Input v-model="formItem.select2"   placeholder="Enter something..."  />
-                  <i-col span="10">
+                  <i-col span="14">
                   <span>KB/s (0表示不限速)</span>
                     </i-col>
               </div>
@@ -62,7 +62,6 @@ export default {
         { Id: 2, value: 3 }
       ],
       tableColumns: [
-        // { type: 'selection', width: 60, align: 'center' },
         { key: 'TypeGame', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
         {
           title: '同步磁盘',
@@ -113,9 +112,9 @@ export default {
               h('Option', {
                 props: {
                   id: 5,
-                  value: ''
+                  value: 'G:'
                 }
-              }, '1')
+              }, 'G')
             ])
           }
         }
@@ -144,7 +143,6 @@ export default {
           x['disk'] = obj[i]
           test.push(x)
         }
-        debugger
         this.tableData = test
       }, (err) => {
         console.log(err)
@@ -152,8 +150,8 @@ export default {
     },
     handleButtonDW () {
       let info = {
-        max_download_task: '',
-        download_speed_limit: '',
+        max_download_task: this.formItem.select1,
+        download_speed_limit: this.formItem.select2,
         default_download_disk: {
           '网络游戏': 'C:',
           '单机游戏': 'D:',
