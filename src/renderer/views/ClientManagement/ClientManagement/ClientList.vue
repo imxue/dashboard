@@ -266,10 +266,8 @@ export default {
     handleGetSuper () {
       let ip = localStorage.getItem('masterip')
       getSuper(ip).then(response => {
-        if (response.data.ok) {
-          if (!response.data.data.error && response.data.data.result) {
-            this.currentSuperip = response.data.result.ip
-          }
+        if (!response.data.error && response.data.result) {
+          this.currentSuperip = response.data.result.ip
         }
       })
     },
@@ -277,10 +275,8 @@ export default {
       if (localStorage.getItem('masterip')) {
         let ip = localStorage.getItem('masterip')
         getPcListConfigx(ip).then(response => {
-          if (response.data.ok) {
-            if (response.data.data.result.list) {
-              this.tableData = response.data.data.result.list
-            }
+          if (response.data.result.list) {
+            this.tableData = response.data.result.list
           }
         })
       }

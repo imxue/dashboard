@@ -101,7 +101,7 @@
       getClientPlan () {
         let masterip = localStorage.getItem('masterip')
         getPcGroupx(masterip).then((e) => {
-          this.pcGpList = e.data.data.result.list
+          this.pcGpList = e.data.result.list
           this.formValidate.pcGp = this.pcGpList[0].name
         },
         (e) => { this.$Message.error(e.data.error) })
@@ -194,9 +194,9 @@
       },
       handleSubmit (name) {
         this.$refs[name].validate(valid => {
+          debugger
           if (valid) {
             let masterip = localStorage.getItem('masterip')
-            this.formValidate.pcGp = 'default'
             setPcConf(this.formValidate, masterip).then((resp) => {
               this.$router.go(-1)
             }, (error) => {
