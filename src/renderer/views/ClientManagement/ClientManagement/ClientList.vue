@@ -31,7 +31,6 @@
         :current="currentPage"
         :page-size="pageSize"
         :total="totalPageNumber"
-        show-total
         style=" float:right;"
         @on-change="hanbleChangePage"
       />

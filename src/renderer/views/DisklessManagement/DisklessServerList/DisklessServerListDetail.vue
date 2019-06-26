@@ -18,7 +18,7 @@
 
 
     <Row style="margin:10px 0;">
-      <h3>{{$t('NetworkSetting')}}</h3>
+      <span>{{$t('NetworkSetting')}}</span>
       <Divider/>
       <Button type="primary" class="topColumn" @click="handleLoadNICx">{{$t('SetTheLoadNetworkCard')}}</Button>
     </Row>
@@ -31,7 +31,7 @@
       :no-data-text="this.$t('Nodata')"
     ></Table>
     <div style="margin:10px 0; ">
-      <h3>{{$t('DiskSetting')}}</h3>
+      <span >{{$t('DiskSetting')}}</span>
       <Divider/>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonAdd">设置磁盘作用</Button> -->
     </div>
@@ -633,7 +633,6 @@ export default {
 </script>
 
 <style scoped>
-
 .topColumn {
   float: none;
 }
@@ -646,7 +645,7 @@ export default {
 .ivu-modal-body {
   padding-left: 50px;
 }
-h3 {
+span {
   margin-bottom: -20px;
 }
 .rowlist {
@@ -659,6 +658,29 @@ h3 {
   text-align: center;
   font-size: 14px;
   margin: -10px;
+}
+.wrapper{
+  display: flex;
+}
+ul ,li {
+  list-style: none;
+}
+li {
+  margin-left: 10px;
+}
+.left {
+  flex:1;
+}
+.ivu-divider-horizontal{
+  margin:15px 0;
+  font-weight: bold;
+}
+.right{
+  background:#F8FCE5;
+  border: 1px solid #ddd;
+  padding:8px;
+  max-width: 260px;
+  font-size: 14px;
 }
 </style>
 
