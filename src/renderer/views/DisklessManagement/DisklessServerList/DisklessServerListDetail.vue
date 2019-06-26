@@ -10,6 +10,8 @@
 
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
+      <Divider type="vertical"/>
+      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">设置为主服务器</Button>
     </div>
 
     <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" :no-data-text="this.$t('Nodata')"></Table>
@@ -142,7 +144,7 @@ export default {
       serverList: '',
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
-      tempMasterServerIp: '', // 主服务器Ip
+      MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
       rowData: '',
       ServerIp: '',
@@ -368,7 +370,7 @@ export default {
     }
   },
   created () {
-    this.tempMasterServerIp = this.$route.query.tempMasterServerIp
+    this.MasterServerIp = this.$route.query.MasterServerIp
     this.serverList = this.$route.query.serverList
     this.handleGetCurrentPageServerInfo()
     this.handleGetNetworkx(this.currentPageServerip)
@@ -435,7 +437,7 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          deleteserverx(this.currentPageServerip, this.tempMasterServerIp).then((resp) => {
+          deleteserverx(this.currentPageServerip, this.MasterServerIp).then((resp) => {
             if (!resp.data.error) {
               this.$Message.success(this.$t('DeleteSucess'))
               this.$router.push({
@@ -453,7 +455,7 @@ export default {
           /**
            * 如果删除主服务器，其他附属服务器都删除
            */
-          if (this.currentPageServerip === this.tempMasterServerIp) {
+          if (this.currentPageServerip === this.MasterServerIp) {
             this.serverList.forEach(element => {
               deleteserverConfig(element.serverIp).then((resp) => {
               }, () => {
@@ -467,8 +469,8 @@ export default {
     handleButtonSetSever () {
       // 若当前服务器为主服务器， 提示'当前服务器为主服务器'
       if (
-        this.$route.query.tempMasterServerIp &&
-        this.tempMasterServerIp === this.rowData.serverIP
+        this.$route.query.MasterServerIp &&
+        this.MasterServerIp === this.rowData.serverIP
       ) {
         this.$Message.info(this.$t('masterismaster'))
       } else {
@@ -487,7 +489,7 @@ export default {
     handleEditServersNode () {
       // masterIp, syncimg, auba
       editServersNode(
-        this.tempMasterServerIp,
+        this.MasterServerIp,
         '1',
         '1',
         this.rowData.serverIp
@@ -585,18 +587,43 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      this.handleGetNetworkx(this.ServerIp)
-      this.handleGetDiskStatusx(this.ServerIp)
+      getServersx(this.currentPageServerip).then((resp) => {
+        this.serverList = resp.data.result.list
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
+        console.log(this.isMaster)
+      }, (resp) => {
+        this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
+      }).catch((error) => {
+        console.log(error)
+      })
+      this.handleGetNetworkx(this.currentPageServerip)
+      this.handleGetDiskStatusx(this.currentPageServerip)
+    },
+    /**
+     * 切换主服务器
+     */
+    HandlechangeMaster () {
+      for (let i = 0; i < this.serverList.length; i++) {
+        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
+          localStorage.setItem('masterip', this.currentPageServerip)
+        }, (error) => {
+          console.log(error)
+        })
+      }
+      this.handleButtonRefresh()
+      setTimeout(() => {
+        this.handleButtonRefresh()
+      }, 2000)
     },
     /*
     列表选择
     */
     listTypeChange (serverip) {
-      this.serverIp = serverip
-      getServersx(serverip).then((resp) => {
-        if (!resp.data.error) {
-          this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
-        }
+      getServersx(this.MasterServerIp).then((resp) => {
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
+        console.log(this.CurrentPageserverInfo)
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)

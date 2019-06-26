@@ -377,7 +377,7 @@ export default {
     handleSeeDetail (index) {
       this.$router.push({
         path: 'DisklessServerDetail',
-        query: { data: index, tempMasterServerIp: this.tempMasterServerIp, serverList: this.serverList }
+        query: { data: index, MasterServerIp: this.tempMasterServerIp, serverList: this.serverList }
       })
     },
     /**
