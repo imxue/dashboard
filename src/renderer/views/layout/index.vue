@@ -78,7 +78,6 @@
 <style scoped>
   .layout{
     min-width: 1190px;
-    min-height: 760px;
     height: 100%;
     display: flex;
     flex-direction: column;
