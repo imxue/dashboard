@@ -28,5 +28,4 @@ const i18n = new VueI18n({
   messages, // set locale messages
   silentFallbackWarn: true
 })
-console.log(i18n)
 export default i18n

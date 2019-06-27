@@ -83,7 +83,7 @@ export default {
         {
           path: 'DownloadSet',
           name: 'subType2-set',
-          meta: { title: '下载设置', hidden: true },
+          meta: { title: 'DownloadSet', hidden: true },
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadSet'),
           hidden: true
         }
