@@ -26,8 +26,9 @@
     background: #f5f7f9;
     width: 100%;
     min-height: 100%;
-    height: 100%;
-    min-width: 1200px
+    min-width: 1200px;
+    max-height: 1200px;
+    height: 100vh;
   }
   
   .topItem{ height: 60px;line-height: 32px;}

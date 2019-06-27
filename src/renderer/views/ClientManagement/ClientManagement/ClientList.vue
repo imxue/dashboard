@@ -584,14 +584,14 @@ export default {
             },
             cookiesMasterIp
           ).then(response => {
-            if (response.data.result.vdiskInfo && response.data.error === null) {
+            if (response.data.error) {
+              self.$Message.error(this.$t(`kxLinuxErr.${response.data.error}`))
+            } else {
               self.adddetail = false
               self.currentSuperip = response.data.result.vdiskInfo.serverIp
               setTimeout(() => {
                 self.reload()
               }, 0)
-            } else {
-              this.err = true
             }
           }, (err) => {
             self.$Message.error(this.$t(`kxLinuxErr.${err}`))

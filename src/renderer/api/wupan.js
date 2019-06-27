@@ -75,14 +75,15 @@ export function getDiskStatusx (url) {
 //   unUsed: 'unUsed'
 // }
 
-export function setDiskFunctionx (path, diskFunctionType, cacheSizeMB, isFormat, volume, ip) {
-  return makeRequestx('Set_DiskFun', {
-    path: path,
-    fun: diskFunctionType,
-    cacheSize: cacheSizeMB,
-    isFormat: isFormat,
-    vol: volume
-  }, ip)
+export function setDiskFunctionx (info, ip) {
+  // return makeRequestx('Set_DiskFun', {
+  //   path: info.path,
+  //   fun: info.diskFunctionType,
+  //   cacheSize: info.cacheSizeMB,
+  //   isFormat: info.isFormat,
+  //   vol: info.volume
+  // }, ip)
+  return makeRequestx('Set_DiskFun', { ...info }, ip)
 }
 
 export function getImageListx (ip) {

@@ -64,12 +64,7 @@
     methods: {
       getBreadcrumb () {
         let matched = this.$route.matched.filter(item => item.name)
-        // const first = matched[0]
-        // if (first && first.name !== 'home') {
-        //   matched = [{ path: '/home', meta: { title: '首页' } }].concat(matched)
-        // }
         this.levelList = matched
-        // console.log('+', this.$route.matched)
       }
     }
   }
@@ -79,10 +74,8 @@
   .layout{
     min-width: 1190px;
     height: 100%;
-    min-height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100vh;
   }
   .xx {
     display: flex;
