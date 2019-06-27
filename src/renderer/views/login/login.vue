@@ -16,7 +16,7 @@
             </Row>
           </FormItem>
           <FormItem>
-              <Button type="primary" @click="handleSubmit('formInline')" style="width:280px;">登陆</Button>
+              <Button type="primary" @click="handleSubmit('formInline')" style="width:280px;">登陆 {{$T('login')}}</Button>
           </FormItem>
       </Form>
       <p style="text-align:right; color:#2b85e4;cursor: pointer;" @click="handleReset">忘记密码？</p>
@@ -56,7 +56,7 @@ export default {
           login(this.formInline).then((e) => {
             if (e.data.ok) {
               localStorage.setItem('token', e.data.token)
-              this.$router.push('/game/subType1/subType1-1')
+              this.$router.push('/Diskless')
             } else {
               this.$Message.info({
                 content: e.data.data.error,

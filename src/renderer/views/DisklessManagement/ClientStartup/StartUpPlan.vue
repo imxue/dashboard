@@ -104,7 +104,7 @@
         })
       },
       handleButtonAdd (val) {
-        this.$router.push({ path: 'subtype3-edit' })
+        this.$router.push({ path: 'StartUpPlanSet' })
       },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
@@ -122,7 +122,7 @@
       },
       handleEdit (index) {
         this.$router.push({
-          path: 'subtype3-edit',
+          path: 'StartUpPlanSet',
           query: { data: index, flag: 'edit' }
         })
       },

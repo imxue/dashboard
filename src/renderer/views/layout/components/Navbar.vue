@@ -53,7 +53,7 @@
               </template>
             </DropdownMenu>
           </Dropdown>
-          <!-- <Button @click="handleExit">{{$t('logout')}}</Button> -->
+          <Button @click="handleExit">{{$t('logout')}}</Button>
         </div>
       </div>
     </div>
@@ -115,8 +115,9 @@ export default {
       this.localStorageLang = localStorage.getItem('language')
     },
     handleExit () {
-      localStorage.setItem('Flag', '')
-      this.$router.push('/login/login')
+      // localStorage.setItem('Flag', '')
+      debugger
+      this.$router.push('/login')
     }
   },
   computed: {

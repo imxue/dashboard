@@ -6,7 +6,7 @@
      
           <FormItem prop="name" :label="this.$t('StartupScenarioName') + '：'">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.name" placeholder=""></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.name" placeholder="" :disabled='flag' ></i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="netMk"  :label="this.$t('SubnetMask') + '：'">
@@ -132,12 +132,13 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx, deletePcGroup } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
       return {
         imgCount: 0,
+        flag: false, // 修改标志
         showPopup: false,
         name01: '',
         name02: '',
@@ -247,6 +248,10 @@
         }
       },
       handleCheckData () {
+        let datax = this.$route.query
+        if (datax.flag === 'edit') {
+          this.flag = true
+        }
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
@@ -308,13 +313,13 @@
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
-                  if (that.$route.query.flag) {
-                    deletePcGroup(name, localStorage.getItem('masterip')).then((response) => {
-                      if (!response.data.error) {
-                        this.handleGetPcGroup()
-                      }
-                    })
-                  }
+                  // if (that.$route.query.flag) {
+                  //   deletePcGroup(name, localStorage.getItem('masterip')).then((response) => {
+                  //     if (!response.data.error) {
+                  //       this.handleGetPcGroup()
+                  //     }
+                  //   })
+                  // }
                   that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)

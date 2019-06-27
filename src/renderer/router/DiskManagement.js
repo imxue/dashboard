@@ -76,10 +76,10 @@ export default {
           component: () => import('@/views/DisklessManagement/ClientStartup/dpcp')
         },
         {
-          path: 'subType3-edit',
-          name: 'type2-SubType3-edit',
+          path: 'StartUpPlanSet',
+          name: 'StartUpPlanSet',
           meta: { title: '方案编辑' },
-          component: () => import('@/views/DisklessManagement/ClientStartup/subtype3-edit'),
+          component: () => import('@/views/DisklessManagement/ClientStartup/StartUpPlanSet'),
           hidden: true
         }
       ]
