@@ -3,17 +3,18 @@
     <div class="box">
         <h3>{{$t('Login')}}</h3>
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-          <FormItem prop="barid" style="width:100%;">
-            <Row>服务器IP地址：</Row>
-            <Row>
+          <FormItem prop="barid" style="width:100%;" class="item">
+            <!-- <Row>服务器IP地址：</Row> -->
+            <Row class="x"></Row>
+
               <Input type="text" v-model="formInline.barid" :placeholder="this.$t('pleaseInputServerIp')" style="width:100%; dispaly:block;"></Input>
-            </Row>
+ 
           </FormItem>
-          <FormItem prop="password" style="width:100%;">
-            <Row>管理密码：</Row>
-            <Row>
+          <FormItem prop="password" style="width:100%;" class="item">
+            <!-- <Row>管理密码：</Row> -->
+      
               <Input type="password" v-model="formInline.password" :placeholder="this.$t('ServerPW')"></Input>
-            </Row>
+     
           </FormItem>
           <FormItem>
               <Button type="primary" @click="handleSubmit('formInline')" style="width:280px;">{{$t('Login')}}</Button>
@@ -94,6 +95,12 @@ export default {
     height: 350px;
     display: block;
     margin: 15% auto 0;
+  }
+  .x{
+    margin-bottom: 50px;
+  }
+  .item{
+    margin-bottom: 40px;
   }
   .ivu-input, button{height: 36px !important;}
   button{margin-top:30px; font-size: 14px; letter-spacing:4px;}
