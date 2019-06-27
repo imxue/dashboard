@@ -126,7 +126,6 @@
             this.$Message.error(a.data.Msg)
           }
         }, () => {
-          this.$Message.error('请求出错，请稍后再试')
         })
       },
       hanbleChangePage (num) {
@@ -166,7 +165,6 @@
         deleteSyncQueue(this.getCheckboxVal).then((res) => {
           self.handleCallBackVaild(res)
         }, () => {
-          self.$Message.error('请求出错，请稍后再试')
         })
       },
       handleCancel () {
@@ -185,7 +183,7 @@
       handleButtonTop (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }
@@ -193,7 +191,7 @@
       handleButtonStart (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }

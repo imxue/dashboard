@@ -244,7 +244,6 @@ export default {
      * 删除游戏
      */
     handleTableDelete (index) {
-      debugger
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         content: this.$t('DeleteCurrentData'),

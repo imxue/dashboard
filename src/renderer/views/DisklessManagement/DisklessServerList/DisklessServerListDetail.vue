@@ -539,7 +539,6 @@ export default {
         vol: this.selecteDiskF // 映射磁盘
       }
       setDiskFunctionx(this.DiskData, this.currentPageServerip).then(response => {
-        debugger
         this.DiskSetDialog = false
         this.DiskSettingDialog = false
         this.spinShow = false
