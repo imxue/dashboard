@@ -148,7 +148,7 @@ export default {
       isMaster: '', // 是否为主服务器
       rowData: '',
       ServerIp: '',
-      selecteDiskF: '',
+      selecteDiskF: 'E',
       selecteDisk: 'imageDisk',
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗

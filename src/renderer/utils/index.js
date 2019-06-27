@@ -35,7 +35,7 @@ export function formatSize (value) {
 }
 // 数据容量单位转换(kb,mb,gb,tb)
 export function bytesToSize (bytes) {
-  if (bytes === 0) return '0'
+  if (bytes === 0 || bytes === '0') return '0'
   var k = 1024 // or 1000
   var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   var i = Math.floor(Math.log(bytes) / Math.log(k))

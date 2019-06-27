@@ -25,7 +25,7 @@
   
         <FormItem prop="name">
           <Row>
-            <i-col span="4">{{$t('GameName')}}：</i-col>
+            <i-col span="4">{{$t('gameName')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
@@ -37,7 +37,7 @@
         </FormItem>
         <FormItem prop="exepath">
           <Row>
-            <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
+            <i-col span="4">{{$t('ExecutePath')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.exepath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
@@ -85,7 +85,7 @@
           path: '',
           exepath: '',
           exename: '',
-          isEnableSync: '自动更新'
+          isEnableSync: 1
         },
         updataWayList: [
           { Id: 1, value: this.$t('Enable') },
@@ -144,7 +144,7 @@
             if (e.target.result) {
               if (valid) {
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
-                  that.$Message.info(res.data)
+                  that.$Message.info(res.data.error)
                   that.$router.push({
                     path: 'BarGames',
                     query: { }

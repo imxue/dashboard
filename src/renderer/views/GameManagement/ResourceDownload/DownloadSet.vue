@@ -10,8 +10,8 @@
         <FormItem label="">
           <Row>
             <i-col span="3">{{this.$t('MaxdownloadTasks')}}：</i-col>
-            <i-col span="4">
-              <Select v-model="formItem.select1"  class="topColumn"  @on-change="handleSelect1Value">
+            <i-col span="5">
+              <Select v-model="formItem.select1"  class="topColumn" >
                 <Option v-for="item in gameList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
               </Select>
             </i-col>
@@ -20,11 +20,11 @@
         <FormItem label="">
           <Row>
             <i-col span="3">{{this.$t('DownloadSpeedlimit')}}：</i-col>
-            <i-col span="4">
+            <i-col span="5">
               <div class="x">
-                <Input v-model="formItem.select2"   placeholder="Enter something..."  />
-                  <i-col span="17">
-                  <span>KB/s ({{this.$t('0ExpressSpeed')}})</span>
+                <Input v-model="formItem.select2"   placeholder="" />
+                  <i-col span="12">
+                  <span >KB/s ({{this.$t('0ExpressSpeed')}})</span>
                     </i-col>
               </div>
             </i-col>
@@ -189,16 +189,16 @@ export default {
     },
     handleButtonBack () {
       this.$router.go(-1)
-    },
-    handleSelect1Value () {
-      alert(this.formItem.select1)
-    },
-    handleSelect2Value (id) {
-      alert(this.formItem.select2)
-    },
-    handleSelectValue (index) {
-      alert(index.id)
     }
+    // handleSelect1Value () {
+    //   alert(this.formItem.select1)
+    // },
+    // handleSelect2Value (id) {
+    //   alert(this.formItem.select2)
+    // },
+    // handleSelectValue (index) {
+    //   alert(index.id)
+    // }
   }
 }
 </script>
@@ -207,7 +207,8 @@ export default {
   .x{
     display: flex;
     justify-content: space-between;
+    text-align: right;
   }
-
+  
 </style>
 

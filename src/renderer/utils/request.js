@@ -3,8 +3,8 @@ import axios from 'axios'
 // import store from '@/store'
 // import { getToken } from '@/utils/auth'
 // create an axios instance
-import i18n from '../../language'
-import iView from 'iview'
+// import i18n from '../../language'
+// import iView from 'iview'
 const service = axios.create({
   baseURL: 'http://10.88.66.153:8080/',
   // baseURL: process.env.BASE_API, // api 的 base_url
@@ -36,13 +36,10 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    if (response.data.error && response.data.ok) {
-      iView.Notice.error({
-        desc: i18n.t(`kxLinuxErr.${response.data.error}`)
-      })
-      return response
+    if (!!response.data.ok && !response.data.ok) {
+      return Promise.reject(response)
     } else {
-      return response
+      return Promise.resolve(response)
     }
   },
 

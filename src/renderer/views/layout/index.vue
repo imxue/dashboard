@@ -79,8 +79,10 @@
   .layout{
     min-width: 1190px;
     height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100vh;
   }
   .xx {
     display: flex;
