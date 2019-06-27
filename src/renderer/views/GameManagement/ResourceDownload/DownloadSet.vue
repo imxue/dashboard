@@ -9,7 +9,7 @@
       <Form :model="formItem">
         <FormItem label="">
           <Row>
-            <i-col span="3">最大同时下载任务数：</i-col>
+            <i-col span="3">{{this.$t('MaxdownloadTasks')}}：</i-col>
             <i-col span="4">
               <Select v-model="formItem.select1"  class="topColumn"  @on-change="handleSelect1Value">
                 <Option v-for="item in gameList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
@@ -19,12 +19,12 @@
         </FormItem>
         <FormItem label="">
           <Row>
-            <i-col span="3">下载限速：</i-col>
+            <i-col span="3">{{this.$t('DownloadSpeedlimit')}}：</i-col>
             <i-col span="4">
               <div class="x">
                 <Input v-model="formItem.select2"   placeholder="Enter something..."  />
-                  <i-col span="14">
-                  <span>KB/s (0表示不限速)</span>
+                  <i-col span="17">
+                  <span>KB/s ({{this.$t('0ExpressSpeed')}})</span>
                     </i-col>
               </div>
             </i-col>
@@ -139,6 +139,26 @@ export default {
         let obj = resp.data.data.default_download_disk
         for (let i in obj) {
           let x = {}
+          switch (i) {
+            case '网络游戏':
+              i = this.$t('OnlineGame')
+              break
+            case '单机游戏':
+              i = this.$t('ConsoleGame')
+              break
+            case '休闲游戏':
+              i = this.$t('CasualGame')
+              break
+            case '棋牌游戏':
+              i = this.$t('ChessGame')
+              break
+            case '辅助工具':
+              i = this.$t('AuxiliaryGame')
+              break
+            case '系统工具':
+              i = this.$t('SystemTool')
+              break
+          }
           x['TypeGame'] = i
           x['disk'] = obj[i]
           test.push(x)

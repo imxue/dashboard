@@ -381,5 +381,9 @@
   "NotDeleteCenterGame":"不能删除中心游戏",
   "ExtendedTypeSuccess":"扩展类型设置成功",
   "ExtendedTypeFail":"扩展类型设置失败",
-  "MacAddressFormat":"mac地址格式不正确"
+  "MacAddressFormat":"mac地址格式不正确",
+  "MaxdownloadTasks":"最大同时下载任务数",
+  "DownloadSpeedlimit":"下载限速",
+  "0ExpressSpeed":"0表示不限速",
+  "ChessGame":"棋牌游戏"
 }
