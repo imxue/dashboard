@@ -31,12 +31,6 @@ const messages = {
   'zh-TW': Object.assign(zhtw, ct)
 }
 
-let lang = Object.keys(messages)
-lang.forEach(item => {
-  if (item.toLowerCase() === navLang.toLowerCase()) {
-    console.log(`${navLang} 支持语言`)
-  }
-})
 const i18n = new VueI18n({
   locale: localLang, // 设置地区
   messages // 设置地区信息
