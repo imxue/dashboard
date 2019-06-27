@@ -11,7 +11,7 @@
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
       <Divider type="vertical"/>
-      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">设置为主服务器</Button>
+      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{this.$t('setMasterSer')}}</Button>
     </div>
 
     <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" ></Table>

@@ -385,5 +385,6 @@
   "MaxdownloadTasks":"最大同时下载任务数",
   "DownloadSpeedlimit":"下载限速",
   "0ExpressSpeed":"0表示不限速",
-  "ChessGame":"棋牌游戏"
+  "ChessGame":"棋牌游戏",
+  "setMasterSer":"设为主服务器"
 }
