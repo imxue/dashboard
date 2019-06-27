@@ -1,25 +1,25 @@
 <template>
   <div class="login">
     <div class="box">
-        <h3>登录</h3>
+        <h3>{{$t('Login')}}</h3>
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem prop="barid" style="width:100%;">
             <Row>服务器IP地址：</Row>
             <Row>
-              <i-input type="text" v-model="formInline.barid" placeholder="请输入服务器IP地址" style="width:100%; dispaly:block;"></i-input>
+              <Input type="text" v-model="formInline.barid" :placeholder="this.$t('pleaseInputServerIp')" style="width:100%; dispaly:block;"></Input>
             </Row>
           </FormItem>
           <FormItem prop="password" style="width:100%;">
             <Row>管理密码：</Row>
             <Row>
-              <i-input type="password" v-model="formInline.password" placeholder="请输入管理密码"></i-input>
+              <Input type="password" v-model="formInline.password" :placeholder="this.$t('ServerPW')"></Input>
             </Row>
           </FormItem>
           <FormItem>
-              <Button type="primary" @click="handleSubmit('formInline')" style="width:280px;">登陆 {{$T('login')}}</Button>
+              <Button type="primary" @click="handleSubmit('formInline')" style="width:280px;">{{$t('Login')}}</Button>
           </FormItem>
       </Form>
-      <p style="text-align:right; color:#2b85e4;cursor: pointer;" @click="handleReset">忘记密码？</p>
+      <!-- <p style="text-align:right; color:#2b85e4;cursor: pointer;" @click="handleReset">忘记密码？</p> -->
     </div>
   </div>
 </template>
@@ -36,10 +36,18 @@ export default {
       },
       ruleInline: {
         barid: [
-          { required: true, message: '请输入服务器IP地址', trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('Thisfieldcannotbeempty'),
+            trigger: 'blur'
+          }
         ],
         password: [
-          { required: true, message: '请输入管理密码', trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('Thisfieldcannotbeempty'),
+            trigger: 'blur'
+          }
         ]
       }
     }
@@ -54,16 +62,9 @@ export default {
         if (valid) {
           this.formInline.barid = Number(this.formInline.barid)
           login(this.formInline).then((e) => {
-            if (e.data.ok) {
-              localStorage.setItem('token', e.data.token)
-              this.$router.push('/Diskless')
-            } else {
-              this.$Message.info({
-                content: e.data.data.error,
-                duration: 10
-              })
-            }
-          })
+            localStorage.setItem('token', e.data.token)
+            this.$router.push('/Diskless')
+          }, () => {})
         }
       })
     },

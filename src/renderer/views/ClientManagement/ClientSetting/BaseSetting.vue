@@ -116,8 +116,9 @@ export default {
     HandleSetBasic () {
       this.form.archive_server_ip = this.archive_server_ip
       setSchemeBasics(this.form).then((response) => {
-        console.log(response)
-        // this.HandleGetBasic()
+        this.$Message.info({
+          content: this.$t('SetSucess')
+        })
       })
     },
     HandleGetBasic () {

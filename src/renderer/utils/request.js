@@ -36,7 +36,7 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    if (response.data.error) {
+    if (response.data.error && response.data.ok) {
       iView.Notice.error({
         desc: i18n.t(`kxLinuxErr.${response.data.error}`)
       })
