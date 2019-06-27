@@ -13,7 +13,7 @@ Vue.use(VueI18n)
 const navLang = navigator.language
 const lang = localStorage.getItem('lang') || navLang || 'en-US'
 
-Vue.locale = () => {}
+Vue.locale = () => { }
 const messages = {
   'en-US': { ...enUs, ...en },
   'zh-CN': { ...zhCn, ...zh },
@@ -28,5 +28,5 @@ const i18n = new VueI18n({
   messages, // set locale messages
   silentFallbackWarn: true
 })
-
+console.log(i18n)
 export default i18n
