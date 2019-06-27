@@ -5,11 +5,13 @@
       <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
       <!-- <Button type="error"   class="topColumn" @click="handleButtonDelete">删除任务</Button>
       <Button type="primary" class="topColumn" @click="handleButtonTop">置顶</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonSet">下载设置</Button> -->
+      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button> -->
+      <router-link to='DownloadSet'>
+      <Button type="primary" class="topColumn">{{$t('DownloadSetting')}}</Button> 
+      </router-link>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe ></Table>
     <Row style="margin-top:10px; ">
       <Page :total="100" :current="1" @on-change="changePage"  style=" float:right;"/>
     </Row>
@@ -86,9 +88,7 @@ export default {
         console.log('获取下载队列')
         console.log(response)
         console.log('获取下载队列')
-        if (response.data.ok) {
-          this.tableData = response.data.data
-        } else {}
+        this.tableData = response.data.data
         // if (response.data.data) {
         //   let temp = response.data.data
         //   for (let i = 0; i < temp.length; i++) {
@@ -97,6 +97,10 @@ export default {
         //   }
         //   this.tableData = response.data.data
         // }
+      }, (response) => {
+        console.log('获取下载队列')
+        console.log(response)
+        console.log('获取下载队列')
       })
     },
     /**

@@ -81,7 +81,7 @@ export default {
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadLog')
         },
         {
-          path: 'subType2-set',
+          path: 'DownloadSet',
           name: 'subType2-set',
           meta: { title: '下载设置', hidden: true },
           component: () => import('@/views/GameManagement/ResourceDownload/DownloadSet'),
