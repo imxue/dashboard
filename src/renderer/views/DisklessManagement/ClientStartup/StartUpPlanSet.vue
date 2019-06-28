@@ -65,18 +65,11 @@
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" :label-width="140">
           <Row>
-<<<<<<< HEAD:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanEdit.vue
-            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input> *M</i-col>
-          </Row>
-        </FormItem>
-        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'"  style="white-space:nowrap;">
-=======
             <i-col span="10"><i-input v-model="formValidate.cach" style="width:190px;"></i-input>*M
             </i-col>
           </Row>
         </FormItem>
         <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
->>>>>>> DiskLess:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanSet.vue
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
           </Row>
@@ -252,18 +245,11 @@
         }
       },
       handleCheckData () {
-<<<<<<< HEAD:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanEdit.vue
-        if (this.$route.query.data) {
-          var data = this.$route.query.data
-          this.oldName = this.$route.query.data.name
-        }
-=======
         let datax = this.$route.query
         if (datax.flag === 'edit') {
           this.flag = true
         }
         var data = this.$route.query.data
->>>>>>> DiskLess:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanSet.vue
         if (data) {
           this.formValidate = data
           // 镜像列表
@@ -278,15 +264,8 @@
       handlegetServerlist () {
         let mip = localStorage.getItem('masterip')
         getServersx(mip).then(response => {
-<<<<<<< HEAD:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanEdit.vue
-          if (response.data.ok) {
-            this.serverlist = response.data.data.result.list
-            this.formValidate2.daSV = this.serverlist[0].serverIp
-            this.handleGetImageList()
-=======
           if (!response.data.error) {
             this.serverlist = response.data.result.list
->>>>>>> DiskLess:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanSet.vue
           }
         })
       },
@@ -294,20 +273,6 @@
       获取镜像类表
       */
       handleGetImageList () {
-<<<<<<< HEAD:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanEdit.vue
-        let serverIp = this.formValidate2.daSV
-        if (serverIp) {
-          getImageListx(serverIp).then((resp) => {
-            if (resp.data.ok) {
-              this.imageList = resp.data.data.result.list
-              this.formValidate2.schemeName = this.imageList[0].name
-              this.handleSelectImageValue()
-            } else {
-              this.$Message.error(resp.data.data.error)
-            }
-          })
-        }
-=======
         let x = this.formValidate2.daSV
         getImageListx(x).then((resp) => {
           if (!resp.data.error) {
@@ -317,7 +282,6 @@
             this.$Message.error(resp.data.error)
           }
         })
->>>>>>> DiskLess:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanSet.vue
       },
       handleSelectImageValue () {
         var arr = this.imageList
@@ -348,13 +312,6 @@
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
-<<<<<<< HEAD:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanEdit.vue
-                  if (this.$route.query.flag) {
-                    deletePcGroup(this.oldName, localStorage.getItem('masterip')).then((response) => {
-                      if (response.data.ok) {}
-                    })
-                  }
-=======
                   // if (that.$route.query.flag) {
                   //   deletePcGroup(name, localStorage.getItem('masterip')).then((response) => {
                   //     if (!response.data.error) {
@@ -362,7 +319,6 @@
                   //     }
                   //   })
                   // }
->>>>>>> DiskLess:src/renderer/views/DisklessManagement/ClientStartup/StartUpPlanSet.vue
                   that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)
