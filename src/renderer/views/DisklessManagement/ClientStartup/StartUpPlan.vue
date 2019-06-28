@@ -92,16 +92,18 @@
     methods: {
       handleGetPcGroup () {
         let mip = localStorage.getItem('masterip')
-        getPcGroupx(mip).then((resp) => {
-          if (!resp.data.error) {
-            var arr = resp.data.result.list || []
+        if (mip) {
+          getPcGroupx(mip).then((resp) => {
             if (!resp.data.error) {
-              this.tableData = arr
-            } else {
-              this.$Message.error(resp.data.error)
+              var arr = resp.data.result.list || []
+              if (!resp.data.error) {
+                this.tableData = arr
+              } else {
+                this.$Message.error(resp.data.error)
+              }
             }
-          }
-        })
+          })
+        }
       },
       handleButtonAdd (val) {
         this.$router.push({ path: 'StartUpPlanSet' })

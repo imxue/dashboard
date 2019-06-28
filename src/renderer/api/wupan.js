@@ -22,7 +22,6 @@ function makeRequestx (method, param, ip) {
     ]
   }
   return request({
-    // Forwardflag: true,
     // url: `/v1/sysbase/startHttpRequest`,
     url: `http://${ip}:13302/jsonrpc`,
     method: 'post',
@@ -571,7 +570,7 @@ export function getErrorStringList () {
 /**
  * 设置节点
  */
-export function editServersNode (masterIp, isSyncImage, isOverload, ip) {
+export function editServersNode (masterIp, ip, isSyncImage, isOverload) {
   return makeRequestx('Set_Servers_Node', {
     masterIp: masterIp,
     syncimg: isSyncImage ? '1' : '0',

@@ -176,15 +176,17 @@
        * 获取镜像列表
        */
       handleGetImageList () {
-        getImageListx(localStorage.getItem('masterip')).then((response) => {
-          if (!response.data.error) {
-            this.mirroringInfo = response.data.result.list || []
-          }
-        }, (error) => {
-          this.$Notice.error({
-            desc: error
+        if (localStorage.getItem('masterip')) {
+          getImageListx(localStorage.getItem('masterip')).then((response) => {
+            if (!response.data.error) {
+              this.mirroringInfo = response.data.result.list || []
+            }
+          }, (error) => {
+            this.$Notice.error({
+              desc: error
+            })
           })
-        })
+        }
       },
       handleButtonAdd (val) {
         this.showPopup = true

@@ -386,5 +386,6 @@
   "DownloadSpeedlimit":"下载限速",
   "0ExpressSpeed":"0表示不限速",
   "ChessGame":"棋牌游戏",
-  "SynchronizeDisk":"同步磁盘"
+  "SynchronizeDisk":"同步磁盘",
+  "setMaterIp":"设置为主服务器"
 }

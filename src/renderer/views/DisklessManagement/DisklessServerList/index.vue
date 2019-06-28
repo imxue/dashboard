@@ -390,11 +390,18 @@ export default {
           let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
           getServersNode(this.formValidate.serverIP).then((res) => {
             if (!res.data.error) {
-              this.handleSubmitAddServer(
-                res.data.result.guid,
-                MasterIp,
-                this.formValidate.serverIP
-              )
+              if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
+                this.handleSubmitAddServer(
+                  res.data.result.guid,
+                  MasterIp,
+                  this.formValidate.serverIP
+                )
+              } else {
+                localStorage.setItem('masterip', res.data.result.masterIp)
+                this.handleGetServerList()
+                this.loadingBtn = false
+                this.showPopup = false
+              }
             } else {
               this.loadingBtn = false
               this.$Notice.error({
@@ -433,9 +440,12 @@ export default {
             this.handleGetServerList()
             setTimeout(() => {
               this.handleGetServerList()
-            }, 2000)
+            }, 1000)
           } else {
             this.loadingBtn = false
+            this.$Notice.error({
+              desc: this.$t(`kxLinuxErr.${resp.data.error}`)
+            })
           }
         }, a => {
           this.loadingBtn = false

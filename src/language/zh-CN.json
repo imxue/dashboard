@@ -369,5 +369,6 @@
 "repairSucess":"修复成功",
 "DeleteGameSucess":"删除游戏",
 "FileNotFound":"文件未找到",
-"DownloadSet":"下载设置"
+"DownloadSet":"下载设置",
+"setMaterIp":"设置为主服务器"
 }

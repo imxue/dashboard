@@ -13,17 +13,17 @@ const service = axios.create({
 })
 
 service.interceptors.request.use(
-  // (config) => {
-  //   if (localStorage.getItem('token')) {
-  //     config.headers['Authorization'] = localStorage.getItem('token')
-  //   }
-  //   return config
-  // },
-
   (request) => {
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
+
+    // request.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // if (request.method === 'post') {
+    //   request.data = qs.stringify({
+    //     ...request.data
+    //   })
+    // }
 
     return request
   },

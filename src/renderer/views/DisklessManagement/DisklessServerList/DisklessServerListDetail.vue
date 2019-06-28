@@ -11,7 +11,7 @@
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
       <Divider type="vertical"/>
-      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">设置为主服务器</Button>
+      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{$t('setMaterIp')}}</Button>
     </div>
 
     <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" ></Table>
@@ -491,9 +491,9 @@ export default {
     handleEditServersNode () {
       editServersNode(
         this.MasterServerIp,
+        this.rowData.serverIp,
         '1',
-        '1',
-        this.rowData.serverIp
+        '1'
       ).then(a => {
         if (a.data.error === null) {
           this.$Message.sucess(this.$t('DeleteDec'))
@@ -605,11 +605,10 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      console.log(this.currentPageServerip)
       getServersx(this.currentPageServerip).then((resp) => {
-        this.serverList = resp.data.data.result.list
-        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
-        this.isMaster = this.CurrentPageserverInfo.isMaster
+        this.serverList = resp.data.result.list
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
       }, (resp) => {
         this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
       }).catch((error) => {
@@ -623,12 +622,15 @@ export default {
      */
     HandlechangeMaster () {
       for (let i = 0; i < this.serverList.length; i++) {
-        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
+        editServersNode(this.currentPageServerip, this.serverList[i].serverIp, '1', '1').then((resp) => {
+          localStorage.setItem('masterip', this.currentPageServerip)
         }, (error) => {
           console.log(error)
         })
       }
-      localStorage.setItem('masterip', this.currentPageServerip)
+      setTimeout(() => {
+        this.handleButtonRefresh()
+      }, 1000)
       this.handleButtonRefresh()
     },
     /*
@@ -636,7 +638,7 @@ export default {
     */
     listTypeChange (serverip) {
       getServersx(this.MasterServerIp).then((resp) => {
-        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
         this.isMaster = this.CurrentPageserverInfo.isMaster
       })
       this.handleGetNetworkx(serverip)
