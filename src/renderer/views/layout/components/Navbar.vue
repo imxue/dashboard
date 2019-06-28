@@ -70,7 +70,7 @@ export default {
       netBarId: '0000001',
       onlineNetBar: '1000',
       totalNetBar: '2000',
-      localStorageLang: localStorage.getItem('language'),
+      localStorageLang: localStorage.getItem('lang'),
       localLanguage: [
         {
           value: 'zh-CN',
@@ -111,8 +111,8 @@ export default {
     },
     ChangeLanguage (name) {
       this.$i18n.locale = name
-      localStorage.setItem('language', name)
-      this.localStorageLang = localStorage.getItem('language')
+      localStorage.setItem('lang', name)
+      this.localStorageLang = name
     },
     handleExit () {
       // localStorage.setItem('Flag', '')

@@ -535,14 +535,17 @@ export default {
       this.handgetClienList()
       this.handleGetSuper()
     },
-    handleTableEdit (index) {
+    handleTableEdit (data) {
+      let exclientIp = this.clientIp.filter(item => { return item !== data.ip })
+      let pc = this.pc.filter(item => { return item !== data.pc })
+
       this.$router.push({
         path: 'clientData',
         query: {
-          data: index,
+          data: data,
           flag: 'Edit',
-          clientIp: this.clientIp,
-          pc: this.pc
+          clientIp: exclientIp,
+          pc: pc
         }
       })
     },

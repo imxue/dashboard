@@ -1,26 +1,26 @@
 <template>
   <div>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80" style="width:400px; margin-top:20px;">
-        <FormItem :label="this.$t('ClientMac')" prop="mac" :label-width="110">
-              <Input v-model.trim="formValidate.mac" placeholder="输入mac地址" :disabled='flag'/>
+        <FormItem :label="this.$t('ClientMAC')" prop="mac" :label-width="110">
+              <Input v-model.trim="formValidate.mac" :placeholder="$t('pleaseInput')" :disabled='flag'/>
             </FormItem>
 
-            <FormItem :label="this.$t('machineName')" prop="pc" :label-width="110">
-              <Input v-model="formValidate.pc" placeholder="输入机器名" />
+            <FormItem :label="this.$t('MachineNamePrefix')" prop="pc" :label-width="110">
+              <Input v-model="formValidate.pc" :placeholder="$t('pleaseInput')" />
             </FormItem>
 
-            <FormItem :label="this.$t('serverIp')" prop="ip" :label-width="110">
-              <Input v-model.trim="formValidate.ip" placeholder="输入服务器地址"/>
+            <FormItem :label="this.$t('ServerIP')" prop="ip" :label-width="110">
+              <Input v-model.trim="formValidate.ip" :placeholder="$t('pleaseInput')"/>
             </FormItem>
 
-            <FormItem :label="this.$t('startClient')" prop="disable" :label-width="110">
-                <Select v-model="formValidate.disable"  placeholder="是否启用客户机"   @on-change="handleGetEnableVal">
+            <FormItem :label="this.$t('Enable')" prop="disable" :label-width="110">
+                <Select v-model="formValidate.disable"  :placeholder="$t('pleaseInput')"   @on-change="handleGetEnableVal">
                   <Option v-for="item in enableList" :value="item.value" :key="item.label">{{ item.label }}</Option>
                 </Select>
             </FormItem>
 
-            <FormItem :label="this.$t('startupScenario')" prop="pcGp" :label-width="110">
-                <Select v-model="formValidate.pcGp"  placeholder="选择客户机启动方案"   @on-change="handleGetEnableVal">
+            <FormItem :label="this.$t('StartupScenario')" prop="pcGp" :label-width="110">
+                <Select v-model="formValidate.pcGp"  :placeholder="$t('pleaseInput')"   @on-change="handleGetEnableVal">
                   <Option v-for="item in pcGpList" :value="item.name" :key="item.label">{{ item.name }}</Option>
                 </Select>
             </FormItem>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  // import { editClient } from '@/api/client'
+  // import { xxx } from '@/utils/index'
   import { setPcConf } from '@/api/client'
   import { getPcGroupx } from '@/api/wupan'
   export default {
@@ -54,18 +54,7 @@
               return item === value
             })
             if (exits) {
-              let count = 0
-              if (this.flag) {
-                this.clientIp.forEach(element => {
-                  if (element === value) {
-                    count++
-                  }
-                  if (count < 1) {
-                    return callback()
-                  }
-                })
-              }
-              return callback(new Error('该客户机已经存在,不能重复添加'))
+              return callback(new Error(this.$t('NotrepeatIP')))
             }
             callback()
           } else {
@@ -102,24 +91,15 @@
           return item === PC
         })
         if (exits) {
-          // let count = 0
-          if (this.flag) {
-            this.pc.forEach(element => {
-              // if (element === PC) {
-              //   count++
-              // }
-              // if (count === 1) {
-              //   return callback()
-              // }
-            })
-          }
-          return callback(new Error('该机器名已经存在,不能重复添加'))
+          return callback(new Error(this.$t('NotrepeatIP')))
         }
         callback()
       }
       return {
         flag: false, //  修改标志
         data: '',
+        EiditIp: '',
+        Editpc: '',
         clientMac: [], // 所以客户机mac地址
         currEnable: '',
         currId: 0,
@@ -145,11 +125,11 @@
           disable: '0'
         },
         ruleValidate: {
-          mac: [{ required: true, validator: checkmacAddressformat, trigger: 'blur' }],
-          ip: [{ required: true, validator: checkIpformat, trigger: 'blur' }],
-          pc: [{ required: true, validator: checkPC, trigger: 'blur' }],
-          pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
+          mac: [{ required: true, validator: checkmacAddressformat, trigger: 'change' }],
+          ip: [{ required: true, validator: checkIpformat, trigger: 'change' }],
+          pc: [{ required: true, validator: checkPC, trigger: 'change' }],
+          pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }]
         }
       }
     },
@@ -158,6 +138,7 @@
       this.clientMac = this.$route.query.clientMac
       this.pc = this.$route.query.pc
       this.clientIp = this.$route.query.clientIp
+  
       if (data === 'Edit') {
         this.flag = true
         this.formValidate = this.$route.query.data

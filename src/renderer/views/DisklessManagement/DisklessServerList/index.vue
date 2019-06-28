@@ -65,6 +65,7 @@
           <div class="ivu-form-item-error-tip" v-if="NetWork">{{$t("NetworkError")}}</div>
           <Input
             type="password"
+            s
             v-model="formValidate.password"
             :placeholder="$t('pleaseInputServerPW')"
             :disabled="loadingBtn"
@@ -123,6 +124,12 @@ export default {
           return callback(new Error(this.$t('IPAddressIsIncorrect')))
         }
       }
+    }
+    var checkpasswd = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+      }
+      callback()
     }
     return {
       NetWork: false,
@@ -251,15 +258,14 @@ export default {
       ruleValidate: {
         serverIP: [
           {
-            required: true,
             validator: checkIpformat,
             trigger: 'blur'
           }
         ],
         password: [
           {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
+            // required: true,
+            validator: checkpasswd,
             trigger: 'blur'
           }
         ]
