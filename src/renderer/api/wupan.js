@@ -38,10 +38,10 @@ export function getServersx (ip) {
   return makeRequestx('Get_Servers', {}, ip)
 }
 
-export function login (password) {
-  return makeRequest('Login', {
+export function login (password, ip) {
+  return makeRequestx('Login', {
     rootPwd: password
-  })
+  }, ip)
 }
 
 export function controllServer (controlServerType, controlServerAction) {

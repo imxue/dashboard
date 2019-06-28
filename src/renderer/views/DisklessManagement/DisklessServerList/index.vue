@@ -102,7 +102,8 @@ import {
   getServersNode,
   editServersNode,
   getServersx,
-  deleteserverConfig
+  deleteserverConfig,
+  login
 } from '@/api/wupan'
 export default {
   name: 'subType1-1',
@@ -387,34 +388,43 @@ export default {
       this.loadingBtn = true
       this.$refs[name].validate(valid => {
         if (valid) {
-          let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-          getServersNode(this.formValidate.serverIP).then((res) => {
-            if (!res.data.error) {
-              if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
-                // 该服务器有主服务器，或者本地有主服务器
-                this.handleSubmitAddServer(
-                  res.data.result.guid,
-                  MasterIp,
-                  this.formValidate.serverIP
-                )
-              } else {
-                // 该服务器没有主服务器，且本地没有服务器
-                localStorage.setItem('masterip', res.data.result.masterIp)
-                this.handleGetServerList()
-                this.loadingBtn = false
-                this.showPopup = false
-              }
-            } else {
-              this.loadingBtn = false
+          login(this.formValidate.password, this.formValidate.serverIP).then(resp => {
+            if (resp.data.error) {
               this.$Notice.error({
-                desc: this.$t('NetworkError')
+                desc: this.$t(`kxLinuxErr.${resp.data.error}`)
+              })
+              this.loadingBtn = false
+            } else {
+              let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
+              getServersNode(this.formValidate.serverIP).then((res) => {
+                if (!res.data.error) {
+                  if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
+                    // 该服务器有主服务器，或者本地有主服务器
+                    this.handleSubmitAddServer(
+                      res.data.result.guid,
+                      MasterIp,
+                      this.formValidate.serverIP
+                    )
+                  } else {
+                    // 该服务器没有主服务器，且本地没有服务器
+                    localStorage.setItem('masterip', res.data.result.masterIp)
+                    this.handleGetServerList()
+                    this.loadingBtn = false
+                    this.showPopup = false
+                  }
+                } else {
+                  this.loadingBtn = false
+                  this.$Notice.error({
+                    desc: this.$t('NetworkError')
+                  })
+                }
+              }, () => {
+                this.loadingBtn = false
+                this.$Notice.error({
+                  desc: this.$t('NetworkError')
+                })
               })
             }
-          }, () => {
-            this.loadingBtn = false
-            this.$Notice.error({
-              desc: this.$t('NetworkError')
-            })
           })
         } else {
           this.loadingBtn = false
