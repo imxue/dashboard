@@ -116,7 +116,7 @@ export default {
     },
     handleExit () {
       // localStorage.setItem('Flag', '')
-      this.$router.push('/login/login')
+      this.$router.push('/login')
     }
   },
   computed: {

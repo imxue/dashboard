@@ -9,11 +9,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
       <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
-<<<<<<< HEAD:src/renderer/views/ClientManagement/ClientManagement/ClientList.vue
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
-=======
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
->>>>>>> DiskLess:src/renderer/views/ClientManagement/ClientManagement/ClientList.vue
     </div>
     <!-- table -->
     <Table
