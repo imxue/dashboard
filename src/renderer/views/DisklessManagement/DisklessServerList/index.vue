@@ -381,7 +381,7 @@ export default {
       })
     },
     /**
-     * 添加服务器
+     * 获取服务器节点
      */
     handleAddServer (name) {
       this.loadingBtn = true
@@ -391,12 +391,14 @@ export default {
           getServersNode(this.formValidate.serverIP).then((res) => {
             if (!res.data.error) {
               if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
+                // 该服务器有主服务器，或者本地有主服务器
                 this.handleSubmitAddServer(
                   res.data.result.guid,
                   MasterIp,
                   this.formValidate.serverIP
                 )
               } else {
+                // 该服务器没有主服务器，且本地没有服务器
                 localStorage.setItem('masterip', res.data.result.masterIp)
                 this.handleGetServerList()
                 this.loadingBtn = false
@@ -419,6 +421,9 @@ export default {
         }
       })
     },
+    /**
+     * 设置服务器节点，添加
+     */
     handleSubmitAddServer (guid, masterIp, selfip) {
       editServersNode(masterIp, selfip).then(
         (res) => {
