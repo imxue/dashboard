@@ -120,7 +120,7 @@ export function deleteSyncQueue (id) { // 删除同步任务
  */
 export function getSyncQueue (info) {
   return request({
-    url: `/v1/gamesync/getAllSyncTask?offset=${info.offset}0&limit=${info.limit}`,
+    url: `/v1/gamesync/getAllSyncTask?offset=${info.offset}&limit=${info.limit}`,
     method: 'get'
   })
 }
@@ -140,5 +140,15 @@ export function setDiskAttribute (info) {
     url: `/v1/serverdisk/setDiskAttribute`,
     method: 'post',
     data
+  })
+}
+
+/**
+ * 设置数据扩展盘
+ */
+export function getAllSyncGameTasks (info) {
+  return request({
+    url: `/v1/synctask/getAllSyncGameTasks?offset=${info.offset}&limit=${info.limit}`,
+    method: 'get'
   })
 }

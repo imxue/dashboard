@@ -39,6 +39,7 @@
 import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
 import { bytesToSize2 } from '../../../utils/index'
 import Vue from 'vue'
+const _ = require('lodash')
 export default {
   name: 'allGame',
   data () {
@@ -188,7 +189,7 @@ export default {
     /**
      * 获取全部游戏
      */
-    handgetAllGame (offset, limit, orderby) {
+    handgetAllGame: _.debounce(function (offset, limit, orderby) {
       getAllGame(offset, limit, orderby).then(response => {
         this.tableData = response.data.data.data
         response.data.data.data.filter(item => {
@@ -209,7 +210,8 @@ export default {
         // 在发送代码错误时执行这里
         this.$Message.error(this.$t('kxLinuxErr.10'))
       })
-    },
+    }, 1000),
+
     handleGetTableList (e) {
       this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
     },

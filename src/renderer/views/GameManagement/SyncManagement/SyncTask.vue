@@ -8,7 +8,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonMove">{{$t('MoveUp')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
@@ -25,11 +25,14 @@
 </template>
 
 <script>
-  import { getSyncQueue, deleteSyncQueue } from '@/api/sync'
+  import { deleteSyncQueue, getAllSyncGameTasks } from '@/api/sync'
+  // import { deleteSyncQueue } from '@/api/sync'
+  const _ = require('lodash')
   export default {
     name: 'subType4-2',
     data () {
       return {
+        fetch: false,
         curroffset: 0,
         currlimit: 10,
         totalPageNumber: 0,
@@ -60,16 +63,16 @@
               }
             }
           },
-          { title: '游戏类型', key: 'Type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'Dispalyname', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '热度', key: 'Centerpopularity', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', key: 'ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'Localpath', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'Dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '更新量', key: 'updateSize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-          { title: '已更新', key: 'updatedSize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
-          { title: '更新速度', key: 'speed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-          { title: '预计完成时间', key: 'time', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
+          { title: '游戏类型', key: 'game_type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'display_name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '热度', key: 'popularity', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'server_ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'src_dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'dst_dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '更新量', key: 'total_bytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          { title: '已更新', key: 'update_bytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
+          { title: '更新速度', key: 'update_speed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+          { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {
@@ -94,7 +97,22 @@
           //   }
           // }
         ],
-        tableData: []
+        tableData: [
+          {
+            'state': '',
+            'game_type': '',
+            'display_name': '',
+            'popularity': '',
+            'server_ip': '',
+            'Localpath': '',
+            'Dir': '',
+            'total_bytes': '',
+            'update_bytes': '',
+            'update_speed': '',
+            'expect_complete_time': ''
+
+          }
+        ]
       }
     },
     created () {
@@ -109,18 +127,21 @@
       /**
       * 获取同步任务
       */
-      handleGetTableList () {
+      handleGetTableList: _.debounce(function () {
+        this.fetch = true
         var info = {
           offset: 0,
           limit: 10
         }
-        getSyncQueue(info).then((resp) => {
-          console.log(resp.data.data.data)
-          this.tableData = resp.data.data.data
-        }, (error) => {
-          console.log(error)
+        getAllSyncGameTasks(info).then((resp) => {
+          this.tableData = resp.data.data.data ? resp.data.data.data : []
+        }, (res) => {
+        }).finally(() => {
+          this.tableData = []
+          this.fetch = false
         })
-      },
+      }, 1000),
+  
       hanbleChangePage (num) {
         if (num === 1) {
           num = 0
