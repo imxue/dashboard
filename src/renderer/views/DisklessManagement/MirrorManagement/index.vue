@@ -173,8 +173,6 @@
               temp = []
             }
           }
-          this.diskList = temp
-          this.formValidate.path = this.diskList[0].path
         })
       },
       /**
