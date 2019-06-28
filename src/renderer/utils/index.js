@@ -370,8 +370,3 @@ export function checkIpformat (rule, value, callback) {
     }
   }
 }
-
-export function xxx (vue, rule, value, callback) {
-  console.log(vue.clientIp)
-  debugger
-}

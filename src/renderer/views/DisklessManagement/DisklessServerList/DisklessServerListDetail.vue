@@ -129,22 +129,22 @@
       </Row>
       </div>
       <div class="right">
-        <span>作用提示</span>
+        <span>{{this.$t(`ExtendedTypeTip.${0}`)}}</span>
         <ul>
-          <span>游戏数据盘：</span>
-          <li>1.作为无盘数据盘使用</li>
-          <li>2.支持游戏同步，自动分配除热门游戏盘已分配游戏外的其他所有游戏，并自动完成游戏同步</li>
+          <span>{{this.$t(`ExtendedTypeTip.${1}`)}}</span>
+          <li>{{this.$t(`ExtendedTypeTip.${2}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${3}`)}}</li>
         </ul>
      
-        <span>热门游戏盘：</span>
+        <span>{{this.$t(`ExtendedTypeTip.${4}`)}}</span>
         <ul>
-          <li>1.作为无盘数据盘使用</li>
-          <li>2.支持游戏同步，需要手动指定需要同步的游戏，指定后自动完成同步操作</li>
+          <li>{{this.$t(`ExtendedTypeTip.${5}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${6}`)}}</li>
         </ul>
-        <span>私有数据盘：</span>
+        <span>{{this.$t(`ExtendedTypeTip.${7}`)}}</span>
         <ul>
-          <li>1.非必要磁盘</li>
-          <li>2.不支持游戏同步功能</li>
+          <li>{{this.$t(`ExtendedTypeTip.${8}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${9}`)}}</li>
         </ul>
       </div>
       </div>
