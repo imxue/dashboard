@@ -52,40 +52,41 @@
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + '：'">
+        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + '：'" :label-width="140">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'">
+        <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'" :label-width="140">
           <Row>
             <i-col span="20"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}}
             </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="cach" :label="this.$t('CacheSize') + '：'">
+        <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.cach" placeholder=""  style="width:120px;"></i-input>&nbsp;&nbsp; *M</i-col>
+            <i-col span="10"><i-input v-model="formValidate.cach" style="width:190px;"></i-input>*M
+            </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'">
+        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'">
+        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.hith" placeholder=""></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.hith" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'">
+        <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.resh" placeholder=""></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.resh" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="deps" :label="this.$t('Color') + '：'">
+        <FormItem prop="deps" :label="this.$t('Color') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.deps" placeholder=""></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.deps" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
         </FormItem>
 

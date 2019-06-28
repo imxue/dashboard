@@ -63,7 +63,7 @@
       return {
         modalType: 'create',
         modalTitle: this.$t('CreateConfigurationPointName'),
-        labelName: '配置点名称:',
+        labelName: this.$t('ConfigurationName'),
         showImgPopup: false,
         showPopup: false,
         configList: [],
@@ -152,7 +152,6 @@
             renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
           },
           { key: 'comment',
-            width: '100px',
             renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) }
           },
           {
@@ -164,7 +163,6 @@
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            width: 300,
             key: 'operation',
             render: (h, params) => {
               let response = h('Button', {

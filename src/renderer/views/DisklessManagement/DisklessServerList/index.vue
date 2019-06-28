@@ -288,11 +288,13 @@ export default {
     handleSearch () {
       this.loading = true
       var arr = this.serverList
-      setTimeout(() => {
-        this.loading = false
-        var newArr = arr.filter(item => item.serverIp === this.searchVal)
-        this.serverList = newArr
-      }, 1000)
+      if (this.searchVal) {
+        setTimeout(() => {
+          this.loading = false
+          var newArr = arr.filter(item => item.serverIp === this.searchVal)
+          this.serverList = newArr
+        }, 1000)
+      }
     },
     ResetError () {
       this.NetWork = false
@@ -316,10 +318,16 @@ export default {
         getServersx(d).then(
           resp => {
             if (!resp.data.error) {
-              this.spinShow = false
-              this.loading = false
-              this.serverList = resp.data.result.list
-              this.handleGetCurrMasterServerIp(this.serverList)
+              if (resp.data.result.list) {
+                this.spinShow = false
+                this.loading = false
+                this.serverList = resp.data.result.list
+                this.handleGetCurrMasterServerIp(this.serverList)
+              } else {
+                this.$Notice.error({
+                  desc: this.$t('ServerListIsEmpty')
+                })
+              }
             } else {
               let x = {
                 serverIp: localStorage.getItem('masterip'),
@@ -431,6 +439,11 @@ export default {
                 })
               })
             }
+          }, () => {
+            this.loadingBtn = false
+            this.$Notice.error({
+              desc: this.$t('NetworkError')
+            })
           })
         } else {
           this.loadingBtn = false

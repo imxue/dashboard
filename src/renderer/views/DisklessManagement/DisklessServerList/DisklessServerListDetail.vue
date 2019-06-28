@@ -639,7 +639,7 @@ export default {
     listTypeChange (serverip) {
       getServersx(this.MasterServerIp).then((resp) => {
         this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
-        this.isMaster = this.CurrentPageserverInfo.isMaster
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)
