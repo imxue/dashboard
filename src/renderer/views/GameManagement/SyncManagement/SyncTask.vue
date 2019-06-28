@@ -124,7 +124,6 @@
       }
     },
     methods: {
-<<<<<<< HEAD
       /**
       * 获取同步任务
       */
@@ -140,28 +139,6 @@
         }).finally(() => {
           this.tableData = []
           this.fetch = false
-=======
-      handleGetTableList (offset, limit) {
-        var listQuery = '?offset=' + offset + '&limit=' + limit
-        getSyncQueue(listQuery).then((a) => {
-          if (a.data.Data) {
-            var datalist = a.data.Data.List
-          }
-          if (a.data.Code === 0) {
-            if (datalist === null) {
-              this.data = null
-              this.tableData = []
-            } else {
-              this.tableData = a.data.Data.List
-              this.totalPageNumber = Number(a.data.Data.TotalCount)
-              this.currentPage = Number(a.data.Data.PageNo)
-              this.pageSize = Number(a.data.Data.TotalPage)
-            }
-          } else {
-            this.$Message.error(a.data.Msg)
-          }
-        }, () => {
->>>>>>> DiskLess
         })
       }, 1000),
   
