@@ -124,6 +124,7 @@
       }
     },
     methods: {
+<<<<<<< HEAD
       /**
       * 获取同步任务
       */
@@ -139,6 +140,28 @@
         }).finally(() => {
           this.tableData = []
           this.fetch = false
+=======
+      handleGetTableList (offset, limit) {
+        var listQuery = '?offset=' + offset + '&limit=' + limit
+        getSyncQueue(listQuery).then((a) => {
+          if (a.data.Data) {
+            var datalist = a.data.Data.List
+          }
+          if (a.data.Code === 0) {
+            if (datalist === null) {
+              this.data = null
+              this.tableData = []
+            } else {
+              this.tableData = a.data.Data.List
+              this.totalPageNumber = Number(a.data.Data.TotalCount)
+              this.currentPage = Number(a.data.Data.PageNo)
+              this.pageSize = Number(a.data.Data.TotalPage)
+            }
+          } else {
+            this.$Message.error(a.data.Msg)
+          }
+        }, () => {
+>>>>>>> DiskLess
         })
       }, 1000),
   
@@ -179,7 +202,6 @@
         deleteSyncQueue(this.getCheckboxVal).then((res) => {
           self.handleCallBackVaild(res)
         }, () => {
-          self.$Message.error('请求出错，请稍后再试')
         })
       },
       handleCancel () {
@@ -198,7 +220,7 @@
       handleButtonTop (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }
@@ -206,7 +228,7 @@
       handleButtonStart (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           alert('val')
         }

@@ -85,7 +85,7 @@
           path: '',
           exepath: '',
           exename: '',
-          isEnableSync: '自动更新'
+          isEnableSync: 1
         },
         updataWayList: [
           { Id: 1, value: this.$t('Enable') },
@@ -145,7 +145,7 @@
             if (e.target.result) {
               if (valid) {
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
-                  that.$Message.info(res.data)
+                  that.$Message.info(res.data.error)
                   that.$router.push({
                     path: 'BarGames',
                     query: { }

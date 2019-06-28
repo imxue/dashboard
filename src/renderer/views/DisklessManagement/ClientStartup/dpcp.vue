@@ -8,7 +8,7 @@
       :rules="ruleValidate"
     >
       <FormItem :label="this.$t('MachineNamePrefix')" prop="prefix">
-        <Input v-model="formValidate.prefix" :placeholder="$t('pleaseInput')"/>
+        <Input v-model="DHCPTable.prefix" :placeholder="$t('pleaseInput')" @on-change='Tip'/>
       </FormItem>
       <FormItem :label="this.$t('Numberlength')" prop="numbetLength">
         <Input v-model="formValidate.numbetLength" :placeholder="$t('pleaseInput')"/>
@@ -50,6 +50,7 @@ import {
 export default {
   data () {
     return {
+      dataChange: '',
       pcGpList: '',
       loading: false,
       formValidate: {
@@ -71,6 +72,12 @@ export default {
     }
   },
   methods: {
+    handUp () {
+      this.showPopup = true
+    },
+    Tip () {
+      this.dataChange = true
+    },
     handleSubmit (name) {
       this.loading = true
       let that = this
@@ -104,11 +111,13 @@ export default {
   },
   created () {
     let ip = localStorage.getItem('masterip')
-    this.getDHCP(ip)
-    getPcGroupx(ip).then((e) => {
-      this.pcGpList = e.data.data.result.list
-    },
-    (e) => { this.$Message.error(e.data.error) })
+    if (ip) {
+      this.getDHCP(ip)
+      getPcGroupx(ip).then((e) => {
+        this.pcGpList = e.data.result.list || {}
+      },
+      (e) => { this.$Message.error(e.data.error) })
+    }
   }
 }
 </script>

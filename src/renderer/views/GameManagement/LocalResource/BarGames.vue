@@ -222,7 +222,7 @@ export default {
     handleButtonEdit (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         this.$router.push({
           path: 'subtype3-2-edit',
@@ -233,7 +233,7 @@ export default {
     handleButtonSync (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         netbarMultiSync(this.getCheckboxVal).then(
           res => {
@@ -248,7 +248,7 @@ export default {
     handleButtonDelete (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         this.$router.push({
           path: 'subtype3-delete',
@@ -317,7 +317,7 @@ export default {
           this.$Message.success(e.data)
         })
       } else {
-        this.$Message.error('请至少选择列表中的一项')
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       }
     }
   }

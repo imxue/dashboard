@@ -91,14 +91,21 @@
     methods: {
       handleGetPcGroup () {
         let mip = localStorage.getItem('masterip')
-        getPcGroupx(mip).then((resp) => {
-          var arr = resp.data.data.result.list || []
-          if (!resp.data.error) {
-            this.tableData = arr
-          } else {
-            this.$Message.error(resp.data.error)
-          }
-        })
+        if (mip) {
+          getPcGroupx(mip).then((resp) => {
+            if (!resp.data.error) {
+              var arr = resp.data.result.list || []
+              if (!resp.data.error) {
+                this.tableData = arr
+              } else {
+                this.$Message.error(resp.data.error)
+              }
+            }
+          })
+        }
+      },
+      handleButtonAdd (val) {
+        this.$router.push({ path: 'StartUpPlanSet' })
       },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
@@ -116,7 +123,7 @@
       },
       handleEdit (index) {
         this.$router.push({
-          path: 'StartUpPlanEdit',
+          path: 'StartUpPlanSet',
           query: { data: index, flag: 'edit' }
         })
       },
@@ -139,7 +146,7 @@
             content: this.$t('DeletingWillCauseClientsUsingThisSchemetoBeUnavailable'),
             onOk: () => {
               deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
-                if (response.data.ok) {
+                if (!response.data.error) {
                   this.handleGetPcGroup()
                 }
               })

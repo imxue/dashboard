@@ -105,20 +105,21 @@
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
               }, this.$t('Configure'))
-              let c = h('Button', {
-                props: { type: 'primary' },
-                style: { marginRight: '10px' },
-                on: { click: () => { this.handleImport(params.row) } }
-              }, this.$t('Import'))
-              let d = h('Button', {
-                props: { type: 'primary' },
-                style: { marginRight: '10px' },
-                on: { click: () => { this.handleExport(params.row) } }
-              }, this.$t('Export'))
+              // let c = h('Button', {
+              //   props: { type: 'primary' },
+              //   style: { marginRight: '10px' },
+              //   on: { click: () => { this.handleImport(params.row) } }
+              // }, this.$t('Import'))
+              // let d = h('Button', {
+              //   props: { type: 'primary' },
+              //   style: { marginRight: '10px' },
+              //   on: { click: () => { this.handleExport(params.row) } }
+              // }, this.$t('Export'))
               let e = h('Button', { props: { type: 'error' },
                 on: { click: () => { this.handleDelete(params.row) } }
               }, this.$t('Delete'))
-              return [a, c, d, e]
+              // return [a, c, d, e]
+              return [a, e]
             }
           }
         ],
@@ -158,15 +159,19 @@
        */
       handleGetDiskStatus () {
         getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
-          let temp = []
-          var arr = response.data.data.result.list || []
-          var newArr = arr.filter(item => item.fun === 'imageDisk')
-          for (var i in newArr) {
-            temp.push({
-              path: newArr[i].path,
-              availableSize: bytesToSize(Number(newArr[i].availableSize)),
-              vol: newArr[i].vol
-            })
+          if (!response.data.error) {
+            let temp = []
+            var arr = response.data.result.list || []
+            var newArr = arr.filter(item => item.fun === 'imageDisk')
+            for (var i in newArr) {
+              temp.push({
+                path: newArr[i].path,
+                availableSize: bytesToSize(Number(newArr[i].availableSize))
+              })
+              this.diskList = temp
+              this.formValidate.path = this.diskList[0].path
+              temp = []
+            }
           }
           this.diskList = temp
           this.formValidate.path = this.diskList[0].path
@@ -176,9 +181,17 @@
        * 获取镜像列表
        */
       handleGetImageList () {
-        getImageListx(localStorage.getItem('masterip')).then((response) => {
-          this.mirroringInfo = response.data.data.result.list || []
-        })
+        if (localStorage.getItem('masterip')) {
+          getImageListx(localStorage.getItem('masterip')).then((response) => {
+            if (!response.data.error) {
+              this.mirroringInfo = response.data.result.list || []
+            }
+          }, (error) => {
+            this.$Notice.error({
+              desc: error
+            })
+          })
+        }
       },
       handleButtonAdd (val) {
         this.showPopup = true

@@ -245,7 +245,7 @@
     "PleaseSelectAtLeastOneItemInTheList" :"Please select one item in the List at least",
     "RequestErrorPleaseTryAgainLater":"Request error,please try again later",
     "OperationSuccessful":"Operation succeeded",
-     "Thisfieldcannotbeempty": "This field cannot be empty",
+    "Thisfieldcannotbeempty": "This field cannot be empty",
     "ChooseAtLeastOne": "One filed at least",
     "Getdiskinformationerror":"Get disk information error",
     "NetworkError": "Network Error",
@@ -386,5 +386,20 @@
   "DownloadSpeedlimit":"Download Speed Limit",
   "0ExpressSpeed":"0=Unlimit",
   "ChessGame":"Chess Game",
-  "setMasterSer":"Set as Master Server"
+  "setMasterSer":"Set as Master Server",
+  "startClient": "start",
+  "CancleSuperS": "Cancle",
+  "NotrepeatIP": "Not RepeatIP",
+  "ExtendedTypeTip": {
+    "0": "Note",
+    "1": "Game Data Disk",
+    "2": "1.Make use of Data Disk",
+    "3": "2.Support auto-sync and auto-assign all games(Exclude games assigned in Hot Game Disk)",
+    "4": "Hot Game Disk",
+    "5": "1.Make use of Data Disk",
+    "6": "2.Need manual-assign games firstly,and games will auto-sync later",
+    "7": "Private Data Disk",
+    "8": "1.Selectable Disk",
+    "9": "2.Can't support game auto-sync"
+  }
 }

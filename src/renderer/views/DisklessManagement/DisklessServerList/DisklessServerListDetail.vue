@@ -11,7 +11,7 @@
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
       <Divider type="vertical"/>
-      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{this.$t('setMasterSer')}}</Button>
+      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{$t('setMaterIp')}}</Button>
     </div>
 
     <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" ></Table>
@@ -129,22 +129,22 @@
       </Row>
       </div>
       <div class="right">
-        <span>作用提示</span>
+        <span>{{this.$t(`ExtendedTypeTip.${0}`)}}</span>
         <ul>
-          <span>游戏数据盘：</span>
-          <li>1.作为无盘数据盘使用</li>
-          <li>2.支持游戏同步，自动分配除热门游戏盘已分配游戏外的其他所有游戏，并自动完成游戏同步</li>
+          <span>{{this.$t(`ExtendedTypeTip.${1}`)}}</span>
+          <li>{{this.$t(`ExtendedTypeTip.${2}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${3}`)}}</li>
         </ul>
      
-        <span>热门游戏盘：</span>
+        <span>{{this.$t(`ExtendedTypeTip.${4}`)}}</span>
         <ul>
-          <li>1.作为无盘数据盘使用</li>
-          <li>2.支持游戏同步，需要手动指定需要同步的游戏，指定后自动完成同步操作</li>
+          <li>{{this.$t(`ExtendedTypeTip.${5}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${6}`)}}</li>
         </ul>
-        <span>私有数据盘：</span>
+        <span>{{this.$t(`ExtendedTypeTip.${7}`)}}</span>
         <ul>
-          <li>1.非必要磁盘</li>
-          <li>2.不支持游戏同步功能</li>
+          <li>{{this.$t(`ExtendedTypeTip.${8}`)}}</li>
+          <li>{{this.$t(`ExtendedTypeTip.${9}`)}}</li>
         </ul>
       </div>
       </div>
@@ -434,7 +434,7 @@ export default {
      */
     handleGetNetworkx (ip) {
       getNetworkx(ip).then(resp => {
-        var arr = resp.data.data.result.list
+        var arr = resp.data.result.list
         arr.map(item => {
           if (item.vdiskSet === 'yes') {
             item['_checked'] = true
@@ -450,7 +450,7 @@ export default {
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(resp => {
-        this.diskInfo = resp.data.data.result.list || []
+        this.diskInfo = resp.data.result.list || []
         this.diskInfo.forEach(item => {
           item.size = bytesToSize(item.size)
           item.availableSize = bytesToSize(item.availableSize)
@@ -491,9 +491,9 @@ export default {
     handleEditServersNode () {
       editServersNode(
         this.MasterServerIp,
+        this.rowData.serverIp,
         '1',
-        '1',
-        this.rowData.serverIp
+        '1'
       ).then(a => {
         if (a.data.error === null) {
           this.$Message.sucess(this.$t('DeleteDec'))
@@ -605,11 +605,10 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      console.log(this.currentPageServerip)
       getServersx(this.currentPageServerip).then((resp) => {
-        this.serverList = resp.data.data.result.list
-        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
-        this.isMaster = this.CurrentPageserverInfo.isMaster
+        this.serverList = resp.data.result.list
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
       }, (resp) => {
         this.$Message.error(this.$t(`kxLinuxErr.${resp}`))
       }).catch((error) => {
@@ -623,12 +622,15 @@ export default {
      */
     HandlechangeMaster () {
       for (let i = 0; i < this.serverList.length; i++) {
-        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
+        editServersNode(this.currentPageServerip, this.serverList[i].serverIp, '1', '1').then((resp) => {
+          localStorage.setItem('masterip', this.currentPageServerip)
         }, (error) => {
           console.log(error)
         })
       }
-      localStorage.setItem('masterip', this.currentPageServerip)
+      setTimeout(() => {
+        this.handleButtonRefresh()
+      }, 1000)
       this.handleButtonRefresh()
     },
     /*
@@ -636,8 +638,8 @@ export default {
     */
     listTypeChange (serverip) {
       getServersx(this.MasterServerIp).then((resp) => {
-        this.CurrentPageserverInfo = resp.data.data.result.list.filter(item => { return item.serverIp === serverip })
-        this.isMaster = this.CurrentPageserverInfo.isMaster
+        this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
+        this.isMaster = this.CurrentPageserverInfo[0].isMaster
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)

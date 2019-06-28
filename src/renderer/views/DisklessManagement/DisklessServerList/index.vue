@@ -67,6 +67,7 @@
           <div class="ivu-form-item-error-tip" v-if="NetWork">{{$t("NetworkError")}}</div>
           <Input
             type="password"
+            s
             v-model="formValidate.password"
             :placeholder="$t('pleaseInputServerPW')"
             :disabled="loadingBtn"
@@ -107,7 +108,6 @@ import {
   deleteserverConfig,
   login
 } from '@/api/wupan'
-// import Cookies from 'js-cookie'
 export default {
   name: 'subType1-1',
   data () {
@@ -126,6 +126,12 @@ export default {
           return callback(new Error(this.$t('IPAddressIsIncorrect')))
         }
       }
+    }
+    var checkpasswd = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+      }
+      callback()
     }
     return {
       NetWork: false,
@@ -254,15 +260,14 @@ export default {
       ruleValidate: {
         serverIP: [
           {
-            required: true,
             validator: checkIpformat,
             trigger: 'blur'
           }
         ],
         password: [
           {
-            required: true,
-            message: this.$t('Thisfieldcannotbeempty'),
+            // required: true,
+            validator: checkpasswd,
             trigger: 'blur'
           }
         ]
@@ -285,11 +290,13 @@ export default {
     handleSearch () {
       this.loading = true
       var arr = this.serverList
-      setTimeout(() => {
-        this.loading = false
-        var newArr = arr.filter(item => item.serverIp === this.searchVal)
-        this.serverList = newArr
-      }, 1000)
+      if (this.searchVal) {
+        setTimeout(() => {
+          this.loading = false
+          var newArr = arr.filter(item => item.serverIp === this.searchVal)
+          this.serverList = newArr
+        }, 1000)
+      }
     },
     ResetError () {
       this.NetWork = false
@@ -311,12 +318,31 @@ export default {
       let d = localStorage.getItem('masterip')
       if (d) {
         getServersx(d).then(
-          response => {
-            this.spinShow = false
-            this.loading = false
-            this.serverList = response.data.data.result.list
-            this.handleGetCurrMasterServerIp(this.serverList)
-          }, () => {
+          resp => {
+            if (!resp.data.error) {
+              if (resp.data.result.list) {
+                this.spinShow = false
+                this.loading = false
+                this.serverList = resp.data.result.list
+                this.handleGetCurrMasterServerIp(this.serverList)
+              } else {
+                this.$Notice.error({
+                  desc: this.$t('ServerListIsEmpty')
+                })
+              }
+            } else {
+              let x = {
+                serverIp: localStorage.getItem('masterip'),
+                online: '0',
+                dataVer: '-'
+              }
+              this.serverList.push(x)
+              this.loading = false
+            }
+          }, (error) => {
+            this.$Notice.error({
+              desc: error
+            })
             let x = {
               serverIp: localStorage.getItem('masterip'),
               online: '0',
@@ -332,7 +358,8 @@ export default {
     },
     handleGetCurrMasterServerIp (data) {
       if (data === null) {
-        this.MasterServerIp = ''
+        this.tempMasterServerIp = ''
+        localStorage.removeItem('masterip')
       } else {
         var arr = data.filter(item => item.isMaster === '1')
         this.MasterServerIp = arr[0].serverIp
@@ -373,58 +400,94 @@ export default {
       })
     },
     /**
-     * 添加服务器
+     * 获取服务器节点
      */
     handleAddServer (name) {
       this.loadingBtn = true
       this.$refs[name].validate(valid => {
         if (valid) {
-          login(this.formValidate.password, this.formValidate.serverIP).then((resp) => {
-            let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-            getServersNode(this.formValidate.serverIP).then((res) => {
-              this.handleSubmitAddServer(
-                res.data.data.result.guid,
-                MasterIp,
-                this.formValidate.serverIP
-              )
-            }, () => {
+          login(this.formValidate.password, this.formValidate.serverIP).then(resp => {
+            if (resp.data.error) {
+              this.$Notice.error({
+                desc: this.$t(`kxLinuxErr.${resp.data.error}`)
+              })
               this.loadingBtn = false
-            })
+            } else {
+              let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
+              getServersNode(this.formValidate.serverIP).then((res) => {
+                if (!res.data.error) {
+                  if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
+                    // 该服务器有主服务器，或者本地有主服务器
+                    this.handleSubmitAddServer(
+                      res.data.result.guid,
+                      MasterIp,
+                      this.formValidate.serverIP
+                    )
+                  } else {
+                    // 该服务器没有主服务器，且本地没有服务器
+                    localStorage.setItem('masterip', res.data.result.masterIp)
+                    this.handleGetServerList()
+                    this.loadingBtn = false
+                    this.showPopup = false
+                  }
+                } else {
+                  this.loadingBtn = false
+                  this.$Notice.error({
+                    desc: this.$t('NetworkError')
+                  })
+                }
+              }, () => {
+                this.loadingBtn = false
+                this.$Notice.error({
+                  desc: this.$t('NetworkError')
+                })
+              })
+            }
           }, () => {
             this.loadingBtn = false
-            this.$Notice.error({ desc: this.$t('NetworkError') })
+            this.$Notice.error({
+              desc: this.$t('NetworkError')
+            })
           })
         } else {
           this.loadingBtn = false
         }
       })
     },
+    /**
+     * 设置服务器节点，添加
+     */
     handleSubmitAddServer (guid, masterIp, selfip) {
       // 设置服务器节点
       editServersNode(masterIp, 1, 1, selfip).then(
         (res) => {
-          addServersx(selfip, guid, masterIp).then(
-            res => {
-              this.loadingBtn = false
-              localStorage.setItem('masterip', masterIp)
-              this.showPopup = false
-              this.handleGetServerList()
-              setTimeout(() => {
-                this.handleGetServerList()
-              }, 1000)
-            }, error => {
-              this.$Notice.error({ desc: this.$t(`kxLinuxErr.${error}`) })
-              this.modal4 = true // 清除服务器信息
-              this.loadingBtn = false
-            }
-          ).catch((a) => {
+          if (!res.data.error) {
+            // 成功执行
+          } else {
             this.$Notice.error({
-              title: `catch`,
-              desc: `${a}`
+              desc: this.$t('NetworkError')
             })
-          })
-        }, (res) => {
-          console.log(res)
+          }
+        }
+      ) // 设置主服务器
+      addServersx(selfip, guid, masterIp).then(
+        resp => {
+          if (!resp.data.error) {
+            this.loadingBtn = false
+            localStorage.setItem('masterip', masterIp)
+            this.showPopup = false
+            this.handleGetServerList()
+            setTimeout(() => {
+              this.handleGetServerList()
+            }, 1000)
+          } else {
+            this.loadingBtn = false
+            this.$Notice.error({
+              desc: this.$t(`kxLinuxErr.${resp.data.error}`)
+            })
+          }
+        }, a => {
+          this.loadingBtn = false
         }
       ) // 设置主服务器
     },

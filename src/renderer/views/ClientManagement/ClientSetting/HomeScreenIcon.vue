@@ -126,7 +126,6 @@ export default {
       }
     },
     ok () {
-      console.log(this.SelectedDataGame)
       let info = {
         'is_global': true,
         'gameids': []
@@ -135,11 +134,13 @@ export default {
         info.gameids.push(item.Id)
       })
       setSchemeIcon(info).then(resp => {
-        if (resp.data.ok) {
-
-        } else {
-          this.$Message.info(resp.data.error)
-        }
+        // if (resp.data.ok) {
+        //   debugger
+        // } else {
+        //   this.$Message.info(resp.data.error)
+        // }
+      }, (err) => {
+        this.$Message.info(err.data.error)
       })
     },
     handleGetPcGroup () {

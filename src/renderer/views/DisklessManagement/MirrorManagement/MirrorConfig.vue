@@ -63,7 +63,7 @@
       return {
         modalType: 'create',
         modalTitle: this.$t('CreateConfigurationPointName'),
-        labelName: '配置点名称:',
+        labelName: this.$t('ConfigurationName'),
         showImgPopup: false,
         showPopup: false,
         configList: [],
@@ -152,7 +152,6 @@
             renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
           },
           { key: 'comment',
-            minWidth: 150,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) }
           },
           {
@@ -164,7 +163,6 @@
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            minWidth: 300,
             key: 'operation',
             render: (h, params) => {
               let response = h('Button', {
@@ -223,9 +221,9 @@
        */
       handleGetImageList () {
         getImageListx(localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            var arr = response.data.data.result.list
-            if (response.data.data.error === null && arr.length !== null) {
+          if (!response.data.error) {
+            var arr = response.data.result.list
+            if (response.data.error === null && arr.length !== null) {
               var newArr = arr.filter(item => { return item.name === this.MirrorsInfoDate[0].name })
               this.tableData = newArr[0].profileList
             }
@@ -264,7 +262,7 @@
             let name = this.formValidate2.nameVal
             let data = { image, name }
             createImageProjectx(data, localStorage.getItem('masterip')).then((response) => {
-              if (response.data.ok) {
+              if (!response.data.error) {
                 this.handleGetImageList()
               }
             }, (err) => {
@@ -296,7 +294,6 @@
        * 还原点
        */
       handleSet (index) {
-        moment.locale(localStorage.getItem('lang').toLowerCase())
         this.showPopup = true
         this.restoreListIndexValue = index // 配置点
         this.handleGetRestoreList(index)
@@ -306,10 +303,10 @@
        * 镜像名 配置编号 服务器
        */
   
-      handleGetRestoreList (data) {
-        getImageRestore(this.MirrorsInfoDate[0].name, data.no, localStorage.getItem('masterip')).then((resp) => {
-          if (resp.data.ok) {
-            this.configPointDate = resp.data.data.result.rollbackList || []
+      handleGetRestoreList (index) {
+        getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
+          if (!resp.data.error) {
+            this.configPointDate = resp.data.result.rollbackList || []
           }
         })
       },
@@ -344,7 +341,7 @@
       handleDelete (index) {
         // image, projectNO
         deleteImageProject(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
+          if (!response.data.error) {
             this.$Message.success(this.$t('DeleteSucess'))
             this.handleGetImageList()
           }
@@ -355,14 +352,12 @@
        */
       handleSubmitFix () {
         editImageProject(this.MirrorsInfoDate[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName, localStorage.getItem('masterip')).then((resp) => {
-          if (resp.data.ok) {
-            if (!resp.data.error) {
-              this.$Message.success(this.$t('SetSucess'))
-              this.showImgPopup = false
-              this.handleGetImageList()
-            } else {
-              this.$Message.error(resp.data.error)
-            }
+          if (!resp.data.error) {
+            this.$Message.success(this.$t('SetSucess'))
+            this.showImgPopup = false
+            this.handleGetImageList()
+          } else {
+            this.$Message.error(resp.data.error)
           }
         })
       },
@@ -409,15 +404,13 @@
       },
       handleDeleteRestore (index) { // 删除还原点
         deleteImageRestore(this.MirrorsInfoDate[0].name, this.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((response) => {
-          if (response.data.ok) {
-            var result = response.data.result
-            if (response.data.error === null && result === null) {
-              this.showPopup = true
-              this.$Message.success(this.$t('OperationSuccessful'))
-              this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
-            } else {
-              this.$Message.error(response.data.error)
-            }
+          var result = response.data.result
+          if (response.data.error === null && result === null) {
+            this.showPopup = true
+            this.$Message.success(this.$t('OperationSuccessful'))
+            this.handleGetRestoreList(this.restoreListIndexValue) // 刷新还原点列表
+          } else {
+            this.$Message.error(response.data.error)
           }
         })
       }

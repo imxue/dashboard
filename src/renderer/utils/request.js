@@ -15,19 +15,15 @@ service.interceptors.request.use(
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
-    let x = request.url.indexOf('startHttpRequest')
-    if (x === -1) {
-      return request
-    } else {
-      request.data.url = request.url1
-      request.data.param = {
-        method: request.data.method,
-        params: request.data.params
-      }
-      delete request.data.params
-      request.data.method = 'POST'
-      return request
-    }
+
+    // request.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // if (request.method === 'post') {
+    //   request.data = qs.stringify({
+    //     ...request.data
+    //   })
+    // }
+
+    return request
   },
 
   (error) => {
@@ -38,17 +34,10 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    if (response.data.ok) {
-      if (!response.data.data) {
-        return response
-      }
-      if (response.data.data.error) {
-        return Promise.reject(response.data.data.error)
-      } else {
-        return Promise.resolve(response)
-      }
-    } else {
+    if (!!response.data.ok && !response.data.ok) {
       return Promise.reject(response)
+    } else {
+      return Promise.resolve(response)
     }
   },
 

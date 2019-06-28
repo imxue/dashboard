@@ -9,7 +9,11 @@
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
       <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
+<<<<<<< HEAD:src/renderer/views/ClientManagement/ClientManagement/ClientList.vue
       <Button type="primary" class="topColumn" @click="handleButtonAdd">添加</Button>
+=======
+      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
+>>>>>>> DiskLess:src/renderer/views/ClientManagement/ClientManagement/ClientList.vue
     </div>
     <!-- table -->
     <Table
@@ -22,6 +26,7 @@
       @on-select="handleGetTableRowInfo"
       @on-select-cancel="handleRemoveTableRowInfo"
       :no-data-text="this.$t('Nodata')"
+      @on-row-dblclick="handleTableEdit"
     ></Table>
     <Row style="margin-top:10px; ">
       <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
@@ -30,7 +35,6 @@
         :current="currentPage"
         :page-size="pageSize"
         :total="totalPageNumber"
-        show-total
         style=" float:right;"
         @on-change="hanbleChangePage"
       />
@@ -61,7 +65,7 @@
               >{{ item.name }}</Option>
             </template>
           </Select>
-             <div class="ivu-form-item-error-tip" v-if="err">{{$t('FailedToGetVirtualdiskInformation')}}</div>
+             <!-- <div class="ivu-form-item-error-tip" v-if="err">{{$t('FailedToGetVirtualdiskInformation')}}</div> -->
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmitx('formValidatex')">{{$t('SetSuperWorkstation')}}</Button>
@@ -70,18 +74,18 @@
     </Modal>
     <Modal title="取消超级工作站" v-model="cancleup" footer-hide width="500">
       <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
-        <FormItem label="操作" prop="plan">
-          <Select v-model="formValidate1.action" placeholder="默认当前(方案)">
+        <FormItem label="操作" prop="action">
+          <Select v-model="formValidate1.action" >
             <Option value="apply">{{$t('apply')}}</Option>
             <Option value="discard">{{$t('cancelText')}}</Option>
           </Select>
         </FormItem>
         <FormItem label="备注" prop="comment">
-          <input v-model="formValidate1.comment" type="text" />
+          <Input v-model="formValidate1.comment" type="text" />
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('cancelText')}}</Button>
-          <Button @click="handleResetx('fromdetail')" style="margin-left: 8px">{{$t('Reset')}}</Button>
+          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('apply')}}</Button>
+          <Button @click="handleReset('formValidate1')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
     </Modal>
@@ -104,6 +108,9 @@ export default {
   data () {
     return {
       err: '',
+      clientIp: [], // 客户机ip
+      clientMac: [],
+      pc: [],
       currentSuperip: '',
       imglist: '',
       addedip: '',
@@ -184,6 +191,21 @@ export default {
                     this.$t('Delete')
                   )
                 ])
+              } else {
+                let d = h(
+                  'Button',
+                  {
+                    props: { type: 'error' },
+                    style: { marginLeft: '10px' },
+                    on: {
+                      click: () => {
+                        this.setcancle(params.row)
+                      }
+                    }
+                  },
+                  this.$t('Delete')
+                )
+                return d
               }
             } else {
               a = h('div', [h(
@@ -223,7 +245,7 @@ export default {
         profileList: ''
       },
       formValidate1: {
-        action: '',
+        action: 'apply',
         comment: ''
       },
       ruleValidatex: {
@@ -235,7 +257,7 @@ export default {
         ]
       },
       ruleValidatex1: {
-        plan: [
+        action: [
           { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
         ],
         comment: [
@@ -245,19 +267,16 @@ export default {
     }
   },
   created () {
-    this.handgetClienList()
-    this.handleGetSuper()
+    this.handgetClienList() // 获取客户机列表
+    this.handleGetSuper() // 获取超级工作站
   },
   computed: {
-    routes () {
-      return this.$router.options.routes
-    },
     profileList () {
       if (this.imglist && this.formValidatex.imglist) {
         let xx = this.imglist.filter(item => {
           return item.name === this.formValidatex.imglist
         })
-
+        this.formValidatex.profileList = xx[0].profileList[0].name
         return xx[0].profileList
       }
     }
@@ -266,21 +285,32 @@ export default {
     handleGetSuper () {
       let ip = localStorage.getItem('masterip')
       getSuper(ip).then(response => {
-        if (response.data.ok) {
-          if (!response.data.data.error && response.data.data.result) {
-            this.currentSuperip = response.data.result.ip
-          }
+        if (!response.data.error && response.data.result) {
+          this.currentSuperip = response.data.result.ip
         }
       })
     },
+    /**
+     *设置数据
+     */
+    // HandsetData (data) {
+    //   this.$router.push({
+    //     paht: 'clientData',
+    //     params: { data }
+    //   })
+    // },
     handgetClienList () {
       if (localStorage.getItem('masterip')) {
         let ip = localStorage.getItem('masterip')
         getPcListConfigx(ip).then(response => {
-          if (response.data.ok) {
-            if (response.data.data.result.list) {
-              this.tableData = response.data.data.result.list
-            }
+          if (response.data.result.list) {
+            this.tableData = response.data.result.list
+
+            this.tableData.forEach(element => {
+              this.clientIp.push(element.ip)
+              this.clientMac.push(element.mac)
+              this.pc.push(element.pc)
+            })
           }
         })
       }
@@ -294,9 +324,8 @@ export default {
       this.adddetail = true
       let ip = localStorage.getItem('masterip')
       getImageListx(ip).then(response => {
-        if (response.data.ok) {
-          this.imglist = response.data.data.result.list
-        }
+        this.imglist = response.data.result.list
+        this.formValidatex.imglist = this.imglist[0].name
       })
       this.addedip = data.ip
     },
@@ -436,7 +465,14 @@ export default {
       }
     },
     handleButtonAdd (val) {
-      this.$router.push({ path: 'subtype1-add' })
+      this.$router.push({
+        path: 'clientData',
+        query: {
+          clientMac: this.clientMac,
+          clientIp: this.clientIp,
+          pc: this.pc
+        }
+      })
     },
     handleButtonEdit (val) {
       // alert(JSON.stringify(this.tableDataList))
@@ -484,7 +520,6 @@ export default {
       var self = this
       this.$refs[name].validate(valid => {
         if (valid) {
-          // this.$Message.success('表单验证成功!')
           deleteClient(currId).then(
             res => {
               self.handleCallBackVaild(res)
@@ -504,11 +539,18 @@ export default {
       this.handgetClienList()
       this.handleGetSuper()
     },
-    handleTableEdit (index) {
-      // alert(JSON.stringify(index))
+    handleTableEdit (data) {
+      let exclientIp = this.clientIp.filter(item => { return item !== data.ip })
+      let pc = this.pc.filter(item => { return item !== data.pc })
+
       this.$router.push({
-        path: 'subtype1-add',
-        query: { data: index }
+        path: 'clientData',
+        query: {
+          data: data,
+          flag: 'Edit',
+          clientIp: exclientIp,
+          pc: pc
+        }
       })
     },
     handleTableRemove (index) {
@@ -549,16 +591,14 @@ export default {
             },
             cookiesMasterIp
           ).then(response => {
-            if (response.data.ok) {
-              if (response.data.data.result.vdiskInfo && response.data.data.error === null) {
-                self.adddetail = false
-                self.currentSuperip = response.data.result.vdiskInfo.serverIp
-                setTimeout(() => {
-                  self.reload()
-                }, 0)
-              } else {
-                this.err = true
-              }
+            if (response.data.error) {
+              self.$Message.error(this.$t(`kxLinuxErr.${response.data.error}`))
+            } else {
+              self.adddetail = false
+              self.currentSuperip = response.data.result.vdiskInfo.serverIp
+              setTimeout(() => {
+                self.reload()
+              }, 0)
             }
           }, (err) => {
             self.$Message.error(this.$t(`kxLinuxErr.${err}`))
@@ -571,6 +611,7 @@ export default {
     handleReset (name) {
       this.$refs[name].resetFields()
       this.showPopup = false
+      this.cancleup = false
     }
   }
 }

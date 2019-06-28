@@ -9,6 +9,14 @@ import { app, BrowserWindow } from 'electron'
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
+// function sendStatusToWindow (text) {
+//   log.info(text)
+//   if (win) {
+//     win.webContents.send('message', text)
+//   }
+// }
+
+// let win
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`

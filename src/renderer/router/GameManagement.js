@@ -98,8 +98,8 @@ export default {
         },
         {
           path: 'DownloadSet',
-          name: 'DownloadSet',
-          meta: { title: '下载设置', hidden: true },
+          name: 'subType2-set',
+          meta: { title: 'DownloadSet', hidden: true },
           component: DownloadSet,
           hidden: true
         }

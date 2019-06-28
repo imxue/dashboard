@@ -1,4 +1,4 @@
-
+import i18n from '../locale'
 /**
  * Created by jiachenpan on 16/11/18.
  */
@@ -340,4 +340,33 @@ export function UploadImg (file) {
       reject(e)
     }
   })
+}
+
+/**
+ * 验证ip
+ * @param {*} rule
+ * @param {*} value
+ * @param {*} callback
+ */
+export function checkIpformat (rule, value, callback) {
+  if (!value) {
+    return callback(new Error(i18n.i('Thisfieldcannotbeempty')))
+  } else {
+    let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+      '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+    let regexp = new RegExp(reg)
+    if (regexp.test(value)) {
+      let exits = this.clientIp.some(item => {
+        return item === value
+      })
+      if (exits) {
+        return callback(new Error(i18n.i('NotrepeatIP')))
+      }
+      callback()
+    } else {
+      return callback(new Error(i18n.i('IPAddressIsIncorrect')))
+    }
+  }
 }

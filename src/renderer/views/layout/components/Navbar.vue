@@ -111,21 +111,12 @@ export default {
     },
     ChangeLanguage (name) {
       this.$i18n.locale = name
-      let lang = ''
-      if (name === 'zh-CN') {
-        lang = 'zh-cn'
-      } else if (name === 'en-US') {
-        lang = 'en'
-      } else if (name === 'zh-TW') {
-        lang = 'zh-tw'
-      }
-      moment.locale(lang)
       localStorage.setItem('lang', name)
-      this.localStorageLang = localStorage.getItem('lang')
+      this.localStorageLang = name
     },
     handleExit () {
-      localStorage.removeItem('token')
-      this.$router.push('/login')
+      // localStorage.setItem('Flag', '')
+      this.$router.push('/login/login')
     }
   },
   computed: {

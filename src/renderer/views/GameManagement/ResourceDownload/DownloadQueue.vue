@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe ></Table>
     <Row style="margin-top:10px; ">
       <Page :total="100" :current="1" @on-change="changePage"  style=" float:right;"/>
     </Row>

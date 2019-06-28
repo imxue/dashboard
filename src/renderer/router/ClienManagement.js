@@ -26,7 +26,7 @@ export default {
           component: ClientList
         },
         {
-          path: 'subType1-add',
+          path: 'clientData',
           name: 'type3-SubType1-add',
           meta: { title: 'ClientSetting' },
           component: ClientSetting,

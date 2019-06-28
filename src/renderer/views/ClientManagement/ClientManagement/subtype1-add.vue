@@ -1,33 +1,33 @@
 <template>
   <div>
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80" style="width:400px; margin-top:20px;">
-        <FormItem label="客户机MAC:" prop="mac" :label-width="100">
-              <Input v-model.trim="formValidate.mac" placeholder="输入mac地址"/>
+        <FormItem :label="this.$t('ClientMAC')" prop="mac" :label-width="110">
+              <Input v-model.trim="formValidate.mac" :placeholder="$t('pleaseInput')" :disabled='flag'/>
             </FormItem>
 
-            <FormItem label="机器名:" prop="pc" :label-width="100">
-              <Input v-model="formValidate.pc" placeholder="输入机器名" />
+            <FormItem :label="this.$t('MachineNamePrefix')" prop="pc" :label-width="110">
+              <Input v-model="formValidate.pc" :placeholder="$t('pleaseInput')" />
             </FormItem>
 
-            <FormItem label="服务器地址:" prop="ip" :label-width="100">
-              <Input v-model="formValidate.ip" placeholder="输入服务器地址"/>
+            <FormItem :label="this.$t('ServerIP')" prop="ip" :label-width="110">
+              <Input v-model.trim="formValidate.ip" :placeholder="$t('pleaseInput')"/>
             </FormItem>
 
-            <FormItem label="启动客户机:" prop="disable" :label-width="100">
-                <Select v-model="formValidate.disable"  placeholder="是否启用客户机"   @on-change="handleGetEnableVal">
+            <FormItem :label="this.$t('Enable')" prop="disable" :label-width="110">
+                <Select v-model="formValidate.disable"  :placeholder="$t('pleaseInput')"   @on-change="handleGetEnableVal">
                   <Option v-for="item in enableList" :value="item.value" :key="item.label">{{ item.label }}</Option>
                 </Select>
             </FormItem>
 
-            <FormItem label="启动方案:" prop="pcGp" :label-width="100">
-                <Select v-model="formValidate.pcGp"  placeholder="选择客户机方案"   @on-change="handleGetEnableVal">
+            <FormItem :label="this.$t('StartupScenario')" prop="pcGp" :label-width="110">
+                <Select v-model="formValidate.pcGp"  :placeholder="$t('pleaseInput')"   @on-change="handleGetEnableVal">
                   <Option v-for="item in pcGpList" :value="item.name" :key="item.label">{{ item.name }}</Option>
                 </Select>
             </FormItem>
 
             <FormItem class="buttonList">
-                <Button type="primary" @click="handleSubmit('formValidate')">确认</Button>
-                <Button @click="handleReset('formValidate')" style="margin-left: 8px">取消</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')">{{this.$t('Add')}}</Button>
+                <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{this.$t('cancelText')}}</Button>
             </FormItem>
     </Form>
   </div>
@@ -40,7 +40,32 @@
   export default {
     name: 'addClient',
     data () {
+      var checkIpformat = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+        } else {
+          let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+                    '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                    '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                    '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+          let regexp = new RegExp(reg)
+          if (regexp.test(value)) {
+            let exits = this.clientIp.some(item => {
+              return item === value
+            })
+            if (exits) {
+              return callback(new Error(this.$t('NotrepeatIP')))
+            }
+            callback()
+          } else {
+            return callback(new Error(this.$t('IPAddressIsIncorrect')))
+          }
+        }
+      }
       var checkmacAddressformat = (rule, macAddress, callback) => {
+        if (this.flag) {
+          return callback()
+        }
         if (!macAddress) {
           return callback(new Error(this.$t('Thisfieldcannotbeempty')))
         }
@@ -49,10 +74,33 @@
         if (!regexp.test(macAddress)) {
           return callback(new Error(this.$t('MacAddressFormat')))
         }
+        let exits = this.clientMac.some(item => {
+          return item === macAddress
+        })
+        if (exits) {
+          return callback(new Error('该客户机已经存在,不能重复添加'))
+        }
+        return callback()
+      }
+      var checkPC = (rule, PC, callback) => {
+        if (!PC) {
+          return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+        }
+  
+        let exits = this.pc.some(item => {
+          return item === PC
+        })
+        if (exits) {
+          return callback(new Error(this.$t('NotrepeatIP')))
+        }
         callback()
       }
       return {
+        flag: false, //  修改标志
         data: '',
+        EiditIp: '',
+        Editpc: '',
+        clientMac: [], // 所以客户机mac地址
         currEnable: '',
         currId: 0,
         activeDnsState: 0,
@@ -61,11 +109,11 @@
         gatewayState: 0,
         startSchemaState: 0,
         subnetState: 0,
-  
+        pcGpList: [], // 启动方案
         dataList: [],
         enableList: [
-          { id: 1, value: '0', label: '启用' },
-          { id: 2, value: '1', label: '停用' }
+          { value: '0', label: this.$t('Enable') },
+          { value: '1', label: this.$t('Disable') }
         ],
         projectList: [],
 
@@ -77,16 +125,24 @@
           disable: '0'
         },
         ruleValidate: {
-          mac: [{ required: true, validator: checkmacAddressformat, trigger: 'blur' }],
-          ip: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          pc: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
+          mac: [{ required: true, validator: checkmacAddressformat, trigger: 'change' }],
+          ip: [{ required: true, validator: checkIpformat, trigger: 'change' }],
+          pc: [{ required: true, validator: checkPC, trigger: 'change' }],
+          pcGp: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+          disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }]
         }
       }
     },
     created () {
-      // this.handleCheckQuery(this.$route.query)
+      let data = this.$route.query.flag
+      this.clientMac = this.$route.query.clientMac
+      this.pc = this.$route.query.pc
+      this.clientIp = this.$route.query.clientIp
+  
+      if (data === 'Edit') {
+        this.flag = true
+        this.formValidate = this.$route.query.data
+      }
       this.getClientPlan()
     },
     computed: {
@@ -101,7 +157,7 @@
       getClientPlan () {
         let masterip = localStorage.getItem('masterip')
         getPcGroupx(masterip).then((e) => {
-          this.pcGpList = e.data.data.result.list
+          this.pcGpList = e.data.result.list
           this.formValidate.pcGp = this.pcGpList[0].name
         },
         (e) => { this.$Message.error(e.data.error) })
@@ -115,51 +171,6 @@
           currVal = false
         }
         this.currEnable = currVal
-      },
-      handleInputVal (data) {
-        this.currId = data.Id
-        this.formValidate.mac = data.Mac
-        this.formValidate.ip = data.Ip
-        this.formValidate.subnet = data.Subnet
-        this.formValidate.gateway = data.Gateway
-        this.formValidate.dns01 = data.ActiveDns
-        this.formValidate.dns02 = data.BackupDns
-        // this.formValidate.enable = data.Enable // 若是State须接另外一个接口
-        this.formValidate.cpu = data.Cpu
-        this.formValidate.mainBord = data.MainBoard
-        this.formValidate.netCrad = data.NetworkCard
-        this.formValidate.graphicsCard = data.GraphicsCard
-        this.formValidate.soundCard = data.SoundCard
-        this.formValidate.project = data.ConfigureScheme
-        if (data.Enable === true) {
-          this.formValidate.enable = '0'
-        } else {
-          this.formValidate.enable = '1'
-        }
-        this.currEnable = this.formValidate.enable
-      },
-      handleEditMore (data) {
-        console.log('dataList:' + JSON.stringify(data[0]))
-        this.currId = data[0].Id
-        this.formValidate.mac = data[0].Mac
-        this.formValidate.ip = data[0].Ip
-        this.formValidate.subnet = data[0].Subnet
-        this.formValidate.gateway = data[0].Gateway
-        this.formValidate.dns01 = data[0].ActiveDns
-        this.formValidate.dns02 = data[0].BackupDns
-        // this.formValidate.enable = data[0].Enable // 若是State须接另外一个接口
-        this.formValidate.cpu = data[0].Cpu
-        this.formValidate.mainBord = data[0].MainBoard
-        this.formValidate.netCrad = data[0].NetworkCard
-        this.formValidate.graphicsCard = data[0].GraphicsCard
-        this.formValidate.soundCard = data[0].SoundCard
-        this.formValidate.project = data[0].ConfigureScheme
-        if (data[0].Enable === true) {
-          this.formValidate.enable = '0'
-        } else {
-          this.formValidate.enable = '1'
-        }
-        this.currEnable = this.formValidate.enable
       },
       handleJsonVaild (res) {
         var code = res.data.Code
@@ -196,7 +207,6 @@
         this.$refs[name].validate(valid => {
           if (valid) {
             let masterip = localStorage.getItem('masterip')
-            this.formValidate.pcGp = 'default'
             setPcConf(this.formValidate, masterip).then((resp) => {
               this.$router.go(-1)
             }, (error) => {

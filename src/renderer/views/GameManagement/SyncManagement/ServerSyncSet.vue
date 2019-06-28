@@ -172,7 +172,6 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       handleGetDriversOption () {
@@ -188,7 +187,6 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       handleGetSearch (offset, limit) {
@@ -209,7 +207,6 @@
             this.$Message.error(res.data.Msg)
           }
         }, () => {
-          // this.$Message.error('请求出错，请稍后再试')
         })
       },
       hanbleChangePage (num) {
@@ -237,7 +234,7 @@
       handleButtonAllowe (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           distributeGame(this.getCheckboxVal).then((res) => {
             this.handleCallBackVaild(res)
@@ -249,7 +246,7 @@
       handleButtonCancleAllowe (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           cancelDistribution(this.getCheckboxVal).then((res) => {
             this.handleCallBackVaild(res)
@@ -261,7 +258,7 @@
       handleButtonAddTask (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error('请至少选择列表中的一项')
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           multiAddSyncTask(this.getCheckboxVal).then((res) => {
             this.handleCallBackVaild(res)
