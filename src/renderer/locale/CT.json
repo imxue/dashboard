@@ -370,6 +370,21 @@
   "DeleteGameSucess": "刪除遊戲",
   "FileNotFound": "文件未找到",
   "DownloadSetting": "下載設置",
-  "DefaultDownloadPaht":"預設下載路徑"
-  
+  "DefaultDownloadPaht":"預設下載路徑",
+  "ConfigPoint":"配置點",
+  "IPAddressIsIncorrect":"請檢查ip地址格式",
+  "loginTmeOut":"登錄超時,請重新登錄",
+  "ExtendedType":"擴展類型",
+  "GameDisk":"遊戲數據盤",
+  "HotGameDisk":"熱門數據盤",
+  "PrivateGameDisk":"私有數據盤",
+  "NotDeleteCenterGame":"不能刪除中心遊戲",
+  "ExtendedTypeSuccess":"擴展類型設置成功",
+  "ExtendedTypeFail":"擴展類型設置失敗",
+  "MacAddressFormat":"mac位址格式不正確",
+  "MaxdownloadTasks":"最大同時下載任務數",
+  "DownloadSpeedlimit":"下載限速",
+  "0ExpressSpeed":"0表示不限速",
+  "ChessGame":"棋牌遊戲",
+  "setMasterSer":"設為主要伺服器"
 }
