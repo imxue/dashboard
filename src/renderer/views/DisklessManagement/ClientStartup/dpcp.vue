@@ -8,7 +8,7 @@
       :rules="ruleValidate"
     >
       <FormItem :label="this.$t('MachineNamePrefix')" prop="prefix">
-        <Input v-model="DHCPTable.prefix" :placeholder="$t('pleaseInput')" @on-change='Tip'/>
+        <Input v-model="formValidate.prefix" :placeholder="$t('pleaseInput')" @on-change='Tip'/>
       </FormItem>
       <FormItem :label="this.$t('Numberlength')" prop="numbetLength">
         <Input v-model="formValidate.numbetLength" :placeholder="$t('pleaseInput')"/>
@@ -105,7 +105,7 @@ export default {
     },
     getDHCP (ip) {
       getDHCPConfig(ip).then(resp => {
-        this.formValidate = resp.data.data.result ? resp.data.data.result : {}
+        this.formValidate = resp.data.result ? resp.data.result : {}
       })
     }
   },
