@@ -10,7 +10,7 @@
 
       <Divider type="vertical"/>
       <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
-      <Divider type="vertical"/>
+      <Divider v-show="isMaster !== '1'" type="vertical" />
       <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{$t('setMaterIp')}}</Button>
     </div>
 
@@ -34,17 +34,17 @@
       <Divider/>
        <Button type="primary" @click="handleDisk">{{this.$t('SetUpDiskSoftConnection')}}</Button>
     </div>
-
-
-      
       <Modal
         v-model="xxxx"
         footer-hide
-        :styles="{top: '280px'}"
+        width="760"
+        :styles="{top: '260px'}"
         :title="this.$t('SetUpDiskSoftConnection')">
-       
         <Transfer
+        :titles="[this.$t('ArrayMembersCanBeUsed'), this.$t('ArrayMemberAlreadyExists')]"
         :data="data1"
+        :render-format="render3"
+        :list-style="listStyle"
         :targetKeys="rightData"
         :operations="[this.$t('Remove'),this.$t('Create')]"
         @on-change="handleChange1"></Transfer>
@@ -197,6 +197,7 @@ export default {
       loading: '',
       xxxx: false, // 设置磁盘 穿
       rightData: [],
+
       setspin: false,
       serverList: '',
       DiskSettingDialog: false, // 磁盘设置中提示
@@ -211,6 +212,10 @@ export default {
       selecteFormatValue: 'no',
       ExtendedType: '0', // 扩展类型
       DiskData: {}, // 磁盘信息
+      listStyle: {
+        width: '300px',
+        height: '300px'
+      },
       tableColumns1: [
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
@@ -455,8 +460,8 @@ export default {
           path = item
           RaidRemove(path, this.currentPageServerip).then(() => {
             this.handleGetDiskStatusx(this.currentPageServerip)
-          }, () => {
-            this.$Message.success(this.$t('fail'))
+          }, (error) => {
+            this.$Message.success(this.$t(`kxLinuxErr.${error}`))
             this.handleGetDiskStatusx(this.currentPageServerip)
           }).finally(() => {
             this.setspin = false
@@ -465,6 +470,7 @@ export default {
       } else {
         if (selected.length === 1) {
           this.$Message.success(this.$t('AtLeastTwoDisks'))
+          this.setspin = false
         } else {
           let y = []
           selected.forEach(item => {
@@ -472,8 +478,8 @@ export default {
           })
           RaidCreate(y, this.currentPageServerip).then(() => {
             this.handleGetDiskStatusx(this.currentPageServerip)
-          }, () => {
-            this.$Message.success(this.$t('fail'))
+          }, (error) => {
+            this.$Message.success(this.$t(`kxLinuxErr.${error}`))
             this.handleGetDiskStatusx(this.currentPageServerip)
           }).finally(() => {
             this.setspin = false
@@ -510,6 +516,7 @@ export default {
       getDiskStatusx(ip).then(resp => {
         this.data1 = []
         this.diskInfo = resp.data.result.list || []
+        console.log(this.diskInfo)
         this.diskInfo.forEach(item => {
           item.size = bytesToSize(item.size)
           item.availableSize = bytesToSize(item.availableSize)
@@ -518,6 +525,7 @@ export default {
             f['key'] = item.path
             f['label'] = item.path
             f['isRaid'] = item.isRaid
+            f['capacity'] = item.size
             // if (item.isRaid === '0') {
             this.data1.push(f)
             // }
@@ -540,22 +548,18 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          console.log(this.MasterServerIp)
           deleteserverx(this.currentPageServerip, this.MasterServerIp).then((resp) => {
+            deleteserverConfig(this.currentPageServerip)
             this.$Message.success(this.$t('DeleteSucess'))
             this.$router.push({
               path: 'DisklessServerList'
             })
+            if (this.currentPageServerip === localStorage.getItem('masterip')) {
+              localStorage.removeItem('masterip')
+            }
           }, (resp) => {
             this.$Message.success(this.$t(`kxLinuxErr.${resp}`))
           })
-          if (this.currentPageServerip === localStorage.getItem('masterip')) {
-            localStorage.removeItem('masterip')
-            this.$router.push({
-              path: 'DisklessServerList'
-            })
-          }
-          deleteserverConfig(this.currentPageServerip)
         }
       })
     },
@@ -692,12 +696,17 @@ export default {
      * 切换主服务器
      */
     HandlechangeMaster () {
+      let sucessflag = 0
       for (let i = 0; i < this.serverList.length; i++) {
-        editServersNode(this.currentPageServerip, this.serverList[i].serverIp, '1', '1').then((resp) => {
-          localStorage.setItem('masterip', this.currentPageServerip)
+        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
+          sucessflag++
         }, (error) => {
           console.log(error)
         })
+      }
+      if (sucessflag === this.serverList.length) {
+        localStorage.setItem('masterip', this.currentPageServerip)
+        sucessflag = 0
       }
       setTimeout(() => {
         this.handleButtonRefresh()
@@ -718,8 +727,8 @@ export default {
     handleDisk () {
       this.xxxx = true
     },
-    render4 (item) {
-      return item.label
+    render3 (item) {
+      return item.label + ' - ' + item.capacity
     }
   }
 }

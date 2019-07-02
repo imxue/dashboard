@@ -91,10 +91,10 @@
       v-model="modal4"
       :title="this.$t('Theservermayalreadybelongtoanothernode')"
       ok-text="OK"
-      @on-ok="remove"
+      @on-ok="removeAndServer"
       cancel-text="Cancel"
     >
-      <p>{{$t("Needtocleartheinformationcontinue")}}</p>
+      <p>{{$t("Needtocleartheinformationcontinue")}} + {{tempMasterIP}}</p>
     </Modal>
   </div>
 </template>
@@ -144,6 +144,8 @@ export default {
       MasterServerIp: '', // 主服务器
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
+      guid: '', // 服务器guid
+      tempMasterIP: '',
       tableColumns: [
         // { type: 'selection', width: 60, align: 'center' },
         {
@@ -304,10 +306,10 @@ export default {
     /**
      * 清除服务器信息
      */
-    remove () {
+    removeAndServer () {
       deleteserverConfig(this.formValidate.serverIP).then(() => {
         this.modal4 = false
-        this.handleAddServer('formValidate')
+        this.handleSubmitAddServer(this.guid, this.formValidate.serverIP, this.formValidate.serverIP)
       })
     },
     /**
@@ -315,7 +317,6 @@ export default {
      */
     handleGetServerList () {
       this.loading = true
-
       let ip = localStorage.getItem('masterip')
       if (ip) {
         let Serverinfo = {
@@ -324,7 +325,11 @@ export default {
           dataVer: '-'
         }
         getServersx(ip).then(resp => {
-          this.serverList = resp.result.list ? resp.result.list : this.serverList.push(Serverinfo)
+          this.serverList = resp.data.result.list ? resp.data.result.list : this.serverList.push(Serverinfo)
+          this.MasterServerIp = this.serverList.filter(item => {
+            return item.isMaster === '1'
+          })
+          this.MasterServerIp = this.MasterServerIp[0].serverIp
         }, () => {
           this.serverList.push(Serverinfo)
           this.$Notice.error({
@@ -333,6 +338,7 @@ export default {
         })
           .finally(() => {
             this.loading = false
+            this.serverPopup = false
           })
       }
       this.loading = false
@@ -381,7 +387,7 @@ export default {
       })
     },
     /**
-     * 获取服务器节点
+     * 添加服务器
      */
     handleAddServer (name) {
       this.$refs[name].validate(valid => {
@@ -399,27 +405,42 @@ export default {
         }
       })
     },
+    /**
+     * 获取服务器信息
+     */
     HandleGetServerNode () {
       // let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-      getServersNode(this.formValidate.serverIP).then((resp) => {
-        let guid = resp.result.guid
-        if (localStorage.getItem('masterip')) {
-          if (resp.result.masterIp === this.formValidate.serverIP && resp.result.masterIp !== localStorage.getItem('masterip')) {
-            console.log(this.formValidate.serverIP + '该服务器已经别添加为服务器 是否更换为' + localStorage.getItem('masterip'))
-            debugger
-            this.remove()
-          } else if (resp.result.masterIp !== this.formValidate.serverIP) {
-            console.log(this.formValidate.serverIP + '该服务器已经别添加为服务器 是否更换为' + localStorage.getItem('masterip'))
+      let localMasterIp = localStorage.getItem('masterip')
+      let currentIp = this.formValidate.serverIP // 添加的服务器ip
+      getServersNode(currentIp).then((resp) => {
+        let guid = resp.data.result.guid
+        let serverMasterIp = resp.data.result.masterIp // 该服务器的主服务ip
+        this.guid = guid
+        if (serverMasterIp) {
+          if (serverMasterIp === currentIp) {
+            if (localMasterIp) {
+              this.handleSubmitAddServer(guid, localMasterIp, currentIp)
+            } else {
+              localStorage.setItem('masterip', currentIp)
+              this.serverPopup = false
+              this.handleGetServerList()
+            }
+          } else {
+            this.modal4 = true
           }
         } else {
-          if (!resp.result.masterIp) {
-            this.handleSubmitAddServer(guid, this.formValidate.serverIP, this.formValidate.serverIP)
-          }
+          let masterip = localMasterIp || currentIp
+          this.handleSubmitAddServer(guid, masterip, currentIp)
         }
       }, () => {
-      }).finally(() => {
+        this.$Notice.error({
+          desc: this.$t(`获取服务器信息失败`)
+        })
       })
     },
+    /**
+     * 设置服务器节点，并添加
+     */
     handleSubmitAddServer (guid, masterIp, selfip) {
       // 设置服务器节点
       editServersNode(masterIp, 1, 1, selfip).then(

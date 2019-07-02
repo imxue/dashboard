@@ -39,13 +39,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     if (response.data.ok) {
-      if (response.data.data.error) {
+      if (response.data.data && response.data.data.error) {
         return Promise.reject(response.data.data.error)
       }
-
-      return Promise.resolve(response.data.data)
+      return Promise.resolve(response.data)
     } else {
-      return Promise.reject(response)
+      response.data.error = 'NetworkError'
+      return Promise.reject(response.data.error)
     }
   },
 
