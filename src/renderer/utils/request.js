@@ -5,7 +5,7 @@ import i18n from '../locale'
 import iView from 'iview'
 const service = axios.create({
   // baseURL: 'http://10.88.66.153:8080/',
-  // baseURL: 'http://10.88.66.74:7480',
+  baseURL: 'http://10.88.66.71:8080',
   // baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 20000 // request timeout
 
