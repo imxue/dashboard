@@ -41,7 +41,7 @@
     <Modal
       :mask-closable="false"
       :title="$t('AddServer')"
-      v-model="showPopup"
+      v-model="serverPopup"
       width="500"
       footer-hide
     >
@@ -140,7 +140,7 @@ export default {
       modal4: false,
       loading: false,
       loadingBtn: false,
-      showPopup: false,
+      serverPopup: false, // 服务器弹窗开关
       MasterServerIp: '', // 主服务器
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
@@ -311,50 +311,31 @@ export default {
       })
     },
     /**
-     * 获取列表
+     * 获取服务器列表
      */
     handleGetServerList () {
       this.loading = true
-      let d = localStorage.getItem('masterip')
-      if (d) {
-        getServersx(d).then(
-          resp => {
-            if (!resp.data.error) {
-              if (resp.data.result.list) {
-                this.spinShow = false
-                this.loading = false
-                this.serverList = resp.data.result.list
-                this.handleGetCurrMasterServerIp(this.serverList)
-              } else {
-                this.$Notice.error({
-                  desc: this.$t('ServerListIsEmpty')
-                })
-              }
-            } else {
-              let x = {
-                serverIp: localStorage.getItem('masterip'),
-                online: '0',
-                dataVer: '-'
-              }
-              this.serverList.push(x)
-              this.loading = false
-            }
-          }, (error) => {
-            this.$Notice.error({
-              desc: error
-            })
-            let x = {
-              serverIp: localStorage.getItem('masterip'),
-              online: '0',
-              dataVer: '-'
-            }
-            this.serverList.push(x)
+
+      let ip = localStorage.getItem('masterip')
+      if (ip) {
+        let Serverinfo = {
+          serverIp: localStorage.getItem('masterip'),
+          online: '0',
+          dataVer: '-'
+        }
+        getServersx(ip).then(resp => {
+          this.serverList = resp.result.list ? resp.result.list : this.serverList.push(Serverinfo)
+        }, () => {
+          this.serverList.push(Serverinfo)
+          this.$Notice.error({
+            desc: this.$t(`kxLinuxErr.${44}`)
+          })
+        })
+          .finally(() => {
             this.loading = false
-          }
-        )
-      } else {
-        this.loading = false
+          })
       }
+      this.loading = false
     },
     handleGetCurrMasterServerIp (data) {
       if (data === null) {
@@ -370,7 +351,7 @@ export default {
      * 弹起添加服务器弹窗
      */
     handleButtonAdd (val) {
-      this.showPopup = true
+      this.serverPopup = true
       this.NetWork = false
       this.loadingBtn = false
       this.$nextTick(() => {
@@ -403,96 +384,74 @@ export default {
      * 获取服务器节点
      */
     handleAddServer (name) {
-      this.loadingBtn = true
       this.$refs[name].validate(valid => {
         if (valid) {
+          this.loadingBtn = true
           login(this.formValidate.password, this.formValidate.serverIP).then(resp => {
-            if (resp.data.error) {
-              this.$Notice.error({
-                desc: this.$t(`kxLinuxErr.${resp.data.error}`)
-              })
-              this.loadingBtn = false
-            } else {
-              let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-              getServersNode(this.formValidate.serverIP).then((res) => {
-                if (!res.data.error) {
-                  if (!res.data.result.masterIp || localStorage.getItem('masterip')) {
-                    // 该服务器有主服务器，或者本地有主服务器
-                    this.handleSubmitAddServer(
-                      res.data.result.guid,
-                      MasterIp,
-                      this.formValidate.serverIP
-                    )
-                  } else {
-                    // 该服务器没有主服务器，且本地没有服务器
-                    localStorage.setItem('masterip', res.data.result.masterIp)
-                    this.handleGetServerList()
-                    this.loadingBtn = false
-                    this.showPopup = false
-                  }
-                } else {
-                  this.loadingBtn = false
-                  this.$Notice.error({
-                    desc: this.$t('NetworkError')
-                  })
-                }
-              }, () => {
-                this.loadingBtn = false
-                this.$Notice.error({
-                  desc: this.$t('NetworkError')
-                })
-              })
-            }
-          }, () => {
-            this.loadingBtn = false
+            this.HandleGetServerNode()
+          }, (error) => {
             this.$Notice.error({
-              desc: this.$t('NetworkError')
+              desc: this.$t(`kxLinuxErr.${error}`)
             })
+          }).finally(() => {
+            this.loadingBtn = false
           })
-        } else {
-          this.loadingBtn = false
         }
       })
     },
-    /**
-     * 设置服务器节点，添加
-     */
+    HandleGetServerNode () {
+      // let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
+      getServersNode(this.formValidate.serverIP).then((resp) => {
+        let guid = resp.result.guid
+        if (localStorage.getItem('masterip')) {
+          if (resp.result.masterIp === this.formValidate.serverIP && resp.result.masterIp !== localStorage.getItem('masterip')) {
+            console.log(this.formValidate.serverIP + '该服务器已经别添加为服务器 是否更换为' + localStorage.getItem('masterip'))
+            debugger
+            this.remove()
+          } else if (resp.result.masterIp !== this.formValidate.serverIP) {
+            console.log(this.formValidate.serverIP + '该服务器已经别添加为服务器 是否更换为' + localStorage.getItem('masterip'))
+          }
+        } else {
+          if (!resp.result.masterIp) {
+            this.handleSubmitAddServer(guid, this.formValidate.serverIP, this.formValidate.serverIP)
+          }
+        }
+      }, () => {
+      }).finally(() => {
+      })
+    },
     handleSubmitAddServer (guid, masterIp, selfip) {
       // 设置服务器节点
       editServersNode(masterIp, 1, 1, selfip).then(
-        (res) => {
-          if (!res.data.error) {
-            // 成功执行
-          } else {
-            this.$Notice.error({
-              desc: this.$t('NetworkError')
-            })
-          }
-        }
-      ) // 设置主服务器
-      addServersx(selfip, guid, masterIp).then(
-        resp => {
-          if (!resp.data.error) {
-            this.loadingBtn = false
-            localStorage.setItem('masterip', masterIp)
-            this.showPopup = false
-            this.handleGetServerList()
-            setTimeout(() => {
+        (resp) => {
+          addServersx(selfip, guid, masterIp).then(
+            resp => {
+              this.loadingBtn = false
+              this.serverPopup = false
+              localStorage.setItem('masterip', masterIp)
               this.handleGetServerList()
-            }, 1000)
-          } else {
+              setTimeout(() => {
+                this.handleGetServerList()
+              }, 1000)
+            }, error => {
+              this.loadingBtn = false
+              this.$Notice.error({
+                desc: this.$t(`kxLinuxErr.${error}`)
+              })
+            }
+          ).finally(() => {
             this.loadingBtn = false
-            this.$Notice.error({
-              desc: this.$t(`kxLinuxErr.${resp.data.error}`)
-            })
-          }
-        }, a => {
-          this.loadingBtn = false
+            this.spinShow = false
+          })
+        }, (error) => {
+          this.$Notice.error({
+            desc: this.$t(`kxLinuxErr.${error}`)
+          })
         }
-      ) // 设置主服务器
+      )
     },
     handleAddReset (name) {
-      this.showPopup = false
+      this.serverPopup = false
       this.$refs[name].resetFields()
       this.error = false
       this.$Modal.remove()

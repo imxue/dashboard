@@ -22,18 +22,14 @@ function makeRequestx (method, param, ip) {
     ]
   }
   return request({
-    // url: `/v1/sysbase/startHttpRequest`,
-    url: `http://${ip}:13302/jsonrpc`,
+    url: `/v1/sysbase/startHttpRequest`,
+    url1: `http://${ip}:13302/jsonrpc`,
     method: 'post',
     data
   })
 }
 
 //  获取服务器类表
-export function getServers () {
-  return makeRequest('Get_Servers', {})
-}
-
 export function getServersx (ip) {
   return makeRequestx('Get_Servers', {}, ip)
 }

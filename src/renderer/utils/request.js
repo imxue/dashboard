@@ -16,13 +16,17 @@ service.interceptors.request.use(
       request.headers['Authorization'] = localStorage.getItem('token')
     }
 
-    // request.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    // if (request.method === 'post') {
-    //   request.data = qs.stringify({
-    //     ...request.data
-    //   })
-    // }
-
+    // 转发 无盘
+    if (request.url.includes('startHttpRequest')) {
+      request.data.url = request.url1
+      request.data.param = {
+        ...request.data
+      }
+      request.data.method = 'POST'
+      delete request.url1
+      delete request.data.params
+      return request
+    }
     return request
   },
 
@@ -34,10 +38,14 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    if (!!response.data.ok && !response.data.ok) {
-      return Promise.reject(response)
+    if (response.data.ok) {
+      if (response.data.data.error) {
+        return Promise.reject(response.data.data.error)
+      }
+
+      return Promise.resolve(response.data.data)
     } else {
-      return Promise.resolve(response)
+      return Promise.reject(response)
     }
   },
 
