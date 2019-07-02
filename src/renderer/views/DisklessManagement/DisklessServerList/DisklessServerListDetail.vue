@@ -32,9 +32,27 @@
     <div style="margin:10px 0; ">
       <span >{{$t('DiskSetting')}}</span>
       <Divider/>
+       <Button type="primary" @click="handleDisk">{{this.$t('SetUpDiskSoftConnection')}}</Button>
     </div>
-      <Table border :columns="tableColumns3" :data="diskInfo" @on-row-dblclick="ShowDiskPlan"></Table>
+
+
+      
+      <Modal
+        v-model="xxxx"
+        footer-hide
+        :styles="{top: '280px'}"
+        :title="this.$t('SetUpDiskSoftConnection')">
+       
+        <Transfer
+        :data="data1"
+        :targetKeys="rightData"
+        :operations="[this.$t('Remove'),this.$t('Create')]"
+        @on-change="handleChange1"></Transfer>
+         <Spin fix v-show="setspin"> <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon></Spin>
+    </Modal>
+
     
+      <Table border :columns="tableColumns3" :data="diskInfo" @on-row-dblclick="ShowDiskPlan"></Table>
     <div class="dig">
       <Modal
         v-model="DiskSettingDialog"
@@ -165,7 +183,9 @@ import {
   getNetworkx,
   getDiskStatusx,
   setVdiskEthernetx,
-  deleteserverConfig
+  deleteserverConfig,
+  RaidCreate,
+  RaidRemove
 } from '@/api/wupan'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
@@ -175,6 +195,9 @@ export default {
     return {
       currentPageServerip: '',
       loading: '',
+      xxxx: false, // 设置磁盘 穿
+      rightData: [],
+      setspin: false,
       serverList: '',
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
@@ -407,7 +430,8 @@ export default {
           }
         }
       ],
-      diskInfo: [] // 磁盘信息类别
+      diskInfo: [], // 磁盘信息类别
+      data1: []
     }
   },
   created () {
@@ -423,6 +447,40 @@ export default {
     }
   },
   methods: {
+    handleChange1 (data, x, selected) {
+      this.setspin = true
+      if (x === 'left') {
+        let path
+        selected.forEach(item => {
+          path = item
+          RaidRemove(path, this.currentPageServerip).then(() => {
+            this.handleGetDiskStatusx(this.currentPageServerip)
+          }, () => {
+            this.$Message.success(this.$t('fail'))
+            this.handleGetDiskStatusx(this.currentPageServerip)
+          }).finally(() => {
+            this.setspin = false
+          })
+        })
+      } else {
+        if (selected.length === 1) {
+          this.$Message.success(this.$t('AtLeastTwoDisks'))
+        } else {
+          let y = []
+          selected.forEach(item => {
+            y.push(item)
+          })
+          RaidCreate(y, this.currentPageServerip).then(() => {
+            this.handleGetDiskStatusx(this.currentPageServerip)
+          }, () => {
+            this.$Message.success(this.$t('fail'))
+            this.handleGetDiskStatusx(this.currentPageServerip)
+          }).finally(() => {
+            this.setspin = false
+          })
+        }
+      }
+    },
     handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
       this.currentPageServerip = data.serverIp
@@ -450,10 +508,23 @@ export default {
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(resp => {
+        this.data1 = []
         this.diskInfo = resp.data.result.list || []
         this.diskInfo.forEach(item => {
           item.size = bytesToSize(item.size)
           item.availableSize = bytesToSize(item.availableSize)
+          let f = {}
+          if (item.fun === 'unUsed') {
+            f['key'] = item.path
+            f['label'] = item.path
+            f['isRaid'] = item.isRaid
+            // if (item.isRaid === '0') {
+            this.data1.push(f)
+            // }
+            if (item.isRaid === '1') {
+              this.rightData.push(f.label)
+            }
+          }
         })
       })
       that.spinShow = false
@@ -643,6 +714,12 @@ export default {
       })
       this.handleGetNetworkx(serverip)
       this.handleGetDiskStatusx(serverip)
+    },
+    handleDisk () {
+      this.xxxx = true
+    },
+    render4 (item) {
+      return item.label
     }
   }
 }
@@ -698,5 +775,13 @@ li {
   max-width: 260px;
   font-size: 14px;
 }
+.demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
 </style>
 

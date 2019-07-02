@@ -402,5 +402,7 @@
     "8":"1.非必要磁盘",
     "9":"2.不支持游戏同步功能"
   },
-  "ServerListIsEmpty":"该服务器下列表为空"
+  "ServerListIsEmpty":"该服务器下列表为空",
+  "SetUpDiskSoftConnection":"设置磁盘软连接",
+  "AtLeastTwoDisks":"至少两个磁盘"
 }

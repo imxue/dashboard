@@ -548,3 +548,15 @@ export function addServersx (serverIp, guid, ip) {
 export function getServersNode (ip) {
   return makeRequestx('Get_Servers_Node', {}, ip)
 }
+/**
+ * 创建软连接
+ */
+export function RaidCreate (list, ip) {
+  return makeRequestx('Raid_Create', { list }, ip)
+}
+/**
+ * 删除软连接
+ */
+export function RaidRemove (path, ip) {
+  return makeRequestx('Raid_Remove', { path }, ip)
+}

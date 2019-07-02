@@ -27,7 +27,7 @@
     max-height: 1200px;
     height: 100vh;
   }
-  
+
   .topItem{ height: 60px;line-height: 32px;}
   .topColumn{ float:left; margin-right:10px;}
   .modalBox .ivu-modal-footer{ display: none !important;}
