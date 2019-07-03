@@ -175,14 +175,14 @@ export default {
       ]
     },
     {
-      path: 'subType4',
-      name: 'GameManagement-SubType4',
+      path: 'SyncSetManagement',
+      name: 'SyncSetManagemen',
       meta: { title: 'SyncManagement', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'SubType4-1',
-          name: 'GameManagement-SubType4-1',
+          path: 'ServerSyncSet',
+          name: 'ServerSyncSet',
           meta: { title: 'ServerSyncSet' },
           component: ServerSyncSet
         },
@@ -193,8 +193,8 @@ export default {
           component: SyncTask
         },
         {
-          path: 'SubType4-3',
-          name: 'GameManagement-SubType4-3',
+          path: 'SyncLog',
+          name: 'SyncLog',
           meta: { title: 'SyncLog' },
           component: SyncLog
         },

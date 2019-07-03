@@ -98,23 +98,6 @@ export function deleteSyncQueue (id) { // 删除同步任务
   })
 }
 
-// export function deleteClient (query) {
-//   return request({
-//     url: '/v1/client/' + query,
-//     method: 'delete'
-//   })
-// }
-// export function changeSchema (id, startSchema) { // 移动至方案
-//   const data = {
-//     Id: id,
-//     StartSchema: startSchema
-//   }
-//   return request({
-//     url: '/v1/client/changeSchema',
-//     method: 'post',
-//     data
-//   })
-// }
 /**
  * 获取同步任务
  */
@@ -149,6 +132,17 @@ export function setDiskAttribute (info) {
 export function getAllSyncGameTasks (info) {
   return request({
     url: `/v1/synctask/getAllSyncGameTasks?offset=${info.offset}&limit=${info.limit}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 获取服务器列表
+ */
+
+export function getAllServers () {
+  return request({
+    url: `/v1/server/getAllServers`,
     method: 'get'
   })
 }

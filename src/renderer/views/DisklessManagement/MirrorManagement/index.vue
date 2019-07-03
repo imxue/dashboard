@@ -4,7 +4,7 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
-    <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirroringInfo" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirroringInfo"></Table>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"
@@ -159,20 +159,18 @@
        */
       handleGetDiskStatus () {
         getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
-          if (!response.data.error) {
-            let temp = []
-            var arr = response.data.result.list || []
-            var newArr = arr.filter(item => item.fun === 'imageDisk')
-            for (var i in newArr) {
-              temp.push({
-                path: newArr[i].path,
-                availableSize: bytesToSize(Number(newArr[i].availableSize))
-              })
-              this.diskList = temp
-              this.formValidate.path = this.diskList[0].path
-              temp = []
-            }
+          let temp = []
+          var arr = response.data.result.list || []
+          var newArr = arr.filter(item => item.fun === 'imageDisk') // 获取镜像盘
+          for (var i in newArr) {
+            temp.push({
+              path: newArr[i].path,
+              availableSize: bytesToSize(Number(newArr[i].availableSize))
+            })
           }
+          this.diskList = temp
+          this.formValidate.path = this.diskList[0].path
+          temp = []
         })
       },
       /**
@@ -181,9 +179,7 @@
       handleGetImageList () {
         if (localStorage.getItem('masterip')) {
           getImageListx(localStorage.getItem('masterip')).then((response) => {
-            if (!response.data.error) {
-              this.mirroringInfo = response.data.result.list || []
-            }
+            this.mirroringInfo = response.data.result.list || []
           }, (error) => {
             this.$Notice.error({
               desc: error
@@ -219,7 +215,7 @@
       },
       handleSet (index) {
         this.$router.push({
-          path: 'subtype2-set',
+          path: 'ConfigPoint',
           query: { data: index }
         })
       },

@@ -71,7 +71,7 @@
     "DownloadedGame":"已下载游戏",
     "BarGames":"本吧游戏",
     "SyncManagement":"同步管理",
-    "ServerSyncSet": "游戏分配",
+    "ServerSyncSet": "服务器分配",
     "SyncTask":"同步任务",
     "SyncLog":"同步日志",
     "MirrorManagement":"镜像管理",
@@ -404,5 +404,6 @@
   },
   "ServerListIsEmpty":"该服务器下列表为空",
   "SetUpDiskSoftConnection":"设置磁盘软连接",
-  "AtLeastTwoDisks":"至少两个磁盘"
+  "AtLeastTwoDisks":"至少两个磁盘",
+  "SaveBootPath":"保存批处理"
 }

@@ -57,7 +57,7 @@ export default {
           component: AllMirror
         },
         {
-          path: 'subType2-set',
+          path: 'ConfigPoint',
           name: 'ConfigPoint',
           meta: { title: 'ConfigPoint' },
           component: ConfigPoint,

@@ -154,8 +154,8 @@ export default {
      */
     handgetAllHotGame (offset, limit, orderby) {
       getTodayUpdateGames(offset, limit, orderby).then(response => {
-        this.tableData = response.data.data.data
-        response.data.data.data.filter(item => {
+        this.tableData = response.data.data
+        response.data.data.filter(item => {
           if (item.Name) {
             this.GameName.push(item.Name)
           }
@@ -163,7 +163,7 @@ export default {
           this.GameName = this.GameName.slice(0, 6)
           this.temp = Array.from(this.GameAllName)
         })
-        this.pageInfo = response.data.data.pageino
+        this.pageInfo = response.data.pageino
         this.pageInfo.page_index++
         this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       }, (e) => {
@@ -179,8 +179,8 @@ export default {
      */
     handgetAllGame (offset, limit, orderby) {
       getTodayUpdateGames(offset, limit, orderby).then((response) => {
-        this.tableData = response.data.data.data
-        response.data.data.data.filter(item => {
+        this.tableData = response.data.data
+        response.data.data.filter(item => {
           if (item.Name) {
             this.GameName.push(item.Name)
           }
@@ -188,7 +188,7 @@ export default {
           this.GameName = this.GameName.slice(0, 6)
           this.temp = Array.from(this.GameAllName)
         })
-        this.pageInfo = response.data.data.pageino
+        this.pageInfo = response.data.pageino
         this.pageInfo.page_index++
         this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       })

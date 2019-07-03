@@ -190,12 +190,12 @@ export default {
     },
     handgetAllGame (offset, limit, orderby) {
       getAllLocalGames(offset, limit, orderby)
-        .then(
-          e => {
-            this.tableData = e.data.data.data
-            this.pageInfo = e.data.data.pageino
-          },
-          () => {}
+        .then(e => {
+          let data = e.data.data
+          this.tableData = data.length === 0 ? [] : data
+          this.pageInfo = e.data.pageino
+        },
+        () => {}
         )
         .catch(error => {
           this.$Notice.open({

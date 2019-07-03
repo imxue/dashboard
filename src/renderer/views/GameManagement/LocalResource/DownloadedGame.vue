@@ -93,7 +93,7 @@
           { key: 'Popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
           { key: 'Size', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('ServerStoragePath')) },
-            key: 'SavePath',
+            key: 'LocalPath',
             tooltip: true,
             minWidth: 130
           },
@@ -163,7 +163,7 @@
       */
       handleGetTableList () {
         getDownloadedGames(0, 10, 'name').then((response) => {
-          this.tableData = response.data.data.data
+          this.tableData = response.data.data
         }, () => {
           this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }).catch((e) => {

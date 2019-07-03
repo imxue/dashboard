@@ -13,7 +13,6 @@
 <style>
   * {
     box-sizing: border-box;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
   html, body {
     width: 100%;
@@ -25,7 +24,7 @@
     min-height: 100vh;
     min-width: 1200px;
     max-height: 1200px;
-    
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
 
   .topItem{ height: 60px;line-height: 32px;}

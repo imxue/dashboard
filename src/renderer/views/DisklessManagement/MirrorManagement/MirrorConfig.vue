@@ -207,7 +207,7 @@
             let ip = localStorage.getItem('masterip')
             deleteImagex(name, ip).then(() => {
               this.$router.push({
-                path: 'subType2-1'
+                path: 'AllMirror'
               })
             })
           },
@@ -262,11 +262,11 @@
             let name = this.formValidate2.nameVal
             let data = { image, name }
             createImageProjectx(data, localStorage.getItem('masterip')).then((response) => {
-              if (!response.data.error) {
-                this.handleGetImageList()
-              }
+              this.handleGetImageList()
             }, (err) => {
-              console.log(err)
+              this.$Notice.error({
+                desc: this.$t(`kxLinuxErr.${err}`)
+              })
             })
           } else {
             this.showImgPopup = true

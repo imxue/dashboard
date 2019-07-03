@@ -234,8 +234,6 @@
       this.handleGetDataLength()
       this.handlegetServerlist()
     },
-    computed: {
-    },
     methods: {
       handleGetDataLength () {
         if (this.tableData1) {
@@ -278,11 +276,16 @@
           if (!resp.data.error) {
             var arr = resp.data.result.list
             this.imageList = arr
+            this.formValidate2.schemeName = this.imageList[0].name
+            this.handleSelectImageValue()
           } else {
             this.$Message.error(resp.data.error)
           }
         })
       },
+      /**
+       * 选择镜像配置
+       */
       handleSelectImageValue () {
         var arr = this.imageList
         var newArr = arr.filter(item => item.name === this.formValidate2.schemeName)
@@ -291,6 +294,8 @@
       },
       handleButtonAdd () {
         this.showPopup = true
+        this.formValidate2.daSV = this.serverlist[0].serverIp
+        this.handleGetImageList()
       },
       handleGetSchemeName (value, type) {
         console.log(JSON.stringify(value) + '&&' + type)

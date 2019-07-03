@@ -7,7 +7,7 @@
       
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" :no-data-text="this.$t('Nodata')"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"
@@ -105,7 +105,7 @@
         }
       },
       handleButtonAdd (val) {
-        this.$router.push({ path: 'StartUpPlanSet' })
+        this.$router.push({ path: 'StartUpPlanEdit' })
       },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
@@ -123,7 +123,7 @@
       },
       handleEdit (index) {
         this.$router.push({
-          path: 'StartUpPlanSet',
+          path: 'StartUpPlanEdit',
           query: { data: index, flag: 'edit' }
         })
       },

@@ -145,15 +145,10 @@
             if (e.target.result) {
               if (valid) {
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
-                  that.$Message.info(res.data.error)
-                  that.$router.push({
-                    path: 'BarGames',
-                    query: { }
-                  })
-                }, () => {
+                  that.$router.push({ path: 'BarGames' })
+                }, (err) => {
+                  that.$Message.error(err.data.error)
                 })
-              } else {
-                that.$Message.error('表单验证失败!')
               }
             }
           })

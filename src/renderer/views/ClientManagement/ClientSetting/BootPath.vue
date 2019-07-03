@@ -9,7 +9,7 @@
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 20,maxRows: 20}"
+            :autosize="{minRows: 36,maxRows: 36}"
             :disabled="disabled"
             v-model="bootPathG"
           />
@@ -19,7 +19,7 @@
       <TabPane :label="$t('ClientStartPlan')" name="StartPlan">
         <div>
           <span>{{$t('ClientScheme')}}:</span>
-          <Select v-model="plan" style="width:200px" @on-change="handleGetBootBath">
+          <Select v-model="plan" style="width:200px" @on-change="handleGetBootBath" :disabled='flag'>
             <Option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
           <Checkbox size="large" v-model="single" @on-change="setDefault">{{$t('UseDefaultSetting')}}</Checkbox>
@@ -29,7 +29,7 @@
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 20,maxRows: 20}"
+            :autosize="{minRows: 36,maxRows: 36}"
             :disabled="disabledSinger"
             v-model="bootPathS"
           />
@@ -50,13 +50,14 @@ export default {
   data () {
     return {
       currentTab: 'DefaultSetting',
-      single: '',
+      single: true,
       plan: '',
       cityList: [],
       disabled: true,
       disabledSinger: true,
       bootPathG: '',
-      bootPathS: ''
+      bootPathS: '',
+      flag: true // 是否用默认设置
     }
   },
   created () {
@@ -75,11 +76,25 @@ export default {
       let matched = this.$route.matched.filter(item => item.name)
       console.log(matched)
     },
+    /**
+     * 是否启用默认设置
+     */
     setDefault (data) {
       if (data) {
+        let info = {
+          is_global: true,
+          scheme_id: '',
+          batch_process: this.bootPathG
+        }
         this.flag = true
+        setSchemeBatch(info).then(resp => {
+          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
+          this.$Message.info({
+            content: this.$t('SetSucess')
+          })
+        })
       } else {
-        this.fiag = false
+        this.flag = false
       }
     },
     HandEdit () {
@@ -102,11 +117,11 @@ export default {
         }
       }
       getSchemeBatch(data).then(response => {
-        if (response.data.ok) {
-          data.global ? this.bootPathG = response.data.data.batch_process : this.bootPathS = response.data.data.batch_process
-        } else {
+        data.global ? this.bootPathG = response.data.batch_process : this.bootPathS = response.data.batch_process
+      }, (error) => {
+        if (error.response.status === 500) {
           this.$Message.info({
-            content: response.data.error
+            content: error.response.statusText
           })
         }
       })
@@ -117,17 +132,12 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then(response => {
-          if (response.data.ok) {
-            console.log(response.data.data)
-            this.cityList = response.data.data
-            console.log(this.cityList)
-            this.plan = this.cityList[0].id
-            this.handleGetBootBath()
-          } else {
-            this.$Message.info({
-              content: response.data.error
-            })
-          }
+          this.cityList = response.data
+          this.plan = this.cityList[0].id
+          this.handleGetBootBath()
+          this.$Message.info({
+            content: response.data.error
+          })
         })
       }
     },
@@ -144,12 +154,10 @@ export default {
       info.scheme_id = this.currentTab === 'DefaultSetting' ? '' : this.plan
       info.batch_process = this.currentTab === 'DefaultSetting' ? this.bootPathG : this.bootPathS
       setSchemeBatch(info).then(resp => {
-        if (resp.data.ok) {
-          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
-          this.$Message.info({
-            content: this.$t('SetSucess')
-          })
-        }
+        this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
+        this.$Message.info({
+          content: this.$t('SetSucess')
+        })
       })
     }
   }

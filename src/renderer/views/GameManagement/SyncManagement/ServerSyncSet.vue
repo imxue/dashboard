@@ -3,7 +3,9 @@
     <div class="topItem">
       <Row>
         <Col :lg="{ span: 3, offset: 0 }">
-          <Input class="topColumn" v-model="inputVal"  :placeholder="this.$t('pleaseInputGameName')" clearable />
+          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" :placeholder="this.$t('pleaseInputMirror')">
+            <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
+          </Select>
           </Col>
           <Col :lg="{ span: 4, offset: 0 }">
           <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" :placeholder="this.$t('pleaseInputMirror')">
@@ -42,8 +44,8 @@
 </template>
 
 <script>
-  import { getSearch, getDrivers, getPolicys, distributeGame, cancelDistribution, multiAddSyncTask } from '@/api/sync'
-  // import { handleCallBackVaild } from '@/utils/index.js'
+  import { getSearch, getDrivers, getPolicys, distributeGame, cancelDistribution, multiAddSyncTask, getAllServers } from '@/api/sync'
+
   export default {
     name: 'subtype4-1',
     data () {
@@ -126,9 +128,7 @@
       }
     },
     created () {
-      // this.handleGetSearch(this.curroffset, this.currlimit) // 盘符
-      // this.handlGetDrivers() // 服务器list
-      // this.handleGetDriversOption()
+      this.handleGetAllServers() // 获取所以服务器列表
     },
     computed: {
       routes () {
@@ -136,6 +136,11 @@
       }
     },
     methods: {
+      handleGetAllServers () {
+        getAllServers().then((resp) => {
+          this.serversIpList = resp.data || []
+        })
+      },
       handleButtonSearch () {
         if (this.inputVal === undefined) {
           this.inputVal = ''

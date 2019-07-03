@@ -4,11 +4,11 @@
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
             <Select v-model="Dg.data" :placeholder="$t('Search')" >
-              <Option v-for='item in disk' v-bind:value='item.name' v-bind:key='item.name'>{{item.name}} \ 可用空间 {{item.free_space}}</Option>
+              <Option v-for='item in disk' v-bind:value='item.DeviceID' v-bind:key='item.DeviceID'>{{item.DeviceID}} \ 可用空间 {{item.free_space}}</Option>
             </Select>
             </FormItem> 
               <FormItem>
-            <Button type="primary" @click="handleSubmit('Dg')">{{$t('DownloadGames')}}</Button>
+            <Button type="primary" :loading="loadBtn" @click="handleSubmit('Dg')">{{$t('DownloadGames')}}</Button>
             <Button @click="handleReset()" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
         </Form>
@@ -44,6 +44,7 @@ export default {
   name: 'allGame',
   data () {
     return {
+      loadBtn: false, // 下载按钮 loading
       pageCount: '',
       disk: '',
       GameName: [], // 游戏名提示
@@ -189,10 +190,10 @@ export default {
     /**
      * 获取全部游戏
      */
-    handgetAllGame: _.debounce(function (offset, limit, orderby) {
+    HandleGetAllGameThrottle: _.throttle(function (offset, limit, orderby) {
       getAllGame(offset, limit, orderby).then(response => {
-        this.tableData = response.data.data.data
-        response.data.data.data.filter(item => {
+        this.tableData = response.data.data
+        this.tableData.filter(item => {
           if (item.Name) {
             this.GameName.push(item.Name)
           }
@@ -200,7 +201,7 @@ export default {
           this.GameName = this.GameName.slice(0, 6)
           this.temp = Array.from(this.GameAllName)
         })
-        this.pageInfo = response.data.data.pageino
+        this.pageInfo = response.data.pageino
         this.pageInfo.page_index++
         this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       }, () => {
@@ -210,8 +211,29 @@ export default {
         // 在发送代码错误时执行这里
         this.$Message.error(this.$t('kxLinuxErr.10'))
       })
-    }, 1000),
-
+    }, 2000),
+    handgetAllGame (offset, limit, orderby) {
+      getAllGame(offset, limit, orderby).then(response => {
+        this.tableData = response.data.data
+        this.tableData.filter(item => {
+          if (item.Name) {
+            this.GameName.push(item.Name)
+          }
+          this.GameAllName = Array.from(this.GameName)
+          this.GameName = this.GameName.slice(0, 6)
+          this.temp = Array.from(this.GameAllName)
+        })
+        this.pageInfo = response.data.pageino
+        this.pageInfo.page_index++
+        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
+      }, () => {
+        // 这里执行reject状态的
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
+      }).catch(() => {
+        // 在发送代码错误时执行这里
+        this.$Message.error(this.$t('kxLinuxErr.10'))
+      })
+    },
     handleGetTableList (e) {
       this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
     },
@@ -230,6 +252,7 @@ export default {
      * 下载游戏
     */
     handleSubmit () {
+      this.loadBtn = true
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
         this.DownloadGameUp = false
@@ -237,6 +260,8 @@ export default {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
+      }).finally(() => {
+        this.loadBtn = false
       })
     },
     /**
@@ -246,11 +271,11 @@ export default {
       this.DownloadGameUp = true
       this.deleteid = id
       getLogicalDrives().then(response => {
-        this.disk = response.data.data
+        this.disk = response.data
         this.disk.map(item => {
-          item.free_space = bytesToSize2(item.free_space)
+          item.free_space = bytesToSize2(item.FreeSpace)
         })
-        this.Dg.data = this.disk[0].name
+        this.Dg.data = this.disk[0].DeviceID
       }, () => {
         this.$Message.error(this.$t('kxLinuxErr.36873'))
       }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
@@ -311,6 +336,7 @@ export default {
       })
     },
     handleReset () {
+      this.loadBtn = false // 是保存按钮回归
       this.DownloadGameUp = false
     },
     /**

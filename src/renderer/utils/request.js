@@ -44,8 +44,7 @@ service.interceptors.response.use(
       }
       return Promise.resolve(response.data)
     } else {
-      response.data.error = 'NetworkError'
-      return Promise.reject(response.data.error)
+      return Promise.reject(response)
     }
   },
 

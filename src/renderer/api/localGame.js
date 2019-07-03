@@ -186,7 +186,7 @@ export function getDownloadedGames (offset, limit, orderby) {
 }
 
 /**
- * 添加游戏
+ * 添加本地游戏
 
 */
 export function addLocalGame ({ name, path, exepath, exename, isEnableSync }, icondata) {
