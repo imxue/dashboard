@@ -133,7 +133,7 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx, deletePcGroup } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {

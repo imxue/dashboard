@@ -133,10 +133,11 @@ export default {
   methods: {
     HandleGetData () {
       getDownloadSettings().then((resp) => {
-        this.formItem.select1 = resp.data.data.max_download_task
-        this.formItem.select2 = resp.data.data.download_speed_limit
+        this.formItem.select1 = resp.data.max_download_task
+        this.formItem.select2 = resp.data.download_speed_limit
         let test = []
-        let obj = resp.data.data.default_download_disk
+        let obj = resp.data.default_download_disk
+        debugger
         for (let i in obj) {
           let x = {}
           switch (i) {
@@ -152,7 +153,7 @@ export default {
             case '棋牌游戏':
               i = this.$t('ChessGame')
               break
-            case '辅助工具':
+            case '辅助游戏':
               i = this.$t('AuxiliaryGame')
               break
             case '系统工具':
@@ -209,6 +210,11 @@ export default {
     justify-content: space-between;
     text-align: right;
   }
-  
+  .mainCenter {
+    height:800px;
+  }
+  .ivu-table-wrapper {
+    overflow:visible;
+  }
 </style>
 

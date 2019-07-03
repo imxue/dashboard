@@ -19,7 +19,7 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-            <Card dis-hover :style="{margin: '0 10px',height: '95%'}">
+            <Card dis-hover :style="{margin: '0 10px',height: '90%'}">
               <AppMain></AppMain>
             </Card>
         </col>

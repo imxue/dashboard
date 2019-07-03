@@ -127,20 +127,19 @@
       /**
       * 获取同步任务
       */
-      handleGetTableList: _.debounce(function () {
+      handleGetTableList: _.throttle(function () {
         this.fetch = true
         var info = {
           offset: 0,
           limit: 10
         }
         getAllSyncGameTasks(info).then((resp) => {
-          this.tableData = resp.data.data.data ? resp.data.data.data : []
+          this.tableData = resp.data.data ? resp.data.data : []
         }, (res) => {
         }).finally(() => {
-          this.tableData = []
           this.fetch = false
         })
-      }, 1000),
+      }, 2000),
   
       hanbleChangePage (num) {
         if (num === 1) {

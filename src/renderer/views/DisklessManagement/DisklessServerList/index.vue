@@ -324,12 +324,17 @@ export default {
           online: '0',
           dataVer: '-'
         }
+
         getServersx(ip).then(resp => {
           this.serverList = resp.data.result.list ? resp.data.result.list : this.serverList.push(Serverinfo)
-          this.MasterServerIp = this.serverList.filter(item => {
-            return item.isMaster === '1'
-          })
-          this.MasterServerIp = this.MasterServerIp[0].serverIp
+          if (this.serverList) {
+            this.MasterServerIp = this.serverList.filter(item => {
+              return item.isMaster === '1'
+            })
+            this.MasterServerIp = this.MasterServerIp[0].serverIp
+          } else {
+            localStorage.removeItem('masterip')
+          }
         }, () => {
           this.serverList.push(Serverinfo)
           this.$Notice.error({

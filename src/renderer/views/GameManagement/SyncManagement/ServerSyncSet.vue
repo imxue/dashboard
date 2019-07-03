@@ -3,20 +3,20 @@
     <div class="topItem">
       <Row>
         <Col :lg="{ span: 3, offset: 0 }">
-          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" :placeholder="this.$t('pleaseInputMirror')">
+          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" >
             <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
           </Select>
           </Col>
           <Col :lg="{ span: 4, offset: 0 }">
-          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" :placeholder="this.$t('pleaseInputMirror')">
-            <Option v-for="item in serversIpList" :value="item.Ip" :key="item.Id">{{ item.Ip }}</Option>
+          <Select v-model="serversDisk" clearable @on-change="handleSelectChange"  class="topColumn">
+            <Option v-for="item in serversDiskList" :value="item.device_path" :key="item.id">{{ item.device_path }}</Option>
           </Select>
            </Col>
             <Col :lg="{ span: 6, offset: 0 }">
           <Select v-model="diskValue" clearable class="topColumn" style="width:140px;" :placeholder="this.$t('AllDiskSymbol')">
-            <Option v-for="item in diskListOption" :value="item.DriverId" :key="item.index" >{{ item.Name }}</Option>
+            <Option v-for="item in diskListOption" :value="item.device_path" :key="item.id" >{{ item.device_path }}</Option>
           </Select>
-          <Button type="primary" class="topColumn" @click="handleButtonSearch">{{$t('Search')}}</Button>
+          <!-- <Button type="primary" class="topColumn" @click="handleButtonSearch">{{$t('Search')}}</Button> -->
            </Col>
           
            <Col :lg="{ span: 11, offset: 0 }">
@@ -44,12 +44,15 @@
 </template>
 
 <script>
-  import { getSearch, getDrivers, getPolicys, distributeGame, cancelDistribution, multiAddSyncTask, getAllServers } from '@/api/sync'
+  import { getSearch, getDrivers, getPolicys, distributeGame, cancelDistribution, multiAddSyncTask, getAllServers, getAllServerDisks, getAllServerGamesByIp } from '@/api/sync'
 
   export default {
-    name: 'subtype4-1',
+    name: 'ServerSyncSet',
     data () {
       return {
+        currentIp: '',
+        serversDisk: '',
+        serversDiskList: [],
         model1: '',
         clearVal: '',
         inputVal: '',
@@ -70,12 +73,18 @@
         diskListOption: [],
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
+          { key: 'display_name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'game_type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { key: 'popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'size', minWidth: 70, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'local_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
+          { key: 'final_sync_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
-            key: 'State',
+            key: 'state',
             minWidth: 120,
             render: (h, params) => {
-              let type = params.row.State
+              let type = params.row.state
               switch (type) {
                 case 0:
                   return h('span', { style: { color: '#999999' } }, this.$t('Unallocated'))
@@ -88,13 +97,7 @@
               }
             }
           },
-          { key: 'Type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { key: 'Name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { key: 'Centerpopularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'Size', minWidth: 70, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
-          { key: 'Ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerIP')) } },
-          { key: 'Drive', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetDiskSymbol')) } },
-          { key: 'Drivesize', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('DiskSymbolVolume')) } },
+          { key: 'final_sync_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             minWidth: 160,
@@ -136,9 +139,42 @@
       }
     },
     methods: {
+      /**
+       * 获取服务器ip
+       */
       handleGetAllServers () {
         getAllServers().then((resp) => {
           this.serversIpList = resp.data || []
+          this.serversIpValue = this.serversIpList[0].ip
+          this.currentIp = this.serversIpValue
+          this.handleGetAllServersDisk() // 获取磁盘
+        })
+      },
+      /**
+       * 获取服务器上的磁盘
+       */
+      handleGetAllServersDisk () {
+        getAllServerDisks(this.currentIp).then((resp) => {
+          this.serversDiskList = resp.data || []
+          this.serversDisk = this.serversDiskList[0].device_path
+          this.handleGetGameByIp()
+        })
+      },
+      /**
+       * 获取服务器游戏
+       */
+      handleGetGameByIp (info) {
+        info = {
+          offset: 0,
+          limit: 10,
+          orderby: 'name',
+          serverip: '10.88.66.144',
+          letter: 'm'
+        }
+        getAllServerGamesByIp(info).then((resp) => {
+          this.tableData = resp.data.data
+        }, (error) => {
+          console.log(error)
         })
       },
       handleButtonSearch () {

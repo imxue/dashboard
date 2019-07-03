@@ -70,12 +70,6 @@ export function getPolicys () { // 策略
     method: 'get'
   })
 }
-export function getSyncLog (query) { // 同步日志
-  return request({
-    url: '/v1/sync/syncLog' + query,
-    method: 'get'
-  })
-}
 export function resync (id) { // 重新同步
   const data = {
     Id: id
@@ -127,7 +121,7 @@ export function setDiskAttribute (info) {
 }
 
 /**
- * 设置数据扩展盘
+ * 获取所有同步任务
  */
 export function getAllSyncGameTasks (info) {
   return request({
@@ -143,6 +137,36 @@ export function getAllSyncGameTasks (info) {
 export function getAllServers () {
   return request({
     url: `/v1/server/getAllServers`,
+    method: 'get'
+  })
+}
+/**
+ * 获取服务器列表
+ */
+
+export function getAllServerDisks (ip) {
+  return request({
+    url: `/v1/server/getAllServerDisks?serverip=${ip}`,
+    method: 'get'
+  })
+}
+/**
+ * 获取服务器列表
+ */
+
+export function getAllServerGamesByIp (info) {
+  return request({
+    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&firstletter=${info.letter}`,
+    method: 'get'
+  })
+}
+/**
+ * 获取同步日志
+ */
+
+export function getAllSyncGameLogs (info) {
+  return request({
+    url: `/v1/synctask/getAllSyncGameLogs?offset=${info.offset}&limit=${info.limit}`,
     method: 'get'
   })
 }
