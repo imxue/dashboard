@@ -1,23 +1,38 @@
 <template>
   <div>
     <div class="topItem">
-      <Input class="topColumn" search enter-button="搜索" placeholder="请输入游戏首字母..." clearable style="width: 200px;" />
+      <Input
+        class="topColumn"
+        search
+        enter-button="搜索"
+        placeholder="请输入游戏首字母..."
+        clearable
+        style="width: 200px;"
+      />
       <Button type="primary" class="topColumn" @click="handleButtonRemove">本地移除</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" :no-data-text="this.$t('Nodata')"></Table>
+    <Table
+      border
+      ref="selection"
+      :columns="tableColumns"
+      :data="tableData"
+      @on-selection-change="handleCheckBox"
+      :no-data-text="this.$t('Nodata')"
+    ></Table>
     <Row style="margin-top:10px; ">
       <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col>
-      <i-col span="20"><Page :total="100"  style=" float:right;"/></i-col>
+      <i-col span="20">
+        <Page :total="100" style=" float:right;" />
+      </i-col>
     </Row>
-    
   </div>
 </template>
 
 <script>
 import { getShelvedGames } from '@/api/localGame'
 export default {
-  name: 'subType1-1',
+  name: 'stopResource',
   data () {
     return {
       getCheckboxVal: [], // 勾选复选框值
@@ -34,17 +49,51 @@ export default {
           title: '操作',
           key: 'operation',
           render: (h, params) => {
-            return h('span', {
-              style: { color: '#2d8cf0', textDecoration: 'underline' },
-              on: { click: () => { this.handleRemove(params.index) } }
-            }, '本地移除')
+            return h(
+              'span',
+              {
+                style: { color: '#2d8cf0', textDecoration: 'underline' },
+                on: {
+                  click: () => {
+                    this.handleRemove(params.index)
+                  }
+                }
+              },
+              '本地移除'
+            )
           }
         }
       ],
       tableData: [
-        { id: 0, resourceType: '游戏', gameType: '网络游戏', name: '英雄联盟', size: '10.85 GB', dwpath: 'xxxxxx', time: '2018-10-10 12:33:11' },
-        { id: 1, resourceType: '游戏', gameType: '网络游戏', name: '穿越火线', size: '10.85 GB', dwpath: 'xxxxxx', time: '-', path: 'xxxxxxxxxxxx' },
-        { id: 2, resourceType: '游戏', gameType: '网络游戏', name: '英雄联盟', size: '10.85 GB', dwpath: 'xxxx', time: '20181010153501', path: 'xxxxxxxxxxxx' }
+        {
+          id: 0,
+          resourceType: '游戏',
+          gameType: '网络游戏',
+          name: '英雄联盟',
+          size: '10.85 GB',
+          dwpath: 'xxxxxx',
+          time: '2018-10-10 12:33:11'
+        },
+        {
+          id: 1,
+          resourceType: '游戏',
+          gameType: '网络游戏',
+          name: '穿越火线',
+          size: '10.85 GB',
+          dwpath: 'xxxxxx',
+          time: '-',
+          path: 'xxxxxxxxxxxx'
+        },
+        {
+          id: 2,
+          resourceType: '游戏',
+          gameType: '网络游戏',
+          name: '英雄联盟',
+          size: '10.85 GB',
+          dwpath: 'xxxx',
+          time: '20181010153501',
+          path: 'xxxxxxxxxxxx'
+        }
       ]
     }
   },
@@ -58,13 +107,15 @@ export default {
   },
   methods: {
     HandleGetShelvedGames (offset, limit, orderby) {
-      getShelvedGames(offset, limit, orderby).then((resp) => {
-        console.log('停服资源')
-        console.log(resp)
-        console.log('停服资源')
-      }).catch((e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
-      })
+      getShelvedGames(offset, limit, orderby)
+        .then(resp => {
+          console.log('停服资源')
+          console.log(resp)
+          console.log('停服资源')
+        })
+        .catch(e => {
+          this.$Notice.error({ desc: '' + e, duration: 0 })
+        })
     },
     handleButtonRemove (val) {
       val = this.getCheckboxVal.length
@@ -100,8 +151,15 @@ export default {
 </script>
 
 <style scoped>
-  .topItem{ height: 60px;}
-  .topColumn{ float:left; margin-right:10px;}
-  .ivu-input-icon{right:55px;}
+.topItem {
+  height: 60px;
+}
+.topColumn {
+  float: left;
+  margin-right: 10px;
+}
+.ivu-input-icon {
+  right: 55px;
+}
 </style>
 

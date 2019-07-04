@@ -7,7 +7,7 @@ const service = axios.create({
   // baseURL: 'http://10.88.66.153:8080/',
   baseURL: 'http://10.88.66.71:8080',
   // baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 20000 // request timeout
+  timeout: 60000 // request timeout
 
 })
 service.interceptors.request.use(
@@ -49,6 +49,7 @@ service.interceptors.response.use(
   },
 
   error => {
+    debugger
     if (error.response.status === 401) {
       iView.Notice.info({
         desc: i18n.t('loginTmeOut'),
