@@ -10,7 +10,7 @@
     <!-- table -->
     <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+      <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
     <!-- 删除提示 -->
         <Modal
@@ -27,7 +27,7 @@
 <script>
   import { deleteSyncQueue, getAllSyncGameTasks, multiAddSyncTask } from '@/api/sync'
   // import { deleteSyncQueue } from '@/api/sync'
-  const _ = require('lodash')
+  // const _ = require('lodash')
   export default {
     name: 'subType4-2',
     data () {
@@ -35,7 +35,6 @@
         fetch: false,
         curroffset: 0,
         currlimit: 10,
-        totalPageNumber: 0,
         pageSize: 10,
         currentPage: 1,
         showDeleteBox: false,
@@ -118,11 +117,16 @@
             'expect_complete_time': ''
 
           }
-        ]
+        ],
+        pageinfo: {
+          count: 0,
+          page_index: 0
+        },
+        Pagelimit: 11
       }
     },
     created () {
-      this.handleGetTableList()
+      this.handleGetTableList(0, this.Pagelimit)
     },
     computed: {
       routes () {
@@ -133,27 +137,40 @@
       /**
       * 获取同步任务
       */
-      handleGetTableList: _.throttle(function () {
+      // handleGetTableList: _.throttle(function () {
+      //   this.fetch = true
+      //   var info = {
+      //     offset: 0,
+      //     limit: 10
+      //   }
+      //   getAllSyncGameTasks(info).then((resp) => {
+      //     this.tableData = resp.data.data ? resp.data.data : []
+      //     this.pageinfo = resp.data.pageino
+      //     console.log(this.pageinfo)
+      //   }, (res) => {
+      //   }).finally(() => {
+      //     this.fetch = false
+      //   })
+      // }, 2000),
+      handleGetTableList (offset, limit) {
         this.fetch = true
         var info = {
-          offset: 0,
-          limit: 10
+          offset: offset,
+          limit: limit
         }
         getAllSyncGameTasks(info).then((resp) => {
           this.tableData = resp.data.data ? resp.data.data : []
-        }, (res) => {
-        }).finally(() => {
-          this.fetch = false
-        })
-      }, 2000),
-  
-      hanbleChangePage (num) {
-        if (num === 1) {
-          num = 0
-        } else {
-          num = (this.currlimit * num) - this.currlimit
-        }
-        this.handleGetTableList(num, this.currlimit)
+          this.pageinfo = resp.data.pageino
+          this.pageinfo.page_index++
+        }, (res) => {})
+          .catch(() => { this.fetch = false })
+          .finally(() => { this.fetch = false })
+      },
+      /**
+       * 切换页码
+       */
+      hanbleChangePage (e) {
+        this.handleGetTableList((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
       },
       handleCallBackVaild (res) {
         var code = res.data.Code
@@ -179,7 +196,7 @@
        */
       handleConfirmDelete () {
         deleteSyncQueue(this.getCheckboxVal[0].task_id).then((res) => {
-          this.handleGetTableList()
+          this.handleGetTableList(this.pageinfo.page_index, this.Pagelimit)
         }, () => {
         })
       },
@@ -206,7 +223,10 @@
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           multiAddSyncTask(this.getCheckboxVal[0].task_id).then((resp) => {
-            this.$Message.error(this.$t(resp.data))
+            this.$Notice.success({
+              title: this.$t('OperationSuccessful'),
+              desc: '已成功添加同步任务中，可去同步任务查看详细内容'
+            })
           }, (err) => {
             this.$Message.error(this.$t(err.data))
           })

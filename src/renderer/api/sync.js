@@ -72,12 +72,7 @@ export function getDrivers () { // 盘符
     method: 'get'
   })
 }
-export function getSearch (data) { // 服务器同步设置
-  return request({
-    url: '/v1/server_game_sync/search?' + data,
-    method: 'get'
-  })
-}
+
 export function getPolicys () { // 策略
   return request({
     url: '/v1/server_game_sync/policys',
@@ -157,7 +152,7 @@ export function getAllServers () {
   })
 }
 /**
- * 获取服务器列表
+ * 获取服务器磁盘
  */
 
 export function getAllServerDisks (ip) {
@@ -167,12 +162,12 @@ export function getAllServerDisks (ip) {
   })
 }
 /**
- * 获取服务器列表
+ * 获取全部中心游戏
  */
 
 export function getAllServerGamesByIp (info) {
   return request({
-    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&firstletter=${info.letter || ''}`,
+    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&gametype=${info.gametype || ''}&firstletter=${info.letter || ''}`,
     method: 'get'
   })
 }

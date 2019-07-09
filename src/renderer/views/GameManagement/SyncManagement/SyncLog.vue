@@ -3,7 +3,7 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+      <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
     
   </div>
@@ -15,11 +15,6 @@
     name: 'subType4-3',
     data () {
       return {
-        curroffset: 0,
-        currlimit: 10,
-        totalPageNumber: 0,
-        pageSize: 10,
-        currentPage: 1,
         getCheckboxVal: [], // 勾选复选框值
         tableSelectVal: [],
         tableColumns: [
@@ -73,11 +68,16 @@
             }
           }
         ],
-        tableData: []
+        tableData: [],
+        pageinfo: {
+          count: 0,
+          page_index: 0
+        },
+        Pagelimit: 11
       }
     },
     created () {
-      this.handleGetTableList(0, 10)
+      this.handleGetTableList(0, this.Pagelimit)
     },
     computed: {
       routes () {
@@ -92,17 +92,17 @@
         }
         getAllSyncGameLogs(info).then((resp) => {
           this.tableData = resp.data.data
+          this.pageinfo = resp.data.pageino
+          this.pageinfo.page_index++
         }, () => {
           this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         })
       },
-      hanbleChangePage (num) {
-        if (num === 1) {
-          num = 0
-        } else {
-          num = (this.currlimit * num) - this.currlimit
-        }
-        this.handleGetTableList(num, this.currlimit)
+      /**
+       * 切换页码
+       */
+      hanbleChangePage (e) {
+        this.handleGetTableList((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
       },
       handleCallBackVaild (res) {
         var code = res.data.Code

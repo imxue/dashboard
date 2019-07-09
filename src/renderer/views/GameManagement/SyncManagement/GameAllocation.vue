@@ -3,16 +3,16 @@
     <div class="topItem">
       <Row :gutter="16">
            <Col :lg="{ span: 3, offset: 0 }">
-           <Select v-model="model1" >
+           <Select v-model="model1" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
              <!-- <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
              <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
            </Select>
         </Col>
           <Col :lg="{ span: 3, offset: 0 }">
-          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
+          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
       </Col>
         <Col :lg="{ span: 3, offset: 0 }">
-          <Select v-model="serversIpValue" clearable @on-change="handleSelectChange"  class="topColumn" >
+          <Select v-model="currentIp" clearable @on-change="handleSelectChange"  class="topColumn" >
             <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
           </Select>
           </Col>
@@ -26,7 +26,6 @@
             <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonAddTask">{{$t('AddSynchronizationTask')}}</Button>
             <router-link to="DefaultRule">
-            <!-- <Button type="primary" class="topColumn" >{{$t('DefaultAssignmentRule')}}</Button> -->
             </router-link>
         </Col>
       </Row>
@@ -38,8 +37,10 @@
         </Col>
     </Row>
     <Row style="margin-top:10px; ">
-      <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
-      <i-col span="17"><Page :current="currentPage" :total="totalPageNumber" show-total  @on-change="hanbleChangePage" style=" float:right;"/></i-col>
+      <!-- <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col> -->
+      <i-col span="24">
+        <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+</i-col>
     </Row>
     <Modal
         v-model="distributionPanel"
@@ -72,28 +73,28 @@
 </template>
 
 <script>
-  import { getSearch, getDrivers, getPolicys, distributeGame, canceldistributeGame, syncGame, getAllServers, getAllServerDisks, getAllServerGamesByIp } from '@/api/sync'
+  import { getDrivers, getPolicys, distributeGame, canceldistributeGame, syncGame, getAllServers, getAllServerDisks, getAllServerGamesByIp } from '@/api/sync'
 
   export default {
     name: 'ServerSyncSet',
     data () {
       return {
+        pageinfo: {
+          count: 0,
+          page_index: 0
+        },
+        Pagelimit: 6,
         distributionPanel: false, //  分配游戏面板
-        currentIp: '',
+        currentIp: '', // 当前页ip
         serversDisk: '',
         serversDiskList: [],
-        model1: '',
+        model1: 'AllGame', // 游戏类型
         clearVal: '',
         inputVal: '',
         diskValue: '',
         serverVal: '',
         serversIpValue: '',
         driversData: [],
-        curroffset: 0,
-        currlimit: 10,
-        totalPageNumber: 0,
-        pageSize: 10,
-        currentPage: 1,
         getCheckboxVal: [], // 勾选复选框值
         getCheckboxValString: '',
         tableSelectVal: [],
@@ -101,11 +102,13 @@
         diskList: [],
         diskListOption: [],
         gameList: [
-          { Id: 0, value: 'HotGame', label: 'HotGame' },
-          { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
-          { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
-          { Id: 3, value: 'CasualGame', label: 'CasualGame' },
-          { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
+          { Id: 0, value: 'AllGame', label: 'AllGame' },
+          { Id: 1, value: 'HotGame', label: 'HotGame' },
+          { Id: 2, value: 'OnlineGame', label: 'OnlineGame' },
+          { Id: 3, value: 'ConsoleGame', label: 'ConsoleGame' },
+          { Id: 4, value: 'CasualGame', label: 'CasualGame' },
+          { Id: 5, value: 'AuxiliaryGame', label: 'AuxiliaryGame' },
+          { Id: 6, value: 'SystemTool', label: 'SystemTool' }
         ],
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
@@ -194,10 +197,39 @@
     },
     methods: {
       /**
+       * 通过游戏类型查询游戏
+       */
+      handleGetGameByTypeName (value) {
+        let gamehash = {
+          All: '',
+          HotGame: '热门游戏',
+          OnlineGame: '网络游戏',
+          ConsoleGame: '单机游戏',
+          CasualGame: '休闲游戏',
+          AuxiliaryGame: '辅助游戏',
+          SystemTool: '系统工具'
+        }
+  
+        let info = {
+          offset: 0,
+          limit: this.Pagelimit,
+          orderby: 'size',
+          serverip: this.currentIp,
+          gametype: gamehash[this.model1] ? gamehash[this.model1] : '',
+          letter: ''
+        }
+        getAllServerGamesByIp(info).then((resp) => {
+          this.tableData = resp.data.data
+          this.pageinfo = resp.data.pageino
+          this.pageinfo.page_index++
+        }, (error) => {
+          console.log(error)
+        })
+      },
+      /**
        * 更加游戏名
        */
       ChangeValue (value) {
-        debugger
       },
       /**
        * 获取服务器ip
@@ -208,10 +240,8 @@
           this.serversIpList = this.serversIpList.filter(item => {
             return item.is_master !== 1
           })
-          console.log(this.serversIpList)
-          this.serversIpValue = this.serversIpList[0].ip
           this.serversIpValue1 = this.serversIpList[0].ip
-          this.currentIp = this.serversIpList[0].ip
+          this.currentIp = this.serversIpList[0].ip // 默认选择第一个服务器
           this.handleGetAllServersDisk() // 获取磁盘
         })
       },
@@ -230,22 +260,25 @@
           this.serversDisk1 = this.serversDiskList[0] // 分配界面上的
           this.currentServerId = this.serversDiskList[0].server_id
           this.currentDiskId = this.serversDiskList[0].id
-          this.handleGetGameByIp()
+          this.handleGetGame(0, this.Pagelimit)
         })
       },
       /**
        * 获取服务器游戏
        */
-      handleGetGameByIp (info) {
-        info = {
-          offset: 0,
-          limit: 10,
-          orderby: 'size',
-          serverip: this.currentIp,
-          letter: ''
+      handleGetGame (offset, limit = this.Pagelimit, orderby = 'name', serverip = this.currentIp, gametype = '', letter = '') {
+        let info = {
+          offset,
+          limit,
+          orderby,
+          serverip,
+          gametype,
+          letter
         }
         getAllServerGamesByIp(info).then((resp) => {
           this.tableData = resp.data.data
+          this.pageinfo = resp.data.pageino
+          this.pageinfo.page_index++
         }, (error) => {
           console.log(error)
         })
@@ -261,6 +294,9 @@
           this.serversIpValue = ''
         }
         this.handleGetSearch(this.curroffset, this.currlimit)
+      },
+      hanbleChangePage (e) {
+        this.handleGetGame((e - 1) * this.Pagelimit, this.Pagelimit)
       },
       handlGetDrivers () {
         getDrivers().then((res) => {
@@ -295,41 +331,13 @@
         }, () => {
         })
       },
-      handleGetSearch (offset, limit) {
-        var data = 'keyword=' + this.inputVal + '&serverIp=' + this.serversIpValue + '&driverId=' + this.diskValue + '&offset=0&limit=10'
-        getSearch(data).then((res) => {
-          if (res.data.Code === 0) {
-            var arr = res.data.Data.List
-            if (arr === null) {
-              this.tableData = []
-              this.getDriversData = []
-              this.serverList = []
-            } else {
-              this.getDriversData = res.data.Data.Servers // 筛选三项data
-              this.tableData = res.data.Data.List
-              // console.log('tableData' + JSON.stringify(this.tableData))
-            }
-          } else {
-            this.$Message.error(res.data.Msg)
-          }
-        }, () => {
-        })
-      },
-      hanbleChangePage (num) {
-        if (num === 1) {
-          num = 0
-        } else {
-          num = (this.currlimit * num) - this.currlimit
-        }
-        this.handleGetSearch(num, this.currlimit)
-      },
       /**
-       * 服务器ip
+       * 切换服务器ip
        */
       handleSelectChange (serverip) {
         this.currentIp = serverip
         // this.currentServerId = serverInfo.server_id
-        this.handleGetGameByIp()
+        this.handleGetGame()
         this.handleGetAllServersDisk()
       },
       /**
@@ -339,8 +347,7 @@
         this.currentDiskId = diskInfo.id
       },
       handleSelectChangeserversIp1 (serverip) {
-        this.currentIp = serverip
-        getAllServerDisks(this.currentIp).then((resp) => {
+        getAllServerDisks(serverip).then((resp) => {
           this.serversDiskList = resp.data || []
           if (this.serversDiskList) {
             this.serversDiskList = this.serversDiskList.filter(item => {
@@ -371,7 +378,7 @@
             data.push(info)
           })
           distributeGame(data).then((res) => {
-            this.handleGetGameByIp()
+            this.handleGetGame((this.pageinfo.page_index - 1) * this.Pagelimit, this.Pagelimit)
             this.$Message.success(res.data)
           }, () => {
             this.$Message.error('请求出错，请稍后再试')
@@ -384,7 +391,7 @@
           info.local_game_id = this.allowGame.local_game_id
           data.push(info)
           distributeGame(data).then((res) => {
-            this.handleGetGameByIp()
+            this.handleGetGame((this.pageinfo.page_index - 1) * this.Pagelimit, this.Pagelimit)
             this.$Message.success(res.data)
           }, () => {
             this.$Message.error('请求出错，请稍后再试')
@@ -395,20 +402,8 @@
        * 分配游戏单个
        */
       handleAllowe (data) {
-        // let info = {
-        //   server_id: this.currentServerId,
-        //   server_disk_id: this.currentDiskId,
-        //   local_game_id: data.local_game_id
-        // }
         this.distributionPanel = true
         this.allowGame = data
-        // let temp = []
-        // temp.push(info)
-        // distributeGame(temp).then((res) => {
-        //   this.$Message.error(res.data)
-        // }, () => {
-        //   this.$Message.error('请求出错，请稍后再试')
-        // })
       },
       /**
        * 取消分配游戏
@@ -420,7 +415,7 @@
         } else {
           canceldistributeGame(this.getCheckboxVal[0].server_game_id).then((res) => {
             this.$Message.success(this.$t('OperationSuccessful'))
-            this.handleGetGameByIp()
+            this.handleGetGame(this.pageinfo.page_index, this.Pagelimit)
           }, () => {
             this.$Message.error('请求出错，请稍后再试')
           })
