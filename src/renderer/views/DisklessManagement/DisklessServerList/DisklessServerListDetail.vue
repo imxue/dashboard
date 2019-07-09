@@ -1,26 +1,66 @@
 <template>
   <div class="container">
-    <Spin size="large" fix v-if="spinShow"></Spin>
+    <Spin
+      size="large"
+      fix
+      v-if="spinShow"
+    ></Spin>
     <div class="topItem">
-      <Select style="width:200px; marginRight:10px;" v-model="currentPageServerip" @on-change="listTypeChange">
-        <Option v-for="item in serverList"  v-bind:key="item.serverIp" :disabled='item.online !== "1"' :value="item.serverIp">{{item.serverIp}} <Tag v-if="item.isMaster === '1'" color="red">master</Tag></Option>
+      <Select
+        style="width:200px; marginRight:10px;"
+        v-model="currentPageServerip"
+        @on-change="listTypeChange"
+      >
+        <Option
+          v-for="item in serverList"
+          v-bind:key="item.serverIp"
+          :disabled='item.online !== "1"'
+          :value="item.serverIp"
+        >{{item.serverIp}} <Tag
+            v-if="item.isMaster === '1'"
+            color="red"
+          >master</Tag>
+        </Option>
       </Select>
-        
-      <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
 
-      <Divider type="vertical"/>
-      <Button type="error" class="topColumn" @click="handleButtonDelete()">{{$t('Delete')}}</Button>
-      <Divider v-show="isMaster !== '1'" type="vertical" />
-      <Button type="error" class="topColumn" v-show="isMaster !== '1'" @click="HandlechangeMaster()">{{$t('setMaterIp')}}</Button>
+      <Button
+        type="primary"
+        class="topColumn"
+        @click="handleButtonRefresh"
+      >{{$t('Refresh')}}</Button>
+
+      <Divider type="vertical" />
+      <Button
+        type="error"
+        class="topColumn"
+        @click="handleButtonDelete()"
+      >{{$t('Delete')}}</Button>
+      <Divider
+        v-show="isMaster !== '1'"
+        type="vertical"
+      />
+      <Button
+        type="error"
+        class="topColumn"
+        v-show="isMaster !== '1'"
+        @click="HandlechangeMaster()"
+      >{{$t('setMaterIp')}}</Button>
     </div>
 
-    <Table border :columns="tableColumns1" :data="CurrentPageserverInfo" ></Table>
-
+    <Table
+      border
+      :columns="serverTableStructure"
+      :data="CurrentPageserverInfo"
+    ></Table>
 
     <Row style="margin:10px 0;">
       <span>{{$t('NetworkSetting')}}</span>
-      <Divider/>
-      <Button type="primary" class="topColumn" @click="handleLoadNICx">{{$t('SetTheLoadNetworkCard')}}</Button>
+      <Divider />
+      <Button
+        type="primary"
+        class="topColumn"
+        @click="handleLoadNICx"
+      >{{$t('SetTheLoadNetworkCard')}}</Button>
     </Row>
     <Table
       border
@@ -30,145 +70,176 @@
       @on-selection-change="handleCheckBox"
     ></Table>
     <div style="margin:10px 0; ">
-      <span >{{$t('DiskSetting')}}</span>
-      <Divider/>
-       <Button type="primary" @click="handleDisk">{{this.$t('SetUpDiskSoftConnection')}}</Button>
+      <span>{{$t('DiskSetting')}}</span>
+      <Divider />
+      <Button
+        type="primary"
+        @click="handleDisk"
+      >{{this.$t('SetUpDiskSoftConnection')}}</Button>
     </div>
-      <Modal
-        v-model="xxxx"
-        footer-hide
-        width="760"
-        :styles="{top: '260px'}"
-        :title="this.$t('SetUpDiskSoftConnection')">
-        <Transfer
+    <Modal
+      v-model="softConnectionShowup"
+      footer-hide
+      width="760"
+      :mask-closable="false"
+      :styles="{top: '260px'}"
+      :title="this.$t('SetUpDiskSoftConnection')"
+    >
+      <Transfer
         :titles="[this.$t('ArrayMembersCanBeUsed'), this.$t('ArrayMemberAlreadyExists')]"
-        :data="data1"
+        :data="matrix"
         :render-format="render3"
         :list-style="listStyle"
-        :targetKeys="rightData"
+        :targetKeys="ExistsMatrixMember"
         :operations="[this.$t('Remove'),this.$t('Create')]"
-        @on-change="handleChange1"></Transfer>
-         <Spin fix v-show="setspin"> <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon></Spin>
+        @on-change="handleChange1"
+      ></Transfer>
+      <Spin
+        fix
+        v-show="setspin"
+      >
+        <Icon
+          type="ios-loading"
+          size=18
+          class="demo-spin-icon-load"
+        ></Icon>
+      </Spin>
     </Modal>
 
-    
-      <Table border :columns="tableColumns3" :data="diskInfo" @on-row-dblclick="ShowDiskPlan"></Table>
+    <Table
+      border
+      :columns="tableColumns3"
+      :data="diskInfo"
+      @on-row-dblclick="ShowDiskPlan"></Table>
     <div class="dig">
       <Modal
         v-model="DiskSettingDialog"
         :loading="loading"
         footer-hide
         :styles="{top: '400px'}"
-        :closable="false"
-      >
+        :closable="false" >
         <p class="textAlign">{{$t('DiskSetting')}}</p>
       </Modal>
     </div>
-    <Modal :title="this.$t('DiskSetting')" v-model="DiskSetDialog" width="600" footer-hide>
+    <Modal
+      :title="this.$t('DiskSetting')"
+      v-model="DiskSetDialog"
+      width="600"
+      footer-hide>
       <div class="wrapper">
-      <div class="left">
-      <Row class="rowlist">
-        <i-col span="7">{{$t('DevicePath')}}：</i-col>
-        <i-col span="16">{{rowData.path}}</i-col>
-      </Row>
-      <Row class="rowlist">
-        <i-col span="7">{{$t('DiskSize')}}：</i-col>
-        <i-col span="16">{{rowData.size}}</i-col>
-      </Row>
-      <Row class="rowlist">
-        <i-col span="7">{{$t('AvailableSpace')}}：</i-col>
-        <i-col span="16">{{rowData.availableSize}}</i-col>
-      </Row>
-      <Row class="rowlist">
-        <i-col span="24">
-          <i-col span='7'>{{$t('DiskEffect')}}：</i-col>
-          <Select
-            v-model="selecteDisk"
-            @on-change="handleSelect"
-            clearable
-            class="topColumn"
-            style="width:200px;"
+        <div class="left">
+          <Row class="rowlist">
+            <Col span="7">{{$t('DevicePath')}}：</Col>
+            <Col span="16">{{selectedDisk.path}}</Col>
+          </Row>
+          <Row class="rowlist">
+            <Col span="7">{{$t('DiskSize')}}：</Col>
+            <Col span="16">{{selectedDisk.size}}</Col>
+          </Row>
+          <Row class="rowlist">
+            <Col span="7">{{$t('AvailableSpace')}}：</Col>
+            <Col span="16">{{selectedDisk.availableSize}}</Col>
+          </Row>
+          <Row class="rowlist">
+            <Col span="24">
+              <Col span='7'>{{$t('DiskEffect')}}：</Col>
+              <Select
+                v-model="selecteDisk"
+                @on-change="handleSelect"
+                clearable
+                class="topColumn"
+                style="width:200px;"
+              >
+                <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
+                <Option value="dataDisk">{{$t('DataDisk')}}</Option>
+                <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
+                <Option value="unUsed">{{$t('Unused')}}</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row
+            class="rowlist"
+            v-show="this.selecteDisk !== 'unUsed'"
           >
-            <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
-            <Option value="dataDisk">{{$t('DataDisk')}}</Option>
-            <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
-            <Option value="unUsed">{{$t('Unused')}}</Option>
-          </Select>
-        </i-col>
-      </Row>
-      <Row class="rowlist" v-show="this.selecteDisk !== 'unUsed'">
-        <i-col span="24">
-           <i-col span='7'>{{$t('isFormat')}}：</i-col>
-          <Select
-            v-model="selecteFormatValue"
-            clearable
-            class="topColumn"
-            style="width:200px;"
-            :placeholder="this.$t('pleaseInput')"
+            <Col span="24">
+              <Col span='7'>{{$t('isFormat')}}：</Col>
+              <Select
+                v-model="selecteFormatValue"
+                clearable
+                class="topColumn"
+                style="width:200px;"
+                :placeholder="this.$t('pleaseInput')"
+              >
+                <Option value="yes">{{$t('Yes')}}</Option>
+                <Option value="no">{{$t('No')}}</Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row
+            v-show="this.selecteDisk === 'dataDisk'"
+            class="rowlist"
           >
-            <Option value="yes">{{$t('Yes')}}</Option>
-            <Option value="no">{{$t('No')}}</Option>
-          </Select>
-        </i-col>
-      </Row>
-      <Row v-show="this.selecteDisk !== 'unUsed'" class="rowlist">
-        <i-col span="24" >
-         <i-col span='7'>{{$t('MappingDiskSymbol')}}：</i-col> 
-          <Select
-            v-model="selecteDiskF"
-            clearable
-            class="topColumn"
-            style="width:200px;"
-            :placeholder="this.$t('pleaseInput')"
+            <Col span="24">
+              <Col span='7'>{{$t('MappingDiskSymbol')}}：</Col>
+              <Select
+                v-model="selecteDiskF"
+                clearable
+                class="topColumn"
+                style="width:200px;"
+                :placeholder="this.$t('pleaseInput')"
+              >
+                <Option  v-for="item in DiskSymbolList" :value="item.DeviceID" :key="item.value">
+                  <!-- {{item.VolumeName}} - {{item.DeviceID}} -->
+         
+                 {{item.DeviceID}} / {{$t('AvailableSpace')}} {{item.free_space}}
+           
+                </Option>
+              </Select>
+            </Col>
+          </Row>
+          <Row
+            class="rowlist"
+            v-show="this.selecteDisk === 'dataDisk'"
           >
-            <Option value="E">E</Option>
-            <Option value="F">F</Option>
-            <Option value="G">G</Option>
-            <Option value="H">H</Option>
-            <Option value="I">I</Option>
-          </Select>
-        </i-col>
-      </Row>
-      <Row class="rowlist" v-show="this.selecteDisk === 'dataDisk'">
-        <i-col span="24">
-           <i-col span='7'>{{$t('ExtendedType')}}：</i-col>
-          <Select
-            v-model="ExtendedType"
-            clearable
-            class="topColumn"
-            style="width:200px;"
-            :placeholder="this.$t('pleaseInput')"
-          >
-            <Option value="0">{{$t('GameDisk')}}</Option>
-            <Option value="1">{{$t('HotGameDisk')}}</Option>
-            <Option value="2">{{$t('PrivateGameDisk')}}</Option>
-          </Select>
-        </i-col>
-      </Row>
+            <Col span="24">
+              <Col span='7'>{{$t('ExtendedType')}}：</Col>
+              <Select
+                v-model="ExtendedType"
+                clearable
+                class="topColumn"
+                style="width:200px;"
+                :placeholder="this.$t('pleaseInput')"
+              >
+                <Option value="0">{{$t('GameDisk')}}</Option>
+                <Option value="1">{{$t('HotGameDisk')}}</Option>
+                <Option value="2">{{$t('PrivateGameDisk')}}</Option>
+              </Select>
+            </Col>
+          </Row>
+        </div>
+        <div class="right">
+          <span>{{this.$t(`ExtendedTypeTip.${0}`)}}</span>
+          <ul>
+            <span>{{this.$t(`ExtendedTypeTip.${1}`)}}</span>
+            <li>{{this.$t(`ExtendedTypeTip.${2}`)}}</li>
+            <li>{{this.$t(`ExtendedTypeTip.${3}`)}}</li>
+          </ul>
+
+          <span>{{this.$t(`ExtendedTypeTip.${4}`)}}</span>
+          <ul>
+            <li>{{this.$t(`ExtendedTypeTip.${5}`)}}</li>
+            <li>{{this.$t(`ExtendedTypeTip.${6}`)}}</li>
+          </ul>
+          <span>{{this.$t(`ExtendedTypeTip.${7}`)}}</span>
+          <ul>
+            <li>{{this.$t(`ExtendedTypeTip.${8}`)}}</li>
+            <li>{{this.$t(`ExtendedTypeTip.${9}`)}}</li>
+          </ul>
+        </div>
       </div>
-      <div class="right">
-        <span>{{this.$t(`ExtendedTypeTip.${0}`)}}</span>
-        <ul>
-          <span>{{this.$t(`ExtendedTypeTip.${1}`)}}</span>
-          <li>{{this.$t(`ExtendedTypeTip.${2}`)}}</li>
-          <li>{{this.$t(`ExtendedTypeTip.${3}`)}}</li>
-        </ul>
-     
-        <span>{{this.$t(`ExtendedTypeTip.${4}`)}}</span>
-        <ul>
-          <li>{{this.$t(`ExtendedTypeTip.${5}`)}}</li>
-          <li>{{this.$t(`ExtendedTypeTip.${6}`)}}</li>
-        </ul>
-        <span>{{this.$t(`ExtendedTypeTip.${7}`)}}</span>
-        <ul>
-          <li>{{this.$t(`ExtendedTypeTip.${8}`)}}</li>
-          <li>{{this.$t(`ExtendedTypeTip.${9}`)}}</li>
-        </ul>
-      </div>
-      </div>
-      <div class="buttonList" style="margin-top:20px;">
-        <Button type="primary" @click="handleSetCard">{{$t('Save')}}</Button>
-        <Button @click="handleResetCard" style="margin-left: 8px">{{$t('cancelText')}}</Button>
+      <div style="margin-top:20px;" >
+        <Button type="primary" @click="handleSetCard" >{{$t('Save')}}</Button>
+        <Button @click="handleResetCard" style="margin-left: 8px" >{{$t('cancelText')}}</Button>
       </div>
     </Modal>
   </div>
@@ -185,38 +256,41 @@ import {
   setVdiskEthernetx,
   deleteserverConfig,
   RaidCreate,
-  RaidRemove
-} from '@/api/wupan'
+  RaidRemove } from '@/api/wupan'
+import { getLogicalDrives } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
+import { bytesToSize2 } from '../../../utils/index'
 export default {
-  name: 'subType1-detail',
+  name: 'DisklessServerListDetail',
   data () {
     return {
-      currentPageServerip: '',
-      loading: '',
-      xxxx: false, // 设置磁盘 穿
-      rightData: [],
-
-      setspin: false,
-      serverList: '',
+      currentPageServerip: '', // 当前页服务器ip
+      CurrentPageserverInfo: [], // 当前页服务器信息
+      loading: '', // 磁盘设置loading
+      softConnectionShowup: false, // 打开软连接界面
+      ExistsMatrixMember: [], // 已存在阵列成员列表
+      matrix: [], // 阵列信息
+      setspin: false, // 设置阵列成员的loading
+      serverList: [], // 服务器列表
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
       MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
-      rowData: '',
-      selecteDiskF: 'E',
-      selecteDisk: 'imageDisk',
+      selectedDisk: '', // 选择的磁盘信息
+      selecteDiskF: 'E', // 映射盘符
+      DiskSymbolList: [], // 盘符列表
+      selecteDisk: 'imageDisk', // 选择的磁盘功能
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗
-      selecteFormatValue: 'no',
+      selecteFormatValue: 'no', // 是否格式化
       ExtendedType: '0', // 扩展类型
       DiskData: {}, // 磁盘信息
-      listStyle: {
+      listStyle: { // 穿梭框样式
         width: '300px',
         height: '300px'
       },
-      tableColumns1: [
+      serverTableStructure: [ // 服务器表格结构
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'online',
@@ -269,7 +343,6 @@ export default {
         { key: 'serverIp', renderHeader: (h, params) => { return h('span', this.$t('ServerIP')) } },
         { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } }
       ],
-      CurrentPageserverInfo: [],
       tableColumns2: [
         { type: 'selection', width: 60, align: 'center' },
         {
@@ -363,11 +436,12 @@ export default {
           }
         },
         { title: '映射盘符',
-          key: 'mountVol',
-          minWidth: 120,
+          key: 'vol',
+          align: 'center',
+          minWidth: 80,
           renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) },
           render: (h, params) => {
-            return h('span', params.row.mountVol || '----')
+            return h('span', params.row.vol || '-')
           } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('IOReadRate')) },
@@ -435,8 +509,7 @@ export default {
           }
         }
       ],
-      diskInfo: [], // 磁盘信息类别
-      data1: []
+      diskInfo: [] // 磁盘信息类别
     }
   },
   created () {
@@ -453,39 +526,81 @@ export default {
   },
   methods: {
     handleChange1 (data, x, selected) {
-      this.setspin = true
+      let _this = this
+      let flagTip; let flag = false
       if (x === 'left') {
-        let path
-        selected.forEach(item => {
-          path = item
-          RaidRemove(path, this.currentPageServerip).then(() => {
-            this.handleGetDiskStatusx(this.currentPageServerip)
-          }, (error) => {
-            this.$Message.success(this.$t(`kxLinuxErr.${error}`))
-            this.handleGetDiskStatusx(this.currentPageServerip)
-          }).finally(() => {
-            this.setspin = false
-          })
+        flag = true
+        flagTip = '将移除该阵列，请知晓您的操作'
+      } else {
+        flagTip = '将合并选择的成员，请知晓您的操作'
+      }
+
+      if (flag) {
+        this.$Modal.confirm({
+          title: this.$t('operationTip'),
+          content: flagTip,
+          onOk () {
+            _this.$Modal.remove()
+            _this.setspin = true
+            let path
+            selected.forEach(item => {
+              path = item
+              console.log(_this.currentPageServerip)
+              RaidRemove(path, _this.currentPageServerip).then(() => {
+                _this.handleGetDiskStatusx(_this.currentPageServerip)
+              }, (error) => {
+                _this.$Message.success(_this.$t(`kxLinuxErr.${error}`))
+                _this.handleGetDiskStatusx(_this.currentPageServerip)
+              })
+                .catch(() => {
+                  _this.setspin = false
+                })
+                .finally(() => {
+                  this.flag = false
+                  _this.setspin = false
+                })
+            })
+          }
         })
       } else {
         if (selected.length === 1) {
-          this.$Message.success(this.$t('AtLeastTwoDisks'))
-          this.setspin = false
+          _this.$Message.success(this.$t('AtLeastTwoDisks'))
+          _this.setspin = false
         } else {
-          let y = []
-          selected.forEach(item => {
-            y.push(item)
-          })
-          RaidCreate(y, this.currentPageServerip).then(() => {
-            this.handleGetDiskStatusx(this.currentPageServerip)
-          }, (error) => {
-            this.$Message.success(this.$t(`kxLinuxErr.${error}`))
-            this.handleGetDiskStatusx(this.currentPageServerip)
-          }).finally(() => {
-            this.setspin = false
+          this.$Modal.confirm({
+            title: this.$t('operationTip'),
+            content: flagTip,
+            onOk () {
+              _this.$Modal.remove()
+              _this.setspin = true
+              let y = []
+              selected.forEach(item => {
+                y.push(item)
+              })
+              RaidCreate(y, _this.currentPageServerip).then(() => {
+                _this.handleGetDiskStatusx(_this.currentPageServerip)
+              }, (error) => {
+                _this.$Message.success(_this.$t(`kxLinuxErr.${error}`))
+                _this.handleGetDiskStatusx(_this.currentPageServerip)
+              }).finally(() => {
+                _this.setspin = false
+              })
+            }
           })
         }
       }
+    },
+    /**
+     * 获取映射盘符
+     */
+    handleLogicalDrives () {
+      getLogicalDrives().then((resp) => {
+        console.log(resp)
+        this.DiskSymbolList = resp.data || []
+        this.DiskSymbolList.map(item => {
+          item.free_space = bytesToSize2(item.FreeSpace)
+        })
+      }, (error) => { console.log(error) })
     },
     handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
@@ -514,7 +629,7 @@ export default {
     handleGetDiskStatusx (ip) {
       let that = this
       getDiskStatusx(ip).then(resp => {
-        this.data1 = []
+        this.matrix = []
         this.diskInfo = resp.data.result.list || []
         console.log(this.diskInfo)
         this.diskInfo.forEach(item => {
@@ -527,10 +642,10 @@ export default {
             f['isRaid'] = item.isRaid
             f['capacity'] = item.size
             // if (item.isRaid === '0') {
-            this.data1.push(f)
+            this.matrix.push(f)
             // }
             if (item.isRaid === '1') {
-              this.rightData.push(f.label)
+              this.ExistsMatrixMember.push(f.label)
             }
           }
         })
@@ -566,7 +681,7 @@ export default {
     handleEditServersNode () {
       editServersNode(
         this.MasterServerIp,
-        this.rowData.serverIp,
+        this.selectedDisk.serverIp,
         '1',
         '1'
       ).then(a => {
@@ -606,7 +721,7 @@ export default {
       this.DiskSettingDialog = true
       this.spinShow = true
       this.DiskData = {
-        path: this.rowData.path, // 设备路径
+        path: this.selectedDisk.path, // 设备路径
         fun: this.selecteDisk, // 磁盘作用
         cacheSize: '512',
         isFormat: this.selecteFormatValue,
@@ -620,12 +735,12 @@ export default {
         if (this.selecteDisk === 'dataDisk') {
           let info = {
             ip: this.currentPageServerip,
-            devicePath: this.rowData.path,
+            devicePath: this.selectedDisk.path,
             disk: this.selecteDiskF,
             extend: parseInt(this.ExtendedType)
           }
           setDiskAttribute(info).then((resp) => {
-            this.$Message.error(this.$t(`ExtendedTypeSuccess`))
+            this.$Message.success(this.$t(`ExtendedTypeSuccess`))
           }, () => {
             this.$Message.error(this.$t(`ExtendedTypeFail`))
           })
@@ -657,9 +772,10 @@ export default {
     /**
      * 弹出设置面板
      */
-    ShowDiskPlan (index) {
-      this.rowData = index
-      this.selecteDisk = this.rowData.fun
+    ShowDiskPlan (data) {
+      this.selectedDisk = data
+      this.handleLogicalDrives() // 获取映射盘符
+      this.selecteDisk = this.selectedDisk.fun
       this.DiskSetDialog = true
     },
     /**
@@ -725,7 +841,7 @@ export default {
       this.handleGetDiskStatusx(serverip)
     },
     handleDisk () {
-      this.xxxx = true
+      this.softConnectionShowup = true
     },
     render3 (item) {
       return item.label + ' - ' + item.capacity
@@ -761,36 +877,42 @@ span {
   font-size: 14px;
   margin: -10px;
 }
-.wrapper{
+.wrapper {
   display: flex;
 }
-ul ,li {
+ul,
+li {
   list-style: none;
 }
 li {
   margin-left: 10px;
 }
 .left {
-  flex:1;
+  flex: 1;
 }
-.ivu-divider-horizontal{
-  margin:15px 0;
+.ivu-divider-horizontal {
+  margin: 15px 0;
   font-weight: bold;
 }
-.right{
-  background:#F8FCE5;
+.right {
+  background: #f8fce5;
   border: 1px solid #ddd;
-  padding:8px;
+  padding: 8px;
   max-width: 260px;
   font-size: 14px;
 }
-.demo-spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
-    }
-    @keyframes ani-demo-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
-    }
+.demo-spin-icon-load {
+  animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>
-

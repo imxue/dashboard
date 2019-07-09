@@ -147,6 +147,7 @@ export default {
 
         },
         { key: 'ip', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'pc', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
         { key: 'mac', renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minwidth: 120, renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
         {

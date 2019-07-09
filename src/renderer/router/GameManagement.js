@@ -10,13 +10,13 @@ import DownloadLog from '@/views/GameManagement/ResourceDownload/DownloadLog'
 import DownloadSet from '@/views/GameManagement/ResourceDownload/DownloadSet'
 import DownloadedGame from '@/views/GameManagement/LocalResource/DownloadedGame'
 import BarGames from '@/views/GameManagement/LocalResource/BarGames'
-import ServerSyncSet from '@/views/GameManagement/SyncManagement/ServerSyncSet'
+import AssignGame from '@/views/GameManagement/SyncManagement/GameAllocation'
 import SyncTask from '@/views/GameManagement/SyncManagement/SyncTask'
 import SyncLog from '@/views/GameManagement/SyncManagement/SyncLog'
 import DefaultRule from '@/views/GameManagement/SyncManagement/DefaultRule'
-import BarGamesEditMain from '@/views/GameManagement/LocalResource/BarGamesEditMain'
+import BarGamesEdit from '@/views/GameManagement/LocalResource/BarGamesEdit'
 import DownloadedGameEdit from '@/views/GameManagement/LocalResource/DownloadedGameEdit'
-import BarGameAddMain from '@/views/GameManagement/LocalResource/BarGameAddMain'
+import BarGameAdd from '@/views/GameManagement/LocalResource/BarGameAdd'
 export default {
   path: '/game',
   name: '游戏管理',
@@ -152,22 +152,22 @@ export default {
         //   hidden: true
         // },
         {
-          path: 'BarGameAddMain',
-          name: 'GameManagement-SubType3-add',
+          path: 'BarGameAdd',
+          name: 'BarGameAdd',
           meta: { title: 'Add', hidden: true },
-          component: BarGameAddMain,
+          component: BarGameAdd,
           hidden: true
         },
         {
-          path: 'BarGamesEditMain', // 编辑游戏
-          name: 'GameManagement-SubType3-edit',
+          path: 'BarGamesEdit', // 编辑游戏
+          name: 'BarGamesEdit',
           meta: { title: 'Edit', hidden: true },
-          component: BarGamesEditMain,
+          component: BarGamesEdit,
           hidden: true
         },
         {
           path: 'DownloadedGameEdit',
-          name: 'GameManagement-SubType3-delete',
+          name: 'DownloadedGameEdit',
           meta: { title: 'Edit', hidden: true },
           component: DownloadedGameEdit,
           hidden: true
@@ -181,10 +181,10 @@ export default {
       component: NullLayout,
       children: [
         {
-          path: 'ServerSyncSet',
-          name: 'ServerSyncSet',
-          meta: { title: 'ServerSyncSet' },
-          component: ServerSyncSet
+          path: 'AssignGame',
+          name: 'AssignGame',
+          meta: { title: 'AssignGame' },
+          component: AssignGame
         },
         {
           path: 'SubType4-2',

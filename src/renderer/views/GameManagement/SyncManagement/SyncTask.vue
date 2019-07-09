@@ -4,8 +4,8 @@
       <Button type="primary" class="topColumn" @click="handleButtonStart">{{$t('Start')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
       <Button type="error"   class="topColumn" @click="handleButtonDelete">{{$t('DeleteTask')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonTop">{{$t('Topping')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">{{$t('MoveUp')}}</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonTop">{{$t('Topping')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonMove">{{$t('MoveUp')}}</Button> -->
     </div>
     <!-- table -->
     <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
@@ -15,17 +15,17 @@
     <!-- 删除提示 -->
         <Modal
         v-model="showDeleteBox"
-        title="$t('DeleteTip')"
+        :title="$t('DeleteTip')"
         @on-ok="handleConfirmDelete"
         @on-cancel="handleCancel"
-        width = "300">
+        >
         <p>是否删除当前任务？</p>
     </Modal>
   </div>
 </template>
 
 <script>
-  import { deleteSyncQueue, getAllSyncGameTasks } from '@/api/sync'
+  import { deleteSyncQueue, getAllSyncGameTasks, multiAddSyncTask } from '@/api/sync'
   // import { deleteSyncQueue } from '@/api/sync'
   const _ = require('lodash')
   export default {
@@ -51,13 +51,19 @@
               let type = params.row.state
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#25da30' } }, '计算差异')
+                  return h('span', { style: { color: '#25da30' } }, '禁止同步')
                 case 1:
-                  return h('span', { style: { color: '#25da30' } }, '同步数据')
+                  return h('span', { style: { color: '#25da30' } }, '未分配')
                 case 2:
-                  return h('span', '数据校验')
+                  return h('span', '待更新')
                 case 3:
-                  return h('span', '等待')
+                  return h('span', '等待磁盘分配')
+                case 4:
+                  return h('span', '更新中')
+                case 5:
+                  return h('span', '更新失败')
+                case 6:
+                  return h('span', '更新成功')
                 default:
                   return '-'
               }
@@ -158,12 +164,7 @@
         }
       },
       handleCheckBoxNumber (name) {
-        var val = this.getCheckboxVal.length
-        if (val === 0 || val > 1) {
-          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-        } else {
-          this.handlePostData(name)
-        }
+        this.getCheckboxVal = name
       },
       handleButtonDelete (val) {
         val = this.getCheckboxVal.length
@@ -173,10 +174,12 @@
           this.showDeleteBox = true
         }
       },
+      /**
+       * 删除同步任务
+       */
       handleConfirmDelete () {
-        var self = this
-        deleteSyncQueue(this.getCheckboxVal).then((res) => {
-          self.handleCallBackVaild(res)
+        deleteSyncQueue(this.getCheckboxVal[0].task_id).then((res) => {
+          this.handleGetTableList()
         }, () => {
         })
       },
@@ -184,14 +187,7 @@
         this.showDeleteBox = false
       },
       handleCheckBox (arr) {
-        var data = arr
-        var list = []
-        for (var i in arr) {
-          list.push(data[i].Id)
-        }
-        this.getCheckboxVal = list
-        console.log(JSON.stringify(list))
-        return this.getCheckboxVal
+        this.getCheckboxVal = arr
       },
       handleButtonTop (val) {
         val = this.getCheckboxVal.length
@@ -201,12 +197,19 @@
           alert('val')
         }
       },
-      handleButtonStart (val) {
-        val = this.getCheckboxVal.length
+      /**
+       * 开始同步任务
+       */
+      handleButtonStart () {
+        let val = this.getCheckboxVal.length
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          alert('val')
+          multiAddSyncTask(this.getCheckboxVal[0].task_id).then((resp) => {
+            this.$Message.error(this.$t(resp.data))
+          }, (err) => {
+            this.$Message.error(this.$t(err.data))
+          })
         }
       },
       handleButtonStop (val) {

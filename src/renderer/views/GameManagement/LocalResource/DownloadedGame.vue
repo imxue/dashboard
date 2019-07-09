@@ -103,15 +103,25 @@
             minWidth: 180,
             fixed: 'right',
             render: (h, params) => {
-              let a = h('Button', {
-                props: { type: 'primary', size: 'small' },
-                style: { 'margin-right': '10px' },
-                on: { click: () => { this.handleTableEdit(params.row) } }
-              }, this.$t('Edit'))
-              let b = h('Button', {
-                props: { type: 'error', size: 'small' },
-                on: { click: () => { this.handleTableDelete(params.row) } }
-              }, this.$t('Delete'))
+              // let a = h('Button', {
+              //   props: { type: 'primary', size: 'small' },
+              //   style: { 'margin-right': '10px' },
+              //   on: { click: () => { this.handleTableEdit(params.row) } }
+              // }, this.$t('Edit'))
+              // let b = h('Button', {
+              //   props: { type: 'error', size: 'small' },
+              //   on: { click: () => { this.handleTableDelete(params.row) } }
+              // }, this.$t('Delete'))
+              let a = h('Button',
+                { style: { marginRight: '5px', width: '70px' },
+                  props: { type: 'primary', size: 'small' },
+                  on: { click: () => { this.handleTableEdit(params.row) } }
+                }, this.$t('Edit'))
+              let b = h('Button',
+                { style: { marginRight: '5px', width: '70px' },
+                  props: { type: 'error', size: 'small' },
+                  on: { click: () => { this.handleTableDelete(params.row) } }
+                }, this.$t('Delete'))
               switch (params) {
                 default:
                   return h('span', [a, b])

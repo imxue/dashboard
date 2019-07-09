@@ -137,7 +137,6 @@ export default {
         this.formItem.select2 = resp.data.download_speed_limit
         let test = []
         let obj = resp.data.default_download_disk
-        debugger
         for (let i in obj) {
           let x = {}
           switch (i) {

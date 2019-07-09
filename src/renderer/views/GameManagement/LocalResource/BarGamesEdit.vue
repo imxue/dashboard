@@ -56,7 +56,7 @@
           <i-col span="8">
             <Select v-model="formValidate.IsEnableSync" @on-change="handleSelectUpdataWays">
               <Option
-                v-for="item in IsEnableSyncList"
+                v-for="item in IsEnableSync"
                 :value="item.Id"
                 :key="item.Id"
                 :label="item.value"
@@ -96,7 +96,10 @@ export default {
         RunExe: '',
         IsEnableSync: ''
       },
-      IsEnableSyncList: [{ Id: 1, value: this.$t('Enable') }, { Id: 0, value: this.$t('Disable') }],
+      IsEnableSync: [
+        { Id: 1, value: this.$t('Enable') },
+        { Id: 0, value: this.$t('Disable') }
+      ],
       showList: [
         { Id: '0', value: '全部显示' },
         { Id: '1', value: '按客户机分组显示' }
@@ -126,13 +129,13 @@ export default {
     handleSingleEdit () {
       if (this.$route.query.data) {
         var data = this.$route.query.data
-        this.Id = data.Id
+        this.Id = data.id
         this.formValidate.Name = data.display_name
         this.formValidate.SavePath = data.local_path
         this.formValidate.RunPath = data.run_path
         this.formValidate.RunExe = data.run_exe
         this.formValidate.IconUrl = data.icon_url
-        this.formValidate.IsEnableSync = data.is_auto_update
+        this.formValidate.IsEnableSync = data.is_enable_sync
       }
     },
     /**
@@ -168,8 +171,8 @@ export default {
             })
           } else {
             this.formValidate.IconUrl = null
-            editLocalGame(this.formValidate, this.formValidate.IconUrl, this.Id).then((e) => {
-              this.$Message.success(e.data)
+            editLocalGame(this.formValidate, this.formValidate.IconUrl, this.Id).then((resp) => {
+              this.$Message.success(resp.data)
               this.$router.go(-1)
             }, (e) => {
               this.$Notice.error({ desc: '' + e, duration: 0 })

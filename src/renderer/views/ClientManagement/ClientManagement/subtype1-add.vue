@@ -9,7 +9,7 @@
               <Input v-model="formValidate.pc" :placeholder="$t('pleaseInput')" />
             </FormItem>
 
-            <FormItem :label="this.$t('ServerIP')" prop="ip" :label-width="110">
+            <FormItem :label="this.$t('ClientIP')" prop="ip" :label-width="110">
               <Input v-model.trim="formValidate.ip" :placeholder="$t('pleaseInput')"/>
             </FormItem>
 

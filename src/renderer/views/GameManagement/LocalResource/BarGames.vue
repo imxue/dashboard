@@ -120,10 +120,10 @@ export default {
           renderHeader: (h, params) => {
             return h('span', this.$t('ServerSyncSet'))
           },
-          key: 'is_auto_update',
+          key: 'is_enable_sync',
           minWidth: 130,
           render: (h, params) => {
-            switch (params.row.is_auto_update) {
+            switch (params.row.is_enable_sync) {
               case 0:
                 return h('span', this.$t('Disable'))
               case 1:
@@ -138,31 +138,16 @@ export default {
           key: 'operation',
           minWidth: 180,
           render: (h, params) => {
-            let a = h(
-              'Button',
-              {
+            let a = h('Button',
+              { style: { marginRight: '5px', width: '70px' },
                 props: { type: 'primary', size: 'small' },
-                style: { marginRight: '10px' },
-                on: {
-                  click: () => {
-                    this.handleTableEdit(params.row)
-                  }
-                }
-              },
-              this.$t('Edit')
-            )
-            let b = h(
-              'Button',
-              {
+                on: { click: () => { this.handleTableEdit(params.row) } }
+              }, this.$t('Edit'))
+            let b = h('Button',
+              { style: { marginRight: '5px', width: '70px' },
                 props: { type: 'error', size: 'small' },
-                on: {
-                  click: () => {
-                    this.handleTableDelete(params.row)
-                  }
-                }
-              },
-              this.$t('Delete')
-            )
+                on: { click: () => { this.handleTableDelete(params.row) } }
+              }, this.$t('Delete'))
             switch (params) {
               default:
                 return h('span', [a, b])
@@ -217,7 +202,7 @@ export default {
     添加游戏
     */
     handleButtonAdd () {
-      this.$router.push({ path: 'BarGameAddMain' })
+      this.$router.push({ path: 'BarGameAdd' })
     },
     handleButtonEdit (val) {
       val = this.getCheckboxVal.length
@@ -230,17 +215,20 @@ export default {
         })
       }
     },
-    handleButtonSync (val) {
-      val = this.getCheckboxVal.length
+    /**
+     * 游戏同步任务
+     */
+    handleButtonSync () {
+      let val = this.getCheckboxVal.length
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        netbarMultiSync(this.getCheckboxVal).then(
+        netbarMultiSync(this.getCheckboxVal[0].id).then(
           res => {
             this.handleCallBackVaild(res)
           },
-          () => {
-            this.$Message.error('请求出错，请稍后再试')
+          (error) => {
+            this.$Message.error(error.data.error)
           }
         )
       }
@@ -256,7 +244,6 @@ export default {
         })
       }
     },
-
     /*
       获取table中的值
       */
@@ -270,15 +257,8 @@ export default {
      */
     handleTableEdit (data) {
       this.$router.push({
-        path: 'BarGamesEditMain',
+        path: 'BarGamesEdit',
         query: { data: data, type: 'edit' }
-      })
-    },
-    handleTableFix (index) {
-      this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      this.$router.push({
-        path: 'subtype3-2-fix',
-        query: { id: this.getCheckboxVal }
       })
     },
     /**

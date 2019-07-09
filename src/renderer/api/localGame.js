@@ -42,13 +42,16 @@ export function localEdit (clientStartPath, isAutoUpdate, localId, runExe, serve
     data
   })
 }
-
+/**
+ * 添加游戏同步人物
+ * @param {*} id
+ */
 export function netbarMultiSync (id) { // 本吧批量同步
   const data = {
-    ids: id
+    servergameid: id
   }
   return request({
-    url: '/v1/netbar/multiSync',
+    url: '/v1/syncgame/syncGame',
     method: 'post',
     data
   })
@@ -192,11 +195,11 @@ export function getDownloadedGames (offset, limit, orderby) {
 export function addLocalGame ({ name, path, exepath, exename, isEnableSync }, icondata) {
   const data = {
     name,
-    icondata,
-    path,
-    exepath,
-    exename,
-    is_enable_sync: isEnableSync
+    'icon_data': icondata,
+    'local_path': path,
+    'run_path': exepath,
+    'run_exe': exename,
+    isEnableSync
   }
   return request({
     url: `/v1/localresource/addLocalGame`,
@@ -209,10 +212,10 @@ export function editLocalGame ({ Name, SavePath, RunPath, RunExe, IsEnableSync }
   const data = {
     id: id,
     name: Name,
-    icondata,
-    path: SavePath,
-    exepath: RunPath,
-    exename: RunExe,
+    icon_data: icondata,
+    local_path: SavePath,
+    run_path: RunPath,
+    run_exe: RunExe,
     is_enable_sync: IsEnableSync
   }
   return request({

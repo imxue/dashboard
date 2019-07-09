@@ -415,7 +415,7 @@ export default {
      */
     HandleGetServerNode () {
       // let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-      let localMasterIp = localStorage.getItem('masterip')
+      let localMasterIp = localStorage.getItem('masterip') || ''
       let currentIp = this.formValidate.serverIP // 添加的服务器ip
       getServersNode(currentIp).then((resp) => {
         let guid = resp.data.result.guid

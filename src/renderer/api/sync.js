@@ -11,47 +11,61 @@ export function distribute (id) { // 分配
     data
   })
 }
-export function cancelDistribution (id) { // 取消分配
-  const data = {
-    'Ids': id
-  }
+/**
+ * 分配游戏
+ * @param {*} id
+ */
+export function distributeGame (info) {
+  const data = info
   return request({
-    url: '/v1/server_game_sync/cancelDistribution',
+    url: '/v1/servergame/allocateGame',
     method: 'post',
     data
   })
 }
-export function distributeGame (id) { // 分配游戏
+/**
+ * 取消分配游戏
+ * @param {*} id
+ */
+export function canceldistributeGame (id) {
   const data = {
-    'Ids': id
+    servergameids: id
   }
   return request({
-    url: '/v1/server_game_sync/distributeGame',
+    url: '/v1/servergame/unallocateGame',
     method: 'post',
     data
   })
 }
-export function multiAddSyncTask (id) { // 添加同步任务
+/**
+ * 添加同步任务
+ * @param {*} id
+ */
+export function syncGame (id) { // 添加同步任务
   const data = {
-    'Ids': id
+    'servergameid': id
   }
   return request({
-    url: '/v1/server_game_sync/multiAddSyncTask',
+    url: '/v1/syncgame/syncGame',
     method: 'post',
     data
   })
 }
-export function distributePolicy (driverId, id) { // 分配规则
+/**
+ *  开始同步任务
+ * @param {*} id
+ */
+export function multiAddSyncTask (id) {
   const data = {
-    DriverId: driverId,
-    TypeIds: id
+    'taskid': id
   }
   return request({
-    url: '/v1/server_game_sync/distributePolicy',
+    url: '/v1/synctask/startSyncGameTask',
     method: 'post',
     data
   })
 }
+
 export function getDrivers () { // 盘符
   return request({
     url: '/v1/server_game_sync/drivers',
@@ -80,13 +94,16 @@ export function resync (id) { // 重新同步
     data
   })
 }
-
+/**
+ * 删除同步任务
+ * @param {*} id
+ */
 export function deleteSyncQueue (id) { // 删除同步任务
   const data = {
-    'Ids': id
+    'taskid': id
   }
   return request({
-    url: '/v1/sync/multiDelete',
+    url: 'v1/synctask/delSyncGameTask',
     method: 'post',
     data
   })
@@ -107,11 +124,11 @@ export function getSyncQueue (info) {
  */
 export function setDiskAttribute (info) {
   const data = {
-    'server_id': info.ip,
+    'server_ip': info.ip,
     'device_path': info.devicePath,
     'disk_type': 1,
     'extend_disk_type': info.extend,
-    'disk_symbol': info.disk + ':'
+    'disk_symbol': info.disk
   }
   return request({
     url: `/v1/serverdisk/setDiskAttribute`,
@@ -119,7 +136,6 @@ export function setDiskAttribute (info) {
     data
   })
 }
-
 /**
  * 获取所有同步任务
  */
@@ -156,7 +172,7 @@ export function getAllServerDisks (ip) {
 
 export function getAllServerGamesByIp (info) {
   return request({
-    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&firstletter=${info.letter}`,
+    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&firstletter=${info.letter || ''}`,
     method: 'get'
   })
 }

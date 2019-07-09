@@ -4,7 +4,7 @@
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
             <Select v-model="Dg.data" :placeholder="$t('Search')" >
-              <Option v-for='item in disk' v-bind:value='item.DeviceID' v-bind:key='item.DeviceID'>{{item.DeviceID}} \ 可用空间 {{item.free_space}}</Option>
+              <Option v-for='item in disk' v-bind:value='item.DeviceID' v-bind:key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
             </Select>
             </FormItem> 
               <FormItem>

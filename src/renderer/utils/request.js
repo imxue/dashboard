@@ -49,8 +49,7 @@ service.interceptors.response.use(
   },
 
   error => {
-    debugger
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       iView.Notice.info({
         desc: i18n.t('loginTmeOut'),
         duration: 3

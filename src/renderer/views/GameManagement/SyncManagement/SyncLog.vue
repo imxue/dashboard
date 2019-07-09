@@ -33,11 +33,13 @@
               let type = params.row.sync_result
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#25da30' } }, this.$t('success'))
-                case 3:
+                  return h('span', { style: { color: '#25da30' } }, this.$t('NotInitiated'))
+                case 1:
+                  return h('span', { style: { color: '#ff0000' } }, this.$t('Running'))
+                case 2:
                   return h('span', { style: { color: '#ff0000' } }, this.$t('fail'))
-                default:
-                  return '-'
+                case 3:
+                  return h('span', { style: { color: '#33FF46' } }, this.$t('success'))
               }
             }
           },
@@ -46,22 +48,27 @@
           { title: '目标服务器地址', minWidth: 130, key: 'server_ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
           { title: '源路径', key: 'src_dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
           { title: '目标路径', minWidth: 130, key: 'dst_dir', renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '开始时间', key: 'start_time', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) } },
           { title: '结束时间', minWidth: 130, key: 'end_time', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
           { title: '错误信息', minWidth: 100, key: 'error', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             minWidth: 130,
             render: (h, params) => {
-              let type = params.row.id
-              let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-                on: { click: () => { this.handleTableResync(params.row) } }
-              }, this.$t('Resync'))
+              let type = params.row.sync_result
+              let a = h('Button',
+                { style: { marginRight: '5px', width: '70px' },
+                  props: { type: 'primary', size: 'small' },
+                  on: { click: () => { this.handleTableResync(params.row) } }
+                }, this.$t('Resync'))
               switch (type) {
-                // case 0:
-                //   return h('div', [a])
-                default:
-                  return h('span', [a])
+                case 0:
+                  return h('div', [a])
+                case 1:
+                  return h('div', [a])
+                case 2:
+                  return h('div', [a])
+                case 3:
+                  return h('div', [])
               }
             }
           }

@@ -96,7 +96,7 @@
         if (this.$route.query.data) {
           var data = this.$route.query.data
           this.formValidate.Name = data.Name
-          this.formValidate.SavePath = data.SavePath
+          this.formValidate.SavePath = data.LocalPath
           this.formValidate.ExePath = data.ExePath
           this.formValidate.UpdateMode = data.UpdateMode
           this.autoupdate = data.IsAutoupdate

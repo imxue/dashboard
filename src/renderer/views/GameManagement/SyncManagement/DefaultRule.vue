@@ -53,6 +53,9 @@
       return {
         currentIp: '',
         serversDisk: '',
+        serversIpValue: '',
+        serversIpList: '',
+        diskListOption: '',
         serversDiskList: [],
         serverVal: '',
         driverId: 0,
@@ -141,10 +144,17 @@
         getAllServerDisks(this.currentIp).then((resp) => {
           this.serversDiskList = resp.data || []
           this.serversDisk = this.serversDiskList[0].device_path
-          debugger
           // this.handleGetGameByIp()
         })
-      }
+      },
+      handleSelectChange () {},
+      checkAllGroupChange () {},
+      handleCheckBox () {},
+      handleConfirm () {},
+      handleCancel () {},
+      handleAllow () {},
+      handleFilter () {},
+      handleReset () {}
     }
   }
 </script>
