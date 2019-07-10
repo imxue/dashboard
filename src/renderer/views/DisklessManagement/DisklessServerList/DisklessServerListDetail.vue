@@ -278,7 +278,7 @@ export default {
       MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
       selectedDisk: '', // 选择的磁盘信息
-      selecteDiskF: 'E', // 映射盘符
+      selecteDiskF: '', // 映射盘符
       DiskSymbolList: [], // 盘符列表
       selecteDisk: 'imageDisk', // 选择的磁盘功能
       getCheckboxVal: [], // 勾选复选框值
@@ -595,8 +595,10 @@ export default {
      */
     handleLogicalDrives () {
       getLogicalDrives().then((resp) => {
-        console.log(resp)
         this.DiskSymbolList = resp.data || []
+        console.log(222)
+        console.log(this.DiskSymbolList)
+        console.log(222)
         this.DiskSymbolList.map(item => {
           item.free_space = bytesToSize2(item.FreeSpace)
         })
@@ -775,7 +777,9 @@ export default {
     ShowDiskPlan (data) {
       this.selectedDisk = data
       this.handleLogicalDrives() // 获取映射盘符
-      this.selecteDisk = this.selectedDisk.fun
+      this.selecteDiskF = data.vol
+      this.ExtendedType = data.exttype
+      this.selecteDisk = data.fun
       this.DiskSetDialog = true
     },
     /**

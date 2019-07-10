@@ -10,14 +10,13 @@
     <!-- table -->
     <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+      <Page :current="pageinfo.page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
     <!-- 删除提示 -->
         <Modal
         v-model="showDeleteBox"
         :title="$t('DeleteTip')"
         @on-ok="handleConfirmDelete"
-        @on-cancel="handleCancel"
         >
         <p>是否删除当前任务？</p>
     </Modal>
@@ -50,21 +49,13 @@
               let type = params.row.state
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#25da30' } }, '禁止同步')
+                  return h('span', { style: { color: '#25da30' } }, this.$t('NotInitiated'))
                 case 1:
-                  return h('span', { style: { color: '#25da30' } }, '未分配')
+                  return h('span', { style: { color: '#ff0000' } }, this.$t('Running'))
                 case 2:
-                  return h('span', '待更新')
+                  return h('span', { style: { color: '#ff0000' } }, this.$t('fail'))
                 case 3:
-                  return h('span', '等待磁盘分配')
-                case 4:
-                  return h('span', '更新中')
-                case 5:
-                  return h('span', '更新失败')
-                case 6:
-                  return h('span', '更新成功')
-                default:
-                  return '-'
+                  return h('span', { style: { color: '#33FF46' } }, this.$t('success'))
               }
             }
           },
@@ -195,10 +186,20 @@
        * 删除同步任务
        */
       handleConfirmDelete () {
-        deleteSyncQueue(this.getCheckboxVal[0].task_id).then((res) => {
-          this.handleGetTableList(this.pageinfo.page_index, this.Pagelimit)
-        }, () => {
-        })
+        let val = this.getCheckboxVal.length
+        if (val === 0) {
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+        } else {
+          let str = ''
+          this.getCheckboxVal.filter(item => {
+            str = str + item.task_id + ','
+          })
+          str = str.substr(0, str.length - 1) // 切换最后一个字符
+          deleteSyncQueue(str).then((res) => {
+            this.handleGetTableList(this.pageinfo.page_index - 1, this.Pagelimit)
+          }, () => {
+          })
+        }
       },
       handleCancel () {
         this.showDeleteBox = false
@@ -222,7 +223,12 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          multiAddSyncTask(this.getCheckboxVal[0].task_id).then((resp) => {
+          let str = ''
+          this.getCheckboxVal.filter(item => {
+            str = str + item.task_id + ','
+          })
+          str = str.substr(0, str.length - 1) // 切换最后一个字符
+          multiAddSyncTask(str).then((resp) => {
             this.$Notice.success({
               title: this.$t('OperationSuccessful'),
               desc: '已成功添加同步任务中，可去同步任务查看详细内容'
@@ -237,7 +243,7 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          alert('val')
+          debugger
         }
       },
       handleButtonMove (val) {

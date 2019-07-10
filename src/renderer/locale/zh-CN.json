@@ -412,8 +412,6 @@
   "setMaterIp":"设置为主服务器",
   "NotInitiated":"未启动",
   "Running":"运行中",
-  "SystemTool":"系统工具",
   "PleaseInputGameType":"请选择游戏类型",
-  "AllGame":"全部游戏",
   "SupportGameInit":"支持游戏名首字母"
 }

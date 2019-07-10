@@ -2,29 +2,29 @@
   <div>
     <div class="topItem">
       <Row :gutter="16">
-           <Col :lg="{ span: 3, offset: 0 }">
+           <Col  span='3'>
            <Select v-model="model1" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
              <!-- <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
              <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
            </Select>
         </Col>
-          <Col :lg="{ span: 3, offset: 0 }">
-          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
+          <Col span='4'>
+          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
       </Col>
-        <Col :lg="{ span: 3, offset: 0 }">
+        <Col span='3'>
           <Select v-model="currentIp" clearable @on-change="handleSelectChange"  class="topColumn" >
             <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
           </Select>
           </Col>
-          <Col :lg="{ span: 3, offset: 0 }">
+          <Col span='3'>
           <Select v-model="serversDisk" clearable @on-change="handleSelectDiskChange"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
-            <Option v-for="item in serversDiskList" :value="item" :key="item.id">{{ item.device_path }}</Option>
+            <Option v-for="item in serversDiskList" :value="item" :key="item.id">{{ item.disk_symbol }} / {{ item.extend_disk_type }}</Option>
           </Select>
            </Col>
-           <Col :lg="{ span: 11, offset: 0 }">
+           <Col span='11'>
             <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonAddTask">{{$t('AddSynchronizationTask')}}</Button>
+            <Button type="primary" class="topColumn" @click="handleButtonMuteAddTask">{{$t('AddSynchronizationTask')}}</Button>
             <router-link to="DefaultRule">
             </router-link>
         </Col>
@@ -39,14 +39,14 @@
     <Row style="margin-top:10px; ">
       <!-- <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col> -->
       <i-col span="24">
-        <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+        <Page :current="pageinfo.page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
 </i-col>
     </Row>
     <Modal
         v-model="distributionPanel"
         title="分配游戏"
         @on-ok="ok"
-        @on-cancel="cancel">
+       >
        <Row class="item">
            <Col span="5">
           <span>分配服务器</span>
@@ -62,8 +62,9 @@
 <span>分配磁盘</span>
         </Col>
             <Col span=18>
-          <Select v-model="serversDisk1" clearable @on-change="handleSelectChangeDisk1"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
-            <Option v-for="item in serversDiskList" :value="item" :key="item.id">{{ item.device_path }}</Option>
+          <!-- <Select v-model="serversDisk1" clearable @on-change="handleSelectChangeDisk1"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')"> -->
+              <Select v-model="serversDisk1" clearable   class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
+            <Option v-for="item in serversDiskList" :value="item.id" :key="item.id">{{ item.device_path }}</Option>
           </Select>
               </Col>
         </Row>
@@ -100,6 +101,10 @@
         tableSelectVal: [],
         serversIpList: [],
         diskList: [],
+        GameName: [],
+        value1: '',
+        serversIpValue1: '',
+        serversDisk1: '',
         diskListOption: [],
         gameList: [
           { Id: 0, value: 'AllGame', label: 'AllGame' },
@@ -134,7 +139,7 @@
                 case 3:
                   return h('span', '等待磁盘分配')
                 case 4:
-                  return h('span', '更新中')
+                  return h('span', '同步中')
                 case 5:
                   return h('span', '更新失败')
                 case 6:
@@ -167,7 +172,7 @@
                 case 0:
                   return h('span', [a])
                 case 1:
-                  return h('span', [a, c])
+                  return h('span', [a])
                 case 2:
                   return h('span', [b])
                 case 3:
@@ -230,6 +235,22 @@
        * 更加游戏名
        */
       ChangeValue (value) {
+        let info = {
+          offset: 0,
+          limit: this.Pagelimit,
+          orderby: 'size',
+          serverip: this.currentIp,
+          gametype: '',
+          serverdiskid: '',
+          letter: value
+        }
+        getAllServerGamesByIp(info).then((resp) => {
+          this.tableData = resp.data.data
+          this.pageinfo = resp.data.pageino
+          this.pageinfo.page_index++
+        }, (error) => {
+          console.log(error)
+        })
       },
       /**
        * 获取服务器ip
@@ -255,25 +276,39 @@
             this.serversDiskList = this.serversDiskList.filter(item => {
               return item.disk_type === 1
             })
+            this.serversDiskList.map(item => {
+              switch (item.extend_disk_type) {
+                case 0:
+                  item.extend_disk_type = this.$t('GameDisk')
+                  break
+                case 1:
+                  item.extend_disk_type = this.$t('HotGameDisk')
+                  break
+                case 2:
+                  item.extend_disk_type = this.$t('PrivateGameDisk')
+                  break
+              }
+            })
           }
           this.serversDisk = this.serversDiskList[0]
           this.serversDisk1 = this.serversDiskList[0] // 分配界面上的
           this.currentServerId = this.serversDiskList[0].server_id
           this.currentDiskId = this.serversDiskList[0].id
-          this.handleGetGame(0, this.Pagelimit)
+          this.handleGetGame(0, this.Pagelimit, this.currentDiskId)
         })
       },
       /**
        * 获取服务器游戏
        */
-      handleGetGame (offset, limit = this.Pagelimit, orderby = 'name', serverip = this.currentIp, gametype = '', letter = '') {
+      handleGetGame (offset, limit = this.Pagelimit, serverdiskid = '', orderby = 'name', serverip = this.currentIp, gametype = '', letter = '') {
         let info = {
           offset,
           limit,
           orderby,
           serverip,
           gametype,
-          letter
+          letter,
+          serverdiskid
         }
         getAllServerGamesByIp(info).then((resp) => {
           this.tableData = resp.data.data
@@ -337,7 +372,7 @@
       handleSelectChange (serverip) {
         this.currentIp = serverip
         // this.currentServerId = serverInfo.server_id
-        this.handleGetGame()
+        this.handleGetGame(0)
         this.handleGetAllServersDisk()
       },
       /**
@@ -345,6 +380,7 @@
        */
       handleSelectDiskChange (diskInfo) {
         this.currentDiskId = diskInfo.id
+        this.handleGetGame(0, this.Pagelimit, this.currentDiskId)
       },
       handleSelectChangeserversIp1 (serverip) {
         getAllServerDisks(serverip).then((resp) => {
@@ -372,8 +408,12 @@
         if (this.getCheckboxVal.length >= 1) {
           this.getCheckboxVal.forEach(item => {
             let info = {}
-            info.server_id = this.serversDisk1.server_id
-            info.server_disk_id = this.serversDisk1.id
+            let disk = this.serversDiskList.filter(item => {
+              return item.id === this.serversDisk1
+            })
+            disk = disk[0]
+            info.server_id = disk.server_id
+            info.server_disk_id = disk.id
             info.local_game_id = item.local_game_id
             data.push(info)
           })
@@ -413,11 +453,16 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          canceldistributeGame(this.getCheckboxVal[0].server_game_id).then((res) => {
+          let str = ''
+          this.getCheckboxVal.filter(item => {
+            str = str + item.server_game_id + ','
+          })
+          str = str.substr(0, str.length - 1) // 切换最后一个字符
+          canceldistributeGame(str).then((res) => {
+            this.handleGetGame(this.pageinfo.page_index - 1, this.Pagelimit)
             this.$Message.success(this.$t('OperationSuccessful'))
-            this.handleGetGame(this.pageinfo.page_index, this.Pagelimit)
-          }, () => {
-            this.$Message.error('请求出错，请稍后再试')
+          }, (error) => {
+            this.$Message.error(error.data.error)
           })
         }
       },
@@ -426,6 +471,7 @@
        */
       handleButtonAddTask (data) {
         syncGame(data.server_game_id).then((res) => {
+          this.handleGetGame(this.pageinfo.page_index - 1, this.Pagelimit)
           this.$Notice.success({
             title: this.$t('OperationSuccessful'),
             desc: '已成功添加同步任务中，可去同步任务查看详细内容'
@@ -436,6 +482,30 @@
       },
       handleButtonRules (val) {
         this.$router.push('DefaultRule')
+      },
+      /**
+       * 添加多个同步任务
+       */
+      handleButtonMuteAddTask () {
+        let length = this.getCheckboxVal.length
+        if (length === 0) {
+          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+        } else {
+          let str = ''
+          this.getCheckboxVal.filter(item => {
+            str = str + item.server_game_id + ','
+          })
+          str = str.substr(0, str.length - 1) // 切换最后一个字符
+          syncGame(str).then((res) => {
+            this.handleGetGame(this.pageinfo.page_index - 1, this.Pagelimit)
+            this.$Notice.success({
+              title: this.$t('OperationSuccessful'),
+              desc: '已成功添加同步任务中，可去同步任务查看详细内容'
+            })
+          }, () => {
+            this.$Message.error('请求出错，请稍后再试')
+          })
+        }
       },
       /**
        * 获取表中数据

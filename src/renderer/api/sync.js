@@ -43,10 +43,10 @@ export function canceldistributeGame (id) {
  */
 export function syncGame (id) { // 添加同步任务
   const data = {
-    'servergameid': id
+    'servergameids': id
   }
   return request({
-    url: '/v1/syncgame/syncGame',
+    url: '/v1/syncgame/syncGames',
     method: 'post',
     data
   })
@@ -57,15 +57,28 @@ export function syncGame (id) { // 添加同步任务
  */
 export function multiAddSyncTask (id) {
   const data = {
-    'taskid': id
+    'taskids': id
   }
   return request({
-    url: '/v1/synctask/startSyncGameTask',
+    url: '/v1/synctask/startSyncGameTasks',
     method: 'post',
     data
   })
 }
-
+/**
+ *  暂停同步任务
+ * @param {*} id
+ */
+export function stopSyncGameTask (id) {
+  const data = {
+    'taskids': id
+  }
+  return request({
+    url: '/v1/synctask/startSyncGameTasks',
+    method: 'post',
+    data
+  })
+}
 export function getDrivers () { // 盘符
   return request({
     url: '/v1/server_game_sync/drivers',
@@ -95,10 +108,10 @@ export function resync (id) { // 重新同步
  */
 export function deleteSyncQueue (id) { // 删除同步任务
   const data = {
-    'taskid': id
+    'taskids': id
   }
   return request({
-    url: 'v1/synctask/delSyncGameTask',
+    url: 'v1/synctask/delSyncGameTasks',
     method: 'post',
     data
   })
@@ -167,7 +180,7 @@ export function getAllServerDisks (ip) {
 
 export function getAllServerGamesByIp (info) {
   return request({
-    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverip=${info.serverip}&gametype=${info.gametype || ''}&firstletter=${info.letter || ''}`,
+    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverdiskid=${info.serverdiskid || ''}&serverip=${info.serverip}&gametype=${info.gametype || ''}&firstletter=${info.letter || ''}`,
     method: 'get'
   })
 }
