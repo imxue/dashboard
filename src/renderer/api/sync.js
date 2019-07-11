@@ -79,19 +79,7 @@ export function stopSyncGameTask (id) {
     data
   })
 }
-export function getDrivers () { // 盘符
-  return request({
-    url: '/v1/server_game_sync/drivers',
-    method: 'get'
-  })
-}
 
-export function getPolicys () { // 策略
-  return request({
-    url: '/v1/server_game_sync/policys',
-    method: 'get'
-  })
-}
 export function resync (id) { // 重新同步
   const data = {
     Id: id
@@ -149,7 +137,8 @@ export function setDiskAttribute (info) {
  */
 export function getAllSyncGameTasks (info) {
   return request({
-    url: `/v1/synctask/getAllSyncGameTasks?offset=${info.offset}&limit=${info.limit}`,
+
+    url: `/v1/synctask/getAllSyncGameTasks?offset=${info.offset}&limit=${info.limit}${info.pagetypeid ? `&gametypeid=${info.pagetypeid}` : ''}${info.letter ? `&firstletter=${info.letter}` : ''}`,
     method: 'get'
   })
 }
@@ -180,7 +169,7 @@ export function getAllServerDisks (ip) {
 
 export function getAllServerGamesByIp (info) {
   return request({
-    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverdiskid=${info.serverdiskid || ''}&serverip=${info.serverip}&gametype=${info.gametype || ''}&firstletter=${info.letter || ''}`,
+    url: `/v1/servergame/getAllServerGames?offset=${info.offset}&limit=${info.limit}&orderby=${info.orderby}&serverdiskid=${info.serverdiskid || ''}&serverip=${info.serverip}&gametypeid=${info.gametypeid || ''}&firstletter=${info.letter || ''}`,
     method: 'get'
   })
 }
@@ -190,7 +179,7 @@ export function getAllServerGamesByIp (info) {
 
 export function getAllSyncGameLogs (info) {
   return request({
-    url: `/v1/synctask/getAllSyncGameLogs?offset=${info.offset}&limit=${info.limit}`,
+    url: `/v1/synctask/getAllSyncGameLogs?offset=${info.offset}&limit=${info.limit}${info.pagetypeid ? `&gametypeid=${info.pagetypeid}` : ''}${info.letter ? `&firstletter=${info.letter}` : ''}`,
     method: 'get'
   })
 }

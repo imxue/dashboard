@@ -1,20 +1,37 @@
 <template>
-  <div>
+  <div class="container">
+    <Row :gutter="16">
+      <Col span='4'>
+          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')"  @on-change='ChangeValue'  />
+         </Col>
+        <Col span='3'>
+           <Select v-model="gameType" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
+             <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.name) }}</Option>
+           </Select>
+        </Col>
+    </Row>
     <!-- table -->
+    <div class="main">
     <Table border ref="selection" :columns="tableColumns" :data="tableData" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Page :current="page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+      <Page :current="this.pageinfo.page_index" :total="this.pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
+    </div>
     
   </div>
 </template>
 
 <script>
   import { getAllSyncGameLogs, resync } from '@/api/sync'
+  import { getAllCenterGameTypes } from '@/api/game'
   export default {
     name: 'subType4-3',
     data () {
       return {
+        gameType: 0,
+        gameList: [
+          { id: 0, name: 'AllGame' }
+        ],
         getCheckboxVal: [], // 勾选复选框值
         tableSelectVal: [],
         tableColumns: [
@@ -78,6 +95,7 @@
     },
     created () {
       this.handleGetTableList(0, this.Pagelimit)
+      this.handleGameType()
     },
     computed: {
       routes () {
@@ -85,11 +103,39 @@
       }
     },
     methods: {
-      handleGetTableList (offset, limit) {
+      /**
+       * 通过游戏类型查询游戏
+       */
+      handleGetGameByTypeName (value) {
+        this.handleGetTableList(0, this.Pagelimit, value)
+      },
+      /**
+       * 通过游戏类型查询游戏
+       */
+      handleGameType (value) {
+        getAllCenterGameTypes().then(res => {
+          res.data.forEach(item => {
+            this.gameList.push(item)
+          })
+        })
+      },
+      /**
+       * 根据游戏名首字母查询
+       */
+      ChangeValue (value) {
+        this.handleGetTableList(0, this.Pagelimit, this.gameType, value)
+      },
+      /**
+       * 获取游戏日志
+       */
+      handleGetTableList (offset, limit, gametypeid = '', letter = '') {
         let info = {
           offset: offset,
-          limit: limit
+          limit: limit,
+          pagetypeid: gametypeid === 0 ? '' : gametypeid,
+          letter
         }
+        console.log(info)
         getAllSyncGameLogs(info).then((resp) => {
           this.tableData = resp.data.data
           this.pageinfo = resp.data.pageino
@@ -131,5 +177,12 @@
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
+  .container{
+    display: flex;
+    flex-direction: column;
+  }
+  .main{
+    margin-top:20px;
+  }
 </style>
 

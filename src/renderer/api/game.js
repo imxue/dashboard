@@ -109,3 +109,12 @@ export function setDownloadSettings (info) {
     data
   })
 }
+/**
+ * 获取游戏类型
+ */
+export function getAllCenterGameTypes () {
+  return request({
+    url: '/v1/centerresource/getAllCenterGameTypes',
+    method: 'get'
+  })
+}

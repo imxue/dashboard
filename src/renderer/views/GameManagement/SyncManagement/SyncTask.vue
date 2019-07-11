@@ -1,16 +1,24 @@
 <template>
   <div>
-    <div class="topItem">
+   
+      <Row :gutter="16" class="header">
+        <Col span='4'>
+          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')"  @on-change='ChangeValue'  />
+         </Col>
+      <Col  span='3'>
+           <Select v-model="gameType" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
+             <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.name) }}</Option>
+           </Select>
+        </Col>
       <Button type="primary" class="topColumn" @click="handleButtonStart">{{$t('Start')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
       <Button type="error"   class="topColumn" @click="handleButtonDelete">{{$t('DeleteTask')}}</Button>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonTop">{{$t('Topping')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">{{$t('MoveUp')}}</Button> -->
-    </div>
+      </Row>
+   
     <!-- table -->
     <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Page :current="pageinfo.page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
+      <Page :current="this.pageinfo.page_index + 1" :total="this.pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
     <!-- 删除提示 -->
         <Modal
@@ -18,13 +26,14 @@
         :title="$t('DeleteTip')"
         @on-ok="handleConfirmDelete"
         >
-        <p>是否删除当前任务？</p>
+        <p>{{$t('DeleteCurrentData')}}?</p>
     </Modal>
   </div>
 </template>
 
 <script>
   import { deleteSyncQueue, getAllSyncGameTasks, multiAddSyncTask } from '@/api/sync'
+  import { getAllCenterGameTypes } from '@/api/game'
   // import { deleteSyncQueue } from '@/api/sync'
   // const _ = require('lodash')
   export default {
@@ -32,13 +41,13 @@
     data () {
       return {
         fetch: false,
-        curroffset: 0,
-        currlimit: 10,
-        pageSize: 10,
-        currentPage: 1,
         showDeleteBox: false,
         getCheckboxVal: [], // 勾选复选框值
         tableSelectVal: [],
+        gameType: 0,
+        gameList: [
+          { id: 0, name: 'AllGame' }
+        ],
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
           {
@@ -111,13 +120,15 @@
         ],
         pageinfo: {
           count: 0,
-          page_index: 0
+          page_index: 0,
+          page_size: 0
         },
-        Pagelimit: 11
+        Pagelimit: 9
       }
     },
     created () {
-      this.handleGetTableList(0, this.Pagelimit)
+      this.handleGetTableList()
+      this.handleGameType()
     },
     computed: {
       routes () {
@@ -143,16 +154,45 @@
       //     this.fetch = false
       //   })
       // }, 2000),
-      handleGetTableList (offset, limit) {
+      /**
+       * 通过游戏类型查询游戏
+       */
+      handleGameType () {
+        getAllCenterGameTypes().then(res => {
+          res.data.forEach(item => {
+            this.gameList.push(item)
+          })
+        })
+      },
+      /**
+       * 通过游戏类型查询游戏
+       */
+      handleGetGameByTypeName (pagetypeid) {
+        this.handleGetTableList(0, this.Pagelimit, pagetypeid)
+      },
+      /**
+       * 更加游戏首字母查询
+       */
+      ChangeValue (letter) {
+        this.handleGetTableList(0, this.Pagelimit, this.gameType, letter)
+      },
+  
+      /**
+       * @pagetypeid 游戏类型ID
+       * @letter 游戏名首字母  0 查询全部类型
+       * 查询同步日志
+       */
+      handleGetTableList (offset = 0, limit = this.Pagelimit, pagetypeid = 0, letter = '') {
         this.fetch = true
-        var info = {
+        var data = {
           offset: offset,
-          limit: limit
+          limit: limit,
+          pagetypeid: pagetypeid === 0 ? '' : pagetypeid,
+          letter
         }
-        getAllSyncGameTasks(info).then((resp) => {
+        getAllSyncGameTasks(data).then((resp) => {
           this.tableData = resp.data.data ? resp.data.data : []
           this.pageinfo = resp.data.pageino
-          this.pageinfo.page_index++
         }, (res) => {})
           .catch(() => { this.fetch = false })
           .finally(() => { this.fetch = false })
@@ -196,7 +236,13 @@
           })
           str = str.substr(0, str.length - 1) // 切换最后一个字符
           deleteSyncQueue(str).then((res) => {
-            this.handleGetTableList(this.pageinfo.page_index - 1, this.Pagelimit)
+            let index
+            if (this.page_size > val) {
+              index = this.pageinfo.page_index
+            } else {
+              index = this.pageinfo.page_index - 1
+            }
+            this.handleGetTableList(index, this.Pagelimit)
           }, () => {
           })
         }
@@ -254,14 +300,6 @@
           alert('val')
         }
       },
-      // handleTableDelete (index) {
-      //   this.tableData.splice(index, 1)
-      // },
-      // handleTableMove (index) {},
-      // handleTableTop (index) {
-      //   var currId = index.id
-      //   alert(currId)
-      // },
       handleTableSort (data) {
         alert(data)
       }
@@ -270,7 +308,9 @@
 </script>
 
 <style scoped>
-  .topItem{ padding: 10px 0}
+  .header{
+    margin-bottom: 20px;
+  }
   .topColumn{ float:left; margin-right:10px;}
 </style>
 
