@@ -191,6 +191,7 @@
           letter
         }
         getAllSyncGameTasks(data).then((resp) => {
+          console.log(resp.data.data)
           this.tableData = resp.data.data ? resp.data.data : []
           this.pageinfo = resp.data.pageino
         }, (res) => {})
