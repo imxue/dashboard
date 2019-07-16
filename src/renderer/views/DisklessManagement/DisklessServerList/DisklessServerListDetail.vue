@@ -519,11 +519,6 @@ export default {
     this.handleGetNetworkx(this.currentPageServerip)
     this.handleGetDiskStatusx(this.currentPageServerip)
   },
-  computed: {
-    routes () {
-      return this.$router.options.routes
-    }
-  },
   methods: {
     handleChange1 (data, x, selected) {
       let _this = this

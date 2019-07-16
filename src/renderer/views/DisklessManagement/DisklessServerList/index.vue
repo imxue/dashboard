@@ -108,6 +108,7 @@ import {
   deleteserverConfig,
   login
 } from '@/api/wupan'
+import { setValue, getValue } from '@/api/common'
 export default {
   name: 'subType1-1',
   data () {
@@ -278,6 +279,11 @@ export default {
   },
   created () {
     this.handleGetServerList()
+    let info = {}
+    info.key = 'master'
+    info.value = '10.88.66.144'
+    this.setCustomConfig(info)
+    this.getCustomConfig()
   },
   computed: {
     refesh () {
@@ -289,6 +295,21 @@ export default {
     }
   },
   methods: {
+    getCustomConfig () {
+      let info = {}
+      info.key = 'master'
+      getValue(info).then(resp => {
+        console.log(resp)
+        debugger
+      })
+    },
+    setCustomConfig (info) {
+      let data = {
+        key: info.key,
+        value: info.value
+      }
+      setValue(data)
+    },
     handleSearch () {
       this.loading = true
       var arr = this.serverList

@@ -44,7 +44,8 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'State',
-            minWidth: 120,
+            maxWidth: 110,
+            minWidth: 110,
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
@@ -100,8 +101,7 @@
           { key: 'ExePath', minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
-            minWidth: 180,
-            fixed: 'right',
+            minWidth: 190,
             render: (h, params) => {
               // let a = h('Button', {
               //   props: { type: 'primary', size: 'small' },

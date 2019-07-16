@@ -47,7 +47,8 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
-          minWidth: 130,
+          maxWidth: 90,
+          minWidth: 90,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {

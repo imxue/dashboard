@@ -2,30 +2,28 @@
   <div>
     <div class="topItem">
       <Row :gutter="16">
-           <Col  span='3'>
+        <Col span='4'>
+          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
+         </Col>
+           <Col  span='4'>
            <Select v-model="gameType" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
              <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.name) }}</Option>
            </Select>
         </Col>
-          <Col span='4'>
-          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
-         </Col>
         <Col span='3'>
           <Select v-model="currentIp" clearable @on-change="handleSelectChange"  class="topColumn" >
             <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
           </Select>
           </Col>
-          <Col span='3'>
+          <Col span='4'>
           <Select v-model="serversDisk" clearable @on-change="handleSelectDiskChange"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
-            <Option v-for="item in serversDiskList" :value="item.id" :key="item.id">{{ item.disk_symbol }} / {{ item.extend_disk_type }}</Option>
+            <Option v-for="item in serversDiskList" :value="item.id" :key="item.id">{{ item.disk_symbol }} ( {{ item.extend_disk_type }} )</Option>
           </Select>
            </Col>
-           <Col span='11'>
+           <Col span='9'>
             <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
             <Button type="primary" class="topColumn" @click="handleButtonMuteAddTask">{{$t('AddSynchronizationTask')}}</Button>
-            <router-link to="DefaultRule">
-            </router-link>
         </Col>
       </Row>
     </div>
@@ -51,8 +49,8 @@
           <span>分配服务器</span>
           </Col>
                 <Col span="18">
-         <Select v-model="serversIpValue1" clearable @on-change="handleSelectChangeserversIp1"  class="topColumn" >
-            <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
+         <Select v-model="serversIpValue1" clearable @on-change="handleSelectChangeserversIp1"  class="topColumn" label-in-value>
+            <Option v-for="item in serversIpList1" :value="item.id" :key="item.id">{{ item.ip }}</Option>
           </Select>
              </Col>
         </Row>
@@ -63,7 +61,7 @@
             <Col span=18>
           <!-- <Select v-model="serversDisk1" clearable @on-change="handleSelectChangeDisk1"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')"> -->
               <Select v-model="serversDisk1" clearable   class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
-            <Option v-for="item in serversDiskList" :value="item.id" :key="item.id">{{ item.device_path }}</Option>
+            <Option v-for="item in serversDiskList1" :value="item.id" :key="item.id">{{ item.disk_symbol }} ( {{ item.extend_disk_type }} )</Option>
           </Select>
               </Col>
         </Row>
@@ -88,6 +86,7 @@
         currentIp: '', // 当前页ip
         serversDisk: '',
         serversDiskList: [],
+        serversDiskList1: [], // 待分配的磁盘列表
         clearVal: '',
         inputVal: '',
         diskValue: '',
@@ -98,6 +97,7 @@
         getCheckboxValString: '',
         tableSelectVal: [],
         serversIpList: [],
+        serversIpList1: [], // 待分配的服务器
         diskList: [],
         GameName: [],
         value1: '',
@@ -110,16 +110,11 @@
         ],
         tableColumns: [
           { type: 'selection', width: 60, align: 'center' },
-          { key: 'display_name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { key: 'game_type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { key: 'popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'size', minWidth: 70, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
-          { key: 'local_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
-          { key: 'final_sync_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'state',
-            minWidth: 120,
+            maxWidth: 90,
+            minWidth: 90,
             render: (h, params) => {
               let type = params.row.state
               switch (type) {
@@ -136,34 +131,40 @@
                 case 5:
                   return h('span', '更新失败')
                 case 6:
-                  return h('span', '更新成功')
+                  return h('span', { style: { color: '#47cb89' } }, '成功')
               }
             }
           },
-          { key: 'final_sync_version', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
+          { key: 'display_name', minWidth: 109, maxWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'game_type', maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { key: 'popularity', sortable: true, maxWidth: 100, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'size', sortable: true, maxWidth: 90, minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'local_version', maxWidth: 120, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
+          { key: 'target_symbol', maxWidth: 140, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
+          { key: 'final_sync_version', maxWidth: 120, minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
-            minWidth: 240,
+  
             render: (h, params) => {
               let type = params.row.state
               let a = h('Button',
-                { style: { marginRight: '5px', width: '70px' },
+                { style: { marginRight: '3px', width: '70px' },
                   props: { type: 'primary', size: 'small' },
                   on: { click: () => { this.handleAllowe(params.row) } }
                 }, this.$t('AssignGame'))
               let b = h('Button',
-                { style: { marginRight: '5px', width: '70px' },
+                { style: { marginRight: '3px', width: '70px' },
                   props: { type: 'primary', size: 'small' },
                   on: { click: () => { this.handleTableCancel(params.row) } }
                 }, this.$t('CancelAssign'))
               let c = h('Button',
-                { style: { marginRight: '5px', width: '86px' },
-                  props: { type: 'primary', size: 'small' },
+                { style: { marginRight: '3px', width: '86px' },
+                  props: { type: 'info', size: 'small' },
                   on: { click: () => { this.handleButtonAddTask(params.row) } }
                 }, this.$t('AddSynchronizationTask'))
               switch (type) {
                 case 0:
-                  return h('span', [a])
+                  return h('span', [a, b])
                 case 1:
                   return h('span', [a])
                 case 2:
@@ -188,12 +189,14 @@
     created () {
       this.handleGetAllServers() // 获取所以服务器列表
       this.handleGameType()
+      this.test()
     },
     computed: {
       routes () {
         return this.$router.options.routes
       }
     },
+
     methods: {
       // /**
       //  * 通过游戏类型查询游戏
@@ -228,6 +231,10 @@
       /**
        * 通过游戏类型查询游戏
        */
+
+      test () {
+        console.log(document.location.hostname)
+      },
       handleGetGameByTypeName (gametypeid) {
         let info = {
           offset: 0,
@@ -283,7 +290,6 @@
           this.serversIpList = this.serversIpList.filter(item => {
             return item.is_master !== 1
           })
-          this.serversIpValue1 = this.serversIpList[0].ip
           this.currentIp = this.serversIpList[0].ip // 默认选择第一个服务器
           this.handleGetAllServersDisk() // 获取磁盘
         })
@@ -313,7 +319,6 @@
             })
           }
           this.serversDisk = this.serversDiskList[0].id
-          this.serversDisk1 = this.serversDiskList[0].id // 分配界面上的
           this.currentServerId = this.serversDiskList[0].server_id
           this.currentDiskId = this.serversDiskList[0].id
           this.handleGetGame(0, this.Pagelimit, this.currentDiskId)
@@ -371,22 +376,46 @@
         this.currentDiskId = diskID
         this.handleGetGame(0, this.Pagelimit, this.currentDiskId)
       },
-      handleSelectChangeserversIp1 (serverip) {
-        getAllServerDisks(serverip).then((resp) => {
-          this.serversDiskList = resp.data || []
+      handleSelectChangeserversIp1 (data) {
+        getAllServerDisks(data.label).then((resp) => {
+          this.serversDiskList1 = resp.data || []
+          console.log(this.serversDiskList1)
           if (this.serversDiskList) {
-            this.serversDiskList = this.serversDiskList.filter(item => {
+            this.serversDiskList1 = this.serversDiskList1.filter(item => {
               return item.disk_type === 1
             })
-            this.serversDisk1 = this.serversDiskList[0]
+            this.serversDiskList1.map(item => {
+              switch (item.extend_disk_type) {
+                case 0:
+                  item.extend_disk_type = this.$t('GameDisk')
+                  break
+                case 1:
+                  item.extend_disk_type = this.$t('HotGameDisk')
+                  break
+                case 2:
+                  item.extend_disk_type = this.$t('PrivateGameDisk')
+                  break
+              }
+            })
+            console.log(this.serversDiskList1)
+            this.serversDisk1 = this.serversDiskList1[0].id
           }
         })
       },
+      /**
+       * 分配游戏
+       */
       handleButtonAllowe (data) {
         if (this.getCheckboxVal.length === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.distributionPanel = true
+          this.serversIpList1 = this.serversIpList.filter(item => { return item.ip !== this.currentIp })
+          this.serversIpValue1 = this.serversIpList1[0].id
+          let data = {
+            label: this.serversIpList1[0].ip
+          }
+          this.handleSelectChangeserversIp1(data)
         }
       },
       /**
@@ -395,15 +424,10 @@
       ok () {
         let data = []
         if (this.getCheckboxVal.length >= 1) {
-          debugger
           this.getCheckboxVal.forEach(item => {
             let info = {}
-            let disk = this.serversDiskList.filter(item => {
-              return item.id === this.serversDisk1
-            })
-            disk = disk[0]
-            info.server_id = disk.server_id
-            info.server_disk_id = disk.id
+            info.server_id = this.serversIpValue1
+            info.server_disk_id = this.serversDisk1
             info.local_game_id = item.local_game_id
             data.push(info)
           })
@@ -415,15 +439,12 @@
             this.$Message.error('请求出错，请稍后再试')
           })
         } else if (this.allowGame) {
-          let serverid = this.serversIpList.filter(item => { return item.ip === this.serversIpValue1 })
-          serverid = serverid[0].id
           let info = {}
           let data = []
-          info.server_id = serverid
+          info.server_id = this.serversIpValue1
           info.server_disk_id = this.serversDisk1
           info.local_game_id = this.allowGame.local_game_id
           data.push(info)
-          debugger
           distributeGame(data).then((res) => {
             this.handleGetGame((this.pageinfo.page_index - 1) * this.Pagelimit, this.Pagelimit)
             this.$Message.success(res.data)
@@ -438,6 +459,12 @@
       handleAllowe (data) {
         this.distributionPanel = true
         this.allowGame = data
+        this.serversIpList1 = this.serversIpList.filter(item => { return item.ip !== this.currentIp })
+        this.serversIpValue1 = this.serversIpList1[0].id
+        let dataCopy = {
+          label: this.serversIpList1[0].ip
+        }
+        this.handleSelectChangeserversIp1(dataCopy)
       },
       /**
        * 取消分配游戏

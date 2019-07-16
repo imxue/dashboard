@@ -8,14 +8,13 @@ const service = axios.create({
   baseURL: 'http://10.88.66.71:8080',
   // baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 60000 // request timeout
-
+  // headers: { Authorization: localStorage.getItem('token') || '' }
 })
 service.interceptors.request.use(
   (request) => {
     if (localStorage.getItem('token')) {
       request.headers['Authorization'] = localStorage.getItem('token')
     }
-
     // 转发 无盘
     if (request.url.includes('startHttpRequest')) {
       request.data.url = request.url1

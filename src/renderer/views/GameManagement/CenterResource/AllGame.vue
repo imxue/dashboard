@@ -20,17 +20,18 @@
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
+      <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
 
    
-    <Table size="small"   width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe ></Table>
    
 
     <Row style="margin-top:10px; ">
       <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col>
-      <Col span="18"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
+      <Col span="18">
+      <Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
   </div>
 </template>
@@ -76,7 +77,8 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
-          minWidth: 130,
+          minWidth: 110,
+          maxWidth: 110,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {
@@ -94,22 +96,23 @@ export default {
           }
         },
         { key: 'TypeName',
-          minWidth: 130,
+          minWidth: 100,
+          maxWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
-        { key: 'Name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'Name', maxWidth: 108, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
           minWidth: 120,
+          maxWidth: 120,
           sortable: true,
           renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
         },
-        { key: 'Size', minWidth: 80, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'Size', minWidth: 80, maxWidth: 100, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
         { key: 'CenterVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { key: 'LocalVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          fixed: 'right',
-          minWidth: 190,
+          minWidth: 170,
           render: (h, params) => {
             let type = params.row.State
             let a = h('Button',

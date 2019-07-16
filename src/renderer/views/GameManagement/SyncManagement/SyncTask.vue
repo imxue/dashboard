@@ -53,7 +53,9 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
             key: 'state',
-            minWidth: 130,
+            align: 'center',
+            minWidth: 96,
+            maxWidth: 96,
             render: (h, params) => {
               let type = params.row.state
               switch (type) {
@@ -64,20 +66,20 @@
                 case 2:
                   return h('span', { style: { color: '#ff0000' } }, this.$t('fail'))
                 case 3:
-                  return h('span', { style: { color: '#33FF46' } }, this.$t('success'))
+                  return h('span', { style: { color: '#47cb89' } }, this.$t('success'))
               }
             }
           },
-          { title: '游戏类型', key: 'game_type', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '游戏名称', key: 'display_name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '热度', key: 'popularity', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', key: 'server_ip', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'src_dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'dst_dir', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '更新量', key: 'total_bytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-          { title: '已更新', key: 'update_bytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
-          { title: '更新速度', key: 'update_speed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-          { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
+          { title: '游戏类型', key: 'game_type', maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', key: 'display_name', maxWidth: 130, minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          // { title: '热度', key: 'popularity', maxWidth: 98, minWidth: 98, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { title: '目标服务器地址', key: 'server_ip', maxWidth: 130, minWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { title: '源路径', key: 'src_dir', maxWidth: 110, minWidth: 110, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { title: '目标路径', key: 'dst_dir', maxWidth: 122, minWidth: 110, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { title: '更新量', key: 'total_bytes', maxWidth: 109, minWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          { title: '已更新', key: 'update_bytes', maxWidth: 100, minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
+          // { title: '更新速度', key: 'update_speed', maxWidth: 100, minWidth: 100, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
+          { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {
@@ -193,6 +195,9 @@
         getAllSyncGameTasks(data).then((resp) => {
           console.log(resp.data.data)
           this.tableData = resp.data.data ? resp.data.data : []
+          this.tableData.forEach(item => {
+            item.expect_complete_time = this.formatTime(item.expect_complete_time)
+          })
           this.pageinfo = resp.data.pageino
         }, (res) => {})
           .catch(() => { this.fetch = false })
@@ -202,7 +207,7 @@
        * 切换页码
        */
       hanbleChangePage (e) {
-        this.handleGetTableList((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
+        this.handleGetTableList((e - 1) * this.Pagelimit, this.Pagelimit)
       },
       handleCallBackVaild (res) {
         var code = res.data.Code
@@ -214,6 +219,12 @@
       },
       handleCheckBoxNumber (name) {
         this.getCheckboxVal = name
+      },
+      formatTime (tiem) {
+        let date = new Date(tiem)
+        let str = date.toLocaleDateString()
+        let xx = date.toLocaleTimeString()
+        return `${xx} - ${str}`
       },
       handleButtonDelete (val) {
         val = this.getCheckboxVal.length
@@ -241,7 +252,7 @@
             if (this.page_size > val) {
               index = this.pageinfo.page_index
             } else {
-              index = this.pageinfo.page_index - 1
+              index = this.pageinfo.page_index === 0 ? 0 : this.pageinfo.page_index - 1
             }
             this.handleGetTableList(index, this.Pagelimit)
           }, () => {
@@ -290,7 +301,6 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          debugger
         }
       },
       handleButtonMove (val) {
@@ -313,5 +323,8 @@
     margin-bottom: 20px;
   }
   .topColumn{ float:left; margin-right:10px;}
+  Table{
+    overflow-x: hidden
+  }
 </style>
 

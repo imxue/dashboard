@@ -131,7 +131,8 @@ export default {
         // { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          width: 90,
+          minWidth: 60,
+          maxWidth: 60,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -146,10 +147,10 @@ export default {
           }
 
         },
-        { key: 'ip', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
-        { key: 'mac', renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
-        { key: 'pcGp', minwidth: 120, renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
+        { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
+        { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
+        { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Configuration')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('SuperWorkstation')) },
           key: 'super',
