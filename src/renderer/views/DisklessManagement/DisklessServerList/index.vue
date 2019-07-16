@@ -279,10 +279,6 @@ export default {
   },
   created () {
     this.handleGetServerList()
-    let info = {}
-    info.key = 'master'
-    info.value = '10.88.66.144'
-    this.setCustomConfig(info)
     this.getCustomConfig()
   },
   computed: {
@@ -299,8 +295,7 @@ export default {
       let info = {}
       info.key = 'master'
       getValue(info).then(resp => {
-        console.log(resp)
-        debugger
+        this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
       })
     },
     setCustomConfig (info) {
@@ -308,7 +303,9 @@ export default {
         key: info.key,
         value: info.value
       }
-      setValue(data)
+      setValue(data).then(res => {
+        this.$store.dispatch('saveMaster', info.value)
+      })
     },
     handleSearch () {
       this.loading = true
@@ -337,47 +334,39 @@ export default {
      * 获取服务器列表
      */
     handleGetServerList () {
+      let masterip = this.$store.state.app.masterip || ''
+      if (!masterip) return
       this.loading = true
-      let ip = localStorage.getItem('masterip')
-      if (ip) {
-        let Serverinfo = {
-          serverIp: localStorage.getItem('masterip'),
-          online: '0',
-          dataVer: '-'
+      let Serverinfo = {
+        serverIp: masterip,
+        online: '0',
+        dataVer: '-'
+      }
+      getServersx(masterip).then(resp => {
+        this.serverList = resp.data.result.list ? resp.data.result.list : ''
+        if (this.serverList) {
+          this.MasterServerIp = this.serverList.filter(item => {
+            return item.isMaster === '1'
+          })
+          this.MasterServerIp = this.MasterServerIp[0].serverIp
+        } else {
+          getServersNode(this.$store.state.app.masterip).then(resp => {
+            let guid = resp.data.result.guid
+            this.handleSubmitAddServer(guid, this.$store.state.app.masterip, this.$store.state.app.masterip)
+          })
         }
-
-        getServersx(ip).then(resp => {
-          this.serverList = resp.data.result.list ? resp.data.result.list : this.serverList.push(Serverinfo)
-          if (this.serverList) {
-            this.MasterServerIp = this.serverList.filter(item => {
-              return item.isMaster === '1'
-            })
-            this.MasterServerIp = this.MasterServerIp[0].serverIp
-          } else {
-            localStorage.removeItem('masterip')
-          }
-        }, () => {
-          this.serverList.push(Serverinfo)
-          this.$Notice.error({
-            desc: this.$t(`kxLinuxErr.${44}`)
-          })
+      }, () => {
+        this.serverList.push(Serverinfo)
+        this.$Notice.error({
+          desc: this.$t(`kxLinuxErr.${44}`)
         })
-          .finally(() => {
-            this.loading = false
-            this.serverPopup = false
-          })
-      }
+      })
+        .finally(() => {
+          this.loading = false
+          this.serverPopup = false
+        })
+
       this.loading = false
-    },
-    handleGetCurrMasterServerIp (data) {
-      if (data === null) {
-        this.tempMasterServerIp = ''
-        localStorage.removeItem('masterip')
-      } else {
-        var arr = data.filter(item => item.isMaster === '1')
-        this.MasterServerIp = arr[0].serverIp
-      }
-      this.spinShow = false
     },
     /**
      * 弹起添加服务器弹窗
@@ -435,8 +424,7 @@ export default {
      * 获取服务器信息
      */
     HandleGetServerNode () {
-      // let MasterIp = (localStorage.getItem('masterip') ? localStorage.getItem('masterip') : this.formValidate.serverIP)
-      let localMasterIp = localStorage.getItem('masterip') || ''
+      let localMasterIp = this.$store.state.app.masterip || ''
       let currentIp = this.formValidate.serverIP // 添加的服务器ip
       getServersNode(currentIp).then((resp) => {
         let guid = resp.data.result.guid
@@ -447,7 +435,11 @@ export default {
             if (localMasterIp) {
               this.handleSubmitAddServer(guid, localMasterIp, currentIp)
             } else {
-              localStorage.setItem('masterip', currentIp)
+              let info = {
+                key: 'master',
+                value: currentIp
+              }
+              this.setCustomConfig(info)
               this.serverPopup = false
               this.handleGetServerList()
             }
@@ -475,7 +467,7 @@ export default {
             resp => {
               this.loadingBtn = false
               this.serverPopup = false
-              localStorage.setItem('masterip', masterIp)
+              this.$store.dispatch('saveMaster', masterIp || '')
               this.handleGetServerList()
               setTimeout(() => {
                 this.handleGetServerList()

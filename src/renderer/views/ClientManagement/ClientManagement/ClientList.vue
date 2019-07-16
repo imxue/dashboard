@@ -99,10 +99,11 @@ import {
 } from '@/api/client'
 import { getPcListConfigx, getImageListx, deletePcsConfigx } from '@/api/wupan'
 export default {
-  name: 'subType1-1',
+  name: 'ClientList',
   inject: ['reload'],
   data () {
     return {
+      masterip: this.$store.state.app.masterip || '',
       err: '',
       clientIp: [], // 客户机ip
       clientMac: [],
@@ -281,47 +282,34 @@ export default {
   },
   methods: {
     handleGetSuper () {
-      let ip = localStorage.getItem('masterip')
-      getSuper(ip).then(response => {
+      if (!this.masterip) return
+      getSuper(this.masterip).then(response => {
         if (!response.data.error && response.data.result) {
           this.currentSuperip = response.data.result.ip
         }
       })
     },
-    /**
-     *设置数据
-     */
-    // HandsetData (data) {
-    //   this.$router.push({
-    //     paht: 'clientData',
-    //     params: { data }
-    //   })
-    // },
     handgetClienList () {
-      if (localStorage.getItem('masterip')) {
-        let ip = localStorage.getItem('masterip')
-        getPcListConfigx(ip).then(response => {
-          if (response.data.result.list) {
-            this.tableData = response.data.result.list
-
-            this.tableData.forEach(element => {
-              this.clientIp.push(element.ip)
-              this.clientMac.push(element.mac)
-              this.pc.push(element.pc)
-            })
-          }
-        })
-      }
+      if (!this.masterip) return
+      getPcListConfigx(this.masterip).then(response => {
+        if (response.data.result.list) {
+          this.tableData = response.data.result.list
+          this.tableData.forEach(element => {
+            this.clientIp.push(element.ip)
+            this.clientMac.push(element.mac)
+            this.pc.push(element.pc)
+          })
+        }
+      })
     },
-    getSuperList () {},
     /*
     获取超级工作站
     */
     setSuperList (data) {
       this.err = false
       this.adddetail = true
-      let ip = localStorage.getItem('masterip')
-      getImageListx(ip).then(response => {
+      if (!this.masterip) return
+      getImageListx(this.masterip).then(response => {
         this.imglist = response.data.result.list
         this.formValidatex.imglist = this.imglist[0].name
       })
@@ -341,9 +329,8 @@ export default {
         if (valid) {
           console.log(this.formValidate1.action)
           console.log(this.formValidate1.comment)
-          let ip = localStorage.getItem('masterip')
           let data = { ip: this.canceledip, action: this.formValidate1.action, comment: this.formValidate1.comment }
-          setCancelSuper(data, ip).then(response => {
+          setCancelSuper(data, this.masterip).then(response => {
             setTimeout(() => {
               that.reload()
             }, 0)
@@ -363,7 +350,7 @@ export default {
         okText: this.$t('Confirm'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          deletePcsConfigx([data.mac], localStorage.getItem('masterip')).then(respon => {
+          deletePcsConfigx([data.mac], this.masterip).then(respon => {
             this.handgetClienList()
           })
         }
@@ -580,7 +567,7 @@ export default {
       console.log(this.formValidatex.imglist)
       self.$refs[name].validate(valid => {
         if (valid) {
-          let cookiesMasterIp = localStorage.getItem('masterip')
+          let cookiesMasterIp = this.masterip
           setSuper(
             {
               ip: self.addedip,

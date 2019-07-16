@@ -261,6 +261,7 @@ import { getLogicalDrives } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
 import { bytesToSize2 } from '../../../utils/index'
+import { setValue } from '@/api/common'
 export default {
   name: 'DisklessServerListDetail',
   data () {
@@ -667,7 +668,12 @@ export default {
               path: 'DisklessServerList'
             })
             if (this.currentPageServerip === localStorage.getItem('masterip')) {
-              localStorage.removeItem('masterip')
+              // localStorage.removeItem('masterip');
+              let info = {
+                key: 'master',
+                value: ''
+              }
+              this.setCustomConfig(info)
             }
           }, (resp) => {
             this.$Message.success(this.$t(`kxLinuxErr.${resp}`))
@@ -810,23 +816,42 @@ export default {
     /**
      * 切换主服务器
      */
-    HandlechangeMaster () {
-      let sucessflag = 0
+    async HandlechangeMaster () {
+      let sucessflag = true
       for (let i = 0; i < this.serverList.length; i++) {
-        editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
-          sucessflag++
+        await editServersNode(this.currentPageServerip, '1', '1', this.serverList[i].serverIp).then((resp) => {
+          sucessflag = true
         }, (error) => {
+          sucessflag = false
           console.log(error)
         })
       }
-      if (sucessflag === this.serverList.length) {
-        localStorage.setItem('masterip', this.currentPageServerip)
+      if (sucessflag) {
+        let info = {
+          key: 'master',
+          value: this.currentPageServerip
+        }
+        this.setCustomConfig(info)
+        this.$store.dispatch('saveMaster', this.currentPageServerip || '')
         sucessflag = 0
       }
       setTimeout(() => {
         this.handleButtonRefresh()
       }, 1000)
       this.handleButtonRefresh()
+    },
+    /**
+    记录主服务器ip
+     */
+    setCustomConfig (info) {
+      let data = {
+        key: info.key,
+        value: info.value
+      }
+      debugger
+      setValue(data).then(res => {
+        this.$store.dispatch('saveMaster', info.value)
+      })
     },
     /*
     列表选择

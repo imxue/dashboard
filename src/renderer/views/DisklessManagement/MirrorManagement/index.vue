@@ -1,26 +1,27 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
+      <Button type="primary" class="topColumn" :disabled=!this.masterip @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
-    <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirroringInfo"></Table>
+    <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirrorList"></Table>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"
       width= "500"
       footer-hide>
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="135">
+      <Form ref="mirrorData" :model="mirrorData" :rules="ruleValidate" :label-width="135">
         <FormItem :label="this.$t('MirrorName')+'：'" prop="name">
-          <Input v-model="formValidate.name" :placeholder="this.$t('pleaseInputMirror')" />
+          <Input v-model="mirrorData.name" :placeholder="this.$t('pleaseInputMirror')" />
         </FormItem>
          <FormItem :label="this.$t('MirrorSize')+'：'" prop="size">
-          <Row><Input v-model="formValidate.size" :placeholder="this.$t('pleaseInputMirrorSize') + ' GB'" /></Row>
+          <Row><Input v-model="mirrorData.size" :placeholder="this.$t('pleaseInputMirrorSize') + ' GB'" /></Row>
         </FormItem>
         <FormItem :label="this.$t('SavePath')+'：'" prop="path">
-          <Select v-model="formValidate.path" :placeholder="this.$t('pleaseInputSavePath')"  >
+          <Select v-model="mirrorData.path" :placeholder="this.$t('pleaseInputSavePath')"  >
         
-                   <Option  :value="item.path" v-for="(item, index) in diskList" :key="index" >{{item.path}}
+                   <Option  :value="item.path" v-for="(item, index) in diskList" :key="index" >
+                     {{item.path}}
               <Poptip title="Title" content="content">
                   <p>{{$t('AvailableSpace')}} {{item.availableSize}}</p>
                    </Poptip>
@@ -28,19 +29,19 @@
           </Select>
         </FormItem>
         <FormItem :label="this.$t('MappingDiskSymbol')+'：'" prop="mountVol">
-          <Input v-model="mountVol" disabled :placeholder="this.$t('pleaseInput')" />
+          <Input v-model="mirrorData.mountVol" disabled :placeholder="this.$t('pleaseInput')" />
         </FormItem>
 
 
          <FormItem :label="this.$t('importPrimaryServer')+'：'" prop="isImportFormMaster">
-             <Select v-model="formValidate.isImportFormMaster" disabled :placeholder="this.$t('pleaseInputSavePath')">
+             <Select v-model="mirrorData.isImportFormMaster" disabled :placeholder="this.$t('pleaseInputSavePath')">
               <Option value="yes">yes</Option>
               <Option value="no">no</Option>
             </Select>
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
-             <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
+             <Button type="primary" @click="handleSubmit('mirrorData')">{{$t('Save')}}</Button>
+             <Button @click="handleReset('mirrorData')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
      </Modal>
@@ -56,6 +57,7 @@
       return {
         showPopup: false,
         diskList: [],
+        masterip: this.$store.state.app.masterip || '',
         serverlist: '',
         tableColumns: [
           { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
@@ -123,13 +125,12 @@
             }
           }
         ],
-        mirroringInfo: [],
-        formValidate: {
+        mirrorList: [],
+        mirrorData: {
           name: '',
           size: '',
-          diskSize: '',
           path: '',
-          menuItemName: '',
+          menuItemName: 'winxp　系统',
           cacheSize: '512',
           mountVol: 'z',
           isImportFormMaster: 'yes'
@@ -145,20 +146,13 @@
     created () {
       this.handleGetImageList()
     },
-    computed: {
-      mountVol () {
-        let temp = this.diskList.filter(item => {
-          return this.formValidate.path === item.path
-        })
-        return temp[0] ? temp[0].vol : ''
-      }
-    },
     methods: {
       /**
        * 获取磁盘
        */
       handleGetDiskStatus () {
-        getDiskStatusx(localStorage.getItem('masterip')).then((response) => {
+        if (!this.masterip) return
+        getDiskStatusx(this.masterip).then((response) => {
           let temp = []
           var arr = response.data.result.list || []
           var newArr = arr.filter(item => item.fun === 'imageDisk') // 获取镜像盘
@@ -169,7 +163,7 @@
             })
           }
           this.diskList = temp
-          this.formValidate.path = this.diskList[0].path
+          this.mirrorData.path = this.diskList[0].path
           temp = []
         })
       },
@@ -177,35 +171,32 @@
        * 获取镜像列表
        */
       handleGetImageList () {
-        if (localStorage.getItem('masterip')) {
-          getImageListx(localStorage.getItem('masterip')).then((response) => {
-            this.mirroringInfo = response.data.result.list || []
-          }, (error) => {
-            this.$Notice.error({
-              desc: error
-            })
+        if (!this.masterip) return
+        getImageListx(this.masterip).then((response) => {
+          this.mirrorList = response.data.result.list || []
+        }, (error) => {
+          this.$Notice.error({
+            desc: error
           })
-        }
+        })
       },
       handleButtonAdd (val) {
         this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
       },
       handleSubmit (name) {
-        var self = this
+        var _this = this
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.showPopup = false
-            // name, sizeGB, title, path, cacheSizeMB, mountVolume, isImportFormMaster
-            this.formValidate.mountVol = this.mountVol
-            createImagex(localStorage.getItem('masterip'), self.formValidate).then((response) => {
-              self.handleGetImageList()
+            console.log(_this.mirrorData)
+            createImagex(this.masterip, _this.mirrorData).then((response) => {
+              _this.handleGetImageList()
               this.$refs[name].resetFields()
             }, (e) => {
             })
           } else {
             this.showPopup = true
-            this.$Message.error('验证失败!')
           }
         })
       },
@@ -229,8 +220,7 @@
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteDec'),
           onOk: () => {
-            let ip = localStorage.getItem('masterip')
-            deleteImagex(name.name, ip).then(() => {
+            deleteImagex(name.name, this.masterip).then(() => {
               this.handleGetImageList()
             })
           },

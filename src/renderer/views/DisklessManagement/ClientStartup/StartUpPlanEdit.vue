@@ -138,6 +138,7 @@
     name: 'subType3-edit',
     data () {
       return {
+        masterip: this.$store.state.app.masterip || '',
         imgCount: 0,
         flag: false, // 修改标志
         showPopup: false,
@@ -260,8 +261,8 @@
       获取服务器类表
       */
       handlegetServerlist () {
-        let mip = localStorage.getItem('masterip')
-        getServersx(mip).then(response => {
+        if (!this.masterip) return
+        getServersx(this.masterip).then(response => {
           if (!response.data.error) {
             this.serverlist = response.data.result.list
           }
@@ -271,8 +272,9 @@
       获取镜像类表
       */
       handleGetImageList () {
-        let x = this.formValidate2.daSV
-        getImageListx(x).then((resp) => {
+        let serverIp = this.formValidate2.daSV
+        if (!serverIp) return
+        getImageListx(serverIp).then((resp) => {
           if (!resp.data.error) {
             var arr = resp.data.result.list
             this.imageList = arr
@@ -313,17 +315,10 @@
             } else {
               that.formValidate.imgG = that.tableData1
               editPcGroupx(
-                that.formValidate, localStorage.getItem('masterip')
+                that.formValidate, this.masterip
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))
-                  // if (that.$route.query.flag) {
-                  //   deletePcGroup(name, localStorage.getItem('masterip')).then((response) => {
-                  //     if (!response.data.error) {
-                  //       this.handleGetPcGroup()
-                  //     }
-                  //   })
-                  // }
                   that.$router.push('StartUpPlan') // 跳转到 全部方案首页
                 } else {
                   that.$Message.error(resp.data.error)
@@ -367,14 +362,12 @@
         this.$set(this.tableData1, index - 1, this.tableData1[index])
         this.$set(this.tableData1, index, temp)
         this.handleGetDataLength()
-        // console.log('handleMoveTop::after===' + JSON.stringify(this.tableData1))
       },
       handleMoveBottom (index) {
         let i = this.tableData1[index + 1]
         this.$set(this.tableData1, index + 1, this.tableList[index])
         this.$set(this.tableData1, index, i)
         this.handleGetDataLength()
-        // console.log('handleMoveBottom::after===' + JSON.stringify(this.tableData1))
       },
       handleReset () {
         this.$router.push('StartUpPlan')

@@ -1,3 +1,4 @@
+// import { setValue } from '../../api/common'
 const state = {
   masterip: ''
 }
@@ -8,14 +9,12 @@ const mutations = {
   }
 
 }
-
 const actions = {
   saveMaster ({ commit }, masterip) {
     // do something async
     commit('SAVE_Master_IP', masterip)
   }
 }
-
 export default {
   state,
   mutations,

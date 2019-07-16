@@ -2,7 +2,7 @@
   <div>
     <div class="topItem">
       <router-link to="StartUpPlanEdit">
-      <Button type="primary" class="topColumn">{{$t('Add')}}</Button>
+      <Button type="primary" class="topColumn" :disabled=!this.masterip>{{$t('Add')}}</Button>
       </router-link>
       
     </div>
@@ -29,9 +29,10 @@
 <script>
   import { getPcGroupx, deletePcGroup } from '@/api/wupan'
   export default {
-    name: 'subType3-1',
+    name: 'StartUpPlan',
     data () {
       return {
+        masterip: this.$store.state.app.masterip || '',
         showPopup: false,
         tableColumns: [
           { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('StartupScenarioName')) } },
@@ -90,9 +91,9 @@
     computed: {},
     methods: {
       handleGetPcGroup () {
-        let mip = localStorage.getItem('masterip')
-        if (mip) {
-          getPcGroupx(mip).then((resp) => {
+        if (!this.masterip) return
+        if (this.masterip) {
+          getPcGroupx(this.masterip).then((resp) => {
             if (!resp.data.error) {
               var arr = resp.data.result.list || []
               if (!resp.data.error) {
@@ -145,7 +146,7 @@
             title: this.$t('DeleteTip'),
             content: this.$t('DeletingWillCauseClientsUsingThisSchemetoBeUnavailable'),
             onOk: () => {
-              deletePcGroup(row.row.name, localStorage.getItem('masterip')).then((response) => {
+              deletePcGroup(row.row.name, this.masterip).then((response) => {
                 if (!response.data.error) {
                   this.handleGetPcGroup()
                 }

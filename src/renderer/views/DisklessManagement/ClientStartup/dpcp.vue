@@ -34,8 +34,8 @@
         </Select>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formValidate')" :loading="loading">{{$t('apply')}}</Button>
-        <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('Reset')}}</Button>
+        <Button type="primary" @click="handleSubmit('formValidate')" :loading="loading" :disabled=!this.masterip>{{$t('apply')}}</Button>
+        <Button @click="handleReset('formValidate')" style="margin-left: 8px" :disabled=!this.masterip>{{$t('Reset')}}</Button>
       </FormItem>
     </Form>
   </div>
@@ -50,6 +50,7 @@ import {
 export default {
   data () {
     return {
+      masterip: this.$store.state.app.masterip || '',
       dataChange: '',
       pcGpList: '',
       loading: false,
@@ -83,7 +84,7 @@ export default {
       let that = this
       that.$refs[name].validate(valid => {
         if (valid) {
-          editDHCPConfigx(that.formValidate, localStorage.getItem('masterip'))
+          editDHCPConfigx(that.formValidate, this.masterip)
             .then(e => {
               this.loading = false
               that.$Message.success('DHCP' + this.$t('SetSucess'))
@@ -107,17 +108,14 @@ export default {
       getDHCPConfig(ip).then(resp => {
         this.formValidate = resp.data.result ? resp.data.result : {}
       })
-    }
-  },
-  created () {
-    let ip = localStorage.getItem('masterip')
-    if (ip) {
-      this.getDHCP(ip)
       getPcGroupx(ip).then((e) => {
         this.pcGpList = e.data.result.list || {}
       },
       (e) => { this.$Message.error(e.data.error) })
     }
+  },
+  created () {
+    this.getDHCP(this.masterip)
   }
 }
 </script>

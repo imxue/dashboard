@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-// import store from './store'
+import store from './store'
 
 // import './router/Hook'
 import i18n from './locale'
@@ -20,7 +20,7 @@ Vue.use(iView, {
 Vue.use(lodash)
 Vue.prototype.$lodash = lodash
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+// if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 
 Vue.config.productionTip = false
 
@@ -28,6 +28,6 @@ new Vue({
   i18n,
   router,
   lodash,
-  // store,
+  store,
   render: h => h(App)
 }).$mount('#app')
