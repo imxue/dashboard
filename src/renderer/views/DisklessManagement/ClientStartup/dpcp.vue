@@ -105,6 +105,7 @@ export default {
       getPcConfig(mac)
     },
     getDHCP (ip) {
+      if (!ip) return
       getDHCPConfig(ip).then(resp => {
         this.formValidate = resp.data.result ? resp.data.result : {}
       })

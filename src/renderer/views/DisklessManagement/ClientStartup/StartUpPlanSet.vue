@@ -133,11 +133,12 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServers } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
       return {
+        masterip: this.$store.state.app.masterip || '',
         imgCount: 0,
         flag: false, // 修改标志
         showPopup: false,
@@ -262,8 +263,7 @@
       获取服务器类表
       */
       handlegetServerlist () {
-        let mip = localStorage.getItem('masterip')
-        getServersx(mip).then(response => {
+        getServers(this.masterip).then(response => {
           if (!response.data.error) {
             this.serverlist = response.data.result.list
           }
@@ -308,7 +308,7 @@
             } else {
               that.formValidate.imgG = that.tableData1
               editPcGroupx(
-                that.formValidate, localStorage.getItem('masterip')
+                that.formValidate, this.masterip
               ).then((resp) => {
                 if (!resp.data.error) {
                   that.$Message.success(this.$t('SetSucess'))

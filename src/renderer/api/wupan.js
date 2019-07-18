@@ -28,9 +28,8 @@ function makeRequestx (method, param, ip) {
     data
   })
 }
-
 //  获取服务器类表
-export function getServersx (ip) {
+export function getServers (ip) {
   return makeRequestx('Get_Servers', {}, ip)
 }
 

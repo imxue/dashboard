@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Spin size="large" fix v-if="spinShow"></Spin>
     <div class="topItem">
       <Input
         class="topColumn"
@@ -21,9 +20,8 @@
         type="primary"
         class="topColumn"
         @click="handleButtonRefesh"
-        :disabled="refesh"
-      >{{$t('Refresh')}}</Button>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemote">远程部署</Button> -->
+        :disabled="this.serverList.length === 0">
+      {{$t('Refresh')}}</Button>
     </div>
     <!-- table -->
     <Table
@@ -33,7 +31,6 @@
       ref="selection"
       :columns="tableColumns"
       :data="serverList"
-      @on-selection-change="handleCheckBox"
       @on-row-dblclick="handleSeeDetail"
       :no-data-text="this.$t('Nodata')"
     ></Table>
@@ -104,11 +101,11 @@ import {
   addServersx,
   getServersNode,
   editServersNode,
-  getServersx,
+  getServers,
   deleteserverConfig,
   login
 } from '@/api/wupan'
-import { setValue, getValue } from '@/api/common'
+import { setValue } from '@/api/common'
 export default {
   name: 'subType1-1',
   data () {
@@ -135,6 +132,7 @@ export default {
       callback()
     }
     return {
+      masterIp: this.$store.state.app.masterip || '', // 主服务器
       NetWork: false,
       spinShow: false,
       searchVal: '',
@@ -142,7 +140,6 @@ export default {
       loading: false,
       loadingBtn: false,
       serverPopup: false, // 服务器弹窗开关
-      MasterServerIp: '', // 主服务器
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       guid: '', // 服务器guid
@@ -278,33 +275,74 @@ export default {
     }
   },
   created () {
-    this.handleGetServerList()
-    this.getCustomConfig()
-  },
-  computed: {
-    refesh () {
-      if (this.MasterServerIp) {
-        return false
-      } else {
-        return true
-      }
-    }
+    this.HandleGetServerListOrAdd(this.masterIp)
   },
   methods: {
-    getCustomConfig () {
-      let info = {}
-      info.key = 'master'
-      getValue(info).then(resp => {
-        this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
-      })
+    /**
+        获取服务器列表
+    */
+    async HandleGetServerList (ip) {
+      if (!ip) return
+      try {
+        let respList = await getServers(ip)
+        let serverList = respList.data.result.list ? respList.data.result.list : []
+        return Promise.resolve(serverList)
+      } catch (error) {
+        console.log(error)
+      }
     },
-    setCustomConfig (info) {
+    HandleGetServerList1 (ip) {
+      try {
+        let respList = getServers(ip)
+        let serverList = respList.data.result.list ? respList.data.result.list : []
+        return serverList
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    /**
+        获取服务器列表 如果为空 则添加
+    */
+    async HandleGetServerListOrAdd (ip) {
+      if (!ip) return
+      try {
+        let serverList = await this.HandleGetServerList(ip)
+        if (serverList.length === 0) {
+          this.HandleAddServerx(ip, this.masterIp || ip)
+        } else {
+          this.serverList = serverList
+        }
+      } catch (error) {
+        this.loading = false
+      }
+      this.loading = false
+    },
+
+    /**
+          添加服务器
+    */
+    async HandleAddServerx (selfip, masterip) {
+      try {
+        let respGuid = await getServersNode(selfip)
+        let guid = respGuid.data.result.guid
+        await editServersNode(masterip, 1, 1, selfip)
+        await addServersx(selfip, guid, masterip)
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+    /**
+
+      持久化信息
+    */
+    async setCustomConfig (info) {
       let data = {
         key: info.key,
         value: info.value
       }
       setValue(data).then(res => {
         this.$store.dispatch('saveMaster', info.value)
+        return Promise.resolve(true)
       })
     },
     handleSearch () {
@@ -327,46 +365,7 @@ export default {
     removeAndServer () {
       deleteserverConfig(this.formValidate.serverIP).then(() => {
         this.modal4 = false
-        this.handleSubmitAddServer(this.guid, this.formValidate.serverIP, this.formValidate.serverIP)
       })
-    },
-    /**
-     * 获取服务器列表
-     */
-    handleGetServerList () {
-      let masterip = this.$store.state.app.masterip || ''
-      if (!masterip) return
-      this.loading = true
-      let Serverinfo = {
-        serverIp: masterip,
-        online: '0',
-        dataVer: '-'
-      }
-      getServersx(masterip).then(resp => {
-        this.serverList = resp.data.result.list ? resp.data.result.list : ''
-        if (this.serverList) {
-          this.MasterServerIp = this.serverList.filter(item => {
-            return item.isMaster === '1'
-          })
-          this.MasterServerIp = this.MasterServerIp[0].serverIp
-        } else {
-          getServersNode(this.$store.state.app.masterip).then(resp => {
-            let guid = resp.data.result.guid
-            this.handleSubmitAddServer(guid, this.$store.state.app.masterip, this.$store.state.app.masterip)
-          })
-        }
-      }, () => {
-        this.serverList.push(Serverinfo)
-        this.$Notice.error({
-          desc: this.$t(`kxLinuxErr.${44}`)
-        })
-      })
-        .finally(() => {
-          this.loading = false
-          this.serverPopup = false
-        })
-
-      this.loading = false
     },
     /**
      * 弹起添加服务器弹窗
@@ -374,121 +373,86 @@ export default {
     handleButtonAdd (val) {
       this.serverPopup = true
       this.NetWork = false
-      this.loadingBtn = false
       this.$nextTick(() => {
         this.$refs.input.focus()
       })
     },
+    /**
+      刷新页面
+    */
     handleButtonRefesh (val) {
-      this.spinShow = true
-      this.handleGetServerList()
+      this.loading = true
+      this.HandleGetServerListOrAdd()
     },
-    handleButtonRemote (val) {
-      alert('暂无')
-    },
-    handleCheckBox (arr) {
-      var data = arr
-      var list = []
-      for (var i in arr) {
-        list.push(data[i].id)
-      }
-      this.getCheckboxVal = list.join(',')
-      return this.getCheckboxVal
-    },
-    handleSeeDetail (index) {
+    /**
+
+      跳转到服务器详细信息页面
+    */
+    handleSeeDetail (data) {
       this.$router.push({
         path: 'DisklessServerDetail',
-        query: { data: index, MasterServerIp: this.MasterServerIp, serverList: this.serverList }
+        query: { data, serverList: this.serverList }
       })
     },
     /**
      * 添加服务器
      */
-    handleAddServer (name) {
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          this.loadingBtn = true
-          login(this.formValidate.password, this.formValidate.serverIP).then(resp => {
-            this.HandleGetServerNode()
-          }, (error) => {
-            this.$Notice.error({
-              desc: this.$t(`kxLinuxErr.${error}`)
-            })
-          }).finally(() => {
-            this.loadingBtn = false
-          })
-        }
-      })
-    },
-    /**
-     * 获取服务器信息
-     */
-    HandleGetServerNode () {
-      let localMasterIp = this.$store.state.app.masterip || ''
-      let currentIp = this.formValidate.serverIP // 添加的服务器ip
-      getServersNode(currentIp).then((resp) => {
-        let guid = resp.data.result.guid
-        let serverMasterIp = resp.data.result.masterIp // 该服务器的主服务ip
-        this.guid = guid
-        if (serverMasterIp) {
-          if (serverMasterIp === currentIp) {
-            if (localMasterIp) {
-              this.handleSubmitAddServer(guid, localMasterIp, currentIp)
-            } else {
-              let info = {
-                key: 'master',
-                value: currentIp
-              }
-              this.setCustomConfig(info)
-              this.serverPopup = false
-              this.handleGetServerList()
-            }
+    async handleAddServer (name) {
+      let fail
+      this.$refs[name].validate(valid => { if (valid) { fail = true } else { fail = false } })
+      if (fail) {
+        this.loadingBtn = true
+        try {
+          let OptServerip = this.formValidate.serverIP
+          let optPassword = this.formValidate.password
+          await this.HandleLogin(optPassword, OptServerip)
+          var resplist = await this.HandleGetServerList(OptServerip)
+          if (resplist.length !== 0 && !this.masterIp) {
+            this.serverList = resplist
+            let masterip = resplist && resplist.filter(item => { return item.isMaster === '1' })
+            await this.setCustomConfig({ key: 'master', value: masterip[0].serverIp })
           } else {
-            this.modal4 = true
+            this.setCustomConfig({ key: 'master', value: this.masterIp || OptServerip })
+            await this.HandleAddServerx(OptServerip, this.masterIp || OptServerip)
+            await this.sleep(1000)
+            this.serverList = await this.HandleGetServerList(this.masterIp)
           }
-        } else {
-          let masterip = localMasterIp || currentIp
-          this.handleSubmitAddServer(guid, masterip, currentIp)
+          this.serverPopup = false
+        } catch (error) {
+          const isObject = obj => obj === Object(obj)
+          if (isObject(error)) {
+            this.$Message.error({
+              content: this.$t(`kxLinuxErr.${36}`)
+            })
+          } else {
+            this.$Message.error({
+              content: this.$t(`kxLinuxErr.${error}`)
+            })
+          }
         }
-      }, () => {
-        this.$Notice.error({
-          desc: this.$t(`获取服务器信息失败`)
-        })
-      })
+        await this.sleep(500)
+        this.loadingBtn = false
+      }
+      this.loading = false
     },
     /**
-     * 设置服务器节点，并添加
-     */
-    handleSubmitAddServer (guid, masterIp, selfip) {
-      // 设置服务器节点
-      editServersNode(masterIp, 1, 1, selfip).then(
-        (resp) => {
-          addServersx(selfip, guid, masterIp).then(
-            resp => {
-              this.loadingBtn = false
-              this.serverPopup = false
-              this.$store.dispatch('saveMaster', masterIp || '')
-              this.handleGetServerList()
-              setTimeout(() => {
-                this.handleGetServerList()
-              }, 1000)
-            }, error => {
-              this.loadingBtn = false
-              this.$Notice.error({
-                desc: this.$t(`kxLinuxErr.${error}`)
-              })
-            }
-          ).finally(() => {
-            this.loadingBtn = false
-            this.spinShow = false
-          })
-        }, (error) => {
-          this.$Notice.error({
-            desc: this.$t(`kxLinuxErr.${error}`)
-          })
-        }
-      )
+        睡觉
+    */
+    sleep (time) {
+      return new Promise((resolve) => setTimeout(resolve, time))
     },
+    /**
+        睡觉
+    */
+    async HandleLogin (password, ip) {
+      try {
+        let resp = await login(password, ip)
+        return Promise.resolve(resp)
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+
     handleAddReset (name) {
       this.serverPopup = false
       this.$refs[name].resetFields()
@@ -498,36 +462,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-.topColumn {
-  float: left;
-  margin-right: 10px;
-}
-
-/* .demo-spin-icon-load {
-  animation: ani-demo-spin 1s linear infinite;
-}
-@keyframes ani-demo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(180deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.demo-spin-col {
-  height: 100px;
-  position: absolute;
-  top: 50px;
-  left: 223px;
-  z-index: 8;
-  width: 84%;
-  height: 100%;
-} */
-</style>
-

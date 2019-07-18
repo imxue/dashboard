@@ -5,10 +5,22 @@
 </template>
 
 <script>
-  export default {
-    name: 'my-project'
+import { getMasterIp } from './api/common'
+export default {
+  name: 'my-project',
+  created () {
+    this.getMasterip()
+  },
+  methods: {
+    getMasterip () {
+      getMasterIp().then((resp) => {
+        this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
+      })
+    }
   }
-</script>
+
+}
+  </script>
 
 <style>
   * {

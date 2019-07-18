@@ -7,10 +7,10 @@
     </Row>
    
       <div style="flex-grow:1" class="xx">
-        <Col  style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 3, offset: 0 }"	:md="{ span: 3, offset: 0 }" :xs='{span:3,offset: 0}'>
+        <Col  style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 4, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
           <Sidebar ></Sidebar>
         </Col>
-        <Col :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 21, offset: 0 }"	:md="{ span: 21, offset: 0 }" :xs='{span:21,offset: 0}'>
+        <Col :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 20, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'>
 
             <Breadcrumb :style="{margin: '10px 10px'}">
               <template v-for="item  in levelList" >
@@ -21,7 +21,7 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-            <Card dis-hover :style="{margin: '0 10px',height: '95%'}">
+            <Card dis-hover :style="{margin: '0 10px',minHeight: '95%'}">
               <AppMain></AppMain>
             </Card>
         </col>

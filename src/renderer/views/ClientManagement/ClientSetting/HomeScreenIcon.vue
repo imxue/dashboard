@@ -2,22 +2,38 @@
   <div>
     <Tabs type="card" @on-click="HandleGetAllScheme" :animated="false"  v-model="currentTab">
         <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
-          <div class="main">
-            <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
+          <div class="main" >
+              <Row :gutter="24">
+                <Col :xs="2" :sm="4" :md="6" :lg="2">
+                    <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
+               </Col>
+              <Col :xs="2" :sm="4" :md="6" :lg="2">
             <Button type="error">{{$t('DeleteIcon')}}</Button>
+             </Col>
+              </Row>
           </div>
                <Table border :columns="columns1" :data="imgreSource"></Table>  
         </TabPane>
         <TabPane :label="$t('ClientStartPlan')" name="StartPlan" class="xx">
          
           <div class="main">
-            <span>{{$t('ClientScheme')}}:</span>
-            <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
-              <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
-            </Select>
-             <Checkbox size="large" v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
+             <Row>
+                 <Col :xs="4" :sm="4" :md="8" :lg="8">
+                   <span>{{$t('ClientScheme')}}:</span>
+                   <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
+                     <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
+                   </Select>
+              </Col>
+              <Col :xs="2" :sm="4" :md="4" :lg="4">
+             <Checkbox size="large" v-model="single" @on-change='SetDefault' class="test">{{$t('UseDefaultSetting')}}</Checkbox>
+             </Col>
+              <Col :xs="2" :sm="4" :md="2" :lg="2">
             <Button type="primary" :disabled='flag'>{{$t('AddIcon')}}</Button>
+              </Col>
+             <Col :xs="2" :sm="4" :md="4" :lg="4">
             <Button type="error" :disabled='flag' >{{$t('DeleteIcon')}}</Button>
+            </Col>
+             </Row>
           </div>
 
        <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
@@ -258,12 +274,13 @@ export default {
 
 <style scoped>
 .main{
-  display: flex;
-  align-items: center;
   margin-bottom: 30px;
 }
 .xx {
   height:500px;
+}
+.test{
+  padding-top: 4px;
 }
 </style>
 

@@ -2,10 +2,15 @@
   <div>
     <Tabs type="card" :animated="false" v-model="currentTab" @on-click="HandleGetAllScheme">
       <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
-        <div>
+          <Row :gutter="16">
+             <Col span="4">
           <Button type="primary" v-on:click="HandEdit" v-if="disabled">{{$t('EditBootPath')}}</Button>
+           </Col>
+
+           <Col span="4">
           <Button type="primary" v-on:click="HandSetSchemeBatch" v-if="!disabled">{{$t('SaveBootPath')}}</Button>
-        </div>
+             </Col>
+         </Row>
         <div class="footer">
           <Input
             type="textarea"

@@ -133,7 +133,7 @@
 </template>
 
 <script>
-  import { getImageListx, editPcGroupx, getServersx } from '@/api/wupan'
+  import { getImageListx, editPcGroupx, getServers } from '@/api/wupan'
   export default {
     name: 'subType3-edit',
     data () {
@@ -262,7 +262,7 @@
       */
       handlegetServerlist () {
         if (!this.masterip) return
-        getServersx(this.masterip).then(response => {
+        getServers(this.masterip).then(response => {
           if (!response.data.error) {
             this.serverlist = response.data.result.list
           }

@@ -49,7 +49,7 @@
 </template>
 
 <script>
-  import { getImageListx, createImagex, getDiskStatusx, deleteImagex } from '@/api/wupan'
+  import { getImageListx, createImagex, getDiskStatusx, deleteImagex, getServers } from '@/api/wupan'
   import { bytesToSize } from '@/utils/index'
   export default {
     name: 'mirrorManagement',
@@ -152,19 +152,42 @@
        */
       handleGetDiskStatus () {
         if (!this.masterip) return
+  
         getDiskStatusx(this.masterip).then((response) => {
           let temp = []
+          let _this = this
           var arr = response.data.result.list || []
           var newArr = arr.filter(item => item.fun === 'imageDisk') // 获取镜像盘
-          for (var i in newArr) {
-            temp.push({
-              path: newArr[i].path,
-              availableSize: bytesToSize(Number(newArr[i].availableSize))
+          if (newArr.length === 0) {
+            this.$Modal.confirm({
+              title: 'Title',
+              content: '找不到主服务器镜像盘，点击确定立即去设置镜像盘',
+              onOk: () => {
+                let serverList
+                let data = {}
+                getServers(_this.masterip).then(resp => {
+                  serverList = resp.data.result.list ? resp.data.result.list : []
+                  data = serverList.filter(item => { return item.isMaster === '1' })
+                  data = data[0]
+                  this.$router.push({
+                    path: '/Diskless/DisklessServer/DisklessServerDetail',
+                    query: { data, serverList }
+                  })
+                })
+              }
             })
+          } else {
+            this.showPopup = true
+            for (var i in newArr) {
+              temp.push({
+                path: newArr[i].path,
+                availableSize: bytesToSize(Number(newArr[i].availableSize))
+              })
+            }
+            this.diskList = temp
+            this.mirrorData.path = this.diskList[0].path
+            temp = []
           }
-          this.diskList = temp
-          this.mirrorData.path = this.diskList[0].path
-          temp = []
         })
       },
       /**
@@ -181,7 +204,6 @@
         })
       },
       handleButtonAdd (val) {
-        this.showPopup = true
         this.handleGetDiskStatus() // 获取磁盘路径list
       },
       handleSubmit (name) {
@@ -194,6 +216,10 @@
               _this.handleGetImageList()
               this.$refs[name].resetFields()
             }, (e) => {
+              this.$Message.error({
+                content: this.$t(`kxLinuxErr.${e}`),
+                duration: 10
+              })
             })
           } else {
             this.showPopup = true

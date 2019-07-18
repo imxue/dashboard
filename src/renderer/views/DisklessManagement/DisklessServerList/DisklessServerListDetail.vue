@@ -94,15 +94,11 @@
         :operations="[this.$t('Remove'),this.$t('Create')]"
         @on-change="handleChange1"
       ></Transfer>
-      <Spin
-        fix
-        v-show="setspin"
-      >
+      <Spin fix v-show="setspin">
         <Icon
           type="ios-loading"
           size=18
-          class="demo-spin-icon-load"
-        ></Icon>
+          class="demo-spin-icon-load"></Icon>
       </Spin>
     </Modal>
 
@@ -188,11 +184,8 @@
                 style="width:200px;"
                 :placeholder="this.$t('pleaseInput')"
               >
-                <Option  v-for="item in DiskSymbolList" :value="item.DeviceID" :key="item.value">
-                  <!-- {{item.VolumeName}} - {{item.DeviceID}} -->
-         
-                 {{item.DeviceID}} / {{$t('AvailableSpace')}} {{item.free_space}}
-           
+                <Option  v-for="item in DiskSymbolList" :value="item.diskSymbol" :key="item.value">
+                 {{item.diskSymbol}}
                 </Option>
               </Select>
             </Col>
@@ -248,7 +241,7 @@
 <script>
 import {
   setDiskFunctionx,
-  getServersx,
+  getServers,
   editServersNode,
   deleteserverx,
   getNetworkx,
@@ -257,15 +250,16 @@ import {
   deleteserverConfig,
   RaidCreate,
   RaidRemove } from '@/api/wupan'
-import { getLogicalDrives } from '@/api/localGame'
+// import { getAllServerDisks } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
-import { bytesToSize2 } from '../../../utils/index'
+// import { bytesToSize2 } from '../../../utils/index'
 import { setValue } from '@/api/common'
 export default {
   name: 'DisklessServerListDetail',
   data () {
     return {
+      masterIp: this.$store.state.app.masterip || '', // 服务器存储的
       currentPageServerip: '', // 当前页服务器ip
       CurrentPageserverInfo: [], // 当前页服务器信息
       loading: '', // 磁盘设置loading
@@ -276,11 +270,14 @@ export default {
       serverList: [], // 服务器列表
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
-      MasterServerIp: '', // 主服务器Ip
       isMaster: '', // 是否为主服务器
       selectedDisk: '', // 选择的磁盘信息
       selecteDiskF: '', // 映射盘符
-      DiskSymbolList: [], // 盘符列表
+      DiskSymbolList: [
+        { diskSymbol: 'C:', value: '1' },
+        { diskSymbol: 'D:', value: '2' },
+        { diskSymbol: 'E:', value: '3' }
+      ], // 盘符列表
       selecteDisk: 'imageDisk', // 选择的磁盘功能
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗
@@ -514,7 +511,6 @@ export default {
     }
   },
   created () {
-    this.MasterServerIp = this.$route.query.MasterServerIp
     this.serverList = this.$route.query.serverList
     this.handleGetCurrentPageServerInfo()
     this.handleGetNetworkx(this.currentPageServerip)
@@ -589,16 +585,16 @@ export default {
     /**
      * 获取映射盘符
      */
-    handleLogicalDrives () {
-      getLogicalDrives().then((resp) => {
-        this.DiskSymbolList = resp.data || []
-        console.log(222)
-        console.log(this.DiskSymbolList)
-        console.log(222)
-        this.DiskSymbolList.map(item => {
-          item.free_space = bytesToSize2(item.FreeSpace)
-        })
-      }, (error) => { console.log(error) })
+    handleGetAllServerDisks () {
+      // getAllServerDisks().then((resp) => {
+      //   this.DiskSymbolList = resp.data || []
+      //   console.log(222)
+      //   this.DiskSymbolList = this.DiskSymbolList.filter(item => {
+      //     return item.disk_type === 1
+      //   })
+      //   console.log(this.DiskSymbolList)
+      //   console.log(222)
+      // }, (error) => { console.log(error) })
     },
     handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
@@ -661,14 +657,13 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
-          deleteserverx(this.currentPageServerip, this.MasterServerIp).then((resp) => {
+          deleteserverx(this.currentPageServerip, this.masterIp).then((resp) => {
             deleteserverConfig(this.currentPageServerip)
             this.$Message.success(this.$t('DeleteSucess'))
             this.$router.push({
               path: 'DisklessServerList'
             })
-            if (this.currentPageServerip === localStorage.getItem('masterip')) {
-              // localStorage.removeItem('masterip');
+            if (this.currentPageServerip === this.masterIp) {
               let info = {
                 key: 'master',
                 value: ''
@@ -681,25 +676,10 @@ export default {
         }
       })
     },
-    handleEditServersNode () {
-      editServersNode(
-        this.MasterServerIp,
-        this.selectedDisk.serverIp,
-        '1',
-        '1'
-      ).then(a => {
-        if (a.data.error === null) {
-          this.$Message.sucess(this.$t('DeleteDec'))
-        } else {
-          this.$Message.error(a.data.error)
-        }
-      })
-    },
     /**
      * 设置磁盘
      */
     handleSetCard () {
-      // this.selecteFormatValue === 'yes' ?
       if (this.selecteFormatValue === 'yes') {
         this.$Modal.confirm({
           title: this.$t('DeleteClear'),
@@ -777,7 +757,7 @@ export default {
      */
     ShowDiskPlan (data) {
       this.selectedDisk = data
-      this.handleLogicalDrives() // 获取映射盘符
+      this.handleGetAllServerDisks() // 获取映射盘符
       this.selecteDiskF = data.vol
       this.ExtendedType = data.exttype
       this.selecteDisk = data.fun
@@ -801,7 +781,7 @@ export default {
       */
     handleButtonRefresh () {
       this.spinShow = true
-      getServersx(this.currentPageServerip).then((resp) => {
+      getServers(this.currentPageServerip).then((resp) => {
         this.serverList = resp.data.result.list
         this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === this.currentPageServerip })
         this.isMaster = this.CurrentPageserverInfo[0].isMaster
@@ -848,7 +828,6 @@ export default {
         key: info.key,
         value: info.value
       }
-      debugger
       setValue(data).then(res => {
         this.$store.dispatch('saveMaster', info.value)
       })
@@ -857,7 +836,7 @@ export default {
     列表选择
     */
     listTypeChange (serverip) {
-      getServersx(this.MasterServerIp).then((resp) => {
+      getServers(this.masterIp).then((resp) => {
         this.CurrentPageserverInfo = resp.data.result.list.filter(item => { return item.serverIp === serverip })
         this.isMaster = this.CurrentPageserverInfo[0].isMaster
       })

@@ -61,6 +61,7 @@
     name: 'MirrorConfig',
     data () {
       return {
+        masterip: this.$store.state.app.masterip || '',
         modalType: 'create',
         modalTitle: this.$t('CreateConfigurationPointName'),
         labelName: this.$t('ConfigurationName'),
@@ -220,7 +221,7 @@
        * 获取镜像类别
        */
       handleGetImageList () {
-        getImageListx(localStorage.getItem('masterip')).then((response) => {
+        getImageListx(this.masterip).then((response) => {
           if (!response.data.error) {
             var arr = response.data.result.list
             if (response.data.error === null && arr.length !== null) {
@@ -261,7 +262,7 @@
             let image = this.$route.query.data.name
             let name = this.formValidate2.nameVal
             let data = { image, name }
-            createImageProjectx(data, localStorage.getItem('masterip')).then((response) => {
+            createImageProjectx(data, this.masterip).then((response) => {
               this.handleGetImageList()
             }, (err) => {
               this.$Notice.error({

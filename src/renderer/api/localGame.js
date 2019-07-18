@@ -120,7 +120,15 @@ export function getLogicalDrives () { // 本吧批量添加
     method: 'get'
   })
 }
-
+/**
+ * 获取盘符
+ */
+export function getAllServerDisks () { // 本吧批量添加
+  return request({
+    url: '/v1/server/getAllServerDisks',
+    method: 'get'
+  })
+}
 /*
 获取游戏队列
 */

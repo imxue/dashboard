@@ -1,8 +1,9 @@
 // import { setValue } from '../../api/common'
+// import { getMasterIp } from '@/api/common'
+
 const state = {
   masterip: ''
 }
-
 const mutations = {
   SAVE_Master_IP (state, masterip) {
     state.masterip = masterip

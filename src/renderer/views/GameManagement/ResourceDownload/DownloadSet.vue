@@ -53,9 +53,9 @@ export default {
       formItem: {
         input: '',
         select1: '',
-        select2: ''
+        select2: '',
+        change: false
       },
-      model1: '',
       gameList: [
         { Id: 0, value: 1 },
         { Id: 1, value: 2 },
@@ -74,7 +74,8 @@ export default {
               },
               on: {
                 'on-change': (event) => {
-                  this.handleSelectValue(params.row)
+                  this.change = true
+                  this.tableData[params.index].disk = event
                 }
               }
             },
@@ -138,6 +139,7 @@ export default {
         let test = []
         let obj = resp.data.default_download_disk
         for (let i in obj) {
+          let o = i // 保存原来的key值
           let x = {}
           switch (i) {
             case '网络游戏':
@@ -160,7 +162,7 @@ export default {
               break
           }
           x['TypeGame'] = i
-          x['disk'] = obj[i]
+          x['disk'] = obj[o]
           test.push(x)
         }
         this.tableData = test
@@ -169,36 +171,39 @@ export default {
       })
     },
     handleButtonDW () {
+      var obj = {}
+      for (var item in this.tableData) {
+        obj[this.tableData[item].TypeGame] = this.tableData[item].disk
+      };
       let info = {
         max_download_task: this.formItem.select1,
         download_speed_limit: this.formItem.select2,
-        default_download_disk: {
-          '网络游戏': 'C:',
-          '单机游戏': 'D:',
-          '休闲游戏': 'E:',
-          '棋牌游戏': 'F:',
-          '辅助工具': 'G:',
-          '系统工具': 'H:'
-        }
+        default_download_disk: obj
       }
       setDownloadSettings(info).then((resp) => {
-        console.log(resp)
-      }, (err) => {
-        console.log(err)
+        this.change = false
+        this.$Message.success({
+          content: this.$t('OperationSuccessful')
+        })
+      }, () => {
+        this.$Message.error({
+          content: this.$t('operation') + this.$t('fail')
+        })
       })
     },
     handleButtonBack () {
       this.$router.go(-1)
     }
-    // handleSelect1Value () {
-    //   alert(this.formItem.select1)
-    // },
-    // handleSelect2Value (id) {
-    //   alert(this.formItem.select2)
-    // },
-    // handleSelectValue (index) {
-    //   alert(index.id)
-    // }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (this.change) {
+      const answer = window.confirm('你没有提交你修改的信息，直接离开将不会保存，请知晓')
+      if (answer) {
+        next()
+      }
+    } else {
+      next()
+    }
   }
 }
 </script>

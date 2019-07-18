@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-
 export function setValue (info) {
   let data = {
     'key': info.key,
@@ -15,9 +14,9 @@ export function setValue (info) {
   })
 }
 
-export function getValue (info) {
+export function getMasterIp () {
   return request({
-    url: `/v1/customconfig/getValue?key=${info.key}`, // search?gameType=1&offset=0&limit=10
+    url: `/v1/customconfig/getValue?key=master`, // search?gameType=1&offset=0&limit=10
     method: 'get'
   })
 }
