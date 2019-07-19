@@ -8,6 +8,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
+    
       <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
@@ -288,6 +289,8 @@ export default {
         if (!response.data.error && response.data.result) {
           this.currentSuperip = response.data.result.ip
         }
+      }, (error) => {
+        this.$Message.error(this.$t(`kxLinuxErr.${error}`))
       })
     },
     handgetClienList () {

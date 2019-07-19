@@ -421,13 +421,9 @@ export default {
         } catch (error) {
           const isObject = obj => obj === Object(obj)
           if (isObject(error)) {
-            this.$Message.error({
-              content: this.$t(`kxLinuxErr.${36}`)
-            })
+            this.notifyUserOfError(36)
           } else {
-            this.$Message.error({
-              content: this.$t(`kxLinuxErr.${error}`)
-            })
+            this.notifyUserOfError(error)
           }
         }
         await this.sleep(500)
@@ -436,13 +432,13 @@ export default {
       this.loading = false
     },
     /**
-        睡觉
+        睡眠
     */
     sleep (time) {
       return new Promise((resolve) => setTimeout(resolve, time))
     },
     /**
-        睡觉
+        登录
     */
     async HandleLogin (password, ip) {
       try {
@@ -452,7 +448,6 @@ export default {
         return Promise.reject(error)
       }
     },
-
     handleAddReset (name) {
       this.serverPopup = false
       this.$refs[name].resetFields()

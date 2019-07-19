@@ -48,6 +48,9 @@ service.interceptors.response.use(
   },
 
   error => {
+    if (error.response === undefined) {
+      return
+    }
     if (error.response && error.response.status === 401) {
       iView.Notice.info({
         desc: i18n.t('loginTmeOut'),

@@ -8,7 +8,7 @@ import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/MirrorConfi
 import StartUpPlan from '@/views/DisklessManagement/ClientStartup/StartUpPlan'
 import dpcp from '@/views/DisklessManagement/ClientStartup/dpcp'
 import Edit from '@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'
-
+import User from '@/views/DisklessManagement/UserManagement/index'
 export default {
   path: '/Diskless',
   name: '无盘管理',
@@ -18,13 +18,13 @@ export default {
   children: [
     {
       path: 'DisklessServer',
-      name: '无盘服务器',
+      name: 'DisklessServer',
       meta: { title: 'DisklessServer', hidden: true },
       component: NullLayout,
       children: [
         {
           path: 'DisklessServerList',
-          name: '无盘服务器列表',
+          name: 'DisklessServerList',
           meta: { title: 'DisklessServerList' },
           component: DisklessServerList
         },
@@ -45,7 +45,7 @@ export default {
       ]
     },
     {
-      path: 'subType2',
+      path: 'MirrorManagement',
       name: 'MirrorManagement',
       meta: { title: 'MirrorManagement', hidden: true },
       component: NullLayout,
@@ -66,8 +66,8 @@ export default {
       ]
     },
     {
-      path: 'subType3',
-      name: 'type2-SubType3',
+      path: 'ClientStartup',
+      name: 'ClientStartup',
       meta: { title: 'ClientStartup', hidden: true },
       component: NullLayout,
       children: [
@@ -89,6 +89,20 @@ export default {
           meta: { title: 'Edit' },
           component: Edit,
           hidden: true
+        }
+      ]
+    },
+    {
+      path: 'UserManagement',
+      name: '用户管理',
+      meta: { title: 'UserManagement', hidden: true },
+      component: NullLayout,
+      children: [
+        {
+          path: 'UserManagement',
+          name: 'UserManagementList',
+          meta: { title: 'UserList' },
+          component: User
         }
       ]
     }

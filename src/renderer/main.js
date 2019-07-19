@@ -18,7 +18,11 @@ Vue.use(iView, {
 })
 Vue.use(lodash)
 Vue.prototype.$lodash = lodash
-
+Vue.prototype.notifyUserOfError = function (error) {
+  this.$Message.error({
+    content: this.$t(`kxLinuxErr.${error}`)
+  })
+}
 // if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 
 Vue.config.productionTip = false

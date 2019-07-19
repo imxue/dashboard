@@ -414,5 +414,7 @@
   "NotInitiated":"未启动",
   "Running":"运行中",
   "PleaseInputGameType":"请选择游戏类型",
-  "SupportGameInit":"支持游戏名首字母"
+  "SupportGameInit":"支持游戏名首字母",
+  "UserManagement":"用户管理",
+  "UserList":"用户列表"
 }
