@@ -94,7 +94,7 @@ export default {
     },
     {
       path: 'UserManagement',
-      name: '用户管理',
+      name: '个人磁盘管理',
       meta: { title: 'UserManagement', hidden: true },
       component: NullLayout,
       children: [

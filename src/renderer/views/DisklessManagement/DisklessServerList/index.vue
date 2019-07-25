@@ -105,7 +105,7 @@ import {
   deleteserverConfig,
   login
 } from '@/api/wupan'
-import { setValue } from '@/api/common'
+import { setValue, getMasterIp } from '@/api/common'
 export default {
   name: 'subType1-1',
   data () {
@@ -275,9 +275,23 @@ export default {
     }
   },
   created () {
+    this.HandleGetMaster()
     this.HandleGetServerListOrAdd(this.masterIp)
   },
   methods: {
+    /**
+
+      获取主服务器
+
+    */
+    async HandleGetMaster () {
+      try {
+        let resp = await getMasterIp()
+        this.$store.dispatch('saveMaster', resp.data.value || '')
+      } catch (e) {
+        this.notifyUserOfDiskError()
+      }
+    },
     /**
         获取服务器列表
     */
@@ -287,15 +301,6 @@ export default {
         let respList = await getServers(ip)
         let serverList = respList.data.result.list ? respList.data.result.list : []
         return Promise.resolve(serverList)
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    HandleGetServerList1 (ip) {
-      try {
-        let respList = getServers(ip)
-        let serverList = respList.data.result.list ? respList.data.result.list : []
-        return serverList
       } catch (error) {
         console.log(error)
       }
@@ -382,7 +387,7 @@ export default {
     */
     handleButtonRefesh (val) {
       this.loading = true
-      this.HandleGetServerListOrAdd()
+      this.HandleGetServerListOrAdd(this.masterIp)
     },
     /**
 
@@ -407,23 +412,40 @@ export default {
           let optPassword = this.formValidate.password
           await this.HandleLogin(optPassword, OptServerip)
           var resplist = await this.HandleGetServerList(OptServerip)
-          if (resplist.length !== 0 && !this.masterIp) {
-            this.serverList = resplist
-            let masterip = resplist && resplist.filter(item => { return item.isMaster === '1' })
-            await this.setCustomConfig({ key: 'master', value: masterip[0].serverIp })
+          if (resplist.length === 0) {
+            // 服务器没有额外的类表
+            if (this.$store.state.app.masterip) {
+              await this.HandleAddServerx(OptServerip, this.$store.state.app.masterip)
+            } else {
+              await this.HandleAddServerx(OptServerip, OptServerip)
+              await this.setCustomConfig({ key: 'master', value: OptServerip })
+            }
+            await this.sleep(800)
+            this.serverList = await this.HandleGetServerList(this.$store.state.app.masterip)
           } else {
-            this.setCustomConfig({ key: 'master', value: this.masterIp || OptServerip })
-            await this.HandleAddServerx(OptServerip, this.masterIp || OptServerip)
-            await this.sleep(1000)
-            this.serverList = await this.HandleGetServerList(this.masterIp)
+            // 服务器有额外的类表
+            if (this.$store.state.app.masterip) {
+              // 已经存在主服务器
+              await this.HandleAddServerx(OptServerip, this.$store.state.app.masterip)
+            } else {
+              // 不存在主服务
+              let masterServer = resplist.filter(item => { return item.isMaster === '1' })
+              if (masterServer) {
+                await this.setCustomConfig({ key: 'master', value: masterServer[0].serverIp })
+              } else {
+                this.modal4 = true
+              }
+            }
+            await this.sleep(800)
+            this.serverList = await this.HandleGetServerList(this.$store.state.app.masterip)
           }
           this.serverPopup = false
         } catch (error) {
           const isObject = obj => obj === Object(obj)
           if (isObject(error)) {
-            this.notifyUserOfError(36)
+            this.notifyUserOfDiskError(36)
           } else {
-            this.notifyUserOfError(error)
+            this.notifyUserOfDiskError(error)
           }
         }
         await this.sleep(500)

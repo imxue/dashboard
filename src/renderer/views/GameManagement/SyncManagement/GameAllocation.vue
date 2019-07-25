@@ -312,7 +312,7 @@
         this.handleGetSearch(this.curroffset, this.currlimit)
       },
       hanbleChangePage (e) {
-        this.handleGetGame((e - 1) * this.Pagelimit, this.Pagelimit)
+        this.handleGetGame({ offset: (e - 1) * this.Pagelimit })
       },
       /**
        * 切换服务器ip
@@ -320,7 +320,7 @@
       handleSelectChange (serverip) {
         this.currentIp = serverip
         // this.currentServerId = serverInfo.server_id
-        this.handleGetGame(0)
+        this.handleGetGame()
         this.handleGetAllServersDisk()
       },
       /**
@@ -328,7 +328,7 @@
        */
       handleSelectDiskChange (diskID) {
         this.currentDiskId = diskID
-        this.handleGetGame(0, this.Pagelimit, this.currentDiskId, 'name', this.currentIp, this.gameType, '')
+        this.handleGetGame({ serverdiskid: diskID })
       },
       handleSelectChangeserversIp1 (data) {
         getAllServerDisks(data.label).then((resp) => {
@@ -361,7 +361,7 @@
        */
       handleButtonAllowe (data) {
         if (this.getCheckboxVal.length === 0) {
-          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+          this.notifyUserOfError('PleaseSelectAtLeastOneItemInTheList')
         } else {
           this.distributionPanel = true
           this.serversIpList1 = this.serversIpList.filter(item => { return item.ip === this.currentIp })
@@ -426,7 +426,7 @@
       handleButtonCancleAllowe (val) {
         val = this.getCheckboxVal.length
         if (val === 0) {
-          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+          this.notifyUserOfError('PleaseSelectAtLeastOneItemInTheList')
         } else {
           let str = ''
           this.getCheckboxVal.filter(item => {
@@ -435,7 +435,7 @@
           str = str.substr(0, str.length - 1) // 切换最后一个字符
           canceldistributeGame(str).then((res) => {
             this.handleGetGame(this.pageinfo.page_index - 1, this.Pagelimit)
-            this.$Message.success(this.$t('OperationSuccessful'))
+            this.notifyUserOfError('OperationSuccessful')
           }, (error) => {
             this.$Message.error(error.data.error)
           })

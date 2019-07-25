@@ -11,6 +11,9 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 
 import lodash from 'lodash'
+
+import alert from './utils/alert'
+
 /* eslint-disable no-new */
 
 Vue.use(iView, {
@@ -18,15 +21,11 @@ Vue.use(iView, {
 })
 Vue.use(lodash)
 Vue.prototype.$lodash = lodash
-Vue.prototype.notifyUserOfError = function (error) {
-  this.$Message.error({
-    content: this.$t(`kxLinuxErr.${error}`)
-  })
-}
-// if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 
+Object.keys(alert).forEach(item => {
+  Vue.prototype[item] = alert[item]
+})
 Vue.config.productionTip = false
-
 new Vue({
   i18n,
   router,

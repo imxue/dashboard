@@ -555,3 +555,29 @@ export function RaidCreate (list, ip) {
 export function RaidRemove (path, ip) {
   return makeRequestx('Raid_Remove', { path }, ip)
 }
+
+/**
+ * 用户创建
+ */
+export function userCreate (info, ip) {
+  return makeRequestx('user_Create', info, ip)
+}
+/**
+ * 用户设置
+ */
+export function userSet (info, ip) {
+  return makeRequestx('user_Set', info, ip)
+}
+/**
+ * 用户删除
+ */
+export function userDelete (info, ip) {
+  let data = { userList: info }
+  return makeRequestx('user_Del', data, ip)
+}
+/**
+ * 用户删除
+ */
+export function userList (ip) {
+  return makeRequestx('user_list', {}, ip)
+}

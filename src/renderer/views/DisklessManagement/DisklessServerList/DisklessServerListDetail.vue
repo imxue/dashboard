@@ -250,10 +250,8 @@ import {
   deleteserverConfig,
   RaidCreate,
   RaidRemove } from '@/api/wupan'
-// import { getAllServerDisks } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
-// import { bytesToSize2 } from '../../../utils/index'
 import { setValue } from '@/api/common'
 export default {
   name: 'DisklessServerListDetail',

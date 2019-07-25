@@ -176,3 +176,56 @@ export function setSchemeIcon (info) {
 export function setPcConf (data, ip) {
   return makeRequestx('Set_PcConf', { ...data }, ip)
 }
+/**
+ *  重新启动
+ */
+export function restart (info) {
+  let data = {
+    macaddrs: info
+  }
+  return request({
+    url: `/v1/pc/restart`,
+    method: 'POST',
+    data
+  })
+}
+/**
+ *  关闭
+ */
+export function shutdown (info) {
+  let data = {
+    macaddrs: info
+  }
+  return request({
+    url: `/v1/pc/shutdown`,
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ *  唤醒
+ */
+export function wakeup (info) {
+  let data = {
+    macaddrs: info
+  }
+  return request({
+    url: `/v1/pc/wakeup`,
+    method: 'POST',
+    data
+  })
+}
+/**
+ *  远程
+ */
+export function remoteControl (info) {
+  let data = {
+    macaddrs: info
+  }
+  return request({
+    url: `/v1/pc/remoteControl`,
+    method: 'POST',
+    data
+  })
+}

@@ -415,6 +415,19 @@
   "Running":"运行中",
   "PleaseInputGameType":"请选择游戏类型",
   "SupportGameInit":"支持游戏名首字母",
-  "UserManagement":"用户管理",
-  "UserList":"用户列表"
+  "UserManagement":"用户磁盘管理",
+  "UserList":"用户列表",
+  "Restart":"重启",
+  "shoudown":"关机",
+  "wakeup":"唤醒",
+  "Remotely":"远程",
+  "Volume":"容量",
+  "usedVolume":"已使用容量",
+  "userName":"用户名",
+  "createUser":"创建用户",
+  "setUserinfo":"设置用户信息",
+  "changePassword":"修改密码",
+  "password":"密码",
+  "cofirmPassword":"确认密码",
+  "passwordError":"两次密码不一致"
 }

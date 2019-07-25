@@ -1,17 +1,26 @@
 <template>
   <div>
-    <div class="topItem">
+ 
       <!-- <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
       <Button type="primary" class="topColumn" @click="handleButtonEdit">批量编辑</Button>
       <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>-->
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonAwaken">唤醒</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonShutdown">关机</Button>-->
-    
-      <Button type="primary" class="topColumn" @click="handleButtonReStart">{{$t('Refresh')}}</Button>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button> -->
+      
+    <Row class="header">
+        <Col span="10" >
+      <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
-    </div>
+        </Col>
+      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemotely">{{$t('Remotely')}}</Button> -->
+      
+        <Col span="" offset="17">
+      <Button type="primary" class="topColumn" @click="handleButtonwakeup" :loading="loading">{{$t('wakeup')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonShutdown" :loading="loading">{{$t('shoudown')}}</Button>
+      <Button type="primary" class="topColumn" @click="handleButtonRestart" :loading="loading">{{$t('Restart')}}</Button>
+        </Col>
+    </Row>
+  
     <!-- table -->
     <Table
       border
@@ -96,7 +105,11 @@ import {
   changeSchema,
   setSuper,
   getSuper,
-  setCancelSuper
+  setCancelSuper,
+  restart,
+  shutdown,
+  wakeup
+
 } from '@/api/client'
 import { getPcListConfigx, getImageListx, deletePcsConfigx } from '@/api/wupan'
 export default {
@@ -105,6 +118,9 @@ export default {
   data () {
     return {
       masterip: this.$store.state.app.masterip || '',
+      loading: false,
+      selectMac: [],
+      macArray: [], // 选择的mac地址
       err: '',
       clientIp: [], // 客户机ip
       clientMac: [],
@@ -130,11 +146,11 @@ export default {
       tableData: [],
       tableDataList: [], // 批量编辑时，传值到下一页
       tableColumns: [
-        // { type: 'selection', width: 50, align: 'center' },
+        { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
           minWidth: 60,
-          maxWidth: 60,
+          maxWidth: 70,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -283,6 +299,39 @@ export default {
     }
   },
   methods: {
+    /**
+        刷新
+    */
+    handleButtonRefresh () {
+      this.handgetClienList()
+      this.handleGetSuper()
+    },
+    /**
+        唤醒 关机 重启 函数模板
+    */
+    formatFunction (func) {
+      if (this.macArray.length === 0) {
+        return
+      }
+      this.loading = true
+      func(this.macArray.toString()).then(resp => {
+        this.notifyUserOfSucess(resp.data)
+        this.loading = false
+      }).catch(err => {
+        setTimeout(() => { this.loading = false }, 500)
+        this.notifyUserOfError(err.data.error)
+      })
+    },
+    /** 唤醒 */
+    handleButtonwakeup () { this.formatFunction(wakeup) },
+    /** 关机 */
+    handleButtonShutdown () { this.formatFunction(shutdown) },
+    /** 重启 */
+    handleButtonRestart () { this.formatFunction(restart) },
+
+    /**
+      获取超级工作站
+    */
     handleGetSuper () {
       if (!this.masterip) return
       getSuper(this.masterip).then(response => {
@@ -290,21 +339,20 @@ export default {
           this.currentSuperip = response.data.result.ip
         }
       }, (error) => {
-        this.$Message.error(this.$t(`kxLinuxErr.${error}`))
+        this.notifyUserOfDiskError(error)
       })
     },
-    handgetClienList () {
+    async handgetClienList () {
       if (!this.masterip) return
-      getPcListConfigx(this.masterip).then(response => {
-        if (response.data.result.list) {
-          this.tableData = response.data.result.list
-          this.tableData.forEach(element => {
-            this.clientIp.push(element.ip)
-            this.clientMac.push(element.mac)
-            this.pc.push(element.pc)
-          })
-        }
-      })
+      let resp = await getPcListConfigx(this.masterip)
+      this.tableData = resp.data.result.list || []
+      if (this.tableData) {
+        this.tableData.forEach(i => {
+          this.clientIp.push(i.ip)
+          this.clientMac.push(i.mac)
+          this.pc.push(i.pc)
+        })
+      }
     },
     /*
     获取超级工作站
@@ -360,7 +408,6 @@ export default {
         }
       })
     },
-
     handleRemoveTableRowInfo (data) {
       this.handleFormatArr(data)
     },
@@ -382,7 +429,6 @@ export default {
         })
       }
       this.tableDataList = list
-      // console.log(JSON.stringify(this.tableDataList))
     },
     handleCallBackVaild (res) {
       var code = res.data.Code
@@ -437,13 +483,11 @@ export default {
       }
     },
     handleCheckBox (arr) {
-      var data = arr
-      var list = []
-      for (var i in arr) {
-        list.push(data[i].Id)
-      }
-      this.getCheckboxVal = list.join(',')
-      return this.getCheckboxVal
+      this.macArray = []
+      if (!arr) return ''
+      arr.forEach(item => {
+        this.macArray.push(item.mac)
+      })
     },
     handleButtonFilter (val) {
       val = this.getCheckboxVal.length
@@ -492,6 +536,7 @@ export default {
       var name = 'del'
       this.handleCheckBoxNumber(name)
     },
+
     handleCancel () {
       this.showDeleteBox = false
     },
@@ -523,11 +568,7 @@ export default {
       })
     },
     handleButtonAwaken () {},
-    handleButtonShutdown () {},
-    handleButtonReStart () {
-      this.handgetClienList()
-      this.handleGetSuper()
-    },
+
     handleTableEdit (data) {
       let exclientIp = this.clientIp.filter(item => { return item !== data.ip })
       let pc = this.pc.filter(item => { return item !== data.pc })
@@ -607,4 +648,7 @@ export default {
 </script>
 
 <style scoped>
+.header{
+  margin-bottom: 10px;
+}
 </style>
