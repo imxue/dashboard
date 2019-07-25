@@ -180,14 +180,9 @@ export default {
           this.tableData = data.length === 0 ? [] : data
           this.pageInfo = e.data.pageino
         },
-        () => {}
-        )
-        .catch(error => {
-          this.$Notice.open({
-            title: '错误',
-            desc: '' + error,
-            duration: 0
-          })
+        () => {})
+        .catch(() => {
+          this.notifyUserOfDiskError(36873)
         })
     },
     handleCallBackVaild (res) {

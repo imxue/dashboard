@@ -22,11 +22,11 @@
           </template>
         </Menu>
         <div class="headerFooter">
-          <span>{{ $t("BarId") }}：{{netBarId}}</span>
-          <span>{{ $t("OnlineTerminal") }} / {{ $t("AllTerminal") }} {{onlineNetBar}} / {{totalNetBar}}</span>
+          <span>{{ $t("BarId") }}：{{x.bar_id}}</span>
+          <span>{{ $t("OnlineTerminal") }} / {{ $t("AllTerminal") }} {{x.online_client_count}} / {{x.client_count}}</span>
           <span>
             {{ $t("AuthorizationIsValidUntil") }}：
-            <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{expireTime}}</span>
+            <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{x.expire_time}}</span>
           </span>
 
           <Dropdown trigger="click" @on-click="ChangeLanguage">
@@ -67,10 +67,11 @@ export default {
     return {
       expireTime: '2019/11/29',
       expireTimeState: 0,
-      netBarId: '0000001',
+      netBarId: this.$store.state.app.barid || '',
       onlineNetBar: '1000',
       totalNetBar: '2000',
       localStorageLang: localStorage.getItem('lang'),
+      x: this.$store.state.app.barinfo,
       localLanguage: [
         {
           value: 'zh-CN',
@@ -92,6 +93,7 @@ export default {
     // if (this.localStorageLang) {
     //   Vue.config.lang = this.localStorageLang
     // }
+    // this.netBarId = this.$store.state.app.barid.toString()
   },
   methods: {
     handleExpireTime () {

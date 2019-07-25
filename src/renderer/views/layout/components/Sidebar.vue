@@ -43,12 +43,9 @@
     },
     methods: {
       getSubItemName (itemIndex, subItemIndex) {
-      // this.activeName = itemIndex + '-' + subItemIndex
-      //  console.log(itemIndex + '-' + subItemIndex)
         return itemIndex + '-' + subItemIndex
       },
       test () {
-        // console.log('1', this.$router.options.routes)
         let matched = this.$router.options.routes.filter(item => {
           return item.path === this.$route.matched[0].path
         })

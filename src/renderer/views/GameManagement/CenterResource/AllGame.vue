@@ -231,10 +231,10 @@ export default {
         this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
       }, () => {
         // 这里执行reject状态的
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
+        this.notifyUserOfDiskError(36873)
       }).catch(() => {
         // 在发送代码错误时执行这里
-        this.$Message.error(this.$t('kxLinuxErr.10'))
+        this.notifyUserOfDiskError(36873)
       })
     },
     handleGetTableList (e) {

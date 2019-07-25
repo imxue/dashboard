@@ -13,7 +13,7 @@ import 'iview/dist/styles/iview.css'
 import lodash from 'lodash'
 
 import alert from './utils/alert'
-
+import './router/Hook'
 /* eslint-disable no-new */
 
 Vue.use(iView, {
@@ -25,6 +25,7 @@ Vue.prototype.$lodash = lodash
 Object.keys(alert).forEach(item => {
   Vue.prototype[item] = alert[item]
 })
+
 Vue.config.productionTip = false
 new Vue({
   i18n,

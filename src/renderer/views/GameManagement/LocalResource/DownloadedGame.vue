@@ -141,24 +141,6 @@
       }
     },
     methods: {
-      // handleGetDrivers () {
-      //   getDrivers().then((res) => {
-      //     debugger
-      //     if (res.data.Code === 0) {
-      //       var arr = res.data.Data.TypeIds
-      //       if (arr === null) {
-      //         this.gameList = null // 全部游戏类型
-      //       } else {
-      //         this.gameList = arr
-      //         // console.log('gameTypeList::' + JSON.stringify(this.gameTypeList))
-      //       }
-      //     } else {
-      //       this.$Message.error(res.data.Msg)
-      //     }
-      //   }, () => {
-      //     this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
-      //   })
-      // },
       handleSelectChange (index) {
         this.optionVal = index
       },
@@ -175,9 +157,9 @@
         getDownloadedGames(0, 10, 'name').then((response) => {
           this.tableData = response.data.data
         }, () => {
-          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
+          this.notifyUserOfError('RequestErrorPleaseTryAgainLater')
         }).catch((e) => {
-          this.$Notice.error({ desc: '' + e, duration: 0 })
+          this.notifyUserOfDiskError(36873)
         })
       },
       hanbleChangePage (num) {

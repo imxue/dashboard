@@ -149,6 +149,7 @@
                 <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
                 <Option value="dataDisk">{{$t('DataDisk')}}</Option>
                 <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
+                <Option value="userDisk">{{$t('userDisk')}}</Option>
                 <Option value="unUsed">{{$t('Unused')}}</Option>
               </Select>
             </Col>
@@ -424,6 +425,8 @@ export default {
                 return h('span', this.$t('WriteBackDisk'))
               case 'unUsed':
                 return h('span', this.$t('Unused'))
+              case 'userDisk':
+                return h('span', this.$t('userDisk'))
               case 'raidMember':
                 return h('span', this.$t('ArrayMember'))
               default:

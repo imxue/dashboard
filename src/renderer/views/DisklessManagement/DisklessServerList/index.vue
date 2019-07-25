@@ -289,7 +289,7 @@ export default {
         let resp = await getMasterIp()
         this.$store.dispatch('saveMaster', resp.data.value || '')
       } catch (e) {
-        this.notifyUserOfDiskError()
+        this.notifyUserOfDiskError(36873)
       }
     },
     /**

@@ -1,7 +1,9 @@
 import request from '@/utils/request'
 
-export function login (info) {
-  const data = { ...info }
+export function login (id) {
+  const data = {
+    'barid': id
+  }
   return request({
     url: '/v1/bar/login',
     method: 'post',
@@ -11,11 +13,11 @@ export function login (info) {
 
 export function netbarRegister (id, password) {
   const data = {
-    Id: id,
-    Password: password
+    barid: id,
+    password: password
   }
   return request({
-    url: '/console/netbarRegister',
+    url: '/v1/bar/regist',
     method: 'post',
     data
   })
@@ -54,7 +56,7 @@ export function getUserInfo (token) {
 
 export function getNetCafe () {
   return request({
-    url: '/getNetCafeInfo',
+    url: '/v1/bar/getBarInfo',
     method: 'get'
   })
 }

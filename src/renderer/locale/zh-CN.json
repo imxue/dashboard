@@ -429,5 +429,6 @@
   "changePassword":"修改密码",
   "password":"密码",
   "cofirmPassword":"确认密码",
-  "passwordError":"两次密码不一致"
+  "passwordError":"两次密码不一致",
+  "userDisk":"用户盘"
 }

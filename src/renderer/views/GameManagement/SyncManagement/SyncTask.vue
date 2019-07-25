@@ -16,7 +16,7 @@
       </Row>
    
     <!-- table -->
-    <Table border ref="selection" :loading='fetch' :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <Page :current="this.pageinfo.page_index + 1" :total="this.pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
     </Row>
@@ -40,7 +40,6 @@
     name: 'subType4-2',
     data () {
       return {
-        fetch: false,
         showDeleteBox: false,
         getCheckboxVal: [], // 勾选复选框值
         tableSelectVal: [],
@@ -185,7 +184,6 @@
        * 查询同步日志
        */
       handleGetTableList (offset = 0, limit = this.Pagelimit, pagetypeid = 0, letter = '') {
-        this.fetch = true
         var data = {
           offset: offset,
           limit: limit,
@@ -200,8 +198,6 @@
           })
           this.pageinfo = resp.data.pageino
         }, (res) => {})
-          .catch(() => { this.fetch = false })
-          .finally(() => { this.fetch = false })
       },
       /**
        * 切换页码

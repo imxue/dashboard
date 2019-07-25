@@ -1,20 +1,28 @@
-// import router from '../router'
-// router.beforeEach((to, from, next) => {
-//   let i = localStorage.getItem('IsLogin')
-//   if (i) {
-//     next()
-//   } else {
-//     // 沒有登錄 判斷路由
-//     let x = to.path.indexOf('/login')
-//     let y = to.path.indexOf('/enroll')
-//     if (x === -1) { // 如果去的不是/ login 重定向到login
-//       if (y === -1) {
-//         next({ path: '/login' })
-//       } else {
-//         next()
-//       }
-//     } else {
-//       next()
-//     }
-//   }
-// })
+import router from '../router'
+
+import { getNetCafe, login } from '../api/login'
+import store from '../store/index'
+
+router.beforeEach(async (to, from, next) => {
+  if (store.state.app.barinfo) {
+    next()
+  } else {
+    getNetCafe().then(resp => {
+      if (resp.data.bar_id.toString()) {
+        store.dispatch('saveBarInfo', resp.data)
+        login(1).then(res => {
+          localStorage.getItem('token', res.token)
+          router.push('/')
+        }, (error) => {
+          console.log(error)
+        })
+      } else {
+        router.push('/login')
+      }
+    })
+
+    if (to.path === '/login') {
+      next()
+    }
+  }
+})
