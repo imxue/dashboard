@@ -11,8 +11,8 @@ router.beforeEach(async (to, from, next) => {
       if (resp.data.bar_id.toString()) {
         store.dispatch('saveBarInfo', resp.data)
         login(1).then(res => {
-          localStorage.getItem('token', res.token)
-          router.push('/')
+          localStorage.setItem('token', res.token)
+          next()
         }, (error) => {
           console.log(error)
         })

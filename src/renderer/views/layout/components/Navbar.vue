@@ -90,10 +90,6 @@ export default {
   },
   created () {
     this.handleExpireTime()
-    // if (this.localStorageLang) {
-    //   Vue.config.lang = this.localStorageLang
-    // }
-    // this.netBarId = this.$store.state.app.barid.toString()
   },
   methods: {
     handleExpireTime () {
