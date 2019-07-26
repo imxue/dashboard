@@ -311,13 +311,14 @@ export default {
     async HandleGetServerListOrAdd (ip) {
       if (!ip) return
       try {
-        let serverList = await this.HandleGetServerList(ip)
+        let serverList = await this.HandleGetServerList(ip) || []
         if (serverList.length === 0) {
           this.HandleAddServerx(ip, this.masterIp || ip)
         } else {
           this.serverList = serverList
         }
       } catch (error) {
+        console.log(error)
         this.loading = false
       }
       this.loading = false
@@ -333,6 +334,8 @@ export default {
         await editServersNode(masterip, 1, 1, selfip)
         await addServersx(selfip, guid, masterip)
       } catch (error) {
+        console.log(error)
+        debugger
         return Promise.reject(error)
       }
     },

@@ -9,7 +9,7 @@
         <FormItem prop="user" :label="this.$t('userName')">
             <Input type="text" v-model="createdUser.name" placeholder="Username" />
         </FormItem>
-        <FormItem prop="sizeM" :label="this.$t('usedVolume') + '(MB)'">
+        <FormItem prop="sizeM" :label="this.$t('password')">
             <Input v-model="createdUser.pwd" placeholder="usedM" />
         </FormItem>
         <FormItem prop="usedM" :label="this.$t('Volume') + '(MB)'">
@@ -212,7 +212,7 @@ export default {
       */
     handleGetUserList (ip) {
       userList(ip).then(resp => {
-        this.userList = resp.data.result.list
+        this.userList = resp.data.result.list || []
       })
     },
     /**
@@ -311,6 +311,9 @@ export default {
 <style scoped>
     .del {
         margin-bottom: 10px;
+    }
+    .del > button{
+        margin-right: 10px;
     }
 </style>
 
