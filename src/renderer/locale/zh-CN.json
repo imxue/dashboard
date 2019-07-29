@@ -421,8 +421,8 @@
   "shoudown":"关机",
   "wakeup":"唤醒",
   "Remotely":"远程",
-  "Volume":"容量",
-  "usedVolume":"已使用容量",
+  "Volume":"总容量",
+  "usedVolume":"已用容量",
   "userName":"用户名",
   "createUser":"创建用户",
   "setUserinfo":"设置用户信息",
@@ -430,5 +430,7 @@
   "password":"密码",
   "cofirmPassword":"确认密码",
   "passwordError":"两次密码不一致",
-  "userDisk":"用户盘"
+  "userDisk":"用户盘",
+  "plInputNumber":"请输入数字格式",
+  "User":"用户"
 }

@@ -53,7 +53,6 @@
           <Input
             ref="input"
             autofocus
-            @on-change="ResetError"
             v-model="formValidate.serverIP"
             :placeholder="$t('pleaseInputServerIp')"
             :disabled="loadingBtn"
@@ -61,7 +60,6 @@
         </FormItem>
 
         <FormItem :label="$t('ServerPW')" prop="password">
-          <div class="ivu-form-item-error-tip" v-if="NetWork">{{$t("NetworkError")}}</div>
           <Input
             type="password"
             s
@@ -97,6 +95,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import {
   addServersx,
   getServersNode,
@@ -132,8 +131,6 @@ export default {
       callback()
     }
     return {
-      masterIp: this.$store.state.app.masterip || '', // 主服务器
-      NetWork: false,
       spinShow: false,
       searchVal: '',
       modal4: false,
@@ -278,6 +275,11 @@ export default {
     this.HandleGetMaster()
     this.HandleGetServerListOrAdd(this.masterIp)
   },
+  computed: {
+    ...mapState({
+      masterIp: state => state.app.masterip // 主服务器
+    })
+  },
   methods: {
     /**
 
@@ -364,9 +366,6 @@ export default {
         }, 1000)
       }
     },
-    ResetError () {
-      this.NetWork = false
-    },
     /**
      * 清除服务器信息
      */
@@ -380,7 +379,6 @@ export default {
      */
     handleButtonAdd (val) {
       this.serverPopup = true
-      this.NetWork = false
       this.$nextTick(() => {
         this.$refs.input.focus()
       })
@@ -417,19 +415,19 @@ export default {
           var resplist = await this.HandleGetServerList(OptServerip)
           if (resplist.length === 0) {
             // 服务器没有额外的类表
-            if (this.$store.state.app.masterip) {
-              await this.HandleAddServerx(OptServerip, this.$store.state.app.masterip)
+            if (this.masterIp) {
+              await this.HandleAddServerx(OptServerip, this.masterIp)
             } else {
               await this.HandleAddServerx(OptServerip, OptServerip)
               await this.setCustomConfig({ key: 'master', value: OptServerip })
             }
             await this.sleep(800)
-            this.serverList = await this.HandleGetServerList(this.$store.state.app.masterip)
+            this.serverList = await this.HandleGetServerList(this.masterIp)
           } else {
             // 服务器有额外的类表
-            if (this.$store.state.app.masterip) {
+            if (this.masterIp) {
               // 已经存在主服务器
-              await this.HandleAddServerx(OptServerip, this.$store.state.app.masterip)
+              await this.HandleAddServerx(OptServerip, this.masterIp)
             } else {
               // 不存在主服务
               let masterServer = resplist.filter(item => { return item.isMaster === '1' })
@@ -440,7 +438,7 @@ export default {
               }
             }
             await this.sleep(800)
-            this.serverList = await this.HandleGetServerList(this.$store.state.app.masterip)
+            this.serverList = await this.HandleGetServerList(this.masterIp)
           }
           this.serverPopup = false
         } catch (error) {

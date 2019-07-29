@@ -5,20 +5,19 @@
         :title="this.$t('createUser')"
         footer-hide
         >
-        <Form ref="createdUser" :model="createdUser" :rules="createdUser" :label-width="100">
+        <Form ref="createdUser" :model="createdUser" :rules="ruleCreatedUser" :label-width="100">
         <FormItem prop="user" :label="this.$t('userName')">
-            <Input type="text" v-model="createdUser.name" placeholder="Username" />
+            <Input type="text" v-model="createdUser.user" placeholder="Username" />
         </FormItem>
-        <FormItem prop="sizeM" :label="this.$t('password')">
+        <FormItem prop="pwd" :label="this.$t('password')">
             <Input v-model="createdUser.pwd" placeholder="usedM" />
         </FormItem>
-        <FormItem prop="usedM" :label="this.$t('Volume') + '(MB)'">
-            <Input v-model="createdUser.sizeM" placeholder="usedM" />
-     
+        <FormItem prop="sizeM" :label="this.$t('Volume') + '(MB)'">
+            <Input v-model="createdUser.sizeM" placeholder="usedM"  type="number" />
         </FormItem>
         
         <FormItem >
-          <Button @click="handleuserCreate">{{$t('Save')}}</Button>
+          <Button @click="handleuserCreate('createdUser')" type="primary">{{$t('Save')}}</Button>
           <Button @click="createdModel = false" >{{$t('cancelText')}}</Button>
         </FormItem>
     </Form>
@@ -30,17 +29,16 @@
         >
         <Form ref="formInline" :model="formInline" :rules="ruleInline" :label-width="100">
         <FormItem prop="user" :label="this.$t('userName')">
-            <Input type="text" v-model="formInline.name" placeholder="Username" />
+            <Input type="text" v-model="formInline.name" placeholder="Username" disabled/>
         </FormItem>
-        <FormItem prop="usedM" :label="this.$t('Volume') + '(*m)'">
-            <Input  v-model="formInline.sizeM" placeholder="usedM" />
-     
-        </FormItem>
-        <FormItem prop="sizeM" :label="this.$t('usedVolume') + '(*m)'">
+        <FormItem prop="sizeM" :label="this.$t('usedVolume') + '(MB)'">
             <Input disabled v-model="formInline.usedM" placeholder="usedM" />
         </FormItem>
+        <FormItem prop="usedM" :label="this.$t('Volume') + '(MB)'">
+            <Input  v-model="formInline.sizeM" placeholder="usedM" />
+        </FormItem>
         <FormItem >
-          <Button @click="HandleSave" >{{$t('Save')}}</Button>
+          <Button @click="HandleSave"  type="primary">{{$t('Save')}}</Button>
           <Button @click="modal6 = false" >{{$t('cancelText')}}</Button>
         </FormItem>
     </Form>
@@ -58,13 +56,13 @@
             <Input v-model="PasswordInfo.Confirmpassword" :placeholder="this.$t('cofirmPassword')"/>
         </FormItem>
         <FormItem >
-          <Button @click="HandleChangePasswordSave" >{{$t('Save')}}</Button>
+          <Button @click="HandleChangePasswordSave" type="primary" >{{$t('Save')}}</Button>
           <Button @click="passwordModel = false" >{{$t('cancelText')}}</Button>
         </FormItem>
     </Form>
     </Modal>
         <div class="del">
-         <Button @click="createdModel = true" type='info' >{{$t('Create')}}</Button>
+         <Button @click="createdModel = true" type="primary" >{{$t('Create')}}</Button>
          <Button @click="handleDeleteAll" type='error' >{{$t('Delete')}}</Button>
         </div>
          <Table :columns="userListColumns" :data="userList" @on-selection-change='handleSelect' border></Table>
@@ -75,7 +73,6 @@
 
 <script>
 import { userList, userDelete, userSet, userCreate } from '@/api/wupan'
-// import { userCreate, userSet, userDelete, userList } from '@/api/wupan'
 export default {
   name: 'user',
   data () {
@@ -104,17 +101,24 @@ export default {
         sizeM: ''
       },
       createdUser: {
-        name: '',
+        user: '',
         pwd: '',
         sizeM: ''
+      },
+      ruleCreatedUser: {
+        user: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+        pwd: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+        sizeM: [
+          { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }
+        ]
       },
       PasswordInfo: {
         password: '',
         Confirmpassword: ''
       },
       rulesPasswordInfo: {
-        password: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-        Confirmpassword: [{ required: true, validator: checkpassword, trigger: 'blur' }]
+        password: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
+        Confirmpassword: [{ required: true, validator: checkpassword, trigger: 'change' }]
       },
       ruleInline: {},
       userList: [],
@@ -147,11 +151,6 @@ export default {
             return [a, b, c]
           }
         },
-        // {
-        //   align: 'center',
-        //   renderHeader: (h, params) => { return h('span', this.$t('usedVolume')) },
-        //   key: 'usedM'
-        // },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
@@ -196,15 +195,19 @@ export default {
     /**
         创建用户
       */
-    handleuserCreate () {
-      let info = {
-        'name': this.createdUser.name,
-        'pwd': this.createdUser.pwd,
-        'sizeM': this.createdUser.sizeM
-      }
-      userCreate(info, this.masterip).then(resp => {
-        this.handleGetUserList(this.masterip)
-        this.createdModel = false
+    handleuserCreate (name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          let info = {
+            'name': this.createdUser.user,
+            'pwd': this.createdUser.pwd,
+            'sizeM': this.createdUser.sizeM
+          }
+          userCreate(info, this.masterip).then(resp => {
+            this.handleGetUserList(this.masterip)
+            this.createdModel = false
+          })
+        }
       })
     },
     /**
@@ -242,8 +245,14 @@ export default {
     handleDelete (data) {
       let userList = []
       userList.push(data.name)
-      userDelete(userList, this.masterip).then((resp) => {
-        this.handleGetUserList(this.masterip)
+      this.$Modal.confirm({
+        title: this.$t('DeleteTip'),
+        content: `${this.$t('确定删除')} 【${data.name}】 ${this.$t('User')} `,
+        onOk: () => {
+          userDelete(userList, this.masterip).then((resp) => {
+            this.handleGetUserList(this.masterip)
+          })
+        }
       })
     },
     /**
@@ -264,8 +273,14 @@ export default {
     */
     handleDeleteAll () {
       if (this.selectData.length > 0) {
-        userDelete(this.selectData, this.masterip).then(() => {
-          this.handleGetUserList(this.masterip)
+        this.$Modal.confirm({
+          title: this.$t('DeleteTip'),
+          content: `${this.$t('Delete')} 【${this.selectData}】 ${this.$t('User')} `,
+          onOk: () => {
+            userDelete(this.selectData, this.masterip).then((resp) => {
+              this.handleGetUserList(this.masterip)
+            })
+          }
         })
       } else {
         console.log(this.selectData)

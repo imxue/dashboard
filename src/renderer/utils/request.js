@@ -1,8 +1,8 @@
 import axios from 'axios'
-import router from '../router'
-// import qs from 'qs'
-import i18n from '../locale'
-import iView from 'iview'
+// import router from '../router'
+// // import qs from 'qs'
+// import i18n from '../locale'
+// import iView from 'iview'
 const service = axios.create({
   // baseURL: 'http://10.88.66.153:8080/',
   baseURL: 'http://10.88.66.71:8080',
@@ -51,13 +51,13 @@ service.interceptors.response.use(
     if (error.response === undefined) {
       return
     }
-    if (error.response && error.response.status === 401) {
-      iView.Notice.info({
-        desc: i18n.t('loginTmeOut'),
-        duration: 3
-      })
-      router.push('/login')
-    }
+    // if (error.response && error.response.status === 401) {
+    //   iView.Notice.info({
+    //     desc: i18n.t('loginTmeOut'),
+    //     duration: 3
+    //   })
+    //   router.push('/login')
+    // }
     return Promise.reject(error)
   }
 )
