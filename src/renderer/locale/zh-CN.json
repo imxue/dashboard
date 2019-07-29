@@ -404,7 +404,7 @@
     "9":"2.不支持游戏同步功能"
   },
   "ServerListIsEmpty":"该服务器下列表为空",
-  "SetUpDiskSoftConnection":"设置磁盘软连接",
+  "SetUpDiskSoftConnection":"设置磁盘软阵列",
   "AtLeastTwoDisks":"至少两个磁盘",
   "SaveBootPath":"保存批处理",
   "DefaultRule":"默认分配规则",
