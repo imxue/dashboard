@@ -5,7 +5,7 @@ import store from '../store/index'
 
 router.beforeEach(async (to, from, next) => {
   if (store.state.app.barinfo) {
-    if (localStorage.getItem('token')) {
+    if (!localStorage.getItem('token')) {
       login(store.state.app.barinfo.bar_id).then(res => {
         localStorage.setItem('token', res.token)
       })

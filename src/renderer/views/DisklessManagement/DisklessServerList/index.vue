@@ -282,9 +282,7 @@ export default {
   },
   methods: {
     /**
-
       获取主服务器
-
     */
     async HandleGetMaster () {
       try {
