@@ -192,9 +192,9 @@ export default {
       info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
         this.imgreSource = resp.data
-        this.imgreSource.map(item => {
-          item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-        })
+        // this.imgreSource.map(item => {
+        //   item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
+        // })
       })
     },
     /**
@@ -210,9 +210,9 @@ export default {
       getSchemeIcon(info).then(response => {
         if (response.data.ok) {
           this.imgreSource = response.data
-          this.imgreSource.map(item => {
-            item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-          })
+          // this.imgreSource.map(item => {
+          //   item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
+          // })
         } else {
           this.imgreSource = []
           this.$Message.info({

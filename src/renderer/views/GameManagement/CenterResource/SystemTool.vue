@@ -6,122 +6,127 @@
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe></Table>
+    <Table border ref="selection" :columns="tableColumns" :data="SystemTool"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="8">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col>
        <!-- <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}}{{$t('Downloaded')}}：{{DownLoadCount}}</i-col> -->
-      <i-col span="16"><Page :total="10"  style=" float:right;"/></i-col>
+       <Page :total="this.pageInfo.count" :current="pageInfo.page_index + 1" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/>
     </Row>
     
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'subType1-1',
-    data () {
-      return {
-        getCheckboxVal: [], // 勾选复选框值
-        tableSelectVal: [],
-        tableColumns: [
-          { type: 'selection', width: 60, align: 'center' },
-          {
-            renderHeader: (h, params) => { return h('span', this.$t('Status')) },
-            key: 'state',
-            render: (h, params) => {
-              let type = params.row.state
-              switch (type) {
-                case 0:
-                  return h('span', this.$t('LatestVersion'))
-                case 1:
-                  return h('span', { style: { color: '#999999' } }, this.$t('Undownload'))
-                case 2:
-                  return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
-                case 3:
-                  return h('span', { style: { color: '#ff0000' } }, this.$t('UpdateFailed'))
-                default:
-                  return '-'
-              }
+import { getSystemTools } from '@/api/localGame'
+export default {
+  name: 'SystemTool',
+  data () {
+    return {
+      getCheckboxVal: [], // 勾选复选框值
+      tableSelectVal: [],
+      tableColumns: [
+        { type: 'selection', width: 60, align: 'center' },
+        {
+          renderHeader: (h, params) => { return h('span', this.$t('Status')) },
+          key: 'State',
+          render: (h, params) => {
+            let type = params.row.State
+            switch (type) {
+              case 0:
+                return h('span', this.$t('LatestVersion'))
+              case 1:
+                return h('span', { style: { color: '#999999' } }, this.$t('Undownload'))
+              case 2:
+                return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
+              case 3:
+                return h('span', { style: { color: '#ff0000' } }, this.$t('UpdateFailed'))
+              default:
+                return '-'
             }
-          },
-          { key: 'type', renderHeader: (h, params) => { return h('span', this.$t('Type')) } },
-          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
-          { key: 'size', renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) } },
-          { key: 'versionCenter', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-          { key: 'versionLocal', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
-          { key: 'path', renderHeader: (h, params) => { return h('span', this.$t('localPath')) } }
-        ],
-        tableData: [
-          { id: 0, state: 0, type: '菜单工具', name: '游戏组件库', size: '10.85 GB', versionCenter: '20181010153501', versionLocal: '20181010153501', path: 'xxxxxxxxxxxx' },
-          { id: 1, state: 1, type: '无盘工具', name: '游戏工具库', size: '10.85 GB', versionCenter: '20181010153501', versionLocal: '-', path: 'xxxxxxxxxxxx' },
-          { id: 2, state: 2, type: '网络游戏', name: '无盘ISO', size: '10.85 GB', versionCenter: '20181010153501', versionLocal: '20181010153501', path: 'xxxxxxxxxxxx' },
-          { id: 3, state: 3, type: '网络游戏', name: '无盘ISO', size: '10.85 GB', versionCenter: '20181010153501', versionLocal: '20181010153501', path: 'xxxxxxxxxxxx' }
-        ]
-      }
+          }
+        },
+        { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('Type')) } },
+        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
+        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) } },
+        { key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { key: 'DownloadPath', renderHeader: (h, params) => { return h('span', this.$t('localPath')) } }
+      ],
+      SystemTool: [],
+      pageInfo: {
+        count: '',
+        page_index: '',
+        page_size: ''
+      },
+      Pagelimit: 10
+    }
+  },
+  created () {
+    this.handleGetTable(0, 10, 'name', '无盘')
+  },
+  computed: {
+    routes () {
+      return this.$router.options.routes
+    }
+  },
+  methods: {
+    handleGetTable (offset, limit, orderby, gamename) {
+      getSystemTools(offset, limit, orderby, gamename).then((resp) => {
+        this.SystemTool = resp.data.data
+        this.pageInfo = resp.data.pageino
+      })
     },
-    created () {},
-    computed: {
-      routes () {
-        return this.$router.options.routes
-      }
+    handleGetTableList (e) {
+      this.handleGetTable((e - 1) * this.Pagelimit, this.Pagelimit, 'Name', '无盘')
     },
-    methods: {
-      handleButtonDW (val) {
-        val = this.getCheckboxVal.length
-        if (val === 0) {
-          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-        } else {
-          this.$router.push({
-            path: 'subtype1-download',
-            query: { id: this.getCheckboxVal }
-          })
-        }
-      },
-      handleButtonFixGame (val) {
-        val = this.getCheckboxVal.length
-        if (val === 0) {
-          this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-        } else {
-          this.$Message.info('修复中，请耐心等待……')
-        }
-      },
-      handleCheckBox (arr) {
-        var data = arr
-        var list = []
-        for (var i in arr) {
-          list.push(data[i].id)
-        }
-        this.getCheckboxVal = list.join(',')
-        console.log(this.getCheckboxVal)
-        return this.getCheckboxVal
-      },
-      handleTableDw (index) {
-        this.getCheckboxVal = this.tableSelectVal.push(index.id)
-        // alert(this.getCheckboxVal)
+    handleButtonDW (val) {
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+      } else {
         this.$router.push({
           path: 'subtype1-download',
           query: { id: this.getCheckboxVal }
         })
-      },
-      handleFixGame (index) {
-        this.getCheckboxVal = this.tableSelectVal.push(index.id)
-        this.$Message.info('id:' + this.getCheckboxVal + '修复中，请耐心等待……')
-        // alert(this.getCheckboxVal)
-        // this.$router.push({
-        //   path: 'subtype1-remove',
-        //   query: { id: this.getCheckboxVal }
-        // })
-      },
-      handleRemove (index) {
-        this.getCheckboxVal = this.tableSelectVal.push(index.id)
-        // alert(this.getCheckboxVal)
-        this.$router.push({
-          path: 'subtype1-remove',
-          query: { id: this.getCheckboxVal }
-        })
       }
+    },
+    handleButtonFixGame (val) {
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+      } else {
+        this.$Message.info('修复中，请耐心等待……')
+      }
+    },
+    handleCheckBox (arr) {
+      var data = arr
+      var list = []
+      for (var i in arr) {
+        list.push(data[i].id)
+      }
+      this.getCheckboxVal = list.join(',')
+      console.log(this.getCheckboxVal)
+      return this.getCheckboxVal
+    },
+    handleTableDw (index) {
+      this.getCheckboxVal = this.tableSelectVal.push(index.id)
+      this.$router.push({
+        path: 'subtype1-download',
+        query: { id: this.getCheckboxVal }
+      })
+    },
+    handleFixGame (index) {
+      this.getCheckboxVal = this.tableSelectVal.push(index.id)
+      this.$Message.info('id:' + this.getCheckboxVal + '修复中，请耐心等待……')
+    },
+    handleRemove (index) {
+      this.getCheckboxVal = this.tableSelectVal.push(index.id)
+      this.$router.push({
+        path: 'subtype1-remove',
+        query: { id: this.getCheckboxVal }
+      })
     }
   }
+}
 </script>
 
 <style scoped>

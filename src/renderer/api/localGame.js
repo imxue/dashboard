@@ -152,14 +152,22 @@ export function getLoad (offset, limit, orderby) {
 */
 
 export function getTodayUpdateGames (offset, limit, orderby) {
-  const data = { offset, limit, orderby }
   return request({
-    url: `/v1/centerresource/getTodayUpdateGames?offset=${data.offset}&limit=${data.limit}&orderby=${data.orderby}`,
-    method: 'get',
-    data
+    url: `/v1/centerresource/getTodayUpdateGames?offset=${offset}&limit=${limit}&orderby=${orderby}`,
+    method: 'get'
   })
 }
+/**
+ * 获取今日更新游戏
 
+*/
+
+export function getSystemTools (offset, limit, orderby, name) {
+  return request({
+    url: `/v1/centerresource/getSystemTools?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${name}`,
+    method: 'get'
+  })
+}
 /**
  * 获取所有本地游戏
 
@@ -314,7 +322,7 @@ export function getDownloadLogs (offset, limit, SearchDate) {
     SearchDate
   }
   return request({
-    url: `/v1/centerresource/getDownloadLogs?offset=${data.offset}&limit=${data.limit}SearchDate=${data.SearchDate}`,
+    url: `/v1/centerresource/getDownloadLogs?offset=${data.offset}&limit=${data.limit}&SearchDate=${data.SearchDate}`,
     method: 'get',
     data
   })

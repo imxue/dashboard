@@ -8,7 +8,7 @@ import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/MirrorConfi
 import StartUpPlan from '@/views/DisklessManagement/ClientStartup/StartUpPlan'
 import dpcp from '@/views/DisklessManagement/ClientStartup/dpcp'
 import Edit from '@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'
-import User from '@/views/DisklessManagement/UserManagement/index'
+// import User from '@/views/DisklessManagement/UserManagement/index'
 export default {
   path: '/Diskless',
   name: '无盘管理',
@@ -91,20 +91,20 @@ export default {
           hidden: true
         }
       ]
-    },
-    {
-      path: 'UserManagement',
-      name: '个人磁盘管理',
-      meta: { title: 'UserManagement', hidden: true },
-      component: NullLayout,
-      children: [
-        {
-          path: 'UserManagement',
-          name: 'UserManagementList',
-          meta: { title: 'UserList' },
-          component: User
-        }
-      ]
     }
+    // {
+    //   path: 'UserManagement',
+    //   name: '个人磁盘管理',
+    //   meta: { title: 'UserManagement', hidden: true },
+    //   component: NullLayout,
+    //   children: [
+    //     {
+    //       path: 'UserManagement',
+    //       name: 'UserManagementList',
+    //       meta: { title: 'UserList' },
+    //       component: User
+    //     }
+    //   ]
+    // }
   ]
 }

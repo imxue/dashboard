@@ -63,8 +63,8 @@ export default {
     }
   },
   created () {
-    this.handTableData(0, 10, '2019-04-23 10:41:05')
-    console.log(this.$t('x'))
+    this.handTableData(0, 10, '')
+    // console.log(this.$t('x'))
   },
   computed: {
     routes () {
@@ -79,6 +79,10 @@ export default {
       var currId = index.id
       alert(currId)
     },
+    /**
+     *
+     * 下载日志
+     */
     handTableData (offset, limit, SearchDate) {
       getDownloadLogs(offset, limit, SearchDate).then((response) => {
         this.tableData = response.data.data.data

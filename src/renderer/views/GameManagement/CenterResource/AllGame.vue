@@ -39,7 +39,7 @@
 <script>
 import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
 import { bytesToSize2 } from '../../../utils/index'
-import Vue from 'vue'
+// import Vue from 'vue'
 const _ = require('lodash')
 export default {
   name: 'allGame',
@@ -149,7 +149,7 @@ export default {
     }
   },
   created () {
-    this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
+    // this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
     this.handgetAllGame(0, this.Pagelimit, 'Name')
   },
   computed: {
@@ -259,6 +259,7 @@ export default {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
         this.DownloadGameUp = false
+        this.handgetAllGame(0, this.Pagelimit, 'Name')
       }, (e) => {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {

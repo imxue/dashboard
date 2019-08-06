@@ -3,8 +3,8 @@ import Layout from '@/views/layout/index'
 import AllGame from '@/views/GameManagement/CenterResource/AllGame'
 import TodyaUpdate from '@/views/GameManagement/CenterResource/TodyaUpdate'
 import SystemTool from '@/views/GameManagement/CenterResource/SystemTool'
-import Download from '@/views/GameManagement/CenterResource/subtype1-download'
-import remove from '@/views/GameManagement/CenterResource/subtype1-remove'
+// import Download from '@/views/GameManagement/CenterResource/subtype1-download'
+// import remove from '@/views/GameManagement/CenterResource/subtype1-remove'
 import DownloadQueue from '@/views/GameManagement/ResourceDownload/DownloadQueue'
 import DownloadLog from '@/views/GameManagement/ResourceDownload/DownloadLog'
 import DownloadSet from '@/views/GameManagement/ResourceDownload/DownloadSet'
@@ -47,7 +47,7 @@ export default {
           name: '系统工具',
           meta: { title: 'SystemTool' },
           component: SystemTool
-        },
+        }
         // {
         //   path: 'subType1-4',
         //   name: '停服资源',
@@ -60,22 +60,22 @@ export default {
         //   meta: { title: '下载资源' },
         //   component: () => import('@/views/GameManagement/CenterResource/DownloadResource')
         // },
-        {
-          path: 'subType1-download',
-          name: 'subType1-download',
-          meta: { title: 'Download', hidden: true },
-          // showBtn: true,
-          component: Download,
-          hidden: true
-        },
-        {
-          path: 'subType1-remove',
-          name: '本地移除',
-          meta: { title: '本地移除', hidden: true },
-          // showBtn: true,
-          component: remove,
-          hidden: true
-        }
+        // {
+        //   path: 'subType1-download',
+        //   name: 'subType1-download',
+        //   meta: { title: 'Download', hidden: true },
+        //   // showBtn: true,
+        //   component: Download,
+        //   hidden: true
+        // }
+        // {
+        //   path: 'subType1-remove',
+        //   name: '本地移除',
+        //   meta: { title: '本地移除', hidden: true },
+        //   // showBtn: true,
+        //   component: remove,
+        //   hidden: true
+        // }
       ]
     },
     {
