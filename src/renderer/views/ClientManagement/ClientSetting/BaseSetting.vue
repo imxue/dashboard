@@ -73,17 +73,6 @@ export default {
   },
   methods: {
     /**
-     * 获取基础设置
-     */
-    HandleGetBasic () {
-      getSchemeBasics().then((response) => {
-        this.archive_server_ip = response.data.archive_server_ip
-        this.form = response.data
-      }, (error) => {
-        console.log(error)
-      })
-    },
-    /**
      * 设置是否显示菜单
     */
     is_display_menuChange (status) {
@@ -131,8 +120,19 @@ export default {
           content: this.$t('SetSucess')
         })
       })
+    },
+    HandleGetBasic () {
+      getSchemeBasics().then((response) => {
+        if (response.data.ok) {
+          this.archive_server_ip = response.data.data.archive_server_ip
+          this.form = response.data.data
+        } else {
+          this.$Message.info({
+            content: response.data.error
+          })
+        }
+      })
     }
-
   }
 }
 </script>

@@ -2,19 +2,14 @@
   <div>
     <Tabs type="card" :animated="false" v-model="currentTab" @on-click="HandleGetAllScheme">
       <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
-          <Row :gutter="16">
-             <Col span="4">
+        <div>
           <Button type="primary" v-on:click="HandEdit" v-if="disabled">{{$t('EditBootPath')}}</Button>
-           </Col>
-
-           <Col span="4">
           <Button type="primary" v-on:click="HandSetSchemeBatch" v-if="!disabled">{{$t('SaveBootPath')}}</Button>
-             </Col>
-         </Row>
+        </div>
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 36,maxRows: 36}"
+            :autosize="{minRows: 20,maxRows: 20}"
             :disabled="disabled"
             v-model="bootPathG"
           />
@@ -24,7 +19,7 @@
       <TabPane :label="$t('ClientStartPlan')" name="StartPlan">
         <div>
           <span>{{$t('ClientScheme')}}:</span>
-          <Select v-model="plan" style="width:200px" @on-change="handleGetBootBath" :disabled='flag'>
+          <Select v-model="plan" style="width:200px" @on-change="handleGetBootBath">
             <Option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
           <Checkbox size="large" v-model="single" @on-change="setDefault">{{$t('UseDefaultSetting')}}</Checkbox>
@@ -34,7 +29,7 @@
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 36,maxRows: 36}"
+            :autosize="{minRows: 20,maxRows: 20}"
             :disabled="disabledSinger"
             v-model="bootPathS"
           />
@@ -55,14 +50,13 @@ export default {
   data () {
     return {
       currentTab: 'DefaultSetting',
-      single: true,
+      single: '',
       plan: '',
       cityList: [],
       disabled: true,
       disabledSinger: true,
       bootPathG: '',
-      bootPathS: '',
-      flag: true // 是否用默认设置
+      bootPathS: ''
     }
   },
   created () {
@@ -81,25 +75,11 @@ export default {
       let matched = this.$route.matched.filter(item => item.name)
       console.log(matched)
     },
-    /**
-     * 是否启用默认设置
-     */
     setDefault (data) {
       if (data) {
-        let info = {
-          is_global: true,
-          scheme_id: '',
-          batch_process: this.bootPathG
-        }
         this.flag = true
-        setSchemeBatch(info).then(resp => {
-          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
-          this.$Message.info({
-            content: this.$t('SetSucess')
-          })
-        })
       } else {
-        this.flag = false
+        this.fiag = false
       }
     },
     HandEdit () {
@@ -122,11 +102,11 @@ export default {
         }
       }
       getSchemeBatch(data).then(response => {
-        data.global ? this.bootPathG = response.data.batch_process : this.bootPathS = response.data.batch_process
-      }, (error) => {
-        if (error.response.status === 500) {
+        if (response.data.ok) {
+          data.global ? this.bootPathG = response.data.data.batch_process : this.bootPathS = response.data.data.batch_process
+        } else {
           this.$Message.info({
-            content: error.response.statusText
+            content: response.data.error
           })
         }
       })
@@ -137,12 +117,17 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then(response => {
-          this.cityList = response.data
-          this.plan = this.cityList[0].id
-          this.handleGetBootBath()
-          this.$Message.info({
-            content: response.data.error
-          })
+          if (response.data.ok) {
+            console.log(response.data.data)
+            this.cityList = response.data.data
+            console.log(this.cityList)
+            this.plan = this.cityList[0].id
+            this.handleGetBootBath()
+          } else {
+            this.$Message.info({
+              content: response.data.error
+            })
+          }
         })
       }
     },
@@ -159,10 +144,12 @@ export default {
       info.scheme_id = this.currentTab === 'DefaultSetting' ? '' : this.plan
       info.batch_process = this.currentTab === 'DefaultSetting' ? this.bootPathG : this.bootPathS
       setSchemeBatch(info).then(resp => {
-        this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
-        this.$Message.info({
-          content: this.$t('SetSucess')
-        })
+        if (resp.data.ok) {
+          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
+          this.$Message.info({
+            content: this.$t('SetSucess')
+          })
+        }
       })
     }
   }

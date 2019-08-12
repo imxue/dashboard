@@ -2,18 +2,20 @@
   <div>
  
       <!-- <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonEdit">批量编辑</Button>
+     
       <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>-->
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button> -->
       
     <Row class="header">
-        <Col span="10" >
+        <Col span="12" >
+        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('')" style="width: 200px;"  @on-change='ChangeValue'  />
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
+       <Button type="primary" class="topColumn" @click="handleButtonEdit">{{$t('Edit')}}</Button>
+         <Button type="error" class="topColumn" @click="handAllDetele">{{$t('Delete')}}</Button>
         </Col>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonRemotely">{{$t('Remotely')}}</Button> -->
-      
         <Col span="" offset="17">
       <Button type="primary" class="topColumn" @click="handleButtonwakeup" :loading="loading">{{$t('wakeup')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonShutdown" :loading="loading">{{$t('shoudown')}}</Button>
@@ -22,35 +24,37 @@
     </Row>
   
     <!-- table -->
+ <div class="footer">
+   <Divider />
+   <h4 style="margin-bottom:5px;">{{$t('SuperWorkstation')}}</h4>
+       <Table v-if="show" border :data="currentSuper" :columns="currentSuperCol" :loading="loading" ></Table>
+       <Table v-if="!show" border :data="currentSuper" :columns="tableColumns1" :loading="loading" ></Table>
+    
+</div>
+<h4 style="margin-bottom:5px;">{{$t('ClientList')}}</h4>
+<div ref="demox" class="xt">
+
     <Table
       border
       stripe
-      ref="selection"
+      highlight-row
+      ref="demox"
       :columns="tableColumns"
       :data="tableData"
       @on-selection-change="handleCheckBox"
-      @on-select="handleGetTableRowInfo"
-      @on-select-cancel="handleRemoveTableRowInfo"
-      :no-data-text="this.$t('Nodata')"
       @on-row-dblclick="handleTableEdit"
+      :loading="loading"
     ></Table>
+</div>
+
     <Row style="margin-top:10px; ">
-      <!-- <i-col span="4">资源：3000 &nbsp;&nbsp;&nbsp;&nbsp;已下载：1000</i-col> -->
-      <Page
-        v-if="tableListPage"
-        :current="currentPage"
-        :page-size="pageSize"
-        :total="totalPageNumber"
-        style=" float:right;"
-        @on-change="hanbleChangePage"
-      />
+      <Col span="24"><Page :total="this.pageInfo.count"  show-total :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
     <!-- 删除提示 -->
     <Modal
       v-model="showDeleteBox"
       :title="this.$t('DeleteTip')"
-      @on-ok="handleConfirmDelete"
-      @on-cancel="handleCancel"
+      @on-cancel="this.showDeleteBox = false"
     >
       <p>{{$t('DeleteCurrentData')}}</p>
     </Modal>
@@ -71,60 +75,95 @@
               >{{ item.name }}</Option>
             </template>
           </Select>
-             <!-- <div class="ivu-form-item-error-tip" v-if="err">{{$t('FailedToGetVirtualdiskInformation')}}</div> -->
         </FormItem>
         <FormItem>
           <Button type="primary" @click="handleSubmitx('formValidatex')">{{$t('SetSuperWorkstation')}}</Button>
         </FormItem>
       </Form>
     </Modal>
-    <Modal title="取消超级工作站" v-model="cancleup" footer-hide width="500">
+    <Modal :title="this.$t('CancleSuperS')" v-model="cancleup" footer-hide :styles="{top: '220px'}">
       <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidatex1" :label-width="100">
-        <FormItem label="操作" prop="action">
-          <Select v-model="formValidate1.action" >
+        <FormItem :label="this.$t('operation')" prop="action">
+          <Select v-model="formValidate1.action" @on-change="changeCommon">
             <Option value="apply">{{$t('apply')}}</Option>
             <Option value="discard">{{$t('cancelText')}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="备注" prop="comment">
+        <FormItem :label="this.$t('comment')" prop="comment" v-if="u">
           <Input v-model="formValidate1.comment" type="text" />
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('apply')}}</Button>
+          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('Save')}}</Button>
           <Button @click="handleReset('formValidate1')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
+    </Modal>
+    <Modal
+        v-model="superEdit"
+         :title="this.$t('ClientSetting')"
+         @on-visible-change="test"
+        footer-hide
+       >
+         <edit v-if="temp" v-bind:data1="xx" v-bind:clientMac="clientMacSet" v-bind:flag1='flag' v-bind:clientIp1="Iptemp" v-bind:pc1="PCtemp" v-on:childByValue="childByValue" /> 
+    </Modal>
+    <Modal
+        v-model="EditModel"
+        :title="this.$t('ClientSetting')"
+        @on-ok="batchEdit"
+        
+        >
+        <Form ref="formInline" :model="formInline">
+        <FormItem :label="this.$t('Enable')" prop="disable" :label-width="110">
+                <Select v-model="formInline.disable"  :placeholder="$t('pleaseInput')">
+                  <Option v-for="item in enableList" :value="item.value" :key="item.label">{{ item.label }}</Option>
+                </Select>
+            </FormItem>
+        <FormItem :label="this.$t('StartupScenario')" prop="pcGp" :label-width="110">
+                <Select v-model="formInline.pcGp"  :placeholder="$t('pleaseInput')" >
+                  <Option v-for="item in pcGpList" :value="item.name" :key="item.label">{{ item.name }}</Option>
+                </Select>
+        </FormItem>
+    </Form>
     </Modal>
   </div>
 </template>
 
 <script>
-import {
-  getClientList,
-  deleteClient,
-  changeSchema,
-  setSuper,
-  getSuper,
-  setCancelSuper,
-  restart,
-  shutdown,
-  wakeup
-
-} from '@/api/client'
-import { getPcListConfigx, getImageListx, deletePcsConfigx } from '@/api/wupan'
+import { setSuper, getSuper, setCancelSuper, restart, shutdown, wakeup, batchSetPcConf } from '@/api/client'
+import { getPcListConfig, getImageListx, deletePcsConfigx, getPcGroupx } from '@/api/wupan'
+import edit from './ClientListAdd'
+import { mapState } from 'vuex'
 export default {
   name: 'ClientList',
   inject: ['reload'],
   data () {
     return {
-      masterip: this.$store.state.app.masterip || '',
+      clientArray: '',
+      clientList: [],
+      flag: '',
+      Pagelimit: 10,
+      pageInfo: {
+        count: 0,
+        page_index: 1
+      },
+      pcGpList: '',
+      EditModel: false,
+      u: true,
       loading: false,
       selectMac: [],
       macArray: [], // 选择的mac地址
-      err: '',
       clientIp: [], // 客户机ip
-      clientMac: [],
+      Iptemp: '',
+      PCtemp: '',
+      clientMacSet: [], // mac 地址
       pc: [],
+      show: false,
+      xx: '', // temp
+      list: [],
+      exclientIp: [], // temp
+      temp: false, //
+      superEdit: false,
+      modal1: false,
       currentSuperip: '',
       imglist: '',
       addedip: '',
@@ -145,12 +184,34 @@ export default {
       tableSelectVal: [],
       tableData: [],
       tableDataList: [], // 批量编辑时，传值到下一页
+      currentSuper: [], // 超级工作站
+      currentSuperCol: [
+        { key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('IP')) } },
+        { key: 'image', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
+        { key: 'profile', renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
+        {
+          key: 'super',
+          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
+          render: (h, params) => {
+            let a = h('Button', {
+              props: { type: 'error' },
+              on: {
+                click: () => {
+                  this.setcancle(params.row)
+                }
+              }
+            }, this.$t('cancelText'))
+
+            return [a]
+          }
+        }
+      ],
       tableColumns: [
         { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          minWidth: 60,
-          maxWidth: 70,
+          minWidth: 70,
+          maxWidth: 80,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -171,64 +232,43 @@ export default {
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
         {
-          renderHeader: (h, params) => { return h('span', this.$t('SuperWorkstation')) },
+          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'super',
           minWidth: 140,
           render: (h, params) => {
             let that = this
             let a = ''
-            if (that.currentSuperip) {
-              if (params.row.ip === that.currentSuperip) {
-                a = h('div', [
-                  h('Tag', { props: { color: 'magenta' } }, this.$t('SuperWorkstation')),
-                  h(
-                    'Button',
-                    {
-                      props: { type: 'info' },
-                      style: { marginLeft: '10px' },
-                      on: {
-                        click: () => {
-                          this.setcancle(params.row)
-                        }
-                      }
-                    },
-                    this.$t('cancelText')
-                  ),
-                  h(
-                    'Button',
-                    {
-                      props: { type: 'error' },
-                      style: { marginLeft: '10px' },
-                      on: {
-                        click: () => {
-                          this.setcancle(params.row)
-                        }
-                      }
-                    },
-                    this.$t('Delete')
-                  )
-                ])
-              } else {
-                let d = h(
-                  'Button',
-                  {
-                    props: { type: 'error' },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.setcancle(params.row)
-                      }
+            if (that.currentSuper.length > 0) {
+              a = h('div', [ h(
+                'Button',
+                {
+                  props: { type: 'info' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handleTableEdit(params.row)
                     }
-                  },
-                  this.$t('Delete')
-                )
-                return d
-              }
+                  }
+                },
+                this.$t('Edit')
+              ), h(
+                'Button',
+                {
+                  props: { type: 'error' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handDetele(params.row)
+                    }
+                  }
+                },
+                this.$t('Delete')
+              )])
             } else {
               a = h('div', [h(
                 'Button',
                 {
-                  props: { type: 'info', ghost: true },
+                  props: { type: 'info' },
                   on: {
                     click: () => {
                       this.setSuperList(params.row)
@@ -236,6 +276,18 @@ export default {
                   }
                 },
                 this.$t('SetSuperWorkstation')
+              ), h(
+                'Button',
+                {
+                  props: { type: 'info' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handleTableEdit(params.row)
+                    }
+                  }
+                },
+                this.$t('Edit')
               ), h(
                 'Button',
                 {
@@ -255,6 +307,49 @@ export default {
           }
         }
       ],
+      tableColumns1: [
+        // { type: 'selection', width: 50, align: 'center' },
+        { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
+          key: 'stat',
+          minWidth: 70,
+          maxWidth: 80,
+          render: (h, params) => {
+            let a = ''
+            switch (params.row.stat) {
+              case '1':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#33AFFF' } })
+                break
+              case '0':
+                a = h('Icon', { props: { type: 'md-desktop', size: '20', color: '#B5B6BE' } })
+                break
+            }
+            return a
+          }
+
+        },
+        { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
+        { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
+        { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
+        { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
+        {
+          key: 'super',
+          renderHeader: (h, params) => { return h('span', this.$t('operation')) },
+          render: (h, params) => {
+            let a = h('Button', {
+              props: { type: 'error' },
+              on: {
+                click: () => {
+                  this.setcancle(params.row)
+                }
+              }
+            }, this.$t('cancelText'))
+            return [a]
+          }
+        }
+      ],
+      tempx: [],
+      srcLis: [],
       nameList: [],
       formValidate: { nameVal: '' },
       formValidatex: {
@@ -265,6 +360,14 @@ export default {
         action: 'apply',
         comment: ''
       },
+      formInline: {
+        disable: '0',
+        pcGp: ''
+      },
+      enableList: [
+        { value: '0', label: this.$t('Enable') },
+        { value: '1', label: this.$t('Disable') }
+      ],
       ruleValidatex: {
         imglist: [
           { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
@@ -285,7 +388,12 @@ export default {
   },
   created () {
     this.handgetClienList() // 获取客户机列表
-    this.handleGetSuper() // 获取超级工作站
+  },
+  mounted () {
+    let div = this.$refs.demox
+    div.addEventListener('scroll', () => {
+      this.tableData = this.list.slice(10, 20)
+    })
   },
   computed: {
     profileList () {
@@ -296,15 +404,59 @@ export default {
         this.formValidatex.profileList = xx[0].profileList[0].name
         return xx[0].profileList
       }
-    }
+    },
+    ...mapState({
+      masterip: state => state.app.masterip // 主服务器
+    })
+  },
+
+  components: {
+    edit
   },
   methods: {
+    ChangeValue (value) {
+      if (!value) {
+        this.handgetClienList()
+        return
+      }
+      this.tempx = []
+      this.srcList.forEach(item => {
+        if (item.pc.indexOf(value) !== -1 || item.ip.indexOf(value) !== -1 || item.mac.indexOf(value) !== -1 || item.pcGp.indexOf(value) !== -1) {
+          this.tempx.push(item)
+        }
+      })
+      this.tableData = this.tempx.slice(0, 10)
+      if (this.tempx) {
+        this.pageInfo.count = this.tempx.length
+        this.list = this.tempx
+      }
+    },
+    handleGetTableList (index, data) {
+      this.pageInfo.page_index = index
+      this.tableData = this.list.slice((index - 1) * this.Pagelimit, index * this.Pagelimit)
+    },
+    test (hide) {
+      this.handgetClienList()
+      if (!hide) {
+        setTimeout(() => {
+          this.temp = false
+        }, 200)
+      }
+    },
+    changeCommon (x) {
+      if (x === 'discard') {
+        this.u = false
+      } else {
+        this.u = true
+      }
+    },
     /**
         刷新
     */
     handleButtonRefresh () {
+      this.loading = true
       this.handgetClienList()
-      this.handleGetSuper()
+      this.clientArray = []
     },
     /**
         唤醒 关机 重启 函数模板
@@ -319,7 +471,7 @@ export default {
         this.loading = false
       }).catch(err => {
         setTimeout(() => { this.loading = false }, 500)
-        this.notifyUserOfError(err.data.error)
+        this.$Message.error(this.$t(err))
       })
     },
     /** 唤醒 */
@@ -330,43 +482,70 @@ export default {
     handleButtonRestart () { this.formatFunction(restart) },
 
     /**
-      获取超级工作站
-    */
-    handleGetSuper () {
-      if (!this.masterip) return
-      getSuper(this.masterip).then(response => {
-        if (!response.data.error && response.data.result) {
-          this.currentSuperip = response.data.result.ip
-        }
-      }, (error) => {
-        this.notifyUserOfDiskError(error)
-      })
-    },
+     * 获取客户机列表
+     */
     async handgetClienList () {
-      if (!this.masterip) return
-      let resp = await getPcListConfigx(this.masterip)
-      this.tableData = resp.data.result.list || []
-      if (this.tableData) {
-        this.tableData.forEach(i => {
-          this.clientIp.push(i.ip)
-          this.clientMac.push(i.mac)
-          this.pc.push(i.pc)
-        })
+      this.clientMac = []
+      let superip = await getSuper(this.masterip)
+      let client = await getPcListConfig(this.masterip)
+      let clientList = client.data.result && (client.data.result.list || [])
+      clientList.forEach(item => {
+        this.clientMac.push(item.mac)
+      })
+      clientList.forEach(item => {
+        this.exclientIp.push(item.ip)
+      })
+      clientList.forEach(item => {
+        this.pc.push(item.pc)
+      })
+      this.srcList = clientList // 保存原数组
+      if (clientList) {
+        this.pageInfo.count = clientList.length
+      }
+      this.loading = false
+      if (superip.data.result) {
+        if (clientList.length > 0) {
+          let flag = true
+          this.list = clientList.filter(item => {
+            if (superip.data.result.ip === item.ip) {
+              this.show = false
+              flag = false
+              this.currentSuper = [item]
+            }
+            return superip.data.result.ip !== item.ip
+          })
+          this.tableData = this.list.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
+          if (flag) {
+            this.show = true
+            this.currentSuper = [superip.data.result]
+          }
+        }
+      } else {
+        this.list = clientList
+        this.tableData = this.list.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
+      }
+    },
+    async HandleSuper () {
+      let resp = await getSuper(this.masterip)
+      let respx = resp.data.result || ''
+      if (respx) {
+        this.currentSuper = [respx]
       }
     },
     /*
-    获取超级工作站
+    设置超级工作站弹窗
     */
-    setSuperList (data) {
-      this.err = false
+    async setSuperList (data) {
       this.adddetail = true
       if (!this.masterip) return
-      getImageListx(this.masterip).then(response => {
-        this.imglist = response.data.result.list
-        this.formValidatex.imglist = this.imglist[0].name
-      })
-      this.addedip = data.ip
+      let resp = await getImageListx(this.masterip)
+      this.imglist = resp.data.result && (resp.data.result.list || [])
+      this.formValidatex.imglist = this.imglist[0].name
+      this.addedip = data.ip // 客户机ip
     },
+    /**
+     * 取消
+     */
     setcancle (data) {
       this.cancleup = true
       this.canceledip = data.ip
@@ -376,19 +555,15 @@ export default {
     */
     handleCancelaction (name) {
       let that = this
-      this.cancleup = false
       this.$refs[name].validate(valid => {
         if (valid) {
-          console.log(this.formValidate1.action)
-          console.log(this.formValidate1.comment)
           let data = { ip: this.canceledip, action: this.formValidate1.action, comment: this.formValidate1.comment }
           setCancelSuper(data, this.masterip).then(response => {
+            this.cancleup = false
             setTimeout(() => {
               that.reload()
             }, 0)
           })
-        } else {
-          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },
@@ -399,210 +574,127 @@ export default {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         content: this.$t('DeleteCurrentData'),
-        okText: this.$t('Confirm'),
-        cancelText: this.$t('cancelText'),
-        onOk: () => {
-          deletePcsConfigx([data.mac], this.masterip).then(respon => {
+        onOk: async () => {
+          try {
+            await deletePcsConfigx([data.mac], this.masterip)
             this.handgetClienList()
-          })
+          } catch (error) {
+            console.log(error)
+          }
         }
       })
     },
-    handleRemoveTableRowInfo (data) {
-      this.handleFormatArr(data)
-    },
-    handleGetTableRowInfo (data) {
-      this.handleFormatArr(data)
-    },
-    handleFormatArr (data) {
-      var list = []
-      for (var i in data) {
-        list.push({
-          ActiveDns: data[i].ActiveDns,
-          BackupDns: data[i].BackupDns,
-          Enable: data[i].Enable,
-          Gateway: data[i].Gateway,
-          Id: data[i].Id,
-          Ip: data[i].Ip,
-          StartSchema: data[i].StartSchema,
-          Subnet: data[i].Subnet
-        })
-      }
-      this.tableDataList = list
-    },
-    handleCallBackVaild (res) {
-      var code = res.data.Code
-      if (code === 0 || res.data.state === 'OK') {
-        this.$Message.success(this.$t('OperationSuccessful'))
-      } else {
-        this.$Message.error(this.$t('OperationFail') + res.data.Msg)
-      }
-    },
-    handleGetClientList (offset, limit) {
-      var listQuery = '?offset=' + offset + '&limit=' + limit
-      getClientList(listQuery).then(
-        a => {
-          var datalist = a.data.Data.List
-          if (a.data.Code === 0) {
-            if (datalist === null) {
-              this.data = null
-            } else {
-              this.tableData = a.data.Data.List
-              this.totalPageNumber = Number(a.data.Data.TotalCount)
-              this.currentPage = Number(a.data.Data.PageNo)
-              this.pageSize = Number(a.data.Data.PageSize)
-            }
-          } else {
-            this.$Message.error(a.data.Msg)
+    /**
+     * 删除客户机
+    */
+    handAllDetele (data) {
+      if (this.clientArray.length === 0) return
+      let x = []
+      this.clientArray.forEach(item => {
+        x.push(item.mac)
+      })
+      this.$Modal.confirm({
+        title: this.$t('DeleteTip'),
+        // content: this.$t('DeleteCurrentData'),
+        content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
+        onOk: async () => {
+          try {
+            await deletePcsConfigx(x, this.masterip)
+            this.clientArray = []
+            this.handgetClienList()
+          } catch (error) {
+            console.log(error)
           }
-        },
-        () => {
-          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         }
-      )
+      })
     },
-    hanbleChangePage (num) {
-      if (num === 1) {
-        num = 0
-      } else {
-        num = this.currlimit * num - this.currlimit
-      }
-      this.handleGetClientList(num, this.currlimit)
-    },
-    handleCheckBoxNumber (name) {
-      var val = this.getCheckboxVal.length
-      if (val === 0 || val > 1) {
-        this.$Message.error('请选择列表中的一项')
-      } else {
-        this.handlePostData(name)
-      }
-    },
-    handlePostData (name) {
-      if (name === 'del') {
-        this.showDeleteBox = true // show删除提示
-      }
-    },
+    /**
+     * 选择客户机
+     */
     handleCheckBox (arr) {
+      this.clientArray = arr
       this.macArray = []
       if (!arr) return ''
       arr.forEach(item => {
         this.macArray.push(item.mac)
       })
     },
-    handleButtonFilter (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        this.$Message.info('筛选成功……')
-      }
+    /**
+       * 获取客户机启动方案
+       */
+    handleButtonEdit () {
+      if (this.clientArray.length < 1) { return }
+      this.EditModel = true
+      getPcGroupx(this.masterIp).then((e) => {
+        this.pcGpList = e.data.result.list
+        this.formInline.pcGp = this.pcGpList[0].name
+      },
+      (e) => { this.$Message.error(e.data.error) })
     },
-    handleButtonAdd (val) {
-      this.$router.push({
-        path: 'clientData',
-        query: {
-          clientMac: this.clientMac,
-          clientIp: this.clientIp,
-          pc: this.pc
-        }
-      })
-    },
-    handleButtonEdit (val) {
-      // alert(JSON.stringify(this.tableDataList))
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error('请至少选择列表中的一项')
-      } else {
-        this.$router.push({
-          path: 'subtype1-add',
-          query: { dataList: this.tableDataList }
+    /**
+     * 批量修改客户
+     */
+    batchEdit () {
+      if (this.clientArray.length < 1) { return }
+      this.clientArray.forEach(item => {
+        this.clientList.push({
+          mac: item.mac,
+          ip: item.ip,
+          pc: item.pc
         })
+      })
+      const data = {
+        macList: this.clientList,
+        property: this.formInline
       }
-    },
-    handleConfirmDelete () {
-      deleteClient(this.getCheckboxVal).then(
-        res => {
-          // console.log('res:' + JSON.stringify(res))
-          this.$Message.success(this.$t('OperationSuccessful'))
-          this.handleGetClientList()
-        },
-        () => {
-          this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
-        }
-      )
-    },
-
-    handleButtonDelete (del) {
-      var name = 'del'
-      this.handleCheckBoxNumber(name)
-    },
-
-    handleCancel () {
-      this.showDeleteBox = false
-    },
-    handleButtonImport () {},
-    handleButtonRemove (name) {
-      var val = this.getCheckboxVal.length
-      if (val === 0 || val > 1) {
-        this.$Message.error('请选择列表中的一项')
-      } else {
-        this.showPopup = true
-      }
-    },
-    handleButtonRemovePost () {
-      var currId = this.getCheckboxVal
-      var self = this
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          deleteClient(currId).then(
-            res => {
-              self.handleCallBackVaild(res)
-            },
-            () => {
-              this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
-            }
-          )
-        } else {
-          this.$Message.error(this.$t('ValidationFailure'))
-        }
+      batchSetPcConf(data, this.masterip).then(res => {
+        this.clientArray = []
+        this.clientList = []
+        this.handgetClienList()
       })
     },
-    handleButtonAwaken () {},
-
+    /**
+     * 添加
+     */
+    handleButtonAdd (val) {
+      this.xx = {}
+      this.flag = 'Add'
+      this.clientArray = []
+      this.clientMacSet = new Set()
+      this.Iptemp = new Set()
+      this.PCtemp = new Set()
+      for (let item of this.clientMac) {
+        this.clientMacSet.add(item)
+      }
+      for (let item of this.exclientIp) {
+        this.Iptemp.add(item)
+      }
+      for (let item of this.pc) {
+        this.PCtemp.add(item)
+      }
+      this.temp = true
+      this.superEdit = true
+    },
+    /**
+     * 编辑
+     */
     handleTableEdit (data) {
-      let exclientIp = this.clientIp.filter(item => { return item !== data.ip })
-      let pc = this.pc.filter(item => { return item !== data.pc })
-
-      this.$router.push({
-        path: 'clientData',
-        query: {
-          data: data,
-          flag: 'Edit',
-          clientIp: exclientIp,
-          pc: pc
+      this.temp = true
+      this.xx = data // temp
+      this.flag = 'Edit'
+      this.Iptemp = new Set()
+      this.PCtemp = new Set()
+      for (let item of this.exclientIp) {
+        if (item !== data.ip) {
+          this.Iptemp.add(item)
         }
-      })
-    },
-    handleTableRemove (index) {
-      this.showPopup = true
-    },
-    handleSubmit (name) {
-      var self = this
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          // this.$Message.success('表单验证成功!')
-          changeSchema(this.getCheckboxVal, this.formValidate.nameVal).then(
-            res => {
-              self.handleCallBackVaild(res)
-            },
-            () => {
-              this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
-            }
-          )
-        } else {
-          this.$Message.error(this.$t('ValidationFailure'))
+      }
+      for (let item of this.pc) {
+        if (item !== data.pc) {
+          this.PCtemp.add(item)
         }
-      })
+      }
+      this.superEdit = true
     },
     /*
     设置为超级工作站
@@ -628,13 +720,11 @@ export default {
               self.currentSuperip = response.data.result.vdiskInfo.serverIp
               setTimeout(() => {
                 self.reload()
-              }, 0)
+              }, 10)
             }
           }, (err) => {
-            self.$Message.error(this.$t(`kxLinuxErr.${err}`))
+            self.$Message.error(this.$t(`kxLinuxErr.${err.data.error}`))
           })
-        } else {
-          this.$Message.error(this.$t('ValidationFailure'))
         }
       })
     },
@@ -642,6 +732,14 @@ export default {
       this.$refs[name].resetFields()
       this.showPopup = false
       this.cancleup = false
+    },
+    childByValue () {
+      this.superEdit = false
+      this.handgetClienList() // 获取客户机列表
+      this.HandleSuper() // 获取超级工作站
+      setTimeout(() => {
+        this.temp = false
+      }, 200)
     }
   }
 }
@@ -649,6 +747,14 @@ export default {
 
 <style scoped>
 .header{
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
+.footer{
+  /* margin-top:20px; */
+  margin-bottom:40px;
+}
+/* .xt{
+  height:519px;
+  overflow: auto;
+} */
 </style>

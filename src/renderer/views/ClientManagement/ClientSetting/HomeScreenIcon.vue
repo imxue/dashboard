@@ -2,42 +2,25 @@
   <div>
     <Tabs type="card" @on-click="HandleGetAllScheme" :animated="false"  v-model="currentTab">
         <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
-          <div class="main" >
-              <Row :gutter="24">
-                <Col :xs="2" :sm="4" :md="6" :lg="2">
-                    <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
-               </Col>
-              <Col :xs="2" :sm="4" :md="6" :lg="2">
+          <div class="main">
+            <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
             <Button type="error">{{$t('DeleteIcon')}}</Button>
-             </Col>
-              </Row>
           </div>
                <Table border :columns="columns1" :data="imgreSource"></Table>  
         </TabPane>
-        <TabPane :label="$t('ClientStartPlan')" name="StartPlan" class="xx">
-         
+        <TabPane :label="$t('ClientStartPlan')" name="StartPlan" >
           <div class="main">
-             <Row>
-                 <Col :xs="4" :sm="4" :md="8" :lg="8">
-                   <span>{{$t('ClientScheme')}}:</span>
-                   <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
-                     <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
-                   </Select>
-              </Col>
-              <Col :xs="2" :sm="4" :md="4" :lg="4">
-             <Checkbox size="large" v-model="single" @on-change='SetDefault' class="test">{{$t('UseDefaultSetting')}}</Checkbox>
-             </Col>
-              <Col :xs="2" :sm="4" :md="2" :lg="2">
+            <span>{{$t('ClientScheme')}}:</span>
+            <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
+              <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
+            </Select>
+             <Checkbox size="large" v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
             <Button type="primary" :disabled='flag'>{{$t('AddIcon')}}</Button>
-              </Col>
-             <Col :xs="2" :sm="4" :md="4" :lg="4">
             <Button type="error" :disabled='flag' >{{$t('DeleteIcon')}}</Button>
-            </Col>
-             </Row>
           </div>
 
-       <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
-          
+
+          <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
           
           </TabPane>
     </Tabs>
@@ -129,11 +112,14 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then((response) => {
-          this.plan = response.data[0].id
-          this.HandleGetAllHomeIcon()
-          this.$Message.info({
-            content: response.data.error
-          })
+          if (response.data.ok) {
+            this.plan = response.data.data[0].id
+            this.HandleGetAllHomeIcon()
+          } else {
+            this.$Message.info({
+              content: response.data.error
+            })
+          }
         })
       } else {
         this.HandleGetAllHomeIcon()
@@ -159,10 +145,14 @@ export default {
     },
     handleGetPcGroup () {
       getAllScheme().then((resp) => {
-        var arr = resp.data
-        this.cityList = arr
-      }, (error) => {
-        this.$Message.error(error.data.error)
+        if (resp.data.ok) {
+          var arr = resp.data.data
+          if (!resp.data.error) {
+            this.cityList = arr
+          } else {
+            this.$Message.error(resp.data.error)
+          }
+        }
       })
     },
     /**
@@ -173,11 +163,14 @@ export default {
         global: true
       }
       getSchemeIcon(info).then(resp => {
-        this.DefaultImgreSource = resp.data
-        this.defaultGameId = []
-        this.DefaultImgreSource.forEach(item => {
-          this.defaultGameId.push(item.game_id)
-        })
+        if (resp.data.ok) {
+          this.DefaultImgreSource = resp.data.data
+          this.defaultGameId = []
+          this.DefaultImgreSource.forEach(item => {
+            this.defaultGameId.push(item.game_id)
+          })
+          console.log(this.defaultGameId)
+        }
       })
     },
     /**
@@ -191,10 +184,12 @@ export default {
       this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
       info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
-        this.imgreSource = resp.data
-        // this.imgreSource.map(item => {
-        //   item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-        // })
+        if (resp.data.ok) {
+          this.imgreSource = resp.data.data
+          this.imgreSource.map(item => {
+            item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
+          })
+        }
       })
     },
     /**
@@ -209,10 +204,10 @@ export default {
       info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(response => {
         if (response.data.ok) {
-          this.imgreSource = response.data
-          // this.imgreSource.map(item => {
-          //   item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-          // })
+          this.imgreSource = response.data.data
+          this.imgreSource.map(item => {
+            item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
+          })
         } else {
           this.imgreSource = []
           this.$Message.info({
@@ -230,7 +225,7 @@ export default {
     handgetAllGame (offset, limit, orderby) {
       getAllGame(0, 10, 'Name').then(response => {
         if (response.data.ok) {
-          this.gameSource = response.data
+          this.gameSource = response.data.data.data
         }
       }, (e) => {
         // 这里执行reject状态的
@@ -273,14 +268,29 @@ export default {
 </script>
 
 <style scoped>
+.item{
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  align-items: center;
+}
+.border{
+  margin-top:10px;
+  height: 600px;
+  padding:10px;
+  border:1px solid #DCDEE2;
+  display: flex;
+}
+img:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+img:active{
+  border:1px dotted;
+}
 .main{
+  z-index: 999999999;
   margin-bottom: 30px;
-}
-.xx {
-  height:500px;
-}
-.test{
-  padding-top: 4px;
 }
 </style>
 
