@@ -273,7 +273,6 @@ export default {
   },
   created () {
     this.HandleGetMaster()
-    this.HandleGetServerListOrAdd(this.masterIp)
   },
   computed: {
     ...mapState({
@@ -288,6 +287,7 @@ export default {
       try {
         let resp = await getMasterIp()
         this.$store.dispatch('saveMaster', resp.data.value || '')
+        this.HandleGetServerListOrAdd(this.masterIp)
       } catch (e) {
         this.notifyUserOfDiskError(36873)
       }

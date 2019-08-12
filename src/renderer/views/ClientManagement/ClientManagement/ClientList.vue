@@ -469,6 +469,9 @@ export default {
       func(this.macArray.toString()).then(resp => {
         this.notifyUserOfSucess(resp.data)
         this.loading = false
+      }, (err) => {
+        setTimeout(() => { this.loading = false }, 500)
+        this.$Message.error(err.data.error)
       }).catch(err => {
         setTimeout(() => { this.loading = false }, 500)
         this.$Message.error(this.$t(err))

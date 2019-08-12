@@ -294,15 +294,7 @@ export function editPcConfig (mac, pc, ip, isDisable, pcGroup) {
  * 获取所以客户机属性
  */
 
-export function getPcListConfig () {
-  return makeRequest('Get_PcListConf', {
-  })
-}
-
-/**
- * 获取所以客户机属性2
- */
-export function getPcListConfigx (ip) {
+export function getPcListConfig (ip) {
   return makeRequestx('Get_PcListConf', {
   }, ip)
 }

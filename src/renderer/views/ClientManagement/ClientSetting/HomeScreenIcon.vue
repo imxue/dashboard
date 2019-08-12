@@ -6,7 +6,7 @@
             <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
             <Button type="error">{{$t('DeleteIcon')}}</Button>
           </div>
-               <Table border :columns="columns1" :data="imgreSource"></Table>  
+            <Table border :columns="columns1" :data="imgreSource"></Table>  
         </TabPane>
         <TabPane :label="$t('ClientStartPlan')" name="StartPlan" >
           <div class="main">
@@ -18,9 +18,12 @@
             <Button type="primary" :disabled='flag'>{{$t('AddIcon')}}</Button>
             <Button type="error" :disabled='flag' >{{$t('DeleteIcon')}}</Button>
           </div>
-
+          <div class="xx">
 
           <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
+          </div>
+
+
           
           </TabPane>
     </Tabs>
@@ -95,10 +98,9 @@ export default {
     }
   },
   created () {
-    this.HandleGetDefaultHomeIcon() // 获取默认图标信息
+    // this.HandleGetDefaultHomeIcon() // 获取默认图标信息
     this.HandleGetAllHomeIcon()
     this.handleGetPcGroup()
-    this.handgetAllGame()
   },
   computed: {
     routes () {
@@ -130,49 +132,51 @@ export default {
         'is_global': true,
         'gameids': []
       }
+      console.log(this.SelectedDataGame)
       this.SelectedDataGame.forEach(item => {
         info.gameids.push(item.Id)
       })
       setSchemeIcon(info).then(resp => {
-        // if (resp.data.ok) {
-        //   debugger
-        // } else {
-        //   this.$Message.info(resp.data.error)
-        // }
+        this.notifyUserOfSucess('Sucess')
+        this.HandleGetAllScheme()
       }, (err) => {
         this.$Message.info(err.data.error)
       })
     },
     handleGetPcGroup () {
       getAllScheme().then((resp) => {
-        if (resp.data.ok) {
-          var arr = resp.data.data
-          if (!resp.data.error) {
-            this.cityList = arr
-          } else {
-            this.$Message.error(resp.data.error)
-          }
-        }
+        this.cityList = resp.data
+      }, (resp) => {
+        this.$Message.error(resp.data.error)
       })
     },
     /**
      * 获取默认图标
      */
-    HandleGetDefaultHomeIcon () {
-      let info = {
-        global: true
-      }
-      getSchemeIcon(info).then(resp => {
-        if (resp.data.ok) {
-          this.DefaultImgreSource = resp.data.data
-          this.defaultGameId = []
-          this.DefaultImgreSource.forEach(item => {
-            this.defaultGameId.push(item.game_id)
-          })
-          console.log(this.defaultGameId)
-        }
-      })
-    },
+    // HandleGetDefaultHomeIcon () {
+    //   let info = {
+    //     global: true
+    //   }
+    //   getSchemeIcon(info).then(resp => {
+    //     this.DefaultImgreSource = resp.data
+    //     this.defaultGameId = []
+    //     this.DefaultImgreSource.forEach(item => {
+    //       this.defaultGameId.push(item.game_id)
+    //     })
+    //     console.log(this.defaultGameId)
+    //   })
+    // },
+    /**
+     * 获取默认图标
+     */
+    // HandleGetDefaultHomeIcon () {
+    //   let info = {
+    //     global: true
+    //   }
+    //   getSchemeIcon(info).then(resp => {
+    //     this.imgreSource = resp.data
+    //   })
+    // },
     /**
      * 获取图标
      */
@@ -184,12 +188,7 @@ export default {
       this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
       info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
-        if (resp.data.ok) {
-          this.imgreSource = resp.data.data
-          this.imgreSource.map(item => {
-            item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-          })
-        }
+        this.imgreSource = resp.data
       })
     },
     /**
@@ -205,9 +204,6 @@ export default {
       getSchemeIcon(info).then(response => {
         if (response.data.ok) {
           this.imgreSource = response.data.data
-          this.imgreSource.map(item => {
-            item.icon_url = 'http://10.88.66.153:8080/src/icon/localgame/f69997e9e008477ab1806886d58b5be6/48.png'
-          })
         } else {
           this.imgreSource = []
           this.$Message.info({
@@ -216,7 +212,8 @@ export default {
         }
       })
     },
-    handSetIcon () {
+    async handSetIcon () {
+      await this.handgetAllGame()
       this.AddIconDialog = true
     },
     /*
@@ -224,9 +221,7 @@ export default {
     */
     handgetAllGame (offset, limit, orderby) {
       getAllGame(0, 10, 'Name').then(response => {
-        if (response.data.ok) {
-          this.gameSource = response.data.data.data
-        }
+        this.gameSource = response.data.data
       }, (e) => {
         // 这里执行reject状态的
         this.$Message.error(this.$t('kxLinuxErr.36873'))
@@ -266,7 +261,6 @@ export default {
   mounted () {}
 }
 </script>
-
 <style scoped>
 .item{
   display: flex;
@@ -281,16 +275,11 @@ export default {
   border:1px solid #DCDEE2;
   display: flex;
 }
-img:hover{
-  cursor: pointer;
-  transform: scale(1.1);
-}
-img:active{
-  border:1px dotted;
-}
 .main{
-  z-index: 999999999;
   margin-bottom: 30px;
+}
+.xx{
+  height: 500px;
 }
 </style>
 

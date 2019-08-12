@@ -12,7 +12,7 @@ function notifyUserOfDiskError (error) {
   })
 }
 function notifyUserOfSucess (error) {
-  iView.Message.error({
+  iView.Message.success({
     content: i18n.t(error)
   })
 }

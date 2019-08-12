@@ -432,5 +432,7 @@
   "passwordError":"两次密码不一致",
   "userDisk":"用户盘",
   "plInputNumber":"请输入数字格式",
-  "User":"用户"
+  "User":"用户",
+  "comment":"备注",
+  "Client":"客户机"
 }

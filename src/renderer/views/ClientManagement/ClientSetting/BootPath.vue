@@ -102,13 +102,11 @@ export default {
         }
       }
       getSchemeBatch(data).then(response => {
-        if (response.data.ok) {
-          data.global ? this.bootPathG = response.data.data.batch_process : this.bootPathS = response.data.data.batch_process
-        } else {
-          this.$Message.info({
-            content: response.data.error
-          })
-        }
+        data.global ? this.bootPathG = response.data.batch_process : this.bootPathS = response.data.batch_process
+      }, (response) => {
+        this.$Message.info({
+          content: response.data.error
+        })
       })
     },
     /**
@@ -117,17 +115,14 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then(response => {
-          if (response.data.ok) {
-            console.log(response.data.data)
-            this.cityList = response.data.data
-            console.log(this.cityList)
-            this.plan = this.cityList[0].id
-            this.handleGetBootBath()
-          } else {
-            this.$Message.info({
-              content: response.data.error
-            })
-          }
+          this.cityList = response.data
+          console.log(this.cityList)
+          this.plan = this.cityList[0].id
+          this.handleGetBootBath()
+        }, (response) => {
+          this.$Message.info({
+            content: response.data.error
+          })
         })
       }
     },
@@ -144,12 +139,8 @@ export default {
       info.scheme_id = this.currentTab === 'DefaultSetting' ? '' : this.plan
       info.batch_process = this.currentTab === 'DefaultSetting' ? this.bootPathG : this.bootPathS
       setSchemeBatch(info).then(resp => {
-        if (resp.data.ok) {
-          this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
-          this.$Message.info({
-            content: this.$t('SetSucess')
-          })
-        }
+        this.currentTab === 'DefaultSetting' ? this.disabled = 'false' : this.disabledSinger = 'false'
+        this.$Message.info({ content: this.$t('SetSucess') })
       })
     }
   }
