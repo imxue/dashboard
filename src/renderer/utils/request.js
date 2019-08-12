@@ -5,10 +5,10 @@ import axios from 'axios'
 // import iView from 'iview'
 const service = axios.create({
   // baseURL: 'http://10.88.66.153:8080/',
-  baseURL: 'http://10.88.66.71:8080',
+  // baseURL: 'http://127.0.0.1:12890',
+  baseURL: 'http://10.88.66.71:12880',
   // baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 60000 // request timeout
-  // headers: { Authorization: localStorage.getItem('token') || '' }
 })
 service.interceptors.request.use(
   (request) => {

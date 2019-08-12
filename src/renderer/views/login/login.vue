@@ -79,22 +79,17 @@ export default {
   h3{ font-size: 18px; text-align: center; }
   .login{
     background-color: #3B4759;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    min-height: 700px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .box{
     background-color:#3B4759;
     padding:20px;
     width: 320px;
     height: 350px;
-    display: block;
-    margin: 15% auto 0;
+    margin: 0 auto;
   }
   .x{
     margin-bottom: 50px;
