@@ -9,7 +9,8 @@ import { getMasterIp } from './api/common'
 export default {
   name: 'my-project',
   created () {
-    this.getMasterip()
+    // this.getMasterip()
+    console.log(this.notifyUserOfError())
   },
   methods: {
     getMasterip () {
