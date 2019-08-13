@@ -12,14 +12,17 @@ router.beforeEach(async (to, from, next) => {
     if (!localStorage.getItem('token')) {
       login(store.state.app.barinfo.bar_id).then(res => {
         localStorage.setItem('token', res.token)
+      }, () => {
+        next()
       })
+    } else {
+      next()
     }
-    next()
   } else {
     getNetCafe().then(resp => {
       if (resp.data.bar_id.toString()) {
         store.dispatch('saveBarInfo', resp.data)
-        login(1).then(res => {
+        login(resp.data.bar_id).then(res => {
           localStorage.setItem('token', res.token)
           next()
         }, (error) => {
@@ -29,8 +32,10 @@ router.beforeEach(async (to, from, next) => {
         router.push('/login')
       }
     }, (e) => {
-      alert.notifyUserOfError('获取网吧信息失败，请重新绑定')
-      router.push('/login')
+      alert.notifyUserOfError('barinfoError')
+      setTimeout(() => {
+        router.push('/login')
+      }, 2000)
     })
   }
 })

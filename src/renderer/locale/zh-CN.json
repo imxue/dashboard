@@ -434,5 +434,6 @@
   "plInputNumber":"请输入数字格式",
   "User":"用户",
   "comment":"备注",
-  "Client":"客户机"
+  "Client":"客户机",
+  "barinfoError":"获取网吧信息失败，请重新绑定"
 }
