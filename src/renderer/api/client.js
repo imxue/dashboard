@@ -159,6 +159,19 @@ export function setSchemeBatch (info) {
     data
   })
 }
+/*
+ * 设置客户机
+*/
+export function setPcConf (data, ip) {
+  return makeRequestx('Set_PcConf', { ...data }, ip)
+}
+
+/**
+ * 设置客户机
+ */
+export function batchSetPcConf (data, ip) {
+  return makeRequestx('Set_PcsConf', data, ip)
+}
 /**
  * 设置方案图标
  */
@@ -170,12 +183,7 @@ export function setSchemeIcon (info) {
     data
   })
 }
-/**
- * 设置客户机
- */
-export function setPcConf (data, ip) {
-  return makeRequestx('Set_PcConf', { ...data }, ip)
-}
+
 /**
  *  重新启动
  */
