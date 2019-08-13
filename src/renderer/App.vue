@@ -10,7 +10,6 @@ export default {
   name: 'my-project',
   created () {
     // this.getMasterip()
-    console.log(this.notifyUserOfError())
   },
   methods: {
     getMasterip () {
