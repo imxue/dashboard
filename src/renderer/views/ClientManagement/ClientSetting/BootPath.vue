@@ -23,7 +23,7 @@
             <Option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.name }}</Option>
           </Select>
           <Checkbox size="large" v-model="single" @on-change="setDefault">{{$t('UseDefaultSetting')}}</Checkbox>
-          <Button type="primary" v-on:click="HandEdit" v-if="disabledSinger" :disabled='flag'>{{$t('EditBootPath')}}</Button>
+          <Button type="primary" v-on:click="HandEdit" v-if="disabledSinger" >{{$t('EditBootPath')}}</Button>
           <Button type="primary" v-on:click="HandSetSchemeBatch" v-if="!disabledSinger">{{$t('SaveBootPath')}}</Button>
         </div>
         <div class="footer">
@@ -56,7 +56,8 @@ export default {
       disabled: true,
       disabledSinger: true,
       bootPathG: '',
-      bootPathS: ''
+      bootPathS: '',
+      flag: true
     }
   },
   created () {
@@ -103,9 +104,9 @@ export default {
       }
       getSchemeBatch(data).then(response => {
         data.global ? this.bootPathG = response.data.batch_process : this.bootPathS = response.data.batch_process
-      }, (response) => {
-        this.$Message.info({
-          content: response.data.error
+      }, (data) => {
+        this.$Message.error({
+          content: data.response.statusText
         })
       })
     },
