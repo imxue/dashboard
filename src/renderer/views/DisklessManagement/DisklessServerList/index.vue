@@ -334,8 +334,6 @@ export default {
         await editServersNode(masterip, 1, 1, selfip)
         await addServersx(selfip, guid, masterip)
       } catch (error) {
-        console.log(error)
-        debugger
         return Promise.reject(error)
       }
     },
