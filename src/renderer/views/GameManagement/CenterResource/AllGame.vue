@@ -14,11 +14,10 @@
         </Form>
     </Modal>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
-        <Option v-for="item in gameList" :value="item.value" :key="item.value">{{ $t(item.label) }}</Option>
+      <Select v-model="model1"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')">
+        <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
       </Select>
-      <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
+      <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
@@ -29,18 +28,18 @@
    
 
     <Row style="margin-top:10px; ">
-      <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col>
-      <Col span="18">
-      <Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
+      <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col> -->
+      <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} </Col> -->
+      <Col span="24">
+      <Page :total="this.pageInfo.count" show-total :current="pageInfo.page_index + 1" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
   </div>
 </template>
 
 <script>
 import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
+import { getAllCenterGameTypes } from '@/api/game'
 import { bytesToSize2 } from '../../../utils/index'
-// import Vue from 'vue'
-const _ = require('lodash')
 export default {
   name: 'allGame',
   data () {
@@ -48,13 +47,12 @@ export default {
       loadBtn: false, // 下载按钮 loading
       pageCount: '',
       disk: '',
-      GameName: [], // 游戏名提示
-      value1: '',
+      GameName: '', // 游戏名提示
       temp: [],
       tempx: [],
       tableDataAll: [],
       pageInfo: '',
-      Pagelimit: 10, // 页面展示的数量
+      Pagelimit: 2, // 页面展示的数量
       DownLoadCount: '0', // 已下载的数
       Dg: {
         data: ''
@@ -150,7 +148,8 @@ export default {
   },
   created () {
     // this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
-    this.handgetAllGame(0, this.Pagelimit, 'Name')
+    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+    this.handleGetGameType()
   },
   computed: {
     routes () {
@@ -158,98 +157,45 @@ export default {
     }
   },
   methods: {
-    ChangeValue () {
-      if (this.value1) {
-        this.tempx = []
-        this.GameName = this.temp.slice(0, 6)
-        let r = new RegExp(`${this.value1}`)
-        this.tempx = this.GameAllName.filter(item => {
-          return r.test(item)
-        })
-        this.GameName = this.tempx.slice(0, 6)
-      } else {
-        this.GameName = this.temp.slice(0, 6)
-        this.handgetAllGame(0, 10, 'Name')
+    /**
+     * 获取游戏类型
+     */
+    async handleGetGameType () {
+      try {
+        let resp = await getAllCenterGameTypes()
+        this.gameList = resp.data
+        console.log(this.gameList)
+      } catch (error) {
+        console.log(this.error)
       }
     },
-    showItem (name) {
-      this.searchByGameName(name)
+    /**
+     * 获取游戏资料
+     */
+    async handleGetGameList (obj) {
+      let pageList = { gameList: [], pageInfo: [] }
+      try {
+        let resp = await getAllGame(obj)
+        this.tableData = resp.data.data
+        this.pageInfo = resp.data.pageino
+      } catch (error) {
+        console.log(error)
+      }
+      return pageList
     },
     /**
-     * 通过游戏名称搜索游戏
-     */
-    searchByGameName (name) {
-      getAllGame(0, 1000000, 'Size').then(response => {
-        this.tableDataAll = response.data.data.data
-        this.tableData = this.tableDataAll.filter(item => {
-          return item.Name === name
-        })
-      }, (e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
-      }).catch((e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
-      })
+     *  搜索游戏
+     *
+    */
+    ChangeValue (data) {
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data })
     },
     /**
-     * 获取全部游戏
-     */
-    HandleGetAllGameThrottle: _.throttle(function (offset, limit, orderby) {
-      getAllGame(offset, limit, orderby).then(response => {
-        this.tableData = response.data.data
-        this.tableData.filter(item => {
-          if (item.Name) {
-            this.GameName.push(item.Name)
-          }
-          this.GameAllName = Array.from(this.GameName)
-          this.GameName = this.GameName.slice(0, 6)
-          this.temp = Array.from(this.GameAllName)
-        })
-        this.pageInfo = response.data.pageino
-        this.pageInfo.page_index++
-        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-      }, () => {
-        // 这里执行reject状态的
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
-      }).catch(() => {
-        // 在发送代码错误时执行这里
-        this.$Message.error(this.$t('kxLinuxErr.10'))
-      })
-    }, 2000),
-    handgetAllGame (offset, limit, orderby) {
-      getAllGame(offset, limit, orderby).then(response => {
-        this.tableData = response.data.data
-        this.tableData.filter(item => {
-          if (item.Name) {
-            this.GameName.push(item.Name)
-          }
-          this.GameAllName = Array.from(this.GameName)
-          this.GameName = this.GameName.slice(0, 6)
-          this.temp = Array.from(this.GameAllName)
-        })
-        this.pageInfo = response.data.pageino
-        this.pageInfo.page_index++
-        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-      }, () => {
-        // 这里执行reject状态的
-        this.notifyUserOfDiskError(36873)
-      }).catch(() => {
-        // 在发送代码错误时执行这里
-        this.notifyUserOfDiskError(36873)
-      })
-    },
+     *  分页
+     *
+    */
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
-    },
-    handleButtonDW (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-      } else {
-        this.$router.push({
-          path: 'subtype1-download',
-          query: { id: this.getCheckboxVal }
-        })
-      }
+      this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
     },
     /**
      * 下载游戏

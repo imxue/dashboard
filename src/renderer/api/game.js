@@ -1,12 +1,5 @@
 import request from '@/utils/request'
 
-export function getAllGame (query) {
-  return request({
-    url: '/v1/all_game/search' + query, // search?gameType=1&offset=0&limit=10
-    method: 'get'
-  })
-}
-
 export function repairGame (id) {
   const data = {
     CenterId: id // num
@@ -44,14 +37,6 @@ export function downloadGame (centerId, dir) {
 export function getDirList () {
   return request({
     url: '/v1/public/dirList',
-    method: 'get'
-  })
-}
-
-// today updata games
-export function getTodayGame (query) {
-  return request({
-    url: '/v1/today_update/search' + query, // search?gameType=1&offset=0&limit=10
     method: 'get'
   })
 }

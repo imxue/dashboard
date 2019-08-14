@@ -30,8 +30,8 @@
     <Row style="margin-top:10px; ">
       <i-col span="24">
         <Page
-          :current="pageInfo.page_size"
-          :page-size="10"
+          :current="pageInfo.page_index + 1"
+          :page-size="Pagelimit"
           :total="this.pageInfo.count"
           show-total
           style=" float:right;"
@@ -56,7 +56,7 @@ export default {
     return {
       searchVal: '',
       curroffset: 0,
-      currlimit: 10,
+      Pagelimit: 1,
       pageInfo: '',
       pageSize: 10, // 每页条数
       currentPage: 1,
@@ -162,7 +162,7 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, 10, 'Name')
+    this.handgetAllGame(0, this.Pagelimit, 'Name')
   },
   computed: {
     routes () {
@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * 10, 10, 'Name')
+      this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
     },
     handgetAllGame (offset, limit, orderby) {
       getAllLocalGames(offset, limit, orderby)
@@ -268,10 +268,10 @@ export default {
         onOk: () => {
           deleteLocalGame(index.id).then(
             resp => {
-              this.handgetAllGame(0, this.currlimit, 'Name')
+              this.handgetAllGame(0, this.Pagelimit, 'Name')
             },
             () => {
-              this.handgetAllGame(0, this.currlimit, 'Name')
+              this.handgetAllGame(0, this.Pagelimit, 'Name')
             }
           )
         },

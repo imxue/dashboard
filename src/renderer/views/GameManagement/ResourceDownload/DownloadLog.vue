@@ -63,7 +63,7 @@ export default {
     }
   },
   created () {
-    this.handTableData(0, 10, '')
+    this.handTableData(0, 10, '2019-04-23 10:41:05')
     // console.log(this.$t('x'))
   },
   computed: {

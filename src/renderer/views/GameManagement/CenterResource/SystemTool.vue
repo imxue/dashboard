@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="Name" @on-change='ChangeValue' />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t('Download')}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
     </div>
@@ -9,7 +9,7 @@
     <Table border ref="selection" :columns="tableColumns" :data="SystemTool"  @on-selection-change="handleCheckBox" stripe></Table>
     <Row style="margin-top:10px; ">
        <!-- <i-col span="4">{{$t('Resource')}}：{{this.pageInfo.count}}{{$t('Downloaded')}}：{{DownLoadCount}}</i-col> -->
-       <Page :total="this.pageInfo.count" :current="pageInfo.page_index + 1" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/>
+       <Page show-total :total="Number(this.pageInfo.count)" :current="Number(pageInfo.page_index + 1)" :page-size="Number(this.Pagelimit)" @on-change="handleGetTableList" style=" float:right;"/>
     </Row>
     
   </div>
@@ -21,6 +21,7 @@ export default {
   name: 'SystemTool',
   data () {
     return {
+      Name: '',
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       tableColumns: [
@@ -61,7 +62,7 @@ export default {
     }
   },
   created () {
-    this.handleGetTable(0, 10, 'name', '无盘')
+    this.handleGetTable(0, 10, 'name', '')
   },
   computed: {
     routes () {
@@ -69,6 +70,9 @@ export default {
     }
   },
   methods: {
+    ChangeValue (v) {
+      this.handleGetTable(0, 10, 'name', v)
+    },
     handleGetTable (offset, limit, orderby, gamename) {
       getSystemTools(offset, limit, orderby, gamename).then((resp) => {
         this.SystemTool = resp.data.data

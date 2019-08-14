@@ -2,37 +2,58 @@
   <div>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
-        <Option v-for="item in gameList" :value="item.value" :key="item.value" >{{ $t(item.label) }}</Option>
+        <Option v-for="item in gameList" :value="item.id" :key="item.value" >{{ $t(item.dispaly_name) }}</Option>
       </Select>
-        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue' @on-select='showItem' />
+        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t("Download")}}</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t("repair")}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
+      <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col>
-      <Col span="18"><Page :total="this.pageInfo.count" :current="pageInfo.page_index" :page-size="PageLimt" @on-change="handleGetTableList" style=" float:right;"/></Col>
+      <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col> -->
+      <Col span="24"><Page show-total :total="this.pageInfo.count" :current="pageInfo.page_index + 1 " :page-size="Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
-    
+    <Modal v-model="DownloadGameUp" draggable scrollable :title="$t('DownloadGames')" footer-hide>
+        <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
+          <FormItem :label="$t('DiskSymbol')" label-position="left">
+            <Select v-model="Dg.data" :placeholder="$t('Search')" >
+              <Option v-for='item in disk' v-bind:value='item.DeviceID' v-bind:key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
+            </Select>
+            </FormItem> 
+              <FormItem>
+            <Button type="primary" :loading="loadBtn" @click="handleSubmit('Dg')">{{$t('DownloadGames')}}</Button>
+            <Button @click="DownloadGameUp = false" style="margin-left: 8px">{{$t('cancelText')}}</Button>
+        </FormItem>
+        </Form>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { getTodayUpdateGames, repairGame, deleteGame } from '@/api/localGame'
+import { getTodayUpdateGames, repairGame, deleteGame, downloadGame, getLogicalDrives } from '@/api/localGame'
+import { getAllCenterGameTypes } from '@/api/game'
+import { bytesToSize2 } from '../../../utils/index'
 export default {
   name: 'subType1-1',
   data () {
     return {
       pageInfo: '',
-      PageLimt: 10, // 每页显示数
+      Pagelimit: 10, // 每页显示数
       model1: '',
+      DownloadGameUp: false,
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       DownLoadCount: '',
       GameName: [], // 游戏名提示
       value1: '',
+      Dg: {
+        data: ''
+      },
+      disk: '',
+      loadBtn: false,
+      Downid: '', // 下载游戏Id
       temp: [],
       tempx: [],
       gameList: [
@@ -110,7 +131,8 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, this.PageLimt, 'Name')
+    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+    this.handleGetGameType()
   },
   computed: {
     routes () {
@@ -118,81 +140,31 @@ export default {
     }
   },
   methods: {
-    ChangeValue () {
-      if (this.value1) {
-        this.tempx = []
-        this.GameName = this.temp.slice(0, 6)
-        let r = new RegExp(`${this.value1}`)
-        this.tempx = this.GameAllName.filter(item => {
-          return r.test(item)
-        })
-        this.GameName = this.tempx.slice(0, 6)
-      } else {
-        this.GameName = this.temp.slice(0, 6)
-        this.handgetAllGame(0, 10, 'Name')
+    /**
+     * 获取游戏类型
+     */
+    async handleGetGameType () {
+      try {
+        let resp = await getAllCenterGameTypes()
+        this.gameList = resp.data
+        console.log(this.gameList)
+      } catch (error) {
+        console.log(this.error)
       }
     },
-    showItem (name) {
-      this.searchByGameName(name)
+    async handleGetGameList (obj) {
+      let pageList = { gameList: [], pageInfo: [] }
+      try {
+        let resp = await getTodayUpdateGames(obj)
+        this.tableData = resp.data.data
+        this.pageInfo = resp.data.pageino
+      } catch (error) {
+        console.log(error)
+      }
+      return pageList
     },
-    /**
-     * 通过游戏名称搜索游戏
-     */
-    searchByGameName (name) {
-      getTodayUpdateGames(0, 1000000, 'Size').then(response => {
-        this.tableDataAll = response.data.data.data
-        this.tableData = this.tableDataAll.filter(item => {
-          return item.Name === name
-        })
-      }, (e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
-      }).catch((e) => {
-        this.$Notice.error({ desc: '' + e, duration: 0 })
-      })
-    },
-    /**
-     * 获取今日全部最新游戏
-     */
-    handgetAllHotGame (offset, limit, orderby) {
-      getTodayUpdateGames(offset, limit, orderby).then(response => {
-        this.tableData = response.data.data
-        response.data.data.filter(item => {
-          if (item.Name) {
-            this.GameName.push(item.Name)
-          }
-          this.GameAllName = Array.from(this.GameName)
-          this.GameName = this.GameName.slice(0, 6)
-          this.temp = Array.from(this.GameAllName)
-        })
-        this.pageInfo = response.data.pageino
-        this.pageInfo.page_index++
-        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-      }, (e) => {
-        // 这里执行reject状态的
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
-      }).catch((e) => {
-        // 在发送代码错误时执行这里
-        this.$Message.error(this.$t('kxLinuxErr.10'))
-      })
-    },
-    /**
-     * 获取今日最新游戏
-     */
-    handgetAllGame (offset, limit, orderby) {
-      getTodayUpdateGames(offset, limit, orderby).then((response) => {
-        this.tableData = response.data.data
-        response.data.data.filter(item => {
-          if (item.Name) {
-            this.GameName.push(item.Name)
-          }
-          this.GameAllName = Array.from(this.GameName)
-          this.GameName = this.GameName.slice(0, 6)
-          this.temp = Array.from(this.GameAllName)
-        })
-        this.pageInfo = response.data.pageino
-        this.pageInfo.page_index++
-        this.DownLoadCount = this.tableData.filter(item => { return item.State !== 0 }).length
-      })
+    ChangeValue (data) {
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data })
     },
     /**
      * 获取选取的表格数据
@@ -200,6 +172,31 @@ export default {
     handleCheckBox (arr) {
       this.getCheckboxVal = arr
       return this.getCheckboxVal
+    },
+    async handleSubmit () {
+      try {
+        let info = { CenterGameId: this.Downid, DiskSymbol: this.Dg.data + '\\' }
+        let resp = await downloadGame(info.CenterGameId, info.DiskSymbol)
+        this.DownloadGameUp = false
+        this.notifyUserOfSucess('success')
+        console.log(resp)
+      } catch (error) {
+        this.notifyUserOfError(error.data.error)
+      }
+    },
+
+    handleDownGame (id) {
+      this.DownloadGameUp = true
+      this.Downid = id
+      getLogicalDrives().then(response => {
+        this.disk = response.data
+        this.disk.map(item => {
+          item.free_space = bytesToSize2(item.FreeSpace)
+        })
+        this.Dg.data = this.disk[0].DeviceID
+      }, () => {
+        this.$Message.error(this.$t('kxLinuxErr.36873'))
+      }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
     },
     handleButtonDW (val) {
       val = this.getCheckboxVal.length
@@ -213,7 +210,7 @@ export default {
       }
     },
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * this.PageLimt, this.PageLimt, 'Name')
+      this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
     },
     test () {
       let matched = this.$route.matched.filter(item => item.name)
@@ -245,10 +242,7 @@ export default {
     handleRemove (index) {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
-        okText: this.$t('Confirm'),
-        cancelText: this.$t('cancelText'),
         content: this.$t('DeleteDec'),
-        'closable': true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
             this.$Message.error(this.$t('DeleteGameSucess'))

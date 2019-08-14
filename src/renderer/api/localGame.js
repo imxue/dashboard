@@ -99,16 +99,10 @@ export function netbarAdd (name, icondata, path, exepath, exename, isEnableSync)
 /**
  * 获取全部游戏
  */
-export function getAllGame (offset, limit, orderby) { // 本吧批量添加
-  const data = {
-    offset,
-    limit,
-    orderby
-  }
+export function getAllGame ({ offset, limit, gameName = '', orderby = 'Name' }) { // 本吧批量添加
   return request({
-    url: `/v1/centerresource/getAllCenterGames?offset=${data.offset}&limit=${data.limit}&orderby=${data.orderby}`,
-    method: 'get',
-    data
+    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&gametypeid='123'`,
+    method: 'get'
   })
 }
 /**
@@ -151,9 +145,9 @@ export function getLoad (offset, limit, orderby) {
 
 */
 
-export function getTodayUpdateGames (offset, limit, orderby) {
+export function getTodayUpdateGames ({ offset, limit, gameName = '', orderby = 'Name' }) {
   return request({
-    url: `/v1/centerresource/getTodayUpdateGames?offset=${offset}&limit=${limit}&orderby=${orderby}`,
+    url: `/v1/centerresource/getTodayUpdateGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
     method: 'get'
   })
 }

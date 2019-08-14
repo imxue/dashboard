@@ -17,7 +17,7 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleTableEdit" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
-      <i-col span="24"><Page :current="currentPage" :page-size="pageSize" :total="totalPageNumber" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
+      <i-col span="24"><Page :current="pageinfo.page_index + 1" :page-size="Pagelimit" :total="pageinfo.count" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
     </Row>
   </div>
 </template>
@@ -32,10 +32,8 @@
         optionVal: 0,
         searchVal: '',
         curroffset: 0,
-        currlimit: 10,
-        totalPageNumber: 0,
-        pageSize: 10,
-        currentPage: 1,
+        Pagelimit: 10,
+        pageinfo: '',
         getCheckboxVal: [], // 勾选复选框值
         tableSelectVal: [],
         gameList: [],
@@ -148,7 +146,7 @@
         if (this.optionVal === undefined) {
           this.optionVal = 0
         }
-        this.handleGetTableList(this.curroffset, this.currlimit)
+        this.handleGetTableList(this.curroffset, this.Pagelimit)
       },
       /**
        * 获取已下载游戏
@@ -156,6 +154,7 @@
       handleGetTableList () {
         getDownloadedGames(0, 10, 'name').then((response) => {
           this.tableData = response.data.data
+          this.pageinfo = response.data.pageino
         }, () => {
           this.notifyUserOfError('RequestErrorPleaseTryAgainLater')
         }).catch((e) => {
@@ -166,9 +165,9 @@
         if (num === 1) {
           num = 0
         } else {
-          num = (this.currlimit * num) - this.currlimit
+          num = (this.Pagelimit * num) - this.Pagelimit
         }
-        this.handleGetTableList(num, this.currlimit)
+        this.handleGetTableList(num, this.Pagelimit)
       },
       handleCallBackVaild (res) {
         var code = res.data.Code
@@ -235,7 +234,7 @@
           onOk: () => {
             deleteLocalGame(index.Id).then(
               resp => {
-                this.handgetAllGame(0, this.currlimit, 'CenterPopularity')
+                this.handgetAllGame(0, this.Pagelimit, 'CenterPopularity')
               },
               (e) => {
                 this.$Message.error(this.$t('NotDeleteCenterGame'))
