@@ -119,6 +119,12 @@ export default {
         this.$Message.info({
           content: this.$t('SetSucess')
         })
+        this.HandleGetBasic()
+      }, (error) => {
+        this.$Message.error({
+          content: this.$t(`${error.data.error}`)
+        })
+        this.HandleGetBasic()
       })
     },
     HandleGetBasic () {

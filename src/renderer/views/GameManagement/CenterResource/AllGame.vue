@@ -206,8 +206,8 @@ export default {
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
         this.DownloadGameUp = false
         this.handgetAllGame(0, this.Pagelimit, 'Name')
-      }, (e) => {
-        this.$Message.error(this.$t('FileNotFound'))
+      }, (error) => {
+        this.$Message.error(this.$t(`${error.data.error}`))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
       }).finally(() => {
@@ -226,8 +226,8 @@ export default {
           item.free_space = bytesToSize2(item.FreeSpace)
         })
         this.Dg.data = this.disk[0].DeviceID
-      }, () => {
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
+      }, (error) => {
+        this.$Message.error(this.$t(`${error.data.error}`))
       }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
     },
     /**
