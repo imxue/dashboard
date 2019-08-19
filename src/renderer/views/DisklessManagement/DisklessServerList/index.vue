@@ -391,6 +391,10 @@ export default {
       跳转到服务器详细信息页面
     */
     handleSeeDetail (data) {
+      if (data.online !== '1') {
+        this.$Message.error('当前服务器离线中')
+        return
+      }
       this.$router.push({
         path: 'DisklessServerDetail',
         query: { data, serverList: this.serverList }
