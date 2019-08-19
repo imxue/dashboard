@@ -16,10 +16,7 @@
           v-bind:key="item.serverIp"
           :disabled='item.online !== "1"'
           :value="item.serverIp"
-        >{{item.serverIp}} <Tag
-            v-if="item.isMaster === '1'"
-            color="red"
-          >master</Tag>
+        >{{item.serverIp}}
         </Option>
       </Select>
 
@@ -42,7 +39,7 @@
       <Button
         type="error"
         class="topColumn"
-        v-show="isMaster !== '1'"
+        v-show="isMaster !== '1' && isonline === '1'"
         @click="HandlechangeMaster()"
       >{{$t('setMaterIp')}}</Button>
     </div>
@@ -270,6 +267,7 @@ export default {
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
       isMaster: '', // 是否为主服务器
+      isonline: '',
       selectedDisk: '', // 选择的磁盘信息
       selecteDiskF: '', // 映射盘符
       DiskSymbolList: [
@@ -602,6 +600,8 @@ export default {
       this.currentPageServerip = data.serverIp
       this.CurrentPageserverInfo.push(data)
       this.isMaster = this.CurrentPageserverInfo[0].isMaster
+      console.dir(this.CurrentPageserverInfo[0])
+      this.isonline = this.CurrentPageserverInfo[0].online
     },
     /**
      * 获取网卡信息
