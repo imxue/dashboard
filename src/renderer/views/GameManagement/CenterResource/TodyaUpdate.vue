@@ -229,7 +229,7 @@ export default {
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        this.$Message.error(this.$t('repairSucess'))
+        this.$Message.success(this.$t('repairSucess'))
       }, () => {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {

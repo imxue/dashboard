@@ -14,7 +14,6 @@
            <p style='margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here to upload</p>
            
             <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="!(this.formValidate.IconUrl)">Click here to upload</p>
-              <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
             </i-col>
           </Row>
       </FormItem>
@@ -147,9 +146,6 @@ export default {
       this.temp = file
     },
     handleAdd () {},
-    handleFormatError (res) {
-      this.$Message.error('handleFormatError::' + res.Msg)
-    },
     handleSelectShow () {},
     /*
       select选择
@@ -172,7 +168,6 @@ export default {
           } else {
             this.formValidate.IconUrl = null
             editLocalGame(this.formValidate, this.formValidate.IconUrl, this.Id).then((resp) => {
-              this.$Message.success(resp.data)
               this.$router.go(-1)
             }, (e) => {
               this.$Notice.error({ desc: '' + e, duration: 0 })

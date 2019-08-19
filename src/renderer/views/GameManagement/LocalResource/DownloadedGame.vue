@@ -3,10 +3,10 @@
     <div class="topItem">
       <Row>
         <i-col span="10">
-          <Select v-model="optionVal" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
-            <Option v-for="item in gameList" :value="item.Id" :key="item.Name" >{{ item.Name }}</Option>
+          <Select v-model="model1" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
+            <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
           </Select>
-           <Input class="topColumn" search :enter-button="$t('Search')" :placeholder="$t('PleaseInputGameName')" clearable style="width: 200px;" />
+            <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
         </i-col>
         <i-col span="2" offset="10">
           <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('Synchronize')}}</Button>
@@ -24,12 +24,14 @@
 
 <script>
   import { localMultiSync, getDownloadedGames, deleteLocalGame } from '@/api/localGame'
-  // import { getDrivers } from '@/api/sync'
+  import { getAllCenterGameTypes } from '@/api/game'
   export default {
     name: 'subType3-1',
     data () {
       return {
+        model1: '',
         optionVal: 0,
+        GameName: '',
         searchVal: '',
         curroffset: 0,
         Pagelimit: 10,
@@ -60,18 +62,7 @@
           {
             key: `TypeName`,
             minWidth: 110,
-            renderHeader: (h, params) => { return h('span', this.$t('TypeName')) },
-            render: (h, params) => {
-              let type = params.row.UpdateMode
-              switch (type) {
-                case '':
-                  return h('span', this.$t('OnlineGame'))
-                case 1:
-                  return h('span', this.$t('AutoUpdate'))
-                default:
-                  return '-'
-              }
-            }
+            renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
           },
           {
             renderHeader: (h, params) => { return h('span', this.$t('UpdateMode')) },
@@ -132,6 +123,7 @@
     },
     created () {
       this.handleGetTableList()
+      this.handleGetGameType()
     },
     computed: {
       routes () {
@@ -139,6 +131,24 @@
       }
     },
     methods: {
+      /**
+     *  搜索游戏
+     *
+    */
+      ChangeValue (data) {
+        this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data })
+      },
+      /**
+     * 获取游戏类型
+     */
+      async handleGetGameType () {
+        try {
+          let resp = await getAllCenterGameTypes()
+          this.gameList = resp.data
+        } catch (error) {
+          console.log(this.error)
+        }
+      },
       handleSelectChange (index) {
         this.optionVal = index
       },
@@ -152,7 +162,7 @@
        * 获取已下载游戏
       */
       handleGetTableList () {
-        getDownloadedGames(0, 10, 'name').then((response) => {
+        getDownloadedGames({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' }).then((response) => {
           this.tableData = response.data.data
           this.pageinfo = response.data.pageino
         }, () => {

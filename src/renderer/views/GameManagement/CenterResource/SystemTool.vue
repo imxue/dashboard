@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { getSystemTools } from '@/api/localGame'
+import { getSystemTools, repairGame } from '@/api/localGame'
 export default {
   name: 'SystemTool',
   data () {
@@ -70,6 +70,35 @@ export default {
     }
   },
   methods: {
+    /**
+     * 修复多个游戏
+     */
+    handleButtonFixGame (val) {
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+      } else {
+        if (this.getCheckboxVal.length > 1) {
+          this.getCheckboxVal.forEach((item) => {
+            this.handleFixGame(item)
+          })
+        } else {
+          this.handleFixGame(this.getCheckboxVal[0])
+        }
+      }
+    },
+    /**
+     * 修复游戏
+     */
+    handleFixGame (index) {
+      repairGame(index.Id).then((e) => {
+        this.$Message.success(this.$t('repairSucess'))
+      }, () => {
+        this.$Message.error(this.$t('FileNotFound'))
+      }).catch((e) => {
+        this.$Message.error({ desc: '' + e, duration: 0 })
+      })
+    },
     ChangeValue (v) {
       this.handleGetTable(0, 10, 'name', v)
     },
@@ -93,24 +122,6 @@ export default {
         })
       }
     },
-    handleButtonFixGame (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-      } else {
-        this.$Message.info('修复中，请耐心等待……')
-      }
-    },
-    handleCheckBox (arr) {
-      var data = arr
-      var list = []
-      for (var i in arr) {
-        list.push(data[i].id)
-      }
-      this.getCheckboxVal = list.join(',')
-      console.log(this.getCheckboxVal)
-      return this.getCheckboxVal
-    },
     handleTableDw (index) {
       this.getCheckboxVal = this.tableSelectVal.push(index.id)
       this.$router.push({
@@ -118,16 +129,19 @@ export default {
         query: { id: this.getCheckboxVal }
       })
     },
-    handleFixGame (index) {
-      this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      this.$Message.info('id:' + this.getCheckboxVal + '修复中，请耐心等待……')
-    },
     handleRemove (index) {
       this.getCheckboxVal = this.tableSelectVal.push(index.id)
       this.$router.push({
         path: 'subtype1-remove',
         query: { id: this.getCheckboxVal }
       })
+    },
+    /**
+     * 获取选取的表格数据
+    */
+    handleCheckBox (arr) {
+      this.getCheckboxVal = arr
+      return this.getCheckboxVal
     }
   }
 }

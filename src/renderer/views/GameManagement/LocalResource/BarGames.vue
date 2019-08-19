@@ -56,7 +56,7 @@ export default {
     return {
       searchVal: '',
       curroffset: 0,
-      Pagelimit: 1,
+      Pagelimit: 10,
       pageInfo: '',
       pageSize: 10, // 每页条数
       currentPage: 1,

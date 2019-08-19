@@ -25,8 +25,6 @@
 
    
     <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe ></Table>
-   
-
     <Row style="margin-top:10px; ">
       <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col> -->
       <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} </Col> -->
@@ -52,7 +50,7 @@ export default {
       tempx: [],
       tableDataAll: [],
       pageInfo: '',
-      Pagelimit: 2, // 页面展示的数量
+      Pagelimit: 10, // 页面展示的数量
       DownLoadCount: '0', // 已下载的数
       Dg: {
         data: ''
@@ -205,6 +203,8 @@ export default {
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
         this.DownloadGameUp = false
+        console.log(response)
+        this.$Message.sucess(this.$t(`${response.data}`))
         this.handgetAllGame(0, this.Pagelimit, 'Name')
       }, (error) => {
         this.$Message.error(this.$t(`${error.data.error}`))
@@ -308,7 +308,7 @@ export default {
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        this.$Message.error(this.$t('repairSucess'))
+        this.$Message.success(this.$t('repairSucess'))
       }, () => {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {

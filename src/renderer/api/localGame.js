@@ -101,7 +101,7 @@ export function netbarAdd (name, icondata, path, exepath, exename, isEnableSync)
  */
 export function getAllGame ({ offset, limit, gameName = '', orderby = 'Name' }) { // 本吧批量添加
   return request({
-    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&gametypeid='123'`,
+    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
     method: 'get'
   })
 }
@@ -185,16 +185,10 @@ export function getAllLocalGames (offset, limit, orderby) {
 
 */
 
-export function getDownloadedGames (offset, limit, orderby) {
-  const data = {
-    offset,
-    limit,
-    orderby
-  }
+export function getDownloadedGames ({ offset, limit, gameName = '', orderby = 'Name' }) {
   return request({
-    url: `/v1/localresource/getDownloadedGames?offset=${data.offset}&limit=${data.limit}&orderby=${data.orderby}`,
-    method: 'get',
-    data
+    url: `/v1/localresource/getDownloadedGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
+    method: 'get'
   })
 }
 
