@@ -4,7 +4,7 @@
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
             <Select v-model="Dg.data" :placeholder="$t('Search')" >
-              <Option v-for='item in disk' v-bind:value='item.DeviceID' v-bind:key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
+              <Option v-for='item in disk' :value='item && item.DeviceID' :key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
             </Select>
             </FormItem> 
               <FormItem>
@@ -15,19 +15,15 @@
     </Modal>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')">
-        <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
+        <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.dispaly_name) }}</Option>
       </Select>
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
-
-   
     <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe ></Table>
     <Row style="margin-top:10px; ">
-      <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col> -->
-      <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} </Col> -->
       <Col span="24">
       <Page :total="this.pageInfo.count" show-total :current="pageInfo.page_index + 1" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
@@ -162,7 +158,6 @@ export default {
       try {
         let resp = await getAllCenterGameTypes()
         this.gameList = resp.data
-        console.log(this.gameList)
       } catch (error) {
         console.log(this.error)
       }
