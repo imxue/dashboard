@@ -413,7 +413,7 @@
       handleAllowe (data) {
         this.distributionPanel = true
         this.allowGame = data
-        this.serversIpList1 = this.serversIpList.filter(item => { return item.ip !== this.currentIp })
+        this.serversIpList1 = this.serversIpList.filter(item => { return item.ip === this.currentIp })
         this.serversIpValue1 = this.serversIpList1[0].id
         let dataCopy = {
           label: this.serversIpList1[0].ip

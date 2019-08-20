@@ -16,7 +16,7 @@
             </Select>
              <Checkbox size="large" false-value='0' true-value='1' v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
             <Button type="primary" v-on:click="handSetIcon" :disabled="!!planCopy">{{$t('AddIcon')}}</Button>
-            <Button type="error" :disabled="!!planCopy">{{$t('DeleteIcon')}}</Button>
+            <!-- <Button type="error" :disabled="!!planCopy">{{$t('DeleteIcon')}}</Button> -->
           </div>
           <div class="xx">
           <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
@@ -27,8 +27,9 @@
         v-model="AddIconDialog"
         :title= "this.$t('AddIcon')"
         @on-ok="ok">
-        <div>
+        <div class="wr">
         <Table border :columns="gameListTable" :data="gameSource" @on-selection-change='hanldGetGameDate'></Table>
+         <Page simple :total="this.pageInfo.count" show-total :current="pageInfo.index + 1" :page-size="this.Pagelimit"  @on-change="handleGetTableList" /></Col>
         </div>
     </Modal>
   </div>
@@ -42,6 +43,7 @@ export default {
   data () {
     return {
       flag: false,
+      srcGame: '', // 全部游戏
       DefaultImgreSource: [], // 获取默认图标
       defaultGameId: [], // 默认游戏Id
       currentTab: 'DefaultSetting',
@@ -50,6 +52,11 @@ export default {
       plan: '',
       planCopy: '',
       cityList: [],
+      pageInfo: {
+        count: 0,
+        index: 0
+      },
+      Pagelimit: 11,
       imgreSource: [],
       gameSource: [],
       AddIconDialog: false,
@@ -75,15 +82,15 @@ export default {
               style: { marginRight: '5px' },
               on: { click: () => { this.handleFixGame(parm.row) } }
             }, '删除')
-            let up = h('Button', { props: { type: 'info' }, style: { marginRight: '5px' } }, '上移')
-            let down = h('Button', { props: { type: 'info' }, style: { marginRight: '5px' } }, '下移')
-            if (parm.index === 0) {
-              return [down, detele]
-            } else if (parm.index === 2) {
-              return [up, detele]
-            } else {
-              return [down, up, detele]
-            }
+            // let up = h('Button', { props: { type: 'info' }, style: { marginRight: '5px' } }, '上移')
+            // let down = h('Button', { props: { type: 'info' }, style: { marginRight: '5px' } }, '下移')
+            // if (parm.index === 0) {
+            //   return [down, detele]
+            // } else if (parm.index === 2) {
+            //   return [up, detele]
+            // } else {
+            return [detele]
+            // }
           }
         }
       ],
@@ -140,8 +147,6 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then((response) => {
-          this.plan = response.data[0].id
-          this.planCopy = response.data[0].id
           this.HandleGetAllHomeIcon()
         }, (response) => {
           this.$Message.info({
@@ -231,8 +236,10 @@ export default {
     * 获取全部游戏
     */
     handgetAllGame (offset, limit, orderby) {
-      getAllGame(0, 10, 'Name').then(response => {
-        this.gameSource = response.data.data
+      getAllGame({ offset: 0, limit: 20000, orderby: 'Name' }).then(response => {
+        this.srcGame = response.data.data
+        this.pageInfo.count = this.srcGame.length
+        this.gameSource = this.srcGame.slice(0, this.Pagelimit)
         if (this.imgreSource.length > 0) {
           this.gameSource.forEach(item => {
             this.imgreSource.forEach(img => {
@@ -250,6 +257,9 @@ export default {
         this.$Message.error(this.$t('kxLinuxErr.10'))
       })
     },
+    handleGetTableList (index) {
+      this.gameSource = this.srcGame.slice(((index - 1) * this.Pagelimit), index * this.Pagelimit)
+    },
     hanldGetGameDate (data) {
       this.SelectedDataGame = data
     },
@@ -263,10 +273,21 @@ export default {
           'gameids': [],
           'is_global': false
         }
-        info.gameids = this.defaultGameId
-        setSchemeIcon(info).then(resp => {
-        }, (resp) => {
-          this.$Message.info(resp.data.error)
+        // 获取默认设置
+        let infox = {
+          global: true,
+          schemeId: ''
+        }
+        info.scheme_id = this.plan
+        getSchemeIcon(infox).then(resp => {
+          resp.data.forEach(item => {
+            info.gameids.push(item.game_id)
+          })
+          setSchemeIcon(info).then(resp => {
+            this.HandleGetAllHomeIcon()
+          }, (resp) => {
+            this.$Message.error(resp.response.statusText && '')
+          })
         })
       }
     }
@@ -293,6 +314,10 @@ export default {
 }
 .xx{
   height: 500px;
+}
+.wr > .ivu-page {
+  margin-top:10px;
+  text-align: right;
 }
 </style>
 

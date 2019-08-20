@@ -9,7 +9,7 @@
       
     <Row class="header">
         <Col span="12" >
-        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('')" style="width: 200px;"  @on-change='ChangeValue'  />
+        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('')" style="width: 200px;"  @on-change='ChangeValue'  placeholder="请输入要查询的内容" />
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
        <Button type="primary" class="topColumn" @click="handleButtonEdit">{{$t('Edit')}}</Button>
@@ -358,7 +358,7 @@ export default {
       },
       formValidate1: {
         action: 'apply',
-        comment: ''
+        comment: '保存信息'
       },
       formInline: {
         disable: '0',
@@ -467,7 +467,7 @@ export default {
       }
       this.loading = true
       func(this.macArray.toString()).then(resp => {
-        this.notifyUserOfSucess(resp.data)
+        this.notifyUserOfSucess('sucess')
         this.loading = false
       }, (err) => {
         setTimeout(() => { this.loading = false }, 500)
@@ -628,7 +628,7 @@ export default {
     handleButtonEdit () {
       if (this.clientArray.length < 1) { return }
       this.EditModel = true
-      getPcGroupx(this.masterIp).then((e) => {
+      getPcGroupx(this.masterip).then((e) => {
         this.pcGpList = e.data.result.list
         this.formInline.pcGp = this.pcGpList[0].name
       },
@@ -704,7 +704,6 @@ export default {
     */
     handleSubmitx (name) {
       var self = this
-      console.log(this.formValidatex.imglist)
       self.$refs[name].validate(valid => {
         if (valid) {
           let cookiesMasterIp = this.masterip

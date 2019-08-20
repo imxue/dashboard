@@ -9,7 +9,7 @@
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 20,maxRows: 20}"
+            :autosize="{minRows: 20,maxRows: 35}"
             :disabled="disabled"
             v-model="bootPathG"
           />
@@ -29,7 +29,7 @@
         <div class="footer">
           <Input
             type="textarea"
-            :autosize="{minRows: 20,maxRows: 20}"
+            :autosize="{minRows: 20,maxRows: 35}"
             :disabled="disabledSinger"
             v-model="bootPathS"
           />

@@ -182,8 +182,8 @@
                 style="width:200px;"
                 :placeholder="this.$t('pleaseInput')"
               >
-                <Option  v-for="item in DiskSymbolList" :value="item.diskSymbol" :key="item.value">
-                 {{item.diskSymbol}}
+                <Option v-for="item in DiskSymbolList" :value="item.diskSymbol"   :key="item.value" :disabled="item.exist">
+                      {{item.diskSymbol}}
                 </Option>
               </Select>
             </Col>
@@ -273,8 +273,10 @@ export default {
       DiskSymbolList: [
         { diskSymbol: 'C:', value: '1' },
         { diskSymbol: 'D:', value: '2' },
-        { diskSymbol: 'E:', value: '3' }
+        { diskSymbol: 'E:', value: '3' },
+        { diskSymbol: 'F:', value: '4' }
       ], // 盘符列表
+      vol: [], // 已存在磁盘
       selecteDisk: 'imageDisk', // 选择的磁盘功能
       getCheckboxVal: [], // 勾选复选框值
       DiskSetDialog: false, // 磁盘设置弹窗
@@ -536,7 +538,6 @@ export default {
             let path
             selected.forEach(item => {
               path = item
-              console.log(_this.currentPageServerip)
               RaidRemove(path, _this.currentPageServerip).then(() => {
                 _this.handleGetDiskStatusx(_this.currentPageServerip)
               }, (error) => {
@@ -585,22 +586,19 @@ export default {
      * 获取映射盘符
      */
     handleGetAllServerDisks () {
-      // getAllServerDisks().then((resp) => {
-      //   this.DiskSymbolList = resp.data || []
-      //   console.log(222)
-      //   this.DiskSymbolList = this.DiskSymbolList.filter(item => {
-      //     return item.disk_type === 1
-      //   })
-      //   console.log(this.DiskSymbolList)
-      //   console.log(222)
-      // }, (error) => { console.log(error) })
+      this.vol.forEach(item => {
+        this.DiskSymbolList.forEach(itemx => {
+          if (itemx.diskSymbol === item) {
+            itemx.exist = true
+          }
+        })
+      })
     },
     handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
       this.currentPageServerip = data.serverIp
       this.CurrentPageserverInfo.push(data)
       this.isMaster = this.CurrentPageserverInfo[0].isMaster
-      console.dir(this.CurrentPageserverInfo[0])
       this.isonline = this.CurrentPageserverInfo[0].online
     },
     /**
@@ -626,8 +624,11 @@ export default {
       getDiskStatusx(ip).then(resp => {
         this.matrix = []
         this.diskInfo = resp.data.result.list || []
-        console.log(this.diskInfo)
+        this.vol = []
         this.diskInfo.forEach(item => {
+          if (item.vol) {
+            this.vol.push(item.vol)
+          }
           item.size = bytesToSize(item.size)
           item.availableSize = bytesToSize(item.availableSize)
           let f = {}
