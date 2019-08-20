@@ -770,6 +770,20 @@ export default {
      * 弹出设置面板
      */
     ShowDiskPlan (data) {
+      if (data.fun === 'dataDisk') {
+        if (data.vol === undefined) {
+          let x = []
+          x = this.DiskSymbolList.filter(item => {
+            return !item.exist
+          })
+          if (x[0]) {
+            data.vol = x[0].diskSymbol
+          }
+        }
+        if (data.exttype === undefined) {
+          data.exttype = '0'
+        }
+      }
       this.selectedDisk = data
       this.handleGetAllServerDisks() // 获取映射盘符
       this.selecteDiskF = data.vol
