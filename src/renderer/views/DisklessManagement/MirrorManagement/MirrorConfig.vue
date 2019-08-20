@@ -44,7 +44,7 @@
 
 <script>
   import moment from 'moment'
-  import { bytesToSize } from '@/utils/index'
+  import { bytesToSize2 } from '@/utils/index'
   import {
     getImageListx,
     deleteImagex,
@@ -81,7 +81,13 @@
               return h('span', params.row.size + 'GB')
             }
           },
-          { title: '占用空间', key: 'fileSizeB', renderHeader: (h, params) => { return h('span', this.$t('TakeupSpace')) } },
+          { title: '占用空间',
+            key: 'fileSizeB',
+            renderHeader: (h, params) => { return h('span', this.$t('TakeupSpace')) },
+            render: (h, params) => {
+              return h('span', bytesToSize2(params.row.fileSizeB))
+            }
+          },
           {
             renderHeader: (h, params) => { return h('span', this.$t('ConfigurePoints')) },
             key: 'profileList',
@@ -103,7 +109,7 @@
             width: 200,
             renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) },
             render: (h, params) => {
-              return h('span', bytesToSize(params.row.fileSizeB))
+              return h('span', bytesToSize2(params.row.fileSizeB))
             }
           },
           { key: 'dataModifyTime',

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" :disabled=!this.masterip @click="handleButtonAdd">{{$t('Add')}}</Button>
+      <Button type="primary" class="topColumn" :disabled="!this.masterip" @click="handleButtonAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
     <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirrorList"></Table>
@@ -69,7 +69,7 @@
             }
           },
           {
-            renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
+            renderHeader: (h, params) => { return h('span', this.$t('TakeupSpace')) },
             key: 'fileSizeB',
             render: (h, params) => {
               var value = params.row.fileSizeB
