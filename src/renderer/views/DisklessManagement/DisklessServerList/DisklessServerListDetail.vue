@@ -139,7 +139,6 @@
               <Select
                 v-model="selecteDisk"
                 @on-change="handleSelect"
-                clearable
                 class="topColumn"
                 style="width:200px;"
               >
@@ -159,7 +158,6 @@
               <Col span='7'>{{$t('isFormat')}}：</Col>
               <Select
                 v-model="selecteFormatValue"
-                clearable
                 class="topColumn"
                 style="width:200px;"
                 :placeholder="this.$t('pleaseInput')"
@@ -177,7 +175,6 @@
               <Col span='7'>{{$t('MappingDiskSymbol')}}：</Col>
               <Select
                 v-model="selecteDiskF"
-                clearable
                 class="topColumn"
                 style="width:200px;"
                 :placeholder="this.$t('pleaseInput')"
@@ -196,7 +193,6 @@
               <Col span='7'>{{$t('ExtendedType')}}：</Col>
               <Select
                 v-model="ExtendedType"
-                clearable
                 class="topColumn"
                 style="width:200px;"
                 :placeholder="this.$t('pleaseInput')"
@@ -274,7 +270,12 @@ export default {
         { diskSymbol: 'C:', value: '1' },
         { diskSymbol: 'D:', value: '2' },
         { diskSymbol: 'E:', value: '3' },
-        { diskSymbol: 'F:', value: '4' }
+        { diskSymbol: 'F:', value: '4' },
+        { diskSymbol: 'G:', value: '5' },
+        { diskSymbol: 'H:', value: '6' },
+        { diskSymbol: 'I:', value: '7' },
+        { diskSymbol: 'J:', value: '8' },
+        { diskSymbol: 'K:', value: '9' }
       ], // 盘符列表
       vol: [], // 已存在磁盘
       selecteDisk: 'imageDisk', // 选择的磁盘功能
@@ -651,7 +652,18 @@ export default {
     /**
      * 删除ip
      */
-    handleSelect () {},
+    handleSelect (data) {
+      if (data === 'dataDisk') {
+        let x = []
+        x = this.DiskSymbolList.filter(item => {
+          return !item.exist
+        })
+        if (x[0]) {
+          this.selecteDiskF = x[0].diskSymbol
+        }
+        this.ExtendedType = '0'
+      }
+    },
     handleButtonDelete () {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
