@@ -267,7 +267,6 @@ export default {
       selectedDisk: '', // 选择的磁盘信息
       selecteDiskF: '', // 映射盘符
       DiskSymbolList: [
-        { diskSymbol: 'C:', value: '1' },
         { diskSymbol: 'D:', value: '2' },
         { diskSymbol: 'E:', value: '3' },
         { diskSymbol: 'F:', value: '4' },
@@ -438,7 +437,7 @@ export default {
         { title: '映射盘符',
           key: 'vol',
           align: 'center',
-          minWidth: 80,
+          minWidth: 90,
           renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) },
           render: (h, params) => {
             return h('span', params.row.vol || '-')
