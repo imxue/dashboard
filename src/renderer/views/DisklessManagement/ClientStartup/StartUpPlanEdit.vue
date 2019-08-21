@@ -52,7 +52,7 @@
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + '：'" :label-width="140">
+        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + ' (G)：'" :label-width="140">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder=""></i-input></i-col>
           </Row>
@@ -190,7 +190,7 @@
           daSV: '',
           bala: '0',
           disable: '0',
-          wrLimG: '0',
+          wrLimG: '10',
           imgG: [],
           gTim: '',
           cach: '512',

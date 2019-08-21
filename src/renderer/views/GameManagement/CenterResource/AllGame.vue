@@ -4,7 +4,7 @@
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
             <Select v-model="Dg.data" :placeholder="$t('Search')" >
-              <Option v-for='item in disk' :value='item && item.DeviceID' :key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
+              <Option v-for='item in disk' :value='item.DeviceID' :key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
             </Select>
             </FormItem> 
               <FormItem>
@@ -15,7 +15,7 @@
     </Modal>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')">
-        <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.dispaly_name) }}</Option>
+        <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ item.dispaly_name }}</Option>
       </Select>
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
@@ -58,11 +58,11 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        { Id: 0, value: 'HotGame', label: 'HotGame' },
-        { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
-        { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
-        { Id: 3, value: 'CasualGame', label: 'CasualGame' },
-        { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
+        // { Id: 0, value: 'HotGame', label: 'HotGame' },
+        // { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
+        // { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
+        // { Id: 3, value: 'CasualGame', label: 'CasualGame' },
+        // { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
       ],
       tableColumns: [
         { type: 'selection', width: '50px', align: 'center' },
@@ -142,8 +142,8 @@ export default {
   },
   created () {
     // this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
-    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
     this.handleGetGameType()
+    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
   },
   computed: {
     routes () {

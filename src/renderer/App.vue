@@ -29,13 +29,12 @@ export default {
   html, body {
     width: 100%;
     height: 100%;
+    margin:0;
+    padding:0;
   }
   #app{
-    background: #f5f7f9;
     width: 100%;
-    min-height: 100vh;
-    min-width: 1200px;
-    max-height: 1200px;
+    height: 100%;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
 

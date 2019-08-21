@@ -56,5 +56,6 @@
 </script>
 
 <style scoped>
-
+.nav{
+}
 </style>

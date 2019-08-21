@@ -1,13 +1,8 @@
 <template>
   <div>
     <div class="topItem">
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonExport">导出</Button> -->
       <Button type="error" class="topColumn" @click="handleDeleteMirrors">{{$t('Delete')}}</Button>
-      <!-- <Divider type="vertical" />
-      <Button type="primary" class="topColumn" @click="handleButtonBuild">施工状态</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonStandby">待机状态</Button> -->
-    </div>
+      </div>
     <!-- table -->
     <Table border :columns="MirrorInfoTable" :data="MirrorsInfoDate"></Table>
     <Divider />
@@ -104,7 +99,7 @@
         ],
         MirrorsInfoDate: [],
         tableColumns: [
-          { key: 'name', width: 200, renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
+          { key: 'name', width: 100, renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
           { key: 'fileSizeB',
             width: 200,
             renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) },
@@ -155,7 +150,6 @@
         ruleValidate: { config: [{ required: true, message: '不能为空', trigger: 'change' }] },
         configPointTable: [
           { key: 'no',
-            minWidth: 150,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
           },
           { key: 'comment',
@@ -171,6 +165,7 @@
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
+            minWidth: 150,
             render: (h, params) => {
               let response = h('Button', {
                 props: { type: 'primary' },

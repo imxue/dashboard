@@ -2,7 +2,7 @@
   <div>
     <div class="topItem">
       <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
-        <Option v-for="item in gameList" :value="item.id" :key="item.value" >{{ $t(item.dispaly_name) }}</Option>
+        <Option v-for="item in gameList" :value="item.id" :key="item.id" >{{ item.dispaly_name }}</Option>
       </Select>
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
       <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t("Download")}}</Button> -->
@@ -57,11 +57,11 @@ export default {
       temp: [],
       tempx: [],
       gameList: [
-        { Id: 0, value: 'HotGame', label: 'HotGame' },
-        { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
-        { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
-        { Id: 3, value: 'CasualGame', label: 'CasualGame' },
-        { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
+        // { Id: 0, value: 'HotGame', label: 'HotGame' },
+        // { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
+        // { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
+        // { Id: 3, value: 'CasualGame', label: 'CasualGame' },
+        // { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
       ],
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
