@@ -32,7 +32,7 @@ function createWindow () {
     width: 1380,
     webPreferences: { webSecurity: false }
   })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null

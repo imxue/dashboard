@@ -227,7 +227,7 @@ export default {
 
         },
         { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
+        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
@@ -328,7 +328,7 @@ export default {
 
         },
         { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineNamePrefix')) } },
+        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },

@@ -273,7 +273,7 @@
               }
             })
           }
-          this.currentServerId = this.serversDiskList[0].server_id
+          this.currentServerId = this.serversDiskList[0]
           // this.currentDiskId = this.serversDiskList[0].id
           this.handleGetGame()
         })
