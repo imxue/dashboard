@@ -1,17 +1,18 @@
 <template>
   <div class="layout">
     <Row>
-      <Col :xxl="{ span: 24, offset: 0 }" :xl="{ span: 24, offset: 0 }" :lg="{span: 24, offset: 0 }"	:xs='{span:24,offset: 0}'>
+      <!-- <Col :xxl="{ span: 24, offset: 0 }" :xl="{ span: 24, offset: 0 }" :lg="{span: 24, offset: 0 }"	:xs='{span:24,offset: 0}'> -->
+      <Col class="navbar"> 
       <Navbar></Navbar>
     </Col>
     </Row>
    
-      <div class="xx">
+      <div class="wrapper">
         <Col  class="siderbar" style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 4, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
+          <!-- <Col  class="siderbar" style="background:#fff"> -->
           <Sidebar ></Sidebar>
         </Col>
-        <Col  class="main" :xxl="{ span: 20, offset: 4 }" :xl="{ span: 20, offset: 4 }" :lg="{span: 20, offset: 4 }"	:md="{ span: 20, offset: 4 }" :xs='{span:20,offset: 4}'>
-
+        <Col  class="main"  :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 20, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'>
             <Breadcrumb :style="{margin: '10px 10px'}">
               <template v-for="item  in levelList" >
                 <BreadcrumbItem :key="item.path">
@@ -75,19 +76,33 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
+    min-width: 1200px;
     background: #f5f7f9;
   }
-  .xx {
+  .navbar{
+    width: 100%
+  }
+  .wrapper {
     display: flex;
     flex-grow:1; 
+    /* overflow-y: scroll;  */
   }
   .siderbar{
-    position: absolute;
-    top:60px;
+    position: relative;
+    /* width: 220px; */
     bottom: 0;
+    overflow-y: scroll; 
+  }
+  .siderbar::-webkit-scrollbar{
+    display: none; 
   }
   .main{
-    position: absolute;
+    position: relative;
+    bottom:0;
+    background: #f5f7f9;
+    height: 100%;
+    /* overflow-y: scroll;  */
   }
 </style>
 
