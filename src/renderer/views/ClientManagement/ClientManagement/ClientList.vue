@@ -110,7 +110,6 @@
         v-model="EditModel"
         :title="this.$t('ClientSetting')"
         @on-ok="batchEdit"
-        
         >
         <Form ref="formInline" :model="formInline">
         <FormItem :label="this.$t('Enable')" prop="disable" :label-width="110">
@@ -132,12 +131,13 @@
 import { setSuper, getSuper, setCancelSuper, restart, shutdown, wakeup, batchSetPcConf } from '@/api/client'
 import { getPcListConfig, getImageListx, deletePcsConfigx, getPcGroupx } from '@/api/wupan'
 import edit from './ClientListAdd'
-import { mapState } from 'vuex'
+import { getMasterIp } from '@/api/common'
 export default {
   name: 'ClientList',
   inject: ['reload'],
   data () {
     return {
+      masterip: this.$store.state.app.masterip || '',
       clientArray: '',
       clientList: [],
       flag: '',
@@ -388,6 +388,7 @@ export default {
   },
   created () {
     this.handgetClienList() // 获取客户机列表
+    this.HandleGetMaster() // 获取主服务器
   },
   mounted () {
     let div = this.$refs.demox
@@ -404,16 +405,24 @@ export default {
         this.formValidatex.profileList = xx[0].profileList[0].name
         return xx[0].profileList
       }
-    },
-    ...mapState({
-      masterip: state => state.app.masterip // 主服务器
-    })
+    }
   },
 
   components: {
     edit
   },
   methods: {
+    /**
+      获取主服务器
+    */
+    async HandleGetMaster () {
+      try {
+        let resp = await getMasterIp()
+        this.$store.dispatch('saveMaster', resp.data.value || '')
+      } catch (e) {
+        this.notifyUserOfDiskError(36873)
+      }
+    },
     ChangeValue (value) {
       if (!value) {
         this.handgetClienList()

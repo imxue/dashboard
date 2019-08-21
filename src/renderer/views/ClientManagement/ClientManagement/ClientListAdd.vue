@@ -88,6 +88,7 @@ export default {
         callback()
       }
       return {
+        masterip: this.$store.state.app.masterip || '',
         flag: false, //  修改标志
         data: '',
         EiditIp: '',
@@ -151,7 +152,7 @@ export default {
        * 获取客户机启动方案
        */
       getClientPlan () {
-        let masterip = localStorage.getItem('masterip')
+        let masterip = this.masterip
         getPcGroupx(masterip).then((e) => {
           this.pcGpList = e.data.result.list
           if (!this.formValidate.pcGp) {
@@ -204,7 +205,7 @@ export default {
       handleSubmit (name) {
         this.$refs[name].validate(valid => {
           if (valid) {
-            let masterip = localStorage.getItem('masterip')
+            let masterip = this.masterip
             setPcConf(this.formValidate, masterip).then((resp) => {
               this.$emit('childByValue')
             }, (error) => {
