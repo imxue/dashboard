@@ -206,7 +206,7 @@
           okText: this.$t('Confirm'),
           cancelText: this.$t('cancelText'),
           onOk: () => {
-            let ip = localStorage.getItem('masterip')
+            let ip = this.masterip
             deleteImagex(name, ip).then(() => {
               this.$router.push({
                 path: 'AllMirror'
@@ -306,7 +306,7 @@
        */
   
       handleGetRestoreList (index) {
-        getImageRestore(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((resp) => {
+        getImageRestore(this.MirrorsInfoDate[0].name, index.no, this.masterip).then((resp) => {
           if (!resp.data.error) {
             this.configPointDate = resp.data.result.rollbackList || []
           }
@@ -342,7 +342,7 @@
        */
       handleDelete (index) {
         // image, projectNO
-        deleteImageProject(this.MirrorsInfoDate[0].name, index.no, localStorage.getItem('masterip')).then((response) => {
+        deleteImageProject(this.MirrorsInfoDate[0].name, index.no, this.masterip).then((response) => {
           if (!response.data.error) {
             this.$Message.success(this.$t('DeleteSucess'))
             this.handleGetImageList()
@@ -353,7 +353,7 @@
        * 修改配置点
        */
       handleSubmitFix () {
-        editImageProject(this.MirrorsInfoDate[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName, localStorage.getItem('masterip')).then((resp) => {
+        editImageProject(this.MirrorsInfoDate[0].name, this.configListIndexValue.no, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName, this.masterip).then((resp) => {
           if (!resp.data.error) {
             this.$Message.success(this.$t('SetSucess'))
             this.showImgPopup = false
@@ -383,7 +383,7 @@
         let that = this
         let length = that.configPointDate.length
         if (length <= 1) {
-          revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((resp) => {
+          revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), this.masterip).then((resp) => {
             if (resp.data.error === null) {
               that.handleGetRestoreList(that.restoreListIndexValue)
             }
@@ -395,7 +395,7 @@
             'cancel-text': this.$t('cancelText'),
             'okText': this.$t('KonwContinue'),
             onOk () {
-              revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((resp) => {
+              revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), this.masterip).then((resp) => {
                 if (resp.data.error === null) {
                   that.handleGetRestoreList(that.restoreListIndexValue)
                 }
@@ -405,7 +405,7 @@
         }
       },
       handleDeleteRestore (index) { // 删除还原点
-        deleteImageRestore(this.MirrorsInfoDate[0].name, this.restoreListIndexValue.no, String(index.no), localStorage.getItem('masterip')).then((response) => {
+        deleteImageRestore(this.MirrorsInfoDate[0].name, this.restoreListIndexValue.no, String(index.no), this.masterip).then((response) => {
           var result = response.data.result
           if (response.data.error === null && result === null) {
             this.showPopup = true
