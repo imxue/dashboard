@@ -226,15 +226,15 @@ export default {
           }
 
         },
-        { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'ip', minWidth: 130, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
         { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
-        { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
+        { key: 'mac', minWidth: 135, maxWidth: 150, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'super',
-          minWidth: 140,
+          minWidth: 300,
           render: (h, params) => {
             let that = this
             let a = ''
@@ -608,7 +608,8 @@ export default {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         // content: this.$t('DeleteCurrentData'),
-        content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
+        // content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
+        content: `是否${this.$t('Delete')}所选择的 ${this.clientArray.length} 台${this.$t('Client')} `,
         onOk: async () => {
           try {
             await deletePcsConfigx(x, this.masterip)

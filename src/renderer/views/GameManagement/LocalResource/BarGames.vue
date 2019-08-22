@@ -136,7 +136,7 @@ export default {
             return h('span', this.$t('operation'))
           },
           key: 'operation',
-          minWidth: 180,
+          minWidth: 190,
           render: (h, params) => {
             let a = h('Button',
               { style: { marginRight: '5px', width: '70px' },
