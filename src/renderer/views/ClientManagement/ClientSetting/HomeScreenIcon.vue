@@ -183,7 +183,9 @@ export default {
      */
     handleGetPcGroup () {
       getAllScheme().then((resp) => {
-        this.cityList = resp.data
+        this.cityList = resp.data.filter(item => {
+          return item.is_global !== 1
+        })
         this.plan = this.cityList[0].id
       }, (resp) => {
         this.$Message.error(resp.data.error)

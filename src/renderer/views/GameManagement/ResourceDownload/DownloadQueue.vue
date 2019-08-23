@@ -13,14 +13,14 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe ></Table>
     <Row style="margin-top:10px; ">
-      <Page :total="10" :current="1" @on-change="changePage"  style=" float:right;"/>
+      <Page :total="this.pageinfo.count" :current="Number(this.pageinfo.page_index + 1)" :page-size="this.Pagelimit" @on-change="changePage"  style=" float:right;"/>
     </Row>
     
   </div>
 </template>
 
 <script>
-import { getLoad, deleteLocalGame } from '@/api/localGame'
+import { getLoad } from '@/api/localGame'
 import { pauseGame, startSyncGameTasks } from '@/api/game'
 import { bytesToSize2, formatTime1 } from '@/utils/index'
 export default {
@@ -39,15 +39,15 @@ export default {
             let state = params.row.Status
             switch (state) {
               case '-1':
-                return h('span', this.$t('unknown'))
+                return h('span', { style: { color: '#999999' } }, this.$t('unknown'))
               case '0':
-                return h('span', this.$t('error'))
+                return h('span', { style: { color: 'red' } }, this.$t('error'))
               case '1':
                 return h('span', this.$t('seeding'))
               case '2':
-                return h('span', this.$t('downloading'))
+                return h('span', { style: { color: '#008000' } }, this.$t('downloading'))
               case '3':
-                return h('span', this.$t('paused'))
+                return h('span', { style: { color: '#B47676' } }, this.$t('paused'))
               case '4':
                 return h('span', this.$t('stopped'))
               case '5':
@@ -55,7 +55,7 @@ export default {
               case '6':
                 return h('span', this.$t('checking'))
               case '7':
-                return h('span', this.$t('finished'))
+                return h('span', { style: { color: '#008000' } }, this.$t('finished'))
             }
           }
         },
@@ -97,37 +97,43 @@ export default {
               return h('span', formatTime1(params.row.PreFinishedTime))
             }
           }
-        },
-        { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-          key: 'operation',
-          minWidth: 130,
-          render: (h, params) => {
-            let type = params.row.id
-            let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              on: { click: () => { this.handleTableDelete(params.row.CenterGameId) } }
-            }, this.$t('Delete'))
-            // let b = h('span', {
-            //   style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-            //   on: { click: () => { this.handleTableMove(params.row) } }
-            // }, this.$t('MoveUp'))
-            // let c = h('span', {
-            //   style: { color: '#2d8cf0', textDecoration: 'underline' },
-            //   on: { click: () => { this.handleTableTop(params.row) } }
-            // }, this.$t('Topping'))
-            switch (type) {
-              case 0:
-                return h('div', [a])
-              default:
-                return h('span', [a])
-            }
-          }
         }
+        // { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
+        //   key: 'operation',
+        //   minWidth: 130,
+        //   render: (h, params) => {
+        //     let type = params.row.id
+        //     let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
+        //       on: { click: () => { this.handleTableDelete(params.row.CenterGameId) } }
+        //     }, this.$t('Delete'))
+        //     // let b = h('span', {
+        //     //   style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
+        //     //   on: { click: () => { this.handleTableMove(params.row) } }
+        //     // }, this.$t('MoveUp'))
+        //     // let c = h('span', {
+        //     //   style: { color: '#2d8cf0', textDecoration: 'underline' },
+        //     //   on: { click: () => { this.handleTableTop(params.row) } }
+        //     // }, this.$t('Topping'))
+        //     switch (type) {
+        //       case 0:
+        //         return h('div', [a])
+        //       default:
+        //         return h('span', [a])
+        //     }
+        //   }
+        // }
       ],
-      tableData: [] // 队列数据
+      tableData: [], // 队列数据
+      pageinfo: {
+        count: 0,
+        page_index: '1'
+
+      },
+      Pagelimit: 10
     }
   },
   created () {
-    this.HandleGetLoadQueue(0, 10, 'name')
+    this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
   },
   computed: {
     routes () {
@@ -143,6 +149,7 @@ export default {
         let data = response.data.data
         if (data.length !== 0) {
           this.tableData = data
+          this.pageinfo = response.data.pageino
         }
       }, (response) => {
         console.log('获取下载队列')
@@ -153,16 +160,16 @@ export default {
     /**
      * 删除
      */
-    handleTableDelete (id) {
-      this.$Modal.confirm({
-        title: this.$t('DeleteTip'),
-        okText: this.$t('confirm'),
-        cancelText: this.$t('cancelText'),
-        onOk: () => {
-          deleteLocalGame(id).then((e) => { console.log(e) }, (e) => { console.log(e) }).catch((e) => { console.log(e) })
-        }
-      })
-    },
+    // handleTableDelete (id) {
+    //   this.$Modal.confirm({
+    //     title: this.$t('DeleteTip'),
+    //     okText: this.$t('confirm'),
+    //     cancelText: this.$t('cancelText'),
+    //     onOk: () => {
+    //       deleteLocalGame(id).then((e) => { console.log(e) }, (e) => { console.log(e) }).catch((e) => { console.log(e) })
+    //     }
+    //   })
+    // },
     /**
      *
     */
@@ -209,7 +216,9 @@ export default {
           this.HandleGetLoadQueue(0, 10, 'name')
         })
     },
-    changePage () {}
+    changePage (index) {
+      this.HandleGetLoadQueue((index - 1) * this.Pagelimit, this.Pagelimit)
+    }
   }
 
 }

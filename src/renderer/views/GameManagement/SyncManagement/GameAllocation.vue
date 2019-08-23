@@ -73,6 +73,7 @@
 <script>
   import { distributeGame, canceldistributeGame, syncGame, getAllServers, getAllServerDisks, getAllServerGamesByIp } from '@/api/sync'
   import { getAllCenterGameTypes } from '@/api/game'
+  import { bytesToSize } from '../../../utils/index'
   export default {
     name: 'ServerSyncSet',
     data () {
@@ -138,7 +139,15 @@
           { key: 'display_name', minWidth: 109, maxWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           { key: 'game_type', maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
           { key: 'popularity', sortable: true, maxWidth: 100, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'size', sortable: true, maxWidth: 90, minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'size',
+            sortable: true,
+            maxWidth: 90,
+            minWidth: 90,
+            renderHeader: (h, params) => { return h('span', this.$t('Size')) },
+            render: (h, params) => {
+              return h('span', bytesToSize(params.row.size))
+            }
+          },
           { key: 'local_version', maxWidth: 120, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
           { key: 'target_symbol', maxWidth: 140, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
           { key: 'final_sync_version', maxWidth: 120, minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
@@ -242,9 +251,7 @@
       handleGetAllServers () {
         getAllServers().then((resp) => {
           this.serversIpList = resp.data || []
-          this.serversIpList = this.serversIpList.filter(item => {
-            return item.is_master !== 1
-          })
+          this.serversIpList = this.serversIpList
           this.currentIp = this.serversIpList[0].ip // 默认选择第一个服务器
           this.handleGetAllServersDisk() // 获取磁盘
         })

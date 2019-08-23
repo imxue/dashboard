@@ -23,8 +23,9 @@
 </template>
 
 <script>
-  import { localMultiSync, getDownloadedGames, deleteLocalGame } from '@/api/localGame'
+  import { localMultiSync, getDownloadedGames, deleteGame } from '@/api/localGame'
   import { getAllCenterGameTypes } from '@/api/game'
+  import { bytesToSize2 } from '../../../utils/index'
   export default {
     name: 'subType3-1',
     data () {
@@ -81,7 +82,13 @@
             }
           },
           { key: 'Popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { key: 'Size', minWidth: 80, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+          { key: 'Size',
+            minWidth: 80,
+            renderHeader: (h, params) => { return h('span', this.$t('Size')) },
+            render: (h, params) => {
+              return h('span', bytesToSize2(params.row.Size))
+            }
+          },
           { renderHeader: (h, params) => { return h('span', this.$t('ServerStoragePath')) },
             key: 'LocalPath',
             tooltip: true,
@@ -242,8 +249,9 @@
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteCurrentData'),
           onOk: () => {
-            deleteLocalGame(index.Id).then(
+            deleteGame(index.Id).then(
               resp => {
+                this.$Message.success(this.$t(`${resp.data}`))
                 this.handgetAllGame(0, this.Pagelimit, 'CenterPopularity')
               },
               (e) => {

@@ -5,7 +5,7 @@
         <Option v-for="item in gameList" :value="item.id" :key="item.id" >{{ item.dispaly_name }}</Option>
       </Select>
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonDW">{{$t("Download")}}</Button> -->
+      <Button type="primary" class="topColumn" @click="handleDownGame">{{$t("Download")}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t("repair")}}</Button>
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
     </div>
@@ -89,7 +89,13 @@ export default {
         { title: '游戏类型', minWidth: 120, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
         { title: '游戏名称', minWidth: 120, key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { title: '当前热度', minWidth: 120, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { title: '游戏大小', minWidth: 120, key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { title: '游戏大小',
+          minWidth: 120,
+          key: 'Size',
+          renderHeader: (h, params) => { return h('span', this.$t('Size')) },
+          render: (h, params) => {
+            return h('span', bytesToSize2(params.row.Size))
+          } },
         { title: '中心游戏版本', minWidth: 130, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { title: '本地游戏版本', minWidth: 130, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
@@ -197,17 +203,6 @@ export default {
       }, () => {
         this.$Message.error(this.$t('kxLinuxErr.36873'))
       }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
-    },
-    handleButtonDW (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-      } else {
-        this.$router.push({
-          path: 'subtype1-download',
-          query: { id: this.getCheckboxVal }
-        })
-      }
     },
     handleGetTableList (e) {
       this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })

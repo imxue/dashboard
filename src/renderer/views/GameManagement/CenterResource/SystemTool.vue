@@ -17,6 +17,7 @@
 
 <script>
 import { getSystemTools, repairGame } from '@/api/localGame'
+import { bytesToSize2 } from '../../../utils/index'
 export default {
   name: 'SystemTool',
   data () {
@@ -33,7 +34,7 @@ export default {
             let type = params.row.State
             switch (type) {
               case 0:
-                return h('span', this.$t('LatestVersion'))
+                return h('span', { style: { color: '#008000' } }, this.$t('LatestVersion'))
               case 1:
                 return h('span', { style: { color: '#999999' } }, this.$t('Undownload'))
               case 2:
@@ -47,7 +48,11 @@ export default {
         },
         { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('Type')) } },
         { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
-        { key: 'Size', renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) } },
+        { key: 'Size',
+          renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) },
+          render: (h, params) => {
+            return h('span', bytesToSize2(params.row.Size))
+          } },
         { key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { key: 'DownloadPath', renderHeader: (h, params) => { return h('span', this.$t('localPath')) } }

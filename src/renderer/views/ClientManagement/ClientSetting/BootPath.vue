@@ -116,8 +116,9 @@ export default {
     HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
         getAllScheme().then(response => {
-          this.cityList = response.data
-          console.log(this.cityList)
+          this.cityList = response.data.filter(item => {
+            return item.is_global !== 1
+          })
           this.plan = this.cityList[0].id
           this.handleGetBootBath()
         }, (response) => {

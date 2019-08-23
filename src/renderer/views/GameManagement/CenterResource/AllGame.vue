@@ -3,7 +3,7 @@
     <Modal v-model="DownloadGameUp" draggable scrollable :title="$t('DownloadGames')" footer-hide>
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
-            <Select v-model="Dg.data" :placeholder="$t('Search')" >
+            <Select v-model="Dg.data" :placeholder="$t('Search')" clearable @on-clear="HandleGetGame">
               <Option v-for='item in disk' :value='item.DeviceID' :key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
             </Select>
             </FormItem> 
@@ -14,7 +14,7 @@
         </Form>
     </Modal>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')">
+      <Select v-model="model1"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType" clearable >
         <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ item.dispaly_name }}</Option>
       </Select>
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
@@ -23,10 +23,10 @@
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
-    <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe ></Table>
+    <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe @on-sort-change="sortOrder"></Table>
     <Row style="margin-top:10px; ">
       <Col span="24">
-      <Page :total="this.pageInfo.count" show-total :current="pageInfo.page_index + 1" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
+      <Page :total="this.pageInfo.count" show-total :current="Number(pageInfo.page_index + 1)" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
   </div>
 </template>
@@ -49,11 +49,13 @@ export default {
       pageInfo: '',
       Pagelimit: 10, // 页面展示的数量
       DownLoadCount: '0', // 已下载的数
+      max: 20000,
+      srcData: [],
       Dg: {
         data: ''
       },
       TypeName: '',
-      deleteid: '',
+      CenterId: '',
       DownloadGameUp: false,
       model1: '',
       getCheckboxVal: [], // 勾选复选框值
@@ -100,7 +102,15 @@ export default {
           sortable: true,
           renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
         },
-        { key: 'Size', minWidth: 80, maxWidth: 100, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('Size')) } },
+        { key: 'Size',
+          minWidth: 80,
+          maxWidth: 100,
+          sortable: 'custom',
+          renderHeader: (h, params) => { return h('span', this.$t('Size')) },
+          render: (h, params) => {
+            return h('span', bytesToSize2(params.row.Size))
+          }
+        },
         { key: 'CenterVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { key: 'LocalVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
@@ -138,7 +148,9 @@ export default {
           }
         }
       ],
-      tableData: []
+      tableData: [],
+      soreFlag: false,
+      sortData: '' // 排过序的数据
     }
   },
   created () {
@@ -151,7 +163,44 @@ export default {
       return this.$router.options.routes
     }
   },
+
   methods: {
+    HandleGetGame () {},
+    async serchByGameType (type) {
+      let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+      this.srcData = resp.data.data
+      let data = this.srcData.filter(item => {
+        return item.TypeId === type
+      })
+      this.tableData = data.slice(0, this.Pagelimit)
+      this.pageInfo.count = data.length
+    },
+    compareAsc (x) {
+      return function (obj1, obj2) {
+        var p = obj1[x]
+        var o = obj2[x]
+        return o - p
+      }
+    },
+    compareDesc (x) {
+      return function (obj1, obj2) {
+        var p = obj1[x]
+        var o = obj2[x]
+        return p - o
+      }
+    },
+    async sortOrder ({ columns, key, order }) {
+      this.soreFlag = true
+      if (order === 'desc') {
+        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+        this.sortData = resp.data.data.sort(this.compareAsc('Size'))
+        this.tableData = this.sortData.slice(this.pageInfo.page_index * this.Pagelimit, this.pageInfo.page_index * this.Pagelimit + this.Pagelimit)
+      } else {
+        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+        this.sortData = resp.data.data.sort(this.compareDesc('Size'))
+        this.tableData = this.sortData.slice(this.pageInfo.page_index, this.Pagelimit)
+      }
+    },
     /**
      * 获取游戏类型
      */
@@ -189,51 +238,48 @@ export default {
      *
     */
     handleGetTableList (e) {
-      this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
+      if (this.soreFlag) {
+        this.tableData = this.sortData.slice((e - 1) * this.Pagelimit, (e - 1) * this.Pagelimit + this.Pagelimit)
+      } else {
+        this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
+      }
     },
     /**
      * 下载游戏
     */
     handleSubmit () {
-      if (typeof this.deleteid !== 'string') {
-        let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
-        if (this.getCheckboxVal.length !== 0) {
-          this.getCheckboxVal.forEach(item => {
-            downloadGame(item.Id, info.DiskSymbol).then((response) => {
-              this.DownloadGameUp = false
-              this.$Message.success(this.$t(`${response.data}`))
-            }, (error) => {
-              this.$Message.error(this.$t(`${error.data.error}`))
-            }).catch((e) => {
-              this.$Message.error({ desc: '' + e, duration: 0 })
-            }).finally(() => {
-              this.loadBtn = false
-              this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
-            })
-          })
-        }
-        return
-      }
-      this.loadBtn = true
-      let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
-      downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
-        this.DownloadGameUp = false
-        this.$Message.success(this.$t(`${response.data}`))
-      }, (error) => {
-        this.$Message.error(this.$t(`${error.data.error}`))
-      }).catch((e) => {
-        this.$Message.error({ desc: '' + e, duration: 0 })
-      }).finally(() => {
-        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
-        this.loadBtn = false
+      this.CenterId.forEach(item => {
+        this.loadBtn = true
+        let info = { CenterGameId: item.Id, DiskSymbol: this.Dg.data + '\\' }
+        downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
+          this.DownloadGameUp = false
+          this.$Message.success(this.$t(`${response.data}`))
+        }, (error) => {
+          this.$Message.error(this.$t(`${error.data.error}`))
+        }).catch((e) => {
+          this.$Message.error({ desc: '' + e, duration: 0 })
+        }).finally(() => {
+          this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+          this.loadBtn = false
+          this.getCheckboxVal = []
+        })
       })
     },
     /**
      * 下载游戏弹窗
     */
     handleDownGame (id) {
-      this.DownloadGameUp = true
-      this.deleteid = id
+      if (typeof id !== 'string' && this.getCheckboxVal.length === 0) {
+        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+        return
+      } else if (typeof id === 'string') {
+        this.DownloadGameUp = true
+        let x = [{ Id: id }]
+        this.CenterId = x
+      } else if (this.getCheckboxVal.length !== 0) {
+        this.DownloadGameUp = true
+        this.CenterId = this.getCheckboxVal
+      }
       getLogicalDrives().then(response => {
         this.disk = response.data
         this.disk.map(item => {
