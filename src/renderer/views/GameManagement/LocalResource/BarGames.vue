@@ -14,7 +14,7 @@
       <!-- <Button type="primary" class="topColumn" @click="handleButtonEdit">编辑</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t("Synchronize")}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonMore">批量操作</Button> -->
-      <Button type="primary" class="topColumn" @click="HandleRepairGame">{{$t("repair")}}</Button>
+      <!-- <Button type="primary" class="topColumn" @click="HandleRepairGame">{{$t("repair")}}</Button> -->
       <Button type="error" class="topColumn" @click="handleButtonDelete">{{$t("Delete")}}</Button>
     </div>
     <!-- table -->

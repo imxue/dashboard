@@ -601,9 +601,9 @@ export default {
     */
     handAllDetele (data) {
       if (this.clientArray.length === 0) return
-      let x = []
+      let client = []
       this.clientArray.forEach(item => {
-        x.push(item.mac)
+        client.push(item.mac)
       })
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
@@ -612,7 +612,7 @@ export default {
         content: `是否${this.$t('Delete')}所选择的 ${this.clientArray.length} 台${this.$t('Client')} `,
         onOk: async () => {
           try {
-            await deletePcsConfigx(x, this.masterip)
+            await deletePcsConfigx(client, this.masterip)
             this.clientArray = []
             this.handgetClienList()
           } catch (error) {

@@ -13,7 +13,7 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-sort-change="handleTableSort" stripe ></Table>
     <Row style="margin-top:10px; ">
-      <Page :total="100" :current="1" @on-change="changePage"  style=" float:right;"/>
+      <Page :total="10" :current="1" @on-change="changePage"  style=" float:right;"/>
     </Row>
     
   </div>
@@ -21,9 +21,10 @@
 
 <script>
 import { getLoad, deleteLocalGame } from '@/api/localGame'
-// import { bytesToSize2 } from '@/utils/index'
+import { pauseGame, startSyncGameTasks } from '@/api/game'
+import { bytesToSize2, formatTime1 } from '@/utils/index'
 export default {
-  name: 'subType2-1',
+  name: 'DownloadQ',
   data () {
     return {
       getCheckboxVal: [], // 勾选复选框值
@@ -31,18 +32,72 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          minWidth: 100,
+          minWidth: 90,
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
-          key: 'Status'
+          key: 'Status',
+          render: (h, params) => {
+            let state = params.row.Status
+            switch (state) {
+              case '-1':
+                return h('span', this.$t('unknown'))
+              case '0':
+                return h('span', this.$t('error'))
+              case '1':
+                return h('span', this.$t('seeding'))
+              case '2':
+                return h('span', this.$t('downloading'))
+              case '3':
+                return h('span', this.$t('paused'))
+              case '4':
+                return h('span', this.$t('stopped'))
+              case '5':
+                return h('span', this.$t('checking'))
+              case '6':
+                return h('span', this.$t('checking'))
+              case '7':
+                return h('span', this.$t('finished'))
+            }
+          }
         },
-        { key: 'TypeName', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { key: 'Name', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        // { title: '当前热度', key: 'hot' },
-        { key: 'UpdateBytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-        { key: 'UpdateBytes', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdatedVolume')) } },
-        { key: 'Progress', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('progress')) } },
-        { key: 'UpdateSpeed', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-        { key: 'PreFinishedTime', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
+        { key: 'TypeName', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { key: 'Name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'TotalBytes',
+          minWidth: 120,
+          renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) },
+          render: (h, params) => {
+            return h('span', bytesToSize2(params.row.TotalBytes))
+          }
+        },
+        { key: 'UpdateBytes',
+          minWidth: 120,
+          renderHeader: (h, params) => { return h('span', this.$t('UpdatedVolume')) },
+          render: (h, params) => {
+            return h('span', bytesToSize2(params.row.UpdateBytes))
+          } },
+        { key: 'Progress',
+          minWidth: 110,
+          renderHeader: (h, params) => { return h('span', this.$t('progress')) },
+          render: (h, params) => {
+            return h('span', `${parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100)}%`)
+          }
+        },
+        { key: 'UpdateSpeed',
+          minWidth: 110,
+          renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) },
+          render: (h, params) => {
+            return h('span', params.row.UpdateSpeed)
+          } },
+        { key: 'PreFinishedTime',
+          minWidth: 110,
+          renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) },
+          render: (h, params) => {
+            if (params.row.PreFinishedTime === -1) {
+              return h('span', '-')
+            } else {
+              return h('span', formatTime1(params.row.PreFinishedTime))
+            }
+          }
+        },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           minWidth: 130,
@@ -51,19 +106,19 @@ export default {
             let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
               on: { click: () => { this.handleTableDelete(params.row.CenterGameId) } }
             }, this.$t('Delete'))
-            let b = h('span', {
-              style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-              on: { click: () => { this.handleTableMove(params.row) } }
-            }, this.$t('MoveUp'))
-            let c = h('span', {
-              style: { color: '#2d8cf0', textDecoration: 'underline' },
-              on: { click: () => { this.handleTableTop(params.row) } }
-            }, this.$t('Topping'))
+            // let b = h('span', {
+            //   style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
+            //   on: { click: () => { this.handleTableMove(params.row) } }
+            // }, this.$t('MoveUp'))
+            // let c = h('span', {
+            //   style: { color: '#2d8cf0', textDecoration: 'underline' },
+            //   on: { click: () => { this.handleTableTop(params.row) } }
+            // }, this.$t('Topping'))
             switch (type) {
               case 0:
                 return h('div', [a])
               default:
-                return h('span', [a, b, c])
+                return h('span', [a])
             }
           }
         }
@@ -85,18 +140,10 @@ export default {
      */
     HandleGetLoadQueue (offset, limit, orderby) {
       getLoad(offset, limit, orderby).then(response => {
-        console.log('获取下载队列')
-        console.log(response)
-        console.log('获取下载队列')
-        this.tableData = response.data.data
-        // if (response.data.data) {
-        //   let temp = response.data.data
-        //   for (let i = 0; i < temp.length; i++) {
-        //     temp[i].Progress = Math.round(temp[i].UpdateBytes / temp[i].TotalBytes * 10000) / 100.00 + '%'
-        //     temp[i].TotalBytes = bytesToSize2(temp[i].TotalBytes)
-        //   }
-        //   this.tableData = response.data.data
-        // }
+        let data = response.data.data
+        if (data.length !== 0) {
+          this.tableData = data
+        }
       }, (response) => {
         console.log('获取下载队列')
         console.log(response)
@@ -119,13 +166,49 @@ export default {
     /**
      *
     */
-    handleCheckBox () {
-
+    handleCheckBox (data) {
+      this.getCheckboxVal = data
     },
-    handleTableTop () {},
+    handleTableTop () {
+      pauseGame()
+    },
     handleTableSort () {},
-    handleButtonStart () {},
-    handleButtonStop () {},
+    handleButtonStart () {
+      if (this.getCheckboxVal.length !== 0) {
+        this.getCheckboxVal.forEach(item => {
+          startSyncGameTasks(item.CenterGameId).then((resp) => {
+            this.$Message.success(this.$t(resp.data))
+          }, error => {
+            this.$Message.error(this.$t(error.data.error))
+          }).finally(() => {
+            this.HandleGetLoadQueue(0, 10, 'name')
+          })
+        })
+      }
+    },
+    handleButtonStop () {
+      if (this.getCheckboxVal.length !== 0) {
+        let array = this.getCheckboxVal
+        console.log(array)
+        array.forEach(item => {
+          console.log(array)
+          this.handlepauseGame(item.CenterGameId)
+        })
+        // this.HandleGetLoadQueue(0, 10, 'name')
+      }
+    },
+    handlepauseGame (CenterGameId) {
+      pauseGame(CenterGameId).then((resp) => {
+        this.$Message.success(this.$t(resp.data))
+      }, (error) => {
+        console.log(error)
+      }).catch((e) => {
+        console.log(e)
+      })
+        .finally(() => {
+          this.HandleGetLoadQueue(0, 10, 'name')
+        })
+    },
     changePage () {}
   }
 

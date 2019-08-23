@@ -436,5 +436,13 @@
   "comment":"备注",
   "Client":"客户机",
   "barinfoError":"获取网吧信息失败，请重新绑定",
-  "MachineName": "机器名"
+  "MachineName": "机器名",
+  "unknown":"未知",
+  "error":"错误",
+  "seeding":"做种",
+  "downloading":"下载中",
+  "paused":"暂停",
+  "stopped":"停止",
+  "checking":"检查中",
+  "finished":"完成"
 }

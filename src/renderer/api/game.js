@@ -103,3 +103,29 @@ export function getAllCenterGameTypes () {
     method: 'get'
   })
 }
+/**
+ * 停止游戏
+ */
+export function pauseGame (centergameid) {
+  let data = {
+    centergameid: centergameid
+  }
+  return request({
+    url: '/v1/centerresource/pauseGame',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 开始游戏
+ */
+export function startSyncGameTasks (centergameid) {
+  let data = {
+    taskids: centergameid
+  }
+  return request({
+    url: '/v1/synctask/startSyncGameTasks',
+    method: 'post',
+    data
+  })
+}

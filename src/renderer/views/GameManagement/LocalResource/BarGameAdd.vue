@@ -14,7 +14,7 @@
             <i-col span="8">
               <div style='border: 1px solid #ccc!important;  border-radius: 16px; '>
           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
-            <img :src='this.imgUrl' style='margin-top:-35px;margin-left:10px;'>
+            <img :src='this.imgUrl' style='margin-top:-35px;margin-left:10px; width:60px;'>
               </div>             
            <p style='margin-top:-35px; text-align:center' v-if="!this.formValidate.IconUrl">Click here to upload</p>   
             <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here1 to upload</p>

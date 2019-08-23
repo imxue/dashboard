@@ -18,6 +18,7 @@
         <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ item.dispaly_name }}</Option>
       </Select>
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
+      <Button type="primary" class="topColumn" @click="handleDownGame">{{$t('Download')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonFixGame">{{$t('repair')}}</Button>
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
@@ -194,18 +195,36 @@ export default {
      * 下载游戏
     */
     handleSubmit () {
+      if (typeof this.deleteid !== 'string') {
+        let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
+        if (this.getCheckboxVal.length !== 0) {
+          this.getCheckboxVal.forEach(item => {
+            downloadGame(item.Id, info.DiskSymbol).then((response) => {
+              this.DownloadGameUp = false
+              this.$Message.success(this.$t(`${response.data}`))
+            }, (error) => {
+              this.$Message.error(this.$t(`${error.data.error}`))
+            }).catch((e) => {
+              this.$Message.error({ desc: '' + e, duration: 0 })
+            }).finally(() => {
+              this.loadBtn = false
+              this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+            })
+          })
+        }
+        return
+      }
       this.loadBtn = true
       let info = { CenterGameId: this.deleteid, DiskSymbol: this.Dg.data + '\\' }
       downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
         this.DownloadGameUp = false
-        console.log(response)
-        this.$Message.sucess(this.$t(`${response.data}`))
-        this.handgetAllGame(0, this.Pagelimit, 'Name')
+        this.$Message.success(this.$t(`${response.data}`))
       }, (error) => {
         this.$Message.error(this.$t(`${error.data.error}`))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
       }).finally(() => {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
         this.loadBtn = false
       })
     },
@@ -269,13 +288,17 @@ export default {
         cancelText: this.$t('cancelText'),
         content: this.$t('DeleteDec'),
         'closable': true,
+        loading: true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.$Message.error(this.$t('FileNotFound'))
+            this.$Message.success(this.$t('sucess'))
           }, (e) => {
-            this.$Message.error(this.$t('FileNotFound'))
+            this.$Message.error(this.$t(`${e.data.error}`))
           }).catch(() => {
             this.$Message.error(this.$t('kxLinuxErr.10'))
+          }).finally(() => {
+            this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+            this.$Modal.remove()
           })
         }
       })
@@ -308,6 +331,8 @@ export default {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
         this.$Message.error({ desc: '' + e, duration: 0 })
+      }).finally(() => {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
       })
     }
   }
