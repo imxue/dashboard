@@ -2,14 +2,14 @@
   <div>
     <div class="topItem">
       <Row>
-        <i-col span="10">
+        <i-col span="8">
           <Select v-model="model1" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
             <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
           </Select>
             <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
         </i-col>
-        <i-col span="2" offset="10">
-          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('Synchronize')}}</Button>
+        <i-col span="2" >
+          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('同步到游戏服务器')}}</Button>
           <!-- <Button type="primary" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button> -->
         </i-col>
       </Row>
@@ -23,7 +23,8 @@
 </template>
 
 <script>
-  import { localMultiSync, getDownloadedGames, deleteGame } from '@/api/localGame'
+  import { getDownloadedGames, deleteGame } from '@/api/localGame'
+  import { syncGame } from '@/api/sync'
   import { getAllCenterGameTypes } from '@/api/game'
   import { bytesToSize2 } from '../../../utils/index'
   export default {
@@ -199,10 +200,12 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          localMultiSync(this.getCheckboxVal).then((res) => {
-            this.handleCallBackVaild(res)
-          }, () => {
-            this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
+          this.getCheckboxVal.forEach(item => {
+            syncGame(item).then((res) => {
+              this.handleCallBackVaild(res)
+            }, () => {
+              this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
+            })
           })
         }
       },

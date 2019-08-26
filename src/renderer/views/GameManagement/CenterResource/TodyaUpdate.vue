@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')">
+      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType">
         <Option v-for="item in gameList" :value="item.id" :key="item.id" >{{ item.dispaly_name }}</Option>
       </Select>
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
@@ -56,13 +56,7 @@ export default {
       Downid: '', // 下载游戏Id
       temp: [],
       tempx: [],
-      gameList: [
-        // { Id: 0, value: 'HotGame', label: 'HotGame' },
-        // { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
-        // { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
-        // { Id: 3, value: 'CasualGame', label: 'CasualGame' },
-        // { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
-      ],
+      gameList: [],
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
@@ -146,14 +140,38 @@ export default {
     }
   },
   methods: {
+    async serchByGameType (type) {
+      if (type === 0) {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
+      } else {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
+      }
+      // let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+      // this.srcData = resp.data.data
+      // let data = this.srcData.filter(item => {
+      //   return item.TypeId === type
+      // })
+      // this.tableData = data.slice(0, this.Pagelimit)
+      // this.pageInfo.count = data.length
+    },
+    /**
+     * 获取游戏类型
+     */
     /**
      * 获取游戏类型
      */
     async handleGetGameType () {
       try {
         let resp = await getAllCenterGameTypes()
-        this.gameList = resp.data
-        console.log(this.gameList)
+        this.gameList = [
+          { id: 0, dispaly_name: this.$t('AllGame') }
+        ]
+        if (resp.data.lenght !== 0) {
+          resp.data.forEach(item => {
+            this.gameList.push(item)
+          })
+        }
+        this.model1 = this.gameList[0].id
       } catch (error) {
         console.log(this.error)
       }
@@ -170,7 +188,7 @@ export default {
       return pageList
     },
     ChangeValue (data) {
-      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data })
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data, gametypeid: '' })
     },
     /**
      * 获取选取的表格数据

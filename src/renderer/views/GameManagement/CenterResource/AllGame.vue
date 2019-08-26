@@ -61,7 +61,7 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        { Id: 0, value: '全部游戏', label: '全部游戏' }
+        { id: 0, dispaly_name: '全部游戏' }
       ],
       tableColumns: [
         { type: 'selection', width: '50px', align: 'center' },
@@ -152,7 +152,7 @@ export default {
   created () {
     // this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
     this.handleGetGameType()
-    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: '' })
   },
   computed: {
     routes () {
@@ -163,7 +163,11 @@ export default {
   methods: {
     HandleGetGame () {},
     async serchByGameType (type) {
-      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
+      if (type === 0) {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
+      } else {
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
+      }
       // let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
       // this.srcData = resp.data.data
       // let data = this.srcData.filter(item => {
@@ -189,11 +193,11 @@ export default {
     async sortOrder ({ columns, key, order }) {
       this.soreFlag = true
       if (order === 'desc') {
-        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gametypeid: '' })
         this.sortData = resp.data.data.sort(this.compareAsc('Size'))
         this.tableData = this.sortData.slice(this.pageInfo.page_index * this.Pagelimit, this.pageInfo.page_index * this.Pagelimit + this.Pagelimit)
       } else {
-        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+        let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gametypeid: '' })
         this.sortData = resp.data.data.sort(this.compareDesc('Size'))
         this.tableData = this.sortData.slice(this.pageInfo.page_index, this.Pagelimit)
       }
@@ -204,12 +208,15 @@ export default {
     async handleGetGameType () {
       try {
         let resp = await getAllCenterGameTypes()
-        // this.gameList = resp.data
+        this.gameList = [
+          { id: 0, dispaly_name: this.$t('AllGame') }
+        ]
         if (resp.data.lenght !== 0) {
           resp.data.forEach(item => {
             this.gameList.push(item)
           })
         }
+        this.model1 = this.gameList[0].id
       } catch (error) {
         console.log(this.error)
       }
@@ -233,7 +240,7 @@ export default {
      *
     */
     ChangeValue (data) {
-      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: data })
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gamename: data })
     },
     /**
      *  分页
@@ -243,7 +250,7 @@ export default {
       if (this.soreFlag) {
         this.tableData = this.sortData.slice((e - 1) * this.Pagelimit, (e - 1) * this.Pagelimit + this.Pagelimit)
       } else {
-        this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
+        this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gamename: this.GameName })
       }
     },
     /**

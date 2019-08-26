@@ -129,3 +129,14 @@ export function startSyncGameTasks (centergameid) {
     data
   })
 }
+
+export function resumeGame (centergameid) {
+  let data = {
+    centergameid: centergameid
+  }
+  return request({
+    url: '/v1/centerresource/resumeGame',
+    method: 'post',
+    data
+  })
+}

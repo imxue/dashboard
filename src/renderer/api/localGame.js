@@ -8,7 +8,7 @@ export function getLocalGame (query) { // 已下载游戏
 }
 export function localMultiSync (id) { // 已下载批量同步
   const data = {
-    'Ids': id
+    'servergameids': id
   }
   return request({
     url: '/v1/local_game/multiSync',
@@ -99,9 +99,9 @@ export function netbarAdd (name, icondata, path, exepath, exename, isEnableSync)
 /**
  * 获取全部游戏
  */
-export function getAllGame ({ offset, limit, gameName = '', orderby = 'Name', gametypeid = '' }) { // 本吧批量添加
+export function getAllGame ({ offset, limit, gamename = '', orderby = 'Name', gametypeid = '' }) { // 本吧批量添加
   return request({
-    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&$gametypeid=${gametypeid}`,
+    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gamename}&gametypeid=${gametypeid}`,
     method: 'get'
   })
 }
@@ -145,9 +145,9 @@ export function getLoad (offset, limit, orderby) {
 
 */
 
-export function getTodayUpdateGames ({ offset, limit, gameName = '', orderby = 'Name' }) {
+export function getTodayUpdateGames ({ offset, limit, gameName = '', orderby = 'Name', gametypeid = '' }) {
   return request({
-    url: `/v1/centerresource/getTodayUpdateGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
+    url: `/v1/centerresource/getTodayUpdateGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&gametypeid=${gametypeid}`,
     method: 'get'
   })
 }

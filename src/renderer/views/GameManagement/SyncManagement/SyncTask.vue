@@ -191,7 +191,6 @@
           letter
         }
         getAllSyncGameTasks(data).then((resp) => {
-          console.log(resp.data.data)
           this.tableData = resp.data.data ? resp.data.data : []
           this.tableData.forEach(item => {
             item.expect_complete_time = this.formatTime(item.expect_complete_time)

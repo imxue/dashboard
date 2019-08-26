@@ -21,8 +21,8 @@
 
 <script>
 import { getLoad } from '@/api/localGame'
-import { pauseGame, startSyncGameTasks } from '@/api/game'
-import { bytesToSize2, formatTime1 } from '@/utils/index'
+import { pauseGame, resumeGame } from '@/api/game'
+import { bytesToSize2, formatTime1, formatSize } from '@/utils/index'
 export default {
   name: 'DownloadQ',
   data () {
@@ -85,7 +85,7 @@ export default {
           minWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) },
           render: (h, params) => {
-            return h('span', params.row.UpdateSpeed)
+            return h('span', formatSize(params.row.UpdateSpeed))
           } },
         { key: 'PreFinishedTime',
           minWidth: 110,
@@ -183,12 +183,13 @@ export default {
     handleButtonStart () {
       if (this.getCheckboxVal.length !== 0) {
         this.getCheckboxVal.forEach(item => {
-          startSyncGameTasks(item.CenterGameId).then((resp) => {
+          resumeGame(item.CenterGameId).then((resp) => {
+            this.getCheckboxVal = []
             this.$Message.success(this.$t(resp.data))
           }, error => {
             this.$Message.error(this.$t(error.data.error))
           }).finally(() => {
-            this.HandleGetLoadQueue(0, 10, 'name')
+            this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
           })
         })
       }
