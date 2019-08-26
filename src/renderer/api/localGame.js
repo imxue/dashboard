@@ -99,9 +99,9 @@ export function netbarAdd (name, icondata, path, exepath, exename, isEnableSync)
 /**
  * 获取全部游戏
  */
-export function getAllGame ({ offset, limit, gameName = '', orderby = 'Name' }) { // 本吧批量添加
+export function getAllGame ({ offset, limit, gameName = '', orderby = 'Name', gametypeid = '' }) { // 本吧批量添加
   return request({
-    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
+    url: `/v1/centerresource/getAllCenterGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&$gametypeid=${gametypeid}`,
     method: 'get'
   })
 }

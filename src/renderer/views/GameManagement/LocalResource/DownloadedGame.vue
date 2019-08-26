@@ -245,6 +245,7 @@
         })
       },
       handleTableDelete (index) {
+        debugger
         this.$Modal.confirm({
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteCurrentData'),
@@ -252,12 +253,14 @@
             deleteGame(index.Id).then(
               resp => {
                 this.$Message.success(this.$t(`${resp.data}`))
-                this.handgetAllGame(0, this.Pagelimit, 'CenterPopularity')
+                // this.handgetAllGame(0, this.Pagelimit, 'CenterPopularity')
               },
               (e) => {
                 this.$Message.error(this.$t('NotDeleteCenterGame'))
               }
-            )
+            ).finally(() => {
+              this.handleGetTableList()
+            })
           },
           onCancel: () => {
             this.$Modal.remove()

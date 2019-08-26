@@ -61,11 +61,7 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        // { Id: 0, value: 'HotGame', label: 'HotGame' },
-        // { Id: 1, value: 'OnlineGame', label: 'OnlineGame' },
-        // { Id: 2, value: 'ConsoleGame', label: 'ConsoleGame' },
-        // { Id: 3, value: 'CasualGame', label: 'CasualGame' },
-        // { Id: 4, value: 'AuxiliaryGame', label: 'AuxiliaryGame' }
+        { Id: 0, value: '全部游戏', label: '全部游戏' }
       ],
       tableColumns: [
         { type: 'selection', width: '50px', align: 'center' },
@@ -167,13 +163,14 @@ export default {
   methods: {
     HandleGetGame () {},
     async serchByGameType (type) {
-      let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
-      this.srcData = resp.data.data
-      let data = this.srcData.filter(item => {
-        return item.TypeId === type
-      })
-      this.tableData = data.slice(0, this.Pagelimit)
-      this.pageInfo.count = data.length
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
+      // let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
+      // this.srcData = resp.data.data
+      // let data = this.srcData.filter(item => {
+      //   return item.TypeId === type
+      // })
+      // this.tableData = data.slice(0, this.Pagelimit)
+      // this.pageInfo.count = data.length
     },
     compareAsc (x) {
       return function (obj1, obj2) {
@@ -207,7 +204,12 @@ export default {
     async handleGetGameType () {
       try {
         let resp = await getAllCenterGameTypes()
-        this.gameList = resp.data
+        // this.gameList = resp.data
+        if (resp.data.lenght !== 0) {
+          resp.data.forEach(item => {
+            this.gameList.push(item)
+          })
+        }
       } catch (error) {
         console.log(this.error)
       }
