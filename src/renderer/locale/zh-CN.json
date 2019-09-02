@@ -444,5 +444,6 @@
   "paused":"暂停",
   "stopped":"停止",
   "checking":"检查中",
-  "finished":"完成"
+  "finished":"完成",
+  "cacheDisk":"缓存盘"
 }

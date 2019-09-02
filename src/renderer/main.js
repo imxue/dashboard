@@ -9,13 +9,11 @@ import i18n from './locale'
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
-import db from './datastore'
 import lodash from 'lodash'
 
 import alert from './utils/alert'
 import './router/Hook'
 /* eslint-disable no-new */
-Vue.prototype.$db = db
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })

@@ -145,6 +145,7 @@
                 <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
                 <Option value="dataDisk">{{$t('DataDisk')}}</Option>
                 <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
+                <Option value="cacheDisk">{{$t('cacheDisk')}}</Option>
                 <!-- <Option value="userDisk">{{$t('userDisk')}}</Option> -->
                 <Option value="unUsed">{{$t('Unused')}}</Option>
               </Select>
@@ -429,6 +430,8 @@ export default {
                 return h('span', this.$t('userDisk'))
               case 'raidMember':
                 return h('span', this.$t('ArrayMember'))
+              case 'cacheDisk':
+                return h('span', this.$t('cacheDisk'))
               default:
                 return '-'
             }
@@ -787,6 +790,7 @@ export default {
       this.handleGetAllServerDisks() // 获取映射盘符
       this.selecteDiskF = data.vol
       this.ExtendedType = data.exttype
+      console.log(data.fun)
       this.selecteDisk = data.fun
       this.DiskSetDialog = true
     },
