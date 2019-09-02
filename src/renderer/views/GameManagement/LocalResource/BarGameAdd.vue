@@ -31,16 +31,16 @@
         </FormItem>
         <FormItem prop="path">
           <Row>
-            <i-col span="4">{{$t('GamePath')}}：</i-col>
+            <i-col span="4">{{$t('ServerPath')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.path" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem>
-        <FormItem prop="exepath">
+        <!-- <FormItem prop="exepath">
           <Row>
             <i-col span="4">{{$t('ExecutePath')}}：</i-col>
             <i-col span="8"><i-input v-model="formValidate.exepath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
-        </FormItem>
+        </FormItem> -->
         <FormItem prop="exename">
           <Row>
             <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
@@ -85,11 +85,11 @@
           path: '',
           exepath: '',
           exename: '',
-          isEnableSync: 1
+          isEnableSync: 0
         },
         updataWayList: [
-          { Id: 1, value: this.$t('Enable') },
-          { Id: 0, value: this.$t('Disable') }
+          { Id: 0, value: this.$t('Enable') },
+          { Id: 1, value: this.$t('Disable') }
         ],
         showList: [
           { Id: 0, value: '全部显示' },
@@ -112,8 +112,6 @@
       imgUpload (data) {
         let file = data.target.files[0]
         this.imgUrl = file.path
-        console.log(data)
-        console.log(this.imgUrl)
         this.temp = file
       },
       handleFormatError (res) {
@@ -144,6 +142,7 @@
           that.$refs[name].validate((valid) => {
             if (e.target.result) {
               if (valid) {
+                console.log(that.formValidate)
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
                   that.$router.push({ path: 'BarGames' })
                 }, (err) => {

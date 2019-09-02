@@ -15,11 +15,11 @@
               <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
             </Select>
              <Checkbox size="large" false-value='0' true-value='1' v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
-            <Button type="primary" v-on:click="handSetIcon" :disabled="!!planCopy">{{$t('AddIcon')}}</Button>
+            <Button type="primary" v-on:click="handSetIcon" :disabled="single === '1'">{{$t('AddIcon')}}</Button>
             <!-- <Button type="error" :disabled="!!planCopy">{{$t('DeleteIcon')}}</Button> -->
           </div>
           <div class="xx">
-          <Table border ref="selection" :columns="columns1" :data="imgreSource"></Table>
+          <Table v-show='single !== "1"' border ref="selection" :columns="columns1" :data="imgreSource"></Table>
           </div>
           </TabPane>
     </Tabs>
@@ -28,7 +28,7 @@
         :title= "this.$t('AddIcon')"
         @on-ok="ok">
         <div class="wr">
-        <Table border :columns="gameListTable" :data="gameSource" @on-selection-change='hanldGetGameDate'></Table>
+        <Table  border :columns="gameListTable" :data="gameSource" @on-selection-change='hanldGetGameDate'></Table>
          <Page simple :total="this.pageInfo.count" show-total :current="pageInfo.index + 1" :page-size="this.Pagelimit"  @on-change="handleGetTableList" /></Col>
         </div>
     </Modal>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getAllScheme, getSchemeIcon, setSchemeIcon } from '../../../api/client'
+import { getAllScheme, getSchemeIcon, setSchemeIcon, useDefaultSetting } from '../../../api/client'
 import { getAllGame } from '@/api/localGame'
 export default {
   name: 'HomeScreenIcon',
@@ -48,7 +48,7 @@ export default {
       defaultGameId: [], // 默认游戏Id
       currentTab: 'DefaultSetting',
       SelectedDataGame: [], // 选择的游戏
-      single: '1',
+      single: '',
       plan: '',
       planCopy: '',
       cityList: [],
@@ -114,16 +114,16 @@ export default {
   methods: {
     handleFixGame (v) {
       let info = {
-        global: '',
         schemeId: ''
       }
       let infox = {
-        'is_global': true,
+        'is_default': '',
         'gameids': [],
         'scheme_id': ''
       }
-      this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
-      infox.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
+      this.currentTab === 'DefaultSetting' ? infox.is_default = true : infox.is_default = false
+      infox.scheme_id = this.currentTab === 'DefaultSetting' ? '' : this.plan
+      info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
         this.imgreSource = resp.data
       })
@@ -159,13 +159,12 @@ export default {
     },
     ok () {
       let info = {
-        'is_global': true,
+        'is_default': this.currentTab === 'DefaultSetting',
         'gameids': [],
         'scheme_id': ''
       }
-      if (this.plan) {
+      if (this.plan && this.currentTab !== 'DefaultSetting') {
         info.scheme_id = this.plan
-        info.is_global = false
       }
 
       this.SelectedDataGame.forEach(item => {
@@ -184,7 +183,7 @@ export default {
     handleGetPcGroup () {
       getAllScheme().then((resp) => {
         this.cityList = resp.data.filter(item => {
-          return item.is_global !== 1
+          return item.name !== 'default'
         })
         this.plan = this.cityList[0].id
       }, (resp) => {
@@ -196,30 +195,27 @@ export default {
      */
     HandleGetAllHomeIcon () {
       let info = {
-        global: '',
+        default: '',
         schemeId: ''
       }
-      this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
+      this.currentTab === 'DefaultSetting' ? info.default = true : info.default = false
       info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
       getSchemeIcon(info).then(resp => {
-        this.imgreSource = resp.data
+        this.single = resp.data.use_default_setting + ''
+        if (this.single === '1' && this.currentTab !== 'DefaultSetting') {
+          this.imgreSource = []
+        } else {
+          this.imgreSource = resp.data.scheme_icon_settings
+        }
       })
     },
     /**
      * 获取图标
      */
     handleHomeScreenicon (v) {
-      this.single = '0'
       let info = {
-        global: '',
-        schemeId: ''
-      }
-      this.currentTab === 'DefaultSetting' ? info.global = true : info.global = false
-      info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
-      if (info.schemeId) {
-        this.single = '0'
-      } else {
-        this.single = '1'
+        default: false,
+        schemeId: this.plan
       }
       getSchemeIcon(info).then(response => {
         this.imgreSource = response.data
@@ -242,7 +238,7 @@ export default {
         this.srcGame = response.data.data
         this.pageInfo.count = this.srcGame.length
         this.gameSource = this.srcGame.slice(0, this.Pagelimit)
-        if (this.imgreSource.length > 0) {
+        if (this.imgreSource && this.imgreSource.length > 0) {
           this.gameSource.forEach(item => {
             this.imgreSource.forEach(img => {
               if (img.game_id === item.Id) {
@@ -269,29 +265,15 @@ export default {
       使用默认设置
     */
     SetDefault (data) {
-      if (data === '1') {
-        let info = {
-          'scheme_id': '',
-          'gameids': [],
-          'is_global': false
-        }
-        // 获取默认设置
-        let infox = {
-          global: true,
-          schemeId: ''
-        }
-        info.scheme_id = this.plan
-        getSchemeIcon(infox).then(resp => {
-          resp.data.forEach(item => {
-            info.gameids.push(item.game_id)
-          })
-          setSchemeIcon(info).then(resp => {
-            this.HandleGetAllHomeIcon()
-          }, (resp) => {
-            this.$Message.error(resp.response.statusText && '')
-          })
-        })
+      this.single = data
+      let info = {
+        isIcon: true,
+        schemeId: this.plan,
+        default: data === '1'
       }
+      useDefaultSetting(info).then(resp => {
+        this.HandleGetAllHomeIcon()
+      })
     }
   },
   mounted () {}

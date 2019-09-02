@@ -1,11 +1,14 @@
 <template>
   <div>
     <div class="topItem">
+      <Button
+        type="primary"
+        class="topColumn"
+        @click="handleButtonRefesh"
+        :disabled="this.tableData.length === 0">
+      {{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStart">{{$t('Start')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonStop">{{$t('Pause')}}</Button>
-      <!-- <Button type="error"   class="topColumn" @click="handleButtonDelete">删除任务</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonTop">置顶</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonMove">上移</Button> -->
       <router-link to='DownloadSet'>
       <Button type="primary" class="topColumn">{{$t('DownloadSetting')}}</Button> 
       </router-link>
@@ -29,6 +32,7 @@ export default {
     return {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
+      timer: null,
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
@@ -126,8 +130,7 @@ export default {
       tableData: [], // 队列数据
       pageinfo: {
         count: 0,
-        page_index: '1'
-
+        page_index: 0
       },
       Pagelimit: 10
     }
@@ -135,12 +138,18 @@ export default {
   created () {
     this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
   },
+  mounted () {
+    // this.test()
+  },
   computed: {
     routes () {
       return this.$router.options.routes
     }
   },
   methods: {
+    handleButtonRefesh () {
+      this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
+    },
     /**
      * 获取下载队列
      */
@@ -152,32 +161,14 @@ export default {
           this.pageinfo = response.data.pageino
         }
       }, (response) => {
-        console.log('获取下载队列')
-        console.log(response)
-        console.log('获取下载队列')
+        this.$Message.info({
+          content: this.$t(response.data.error),
+          closable: true
+        })
       })
     },
-    /**
-     * 删除
-     */
-    // handleTableDelete (id) {
-    //   this.$Modal.confirm({
-    //     title: this.$t('DeleteTip'),
-    //     okText: this.$t('confirm'),
-    //     cancelText: this.$t('cancelText'),
-    //     onOk: () => {
-    //       deleteLocalGame(id).then((e) => { console.log(e) }, (e) => { console.log(e) }).catch((e) => { console.log(e) })
-    //     }
-    //   })
-    // },
-    /**
-     *
-    */
     handleCheckBox (data) {
       this.getCheckboxVal = data
-    },
-    handleTableTop () {
-      pauseGame()
     },
     handleTableSort () {},
     handleButtonStart () {
@@ -220,6 +211,11 @@ export default {
     changePage (index) {
       this.HandleGetLoadQueue((index - 1) * this.Pagelimit, this.Pagelimit)
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    window.clearInterval(this.timer)
+    this.timer = null
+    next()
   }
 
 }

@@ -22,13 +22,17 @@ export function deleteGame (ids, isDeleteFile) {
     data
   })
 }
-export function downloadGame (centerId, dir) {
+/**
+ * 下载游戏
+ */
+
+export function downloadGame (CenterGameId, DiskSymbol) {
   const data = {
-    CenterId: centerId, // num
-    Dir: dir // string
+    centergameid: CenterGameId,
+    disksymbol: DiskSymbol
   }
   return request({
-    url: '/v1/all_game/download',
+    url: `/v1/centerresource/downloadGame`,
     method: 'post',
     data
   })

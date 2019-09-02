@@ -16,10 +16,18 @@ function notifyUserOfSucess (error) {
     content: i18n.t(error)
   })
 }
+function notifyUser (type, data) {
+  iView.Message[type]({
+    content: i18n.t(data),
+    closable: true,
+    duration: 5
+  })
+}
 const test = {
   notifyUserOfError,
   notifyUserOfDiskError,
-  notifyUserOfSucess
+  notifyUserOfSucess,
+  notifyUser
 }
 
 export default test

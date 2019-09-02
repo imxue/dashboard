@@ -1,6 +1,10 @@
 const state = {
   masterip: '',
-  barinfo: null
+  barinfo: null,
+  netWork: {
+    ip: '127.0.0.1',
+    port: '12880'
+  }
 }
 const mutations = {
   SAVE_Master_IP (state, masterip) {

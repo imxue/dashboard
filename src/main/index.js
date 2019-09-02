@@ -1,6 +1,6 @@
 'use strict'
-
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+// const electron = require('electron')
 
 /**
  * Set `__static` path to static files in production
@@ -9,12 +9,6 @@ import { app, BrowserWindow } from 'electron'
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
-// function sendStatusToWindow (text) {
-//   log.info(text)
-//   if (win) {
-//     win.webContents.send('message', text)
-//   }
-// }
 
 // let win
 let mainWindow
@@ -29,10 +23,11 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 801,
     useContentSize: true,
+    minWidth: 680,
     width: 1380,
     webPreferences: { webSecurity: false }
   })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -45,7 +40,7 @@ app.on('ready', function () {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.relaunch()
   }
 })
 
@@ -54,7 +49,10 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
+ipcMain.on('restart', () => {
+  app.relaunch()
+  app.exit(0)
+})
 /**
  * Auto Updater
  *

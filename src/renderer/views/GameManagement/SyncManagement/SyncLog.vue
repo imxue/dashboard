@@ -11,7 +11,7 @@
            </Select>
         </Col>
           <Col span='3'>
-          <Button  type="primary" @click="handleTableResync">重新同步</Button>
+          <!-- <Button  type="primary" @click="handleTableResync">重新同步</Button> -->
          </Col>
     </Row>
     <!-- table -->
@@ -60,8 +60,8 @@
               }
             }
           },
-          { title: '游戏名称', maxWidth: 107, minWidth: 107, key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '游戏类型', maxWidth: 105, minWidth: 106, key: 'game_type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏名称', maxWidth: 107, minWidth: 107, tooltip: true, key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { title: '游戏类型', maxWidth: 105, minWidth: 106, tooltip: true, key: 'game_type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
           { title: '热度', maxWidth: 100, minWidth: 100, key: 'popularity', align: 'center', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
           { title: '目标服务器地址', maxWidth: 160, minWidth: 114, key: 'server_ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
           { title: '源路径', key: 'src_dir', tooltip: true, maxWidth: 120, minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
@@ -167,18 +167,21 @@
           this.$Message.error('操作失败：' + res.data.Msg)
         }
       },
-      formatTime (tiem) {
-        let date = new Date(tiem)
-        let str = date.toLocaleDateString()
-        let xx = date.toLocaleTimeString()
-        return `${xx} - ${str}`
-      },
       handleTableResync (index) { // 重新同步
         resync(index.Id).then((res) => {
           this.handleCallBackVaild(res)
         }, () => {
           this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
         })
+      },
+      formatTime (item) {
+        let date = new Date(item)
+        let year = date.getFullYear()
+        let month = date.getMonth() + 1
+        let day = date.getMonth()
+        let houters = date.getHours()
+        let Minutes = date.getMinutes()
+        return `${year}/${month}/${day}-${houters}:${Minutes}`
       },
       changePage (key, type) {
         console.log('排序字段:' + key)

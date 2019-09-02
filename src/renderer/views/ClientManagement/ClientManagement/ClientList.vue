@@ -33,7 +33,6 @@
 </div>
 <h4 style="margin-bottom:5px;">{{$t('ClientList')}}</h4>
 <div ref="demox" class="xt">
-
     <Table
       border
       stripe
@@ -387,8 +386,10 @@ export default {
     }
   },
   created () {
-    this.handgetClienList() // 获取客户机列表
-    this.HandleGetMaster() // 获取主服务器
+    if (this.masterip) {
+      this.handgetClienList() // 获取客户机列表
+      this.HandleGetMaster() // 获取主服务器
+    }
   },
   mounted () {
     let div = this.$refs.demox
@@ -445,7 +446,7 @@ export default {
       this.tableData = this.list.slice((index - 1) * this.Pagelimit, index * this.Pagelimit)
     },
     test (hide) {
-      this.handgetClienList()
+      // this.handgetClienList()
       if (!hide) {
         setTimeout(() => {
           this.temp = false
@@ -484,6 +485,10 @@ export default {
       }).catch(err => {
         setTimeout(() => { this.loading = false }, 500)
         this.$Message.error(this.$t(err))
+      }).finally(() => {
+        setTimeout(() => {
+          this.handleButtonRefresh()
+        }, 1000)
       })
     },
     /** 唤醒 */

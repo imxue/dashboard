@@ -2,40 +2,45 @@ import router from '../router'
 import alert from '../utils/alert'
 import { getNetCafe, login } from '../api/login'
 import store from '../store/index'
-
+import iView from 'iview'
 router.beforeEach(async (to, from, next) => {
+  const barinfo = store.state.app.barinfo
+  console.log(barinfo)
+  if (to.path !== '/login') {
+    iView.Message.destroy()
+  }
   if (to.path === '/login') {
     next()
-    return
   }
-  if (store.state.app.barinfo) {
-    if (!localStorage.getItem('token')) {
-      login(store.state.app.barinfo.bar_id).then(res => {
-        localStorage.setItem('token', res.token)
-      }, () => {
-        next()
-      })
-    } else {
+  if (barinfo) {
+    if (localStorage.getItem('token')) {
       next()
-    }
-  } else {
-    getNetCafe().then(resp => {
-      if (resp.data.bar_id.toString()) {
-        store.dispatch('saveBarInfo', resp.data)
-        login(resp.data.bar_id).then(res => {
-          localStorage.setItem('token', res.token)
-          next()
-        }, (error) => {
-          console.log(error)
-        })
-      } else {
+    } else {
+      try {
+        let resp = await login(Number(barinfo.bar_id))
+        localStorage.setItem('token', resp.token)
+        next('/')
+      } catch (error) {
+        alert.notifyUser('error', '获取token失败')
         router.push('/login')
       }
-    }, (e) => {
-      alert.notifyUserOfError('barinfoError')
-      setTimeout(() => {
-        router.push('/login')
-      }, 2000)
-    })
+    }
+  } else {
+    try {
+      // alert.notifyUser('info', '获取信息中...')
+      iView.Spin.show({
+        render: (h) => {
+          return h('div', '获取网吧信息...')
+        }
+      })
+      let resp = await getNetCafe()
+      iView.Spin.hide()
+      store.dispatch('saveBarInfo', resp.data)
+      next('/')
+    } catch (error) {
+      iView.Spin.hide()
+      alert.notifyUser('error', error)
+      router.push('/login')
+    }
   }
 })

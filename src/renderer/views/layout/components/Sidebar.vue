@@ -8,6 +8,7 @@
             {{ $t(item.meta.title) }}
           </template>
           <template v-for="(subItem) in item.children" >
+           <!-- {{subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path}} -->
             <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ $t(subItem.meta.title) }} </Menu-item>
           </template>
         </Submenu>
@@ -25,8 +26,6 @@
       }
     },
     created () {
-      // console.log('hello', JSON.stringify(this.routes), this.$route)
-      // this.test()
     },
     computed: {
       routes () {
@@ -36,7 +35,8 @@
         this.openname = ['0', '1', '2', '3']
         this.$nextTick(() => {
           this.$refs.side_menu.updateOpened()
-          this.$refs.side_menu.updateActiveName()
+          this.activeName = matched[0]['redirect']
+          // this.$refs.side_menu.updateActiveName()
         })
         return matched[0]
       }
@@ -44,18 +44,10 @@
     methods: {
       getSubItemName (itemIndex, subItemIndex) {
         return itemIndex + '-' + subItemIndex
-      },
-      test () {
-        let matched = this.$router.options.routes.filter(item => {
-          return item.path === this.$route.matched[0].path
-        })
-        console.log(matched)
       }
     }
   }
 </script>
 
 <style scoped>
-.nav{
-}
 </style>

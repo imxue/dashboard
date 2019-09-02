@@ -13,7 +13,7 @@ export default {
   path: '/Diskless',
   name: '无盘管理',
   component: Layout,
-  redirect: '/diskless/DisklessServer/DisklessServerList',
+  redirect: '/Diskless/DisklessServer/DisklessServerList',
   meta: { title: 'DiskLessManagement', icon: 'example' },
   children: [
     {

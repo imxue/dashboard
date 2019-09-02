@@ -26,7 +26,7 @@
           <span>{{ $t("OnlineTerminal") }} / {{ $t("AllTerminal") }} {{x.online_client_count}} / {{x.client_count}}</span>
           <span>
             {{ $t("AuthorizationIsValidUntil") }}：
-            <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{x.expire_time}}</span>
+            <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{this.expireTime}}</span>
           </span>
 
           <Dropdown trigger="click" @on-click="ChangeLanguage">
@@ -65,7 +65,7 @@
 export default {
   data () {
     return {
-      expireTime: '2019/11/29',
+      expireTime: '',
       expireTimeState: 0,
       netBarId: this.$store.state.app.barid || '',
       onlineNetBar: '1000',
@@ -93,19 +93,11 @@ export default {
   },
   methods: {
     handleExpireTime () {
-      // 到期时间 AppExpireTime
-      var s1 = this.expireTime
-      s1 = new Date(s1.replace(/-/g, '/'))
-      var s2 = new Date()
-      var days = s1.getTime() - s2.getTime()
-      var overTime = parseInt(days / (1000 * 60 * 60 * 24))
-      // 到期时间还剩20天，提示消息
-      if (overTime <= 0) {
-        this.expireTime = '已过期'
-        this.expireTimeState = 1
-      } else {
-        this.expireTime = this.expireTime
-      }
+      let date = new Date(this.$store.state.app.barinfo.expire_time)
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getMonth()
+      this.expireTime = `${year} / ${month} / ${day}`
     },
     ChangeLanguage (name) {
       this.$i18n.locale = name
@@ -113,7 +105,6 @@ export default {
       this.localStorageLang = name
     },
     handleExit () {
-      // localStorage.setItem('Flag', '')
       this.$router.push('/login')
     }
   },

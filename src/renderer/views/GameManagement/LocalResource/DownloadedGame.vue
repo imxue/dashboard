@@ -2,29 +2,28 @@
   <div>
     <div class="topItem">
       <Row>
-        <i-col span="8">
+        <i-col span="24">
           <Select v-model="model1" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
             <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
           </Select>
             <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
+          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('同步到游戏服务器')}}</Button>
         </i-col>
         <i-col span="2" >
-          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('同步到游戏服务器')}}</Button>
           <!-- <Button type="primary" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button> -->
         </i-col>
       </Row>
     </div>
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleTableEdit" stripe :no-data-text="this.$t('Nodata')"></Table>
-    <Row style="margin-top:10px; ">
+    <Row style="margin-top:10px;">
       <i-col span="24"><Page :current="pageinfo.page_index + 1" :page-size="Pagelimit" :total="pageinfo.count" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
     </Row>
   </div>
 </template>
 
 <script>
-  import { getDownloadedGames, deleteGame } from '@/api/localGame'
-  import { syncGame } from '@/api/sync'
+  import { getDownloadedGames, deleteGame, syncToServers } from '@/api/localGame'
   import { getAllCenterGameTypes } from '@/api/game'
   import { bytesToSize2 } from '../../../utils/index'
   export default {
@@ -46,8 +45,6 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'State',
-            maxWidth: 110,
-            minWidth: 110,
             render: (h, params) => {
               let type = params.row.State
               switch (type) {
@@ -60,16 +57,14 @@
               }
             }
           },
-          { key: 'Name', minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           {
             key: `TypeName`,
-            minWidth: 110,
             renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
           },
           {
             renderHeader: (h, params) => { return h('span', this.$t('UpdateMode')) },
             key: 'UpdateMode',
-            minWidth: 120,
             render: (h, params) => {
               let type = params.row.UpdateMode
               switch (type) {
@@ -82,9 +77,8 @@
               }
             }
           },
-          { key: 'Popularity', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
           { key: 'Size',
-            minWidth: 80,
             renderHeader: (h, params) => { return h('span', this.$t('Size')) },
             render: (h, params) => {
               return h('span', bytesToSize2(params.row.Size))
@@ -92,13 +86,13 @@
           },
           { renderHeader: (h, params) => { return h('span', this.$t('ServerStoragePath')) },
             key: 'LocalPath',
-            tooltip: true,
-            minWidth: 130
+            minWidth: 32,
+            tooltip: true
           },
-          { key: 'ExePath', minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
+          { key: 'ExePath', tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('ExecuteProgram')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
-            minWidth: 190,
+            minWidth: 100,
             render: (h, params) => {
               // let a = h('Button', {
               //   props: { type: 'primary', size: 'small' },
@@ -130,7 +124,7 @@
       }
     },
     created () {
-      this.handleGetTableList()
+      this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
       this.handleGetGameType()
     },
     computed: {
@@ -152,25 +146,31 @@
       async handleGetGameType () {
         try {
           let resp = await getAllCenterGameTypes()
-          this.gameList = resp.data
+          this.gameList = [
+            { id: 0, dispaly_name: this.$t('AllGame') }
+          ]
+          if (resp.data.lenght !== 0) {
+            resp.data.forEach(item => {
+              this.gameList.push(item)
+            })
+          }
+          this.model1 = this.gameList[0].id
         } catch (error) {
           console.log(this.error)
         }
       },
-      handleSelectChange (index) {
-        this.optionVal = index
-      },
-      handleButtonSearch () {
-        if (this.optionVal === undefined) {
-          this.optionVal = 0
+      handleSelectChange (id) {
+        if (id === 0) {
+          this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
+        } else {
+          this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: id })
         }
-        this.handleGetTableList(this.curroffset, this.Pagelimit)
       },
       /**
        * 获取已下载游戏
       */
-      handleGetTableList () {
-        getDownloadedGames({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' }).then((response) => {
+      handleGetTableList (obj) {
+        getDownloadedGames(obj).then((response) => {
           this.tableData = response.data.data
           this.pageinfo = response.data.pageino
         }, () => {
@@ -201,10 +201,12 @@
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
           this.getCheckboxVal.forEach(item => {
-            syncGame(item).then((res) => {
-              this.handleCallBackVaild(res)
+            syncToServers(item).then((res) => {
+              this.$Message.success(this.$t('success'))
             }, () => {
               this.$Message.error(this.$t('RequestErrorPleaseTryAgainLater'))
+            }).finally(() => {
+              this.handleGetTableList()
             })
           })
         }
@@ -233,7 +235,6 @@
        * 编辑游戏
       */
       handleTableEdit (index) {
-        console.log(index)
         this.$router.push({
           path: 'DownloadedGameEdit',
           query: { data: index }
@@ -248,10 +249,10 @@
         })
       },
       handleTableDelete (index) {
-        debugger
         this.$Modal.confirm({
           title: this.$t('DeleteTip'),
           content: this.$t('DeleteCurrentData'),
+          loading: true,
           onOk: () => {
             deleteGame(index.Id).then(
               resp => {
@@ -262,7 +263,8 @@
                 this.$Message.error(this.$t('NotDeleteCenterGame'))
               }
             ).finally(() => {
-              this.handleGetTableList()
+              this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
+              this.$Modal.remove()
             })
           },
           onCancel: () => {

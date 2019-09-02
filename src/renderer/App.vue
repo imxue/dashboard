@@ -9,7 +9,11 @@ import { getMasterIp } from './api/common'
 export default {
   name: 'my-project',
   created () {
-    // this.getMasterip()
+    this.$Message.config({
+      top: 80,
+      duration: 8
+    })
+    // localStorage.setItem('connectNet', { ip: '127.0.0.1', port: 12880 })
   },
   methods: {
     getMasterip () {
@@ -17,6 +21,7 @@ export default {
         this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
       })
     }
+
   }
 
 }
@@ -37,7 +42,6 @@ export default {
     height: 100%;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   }
-
   .topItem{ height: 60px;line-height: 32px;}
   .topColumn{ float:left; margin-right:10px;}
   .modalBox .ivu-modal-footer{ display: none !important;}

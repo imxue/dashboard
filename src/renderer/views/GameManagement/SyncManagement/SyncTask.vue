@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import { deleteSyncQueue, getAllSyncGameTasks, multiAddSyncTask } from '@/api/sync'
+  import { deleteSyncQueue, getAllSyncGameTasks, multiAddSyncTask, stopSyncGameTask } from '@/api/sync'
   import { getAllCenterGameTypes } from '@/api/game'
   // import { deleteSyncQueue } from '@/api/sync'
   // const _ = require('lodash')
@@ -69,7 +69,7 @@
               }
             }
           },
-          { title: '游戏类型', key: 'game_type', maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { title: '游戏类型', key: 'game_type', tooltip: true, maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
           { title: '游戏名称', key: 'display_name', maxWidth: 130, minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           // { title: '热度', key: 'popularity', maxWidth: 98, minWidth: 98, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
           { title: '目标服务器地址', key: 'server_ip', maxWidth: 130, minWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
@@ -138,24 +138,6 @@
     },
     methods: {
       /**
-      * 获取同步任务
-      */
-      // handleGetTableList: _.throttle(function () {
-      //   this.fetch = true
-      //   var info = {
-      //     offset: 0,
-      //     limit: 10
-      //   }
-      //   getAllSyncGameTasks(info).then((resp) => {
-      //     this.tableData = resp.data.data ? resp.data.data : []
-      //     this.pageinfo = resp.data.pageino
-      //     console.log(this.pageinfo)
-      //   }, (res) => {
-      //   }).finally(() => {
-      //     this.fetch = false
-      //   })
-      // }, 2000),
-      /**
        * 通过游戏类型查询游戏
        */
       handleGameType () {
@@ -215,11 +197,17 @@
       handleCheckBoxNumber (name) {
         this.getCheckboxVal = name
       },
-      formatTime (tiem) {
-        let date = new Date(tiem)
-        let str = date.toLocaleDateString()
-        let xx = date.toLocaleTimeString()
-        return `${xx} - ${str}`
+      formatTime (item) {
+        if (item === -1) {
+          return '-'
+        }
+        let date = new Date(item)
+        let year = date.getFullYear()
+        let month = date.getMonth() + 1
+        let day = date.getMonth()
+        let houters = date.getHours()
+        let Minutes = date.getMinutes()
+        return `${year}/${month}/${day}:${houters}:${Minutes}`
       },
       handleButtonDelete (val) {
         val = this.getCheckboxVal.length
@@ -276,18 +264,23 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
-          let str = ''
-          this.getCheckboxVal.filter(item => {
-            str = str + item.task_id + ','
+          // let str = ''
+          // this.getCheckboxVal.filter(item => {
+          //   str = str + item.task_id + ','
+          // })
+          // str = str.substr(0, str.length - 1) // 切换最后一个字符
+          let result = this.getCheckboxVal.map(item => {
+            return item.task_id
           })
-          str = str.substr(0, str.length - 1) // 切换最后一个字符
-          multiAddSyncTask(str).then((resp) => {
-            this.$Notice.success({
-              title: this.$t('OperationSuccessful'),
-              desc: '已成功添加同步任务中，可去同步任务查看详细内容'
-            })
+          multiAddSyncTask(result.join(',')).then((resp) => {
+            // this.$Notice.success({
+            //   title: this.$t('OperationSuccessful'),
+            //   desc: '已成功添加同步任务中，可去同步任务查看详细内容'
+            // })
           }, (err) => {
             this.$Message.error(this.$t(err.data))
+          }).finally(() => {
+            this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
           })
         }
       },
@@ -296,6 +289,17 @@
         if (val === 0) {
           this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
         } else {
+          let result = this.getCheckboxVal.map(item => {
+            return item.task_id
+          })
+          stopSyncGameTask(result.join(',')).then(
+            resp => {},
+            (e) => {
+              this.notifyUser('error', `${e.data.error}`)
+            }
+          ).finally(() => {
+            this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+          })
         }
       },
       handleButtonMove (val) {

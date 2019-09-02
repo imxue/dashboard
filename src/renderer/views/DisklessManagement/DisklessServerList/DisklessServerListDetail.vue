@@ -145,7 +145,7 @@
                 <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
                 <Option value="dataDisk">{{$t('DataDisk')}}</Option>
                 <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
-                <Option value="userDisk">{{$t('userDisk')}}</Option>
+                <!-- <Option value="userDisk">{{$t('userDisk')}}</Option> -->
                 <Option value="unUsed">{{$t('Unused')}}</Option>
               </Select>
             </Col>

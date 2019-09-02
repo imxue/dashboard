@@ -25,7 +25,7 @@ export default {
   meta: { title: 'GameManagement', icon: 'example' },
   children: [
     {
-      path: 'subtype1',
+      path: 'subType1',
       name: '中心资源',
       meta: { title: 'CenterResource', hidden: true },
       component: NullLayout,

@@ -133,9 +133,24 @@ export function getAllScheme () {
 /**
  * 获取图标
  */
+export function useDefaultSetting (info) {
+  let data = {
+    is_icon_setting: info.isIcon,
+    scheme_id: info.schemeId,
+    is_use_default_setting: info.default
+  }
+  return request({
+    url: `/v1/scheme/useDefaultSetting`,
+    method: 'post',
+    data
+  })
+}
+/**
+ * 设置默认设置
+ */
 export function getSchemeIcon (info) {
   return request({
-    url: `/v1/scheme/getSchemeIcon${info.global ? `?is_global=${info.global}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
+    url: `/v1/scheme/getSchemeIcon${info.default ? `?is_default=${info.default}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
     method: 'GET'
   })
 }
@@ -144,7 +159,7 @@ export function getSchemeIcon (info) {
  */
 export function getSchemeBatch (info) {
   return request({
-    url: `/v1/scheme/getSchemeBatch${info.global ? `?is_global=${info.global}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
+    url: `/v1/scheme/getSchemeBatch${info.global ? `?is_default=${info.global}` : '?'}${info.schemeId ? `scheme_id=${info.schemeId}` : ''}`,
     method: 'GET'
   })
 }

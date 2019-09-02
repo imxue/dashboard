@@ -1,15 +1,16 @@
 <template>
   <div>
     <div class="topItem">
-      <Input
+      <!-- <Input
         class="topColumn"
         v-model="searchVal"
         search
+        @on-search="handleDataByName"
         :enter-button="$t('Search')"
         :placeholder="this.$t('PleaseInputGameName')"
-        clearable
         style="width: 200px;"
-      />
+      /> -->
+      <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='handleDataByName' />
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t("Add")}}</Button>
       <!-- <Button type="primary" class="topColumn" @click="handleButtonEdit">编辑</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t("Synchronize")}}</Button>
@@ -44,7 +45,7 @@
 
 <script>
 import {
-  netbarMultiSync,
+  syncToServers,
   getAllLocalGames,
   deleteLocalGame,
   repairGame
@@ -54,6 +55,7 @@ export default {
   name: 'subType3-2',
   data () {
     return {
+      GameName: '',
       searchVal: '',
       curroffset: 0,
       Pagelimit: 10,
@@ -91,6 +93,7 @@ export default {
         {
           key: 'center_popularity',
           minWidth: 100,
+          tooltip: true,
           renderHeader: (h, params) => {
             return h('span', this.$t('Popularity'))
           }
@@ -98,6 +101,7 @@ export default {
         {
           key: 'local_path',
           minWidth: 120,
+          tooltip: true,
           renderHeader: (h, params) => {
             return h('span', this.$t('ServerPath'))
           }
@@ -105,6 +109,7 @@ export default {
         {
           key: 'run_exe',
           minWidth: 130,
+          tooltip: true,
           renderHeader: (h, params) => {
             return h('span', this.$t('executableFile'))
           }
@@ -128,9 +133,9 @@ export default {
           render: (h, params) => {
             switch (params.row.is_enable_sync) {
               case 0:
-                return h('span', this.$t('Disable'))
-              case 1:
                 return h('span', this.$t('Enable'))
+              case 1:
+                return h('span', this.$t('Disable'))
             }
           }
         },
@@ -165,7 +170,7 @@ export default {
     }
   },
   created () {
-    this.handgetAllGame(0, this.Pagelimit, 'Name')
+    this.handgetAllGame(0, this.Pagelimit, 'Name', '')
   },
   computed: {
     routes () {
@@ -173,17 +178,29 @@ export default {
     }
   },
   methods: {
+    /**
+     *  搜索游戏
+     *
+    */
+    handleDataByName (data) {
+      this.handgetAllGame(0, this.Pagelimit, 'Name', data)
+    },
     handleGetTableList (e) {
       this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
     },
-    handgetAllGame (offset, limit, orderby) {
-      getAllLocalGames(offset, limit, orderby)
+    handgetAllGame (offset, limit, orderby, name) {
+      getAllLocalGames(offset, limit, orderby, name)
         .then(e => {
           let data = e.data.data
           this.tableData = data.length === 0 ? [] : data
           this.pageInfo = e.data.pageino
         },
-        () => {})
+        (response) => {
+          this.$Message.info({
+            content: this.$t(response.data.error),
+            closable: true
+          })
+        })
         .catch(() => {
           this.notifyUserOfDiskError(36873)
         })
@@ -221,9 +238,11 @@ export default {
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        netbarMultiSync(this.getCheckboxVal[0].id).then(
+        let result = this.getCheckboxVal.map(item => { return item.id }).join(',')
+        syncToServers(result).then(
           res => {
-            this.handleCallBackVaild(res)
+            this.$Message.success(this.$t('success'))
+            this.handgetAllGame(0, this.Pagelimit, 'Name', '')
           },
           (error) => {
             this.$Message.error(error.data.error)
@@ -236,9 +255,26 @@ export default {
       if (val === 0) {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
-        this.$router.push({
-          path: 'subtype3-delete',
-          query: { ids: this.getCheckboxVal }
+        this.$Modal.confirm({
+          title: this.$t('DeleteTip'),
+          content: this.$t('DeleteCurrentData'),
+          cancelText: this.$t('cancelText'),
+          okText: this.$t('Confirm'),
+          onOk: () => {
+            this.getCheckboxVal.forEach(item => {
+              deleteLocalGame(item.id).then(
+                resp => {
+                  this.handgetAllGame(0, this.Pagelimit, 'Name', '')
+                },
+                () => {
+                  this.handgetAllGame(0, this.Pagelimit, 'Name', '')
+                }
+              )
+            })
+          },
+          onCancel: () => {
+            this.$Modal.remove()
+          }
         })
       }
     },
@@ -271,10 +307,10 @@ export default {
         onOk: () => {
           deleteLocalGame(index.id).then(
             resp => {
-              this.handgetAllGame(0, this.Pagelimit, 'Name')
+              this.handgetAllGame(0, this.Pagelimit, 'Name', '')
             },
             () => {
-              this.handgetAllGame(0, this.Pagelimit, 'Name')
+              this.handgetAllGame(0, this.Pagelimit, 'Name', '')
             }
           )
         },

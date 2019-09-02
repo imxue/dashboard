@@ -32,9 +32,11 @@
 </template>
 
 <script>
-import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
+// import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
+import { getAllGame, getLogicalDrives, repairGame, deleteGame } from '@/api/localGame'
 import { getAllCenterGameTypes } from '@/api/game'
 import { bytesToSize2 } from '../../../utils/index'
+import { download } from '@/utils/common'
 export default {
   name: 'allGame',
   data () {
@@ -69,7 +71,7 @@ export default {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
           minWidth: 110,
-          maxWidth: 110,
+          maxWidth: 120,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {
@@ -159,23 +161,89 @@ export default {
       return this.$router.options.routes
     }
   },
-
   methods: {
-    HandleGetGame () {},
-    async serchByGameType (type) {
+    /*
+    * 根据游戏类型查找游戏
+    */
+    serchByGameType (type) {
       if (type === 0) {
         this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
       } else {
         this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
       }
-      // let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
-      // this.srcData = resp.data.data
-      // let data = this.srcData.filter(item => {
-      //   return item.TypeId === type
-      // })
-      // this.tableData = data.slice(0, this.Pagelimit)
-      // this.pageInfo.count = data.length
     },
+
+    /*
+    * 根据游戏名称查找游戏
+    */
+    ChangeValue (data) {
+      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gamename: data })
+    },
+
+    /*
+    * 获取盘符
+    */
+    async GetDriver () {
+      try {
+        let resp = await getLogicalDrives()
+        this.disk = resp.data
+        this.disk.forEach(item => { item.free_space = bytesToSize2(item.FreeSpace) })
+        this.Dg.data = this.disk[0].DeviceID
+      } catch (error) {
+        this.$Message.error(this.$t(`${error.data.error}`))
+      }
+    },
+
+    /*
+    * 整理数据
+    */
+    handleDownGame (id) {
+      if (typeof id !== 'string' && this.getCheckboxVal.length === 0) {
+        this.notifyUser('error', 'PleaseSelectAtLeastOneItemInTheList')
+        return
+      } else if (typeof id === 'string') {
+        this.CenterId = [{ Id: id }]
+      } else if (this.getCheckboxVal.length !== 0) {
+        this.CenterId = this.getCheckboxVal
+      }
+      this.DownloadGameUp = true
+      this.GetDriver()
+    },
+
+    /**
+     * 下载游戏
+     */
+    handleSubmit () {
+      this.CenterId.forEach(async item => {
+        this.loadBtn = true
+        let resp = await download(this, item.Id, this.Dg.data + '\\')
+        if (resp !== 0) {
+          this.DownloadGameUp = false
+          this.loadBtn = false
+          this.notifyUser('success', resp.data)
+          this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+        }
+        this.loadBtn = false
+      })
+    },
+    /**
+     * 修复游戏
+     */
+    handleButtonFixGame (val) {
+      val = this.getCheckboxVal.length
+      if (val === 0) {
+        this.notifyUser('error', 'PleaseSelectAtLeastOneItemInTheList')
+      } else {
+        if (this.getCheckboxVal.length > 1) {
+          this.getCheckboxVal.forEach((item) => {
+            this.handleFixGame(item)
+          })
+        } else {
+          this.handleFixGame(this.getCheckboxVal[0])
+        }
+      }
+    },
+
     compareAsc (x) {
       return function (obj1, obj2) {
         var p = obj1[x]
@@ -183,6 +251,7 @@ export default {
         return o - p
       }
     },
+
     compareDesc (x) {
       return function (obj1, obj2) {
         var p = obj1[x]
@@ -205,6 +274,7 @@ export default {
     /**
      * 获取游戏类型
      */
+    HandleGetGame () {},
     async handleGetGameType () {
       try {
         let resp = await getAllCenterGameTypes()
@@ -236,13 +306,6 @@ export default {
       return pageList
     },
     /**
-     *  搜索游戏
-     *
-    */
-    ChangeValue (data) {
-      this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gamename: data })
-    },
-    /**
      *  分页
      *
     */
@@ -254,79 +317,38 @@ export default {
       }
     },
     /**
-     * 下载游戏
-    */
-    handleSubmit () {
-      this.CenterId.forEach(item => {
-        this.loadBtn = true
-        let info = { CenterGameId: item.Id, DiskSymbol: this.Dg.data + '\\' }
-        downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
-          this.DownloadGameUp = false
-          this.$Message.success(this.$t(`${response.data}`))
-        }, (error) => {
-          this.$Message.error(this.$t(`${error.data.error}`))
-        }).catch((e) => {
-          this.$Message.error({ desc: '' + e, duration: 0 })
-        }).finally(() => {
-          this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
-          this.loadBtn = false
-          this.getCheckboxVal = []
-        })
-      })
-    },
-    /**
-     * 下载游戏弹窗
-    */
-    handleDownGame (id) {
-      if (typeof id !== 'string' && this.getCheckboxVal.length === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-        return
-      } else if (typeof id === 'string') {
-        this.DownloadGameUp = true
-        let x = [{ Id: id }]
-        this.CenterId = x
-      } else if (this.getCheckboxVal.length !== 0) {
-        this.DownloadGameUp = true
-        this.CenterId = this.getCheckboxVal
-      }
-      getLogicalDrives().then(response => {
-        this.disk = response.data
-        this.disk.map(item => {
-          item.free_space = bytesToSize2(item.FreeSpace)
-        })
-        this.Dg.data = this.disk[0].DeviceID
-      }, (error) => {
-        this.$Message.error(this.$t(`${error.data.error}`))
-      }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
-    },
-    /**
-     * 修复多个游戏
-     */
-    handleButtonFixGame (val) {
-      val = this.getCheckboxVal.length
-      if (val === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
-      } else {
-        if (this.getCheckboxVal.length > 1) {
-          this.getCheckboxVal.forEach((item) => {
-            this.handleFixGame(item)
-          })
-        } else {
-          this.handleFixGame(this.getCheckboxVal[0])
-        }
-      }
-    },
-    /**
      * 删除多个游戏
      */
     handleButtonRemove (val) {
       val = this.getCheckboxVal.length
       if (val === 0) {
-        this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
+        this.notifyUser('error', 'PleaseSelectAtLeastOneItemInTheList')
       } else {
         if (this.getCheckboxVal.length > 1) {
-          this.getCheckboxVal.forEach((item) => {
-            this.handleRemove(item)
+          this.$Modal.confirm({
+            title: this.$t('DeleteTip'),
+            content: this.$t('DeleteCurrentData'),
+            cancelText: this.$t('cancelText'),
+            okText: this.$t('Confirm'),
+            loading: true,
+            onOk: () => {
+              this.getCheckboxVal.forEach(item => {
+                deleteGame(item.Id).then(
+                  resp => {
+                  },
+                  (e) => {
+                    this.notifyUser('error', `${e.data.error}`)
+                    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+                  }
+                ).finally(() => {
+                  this.$Modal.remove()
+                })
+              })
+              this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+            },
+            onCancel: () => {
+              this.$Modal.remove()
+            }
           })
         } else {
           this.handleRemove(this.getCheckboxVal[0])
@@ -336,7 +358,7 @@ export default {
     /**
      * 删除游戏
      */
-    handleRemove (index) {
+    async handleRemove (index) {
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
         okText: this.$t('Confirm'),
@@ -346,11 +368,11 @@ export default {
         loading: true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.$Message.success(this.$t('sucess'))
+            this.notifyUser('success', 'sucess')
           }, (e) => {
-            this.$Message.error(this.$t(`${e.data.error}`))
+            this.notifyUser('error', `${e.data.error}`)
           }).catch(() => {
-            this.$Message.error(this.$t('kxLinuxErr.10'))
+            this.notifyUser('error', `${'kxLinuxErr.10'}`)
           }).finally(() => {
             this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
             this.$Modal.remove()
@@ -369,23 +391,16 @@ export default {
       this.getCheckboxVal = arr
       return this.getCheckboxVal
     },
-    handleTableDw (index) {
-      this.getCheckboxVal = this.tableSelectVal.push(index.id)
-      this.$router.push({
-        path: 'subtype1-download',
-        query: { id: this.getCheckboxVal }
-      })
-    },
     /**
      * 修复游戏
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        this.$Message.success(this.$t('repairSucess'))
-      }, () => {
-        this.$Message.error(this.$t('FileNotFound'))
+        // this.notifyUser('success', `${'repairSucess'}`)
+      }, (e) => {
+        this.notifyUser('error', `${e.data.error}`)
       }).catch((e) => {
-        this.$Message.error({ desc: '' + e, duration: 0 })
+        this.notifyUser('error', `${e}`)
       }).finally(() => {
         this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
       })

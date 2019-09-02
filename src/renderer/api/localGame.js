@@ -167,16 +167,10 @@ export function getSystemTools (offset, limit, orderby, name) {
 
 */
 
-export function getAllLocalGames (offset, limit, orderby) {
-  const data = {
-    offset,
-    limit,
-    orderby
-  }
+export function getAllLocalGames (offset, limit, orderby, gamename) {
   return request({
-    url: `/v1/localresource/getAllLocalGames?offset=${data.offset}&limit=${data.limit}&orderby=${data.orderby}`,
-    method: 'get',
-    data
+    url: `/v1/localresource/getAllLocalGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gamename}`,
+    method: 'get'
   })
 }
 
@@ -185,9 +179,9 @@ export function getAllLocalGames (offset, limit, orderby) {
 
 */
 
-export function getDownloadedGames ({ offset, limit, gameName = '', orderby = 'Name' }) {
+export function getDownloadedGames ({ offset, limit, gameName = '', orderby = 'Name', gametypeid = '' }) {
   return request({
-    url: `/v1/localresource/getDownloadedGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}`,
+    url: `/v1/localresource/getDownloadedGames?offset=${offset}&limit=${limit}&orderby=${orderby}&gamename=${gameName}&gametypeid=${gametypeid}`,
     method: 'get'
   })
 }
@@ -203,7 +197,7 @@ export function addLocalGame ({ name, path, exepath, exename, isEnableSync }, ic
     'local_path': path,
     'run_path': exepath,
     'run_exe': exename,
-    isEnableSync
+    'is_enable_sync': isEnableSync
   }
   return request({
     url: `/v1/localresource/addLocalGame`,
@@ -312,6 +306,20 @@ export function getDownloadLogs (offset, limit, SearchDate) {
   return request({
     url: `/v1/centerresource/getDownloadLogs?offset=${data.offset}&limit=${data.limit}&SearchDate=${data.SearchDate}`,
     method: 'get',
+    data
+  })
+}
+/**
+ * 同步游戏至服务器
+ */
+
+export function syncToServers (id) {
+  const data = {
+    localgameids: id
+  }
+  return request({
+    url: `/v1/localresource/syncToServers`,
+    method: 'post',
     data
   })
 }

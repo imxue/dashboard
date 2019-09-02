@@ -33,14 +33,14 @@
           </i-col>
         </Row>
       </FormItem>
-      <FormItem prop="RunPath">
+      <!-- <FormItem prop="RunPath">
         <Row>
           <i-col span="4">{{$t("ClientStartup")}}：</i-col>
           <i-col span="8">
             <i-input v-model="formValidate.RunPath" :placeholder="$t('pleaseInput')"></i-input>
           </i-col>
         </Row>
-      </FormItem>
+      </FormItem> -->
       <FormItem prop="RunExe">
         <Row>
           <i-col span="4">{{$t("ExecuteProgram")}}：</i-col>
@@ -96,8 +96,8 @@ export default {
         IsEnableSync: ''
       },
       IsEnableSync: [
-        { Id: 1, value: this.$t('Enable') },
-        { Id: 0, value: this.$t('Disable') }
+        { Id: 0, value: this.$t('Enable') },
+        { Id: 1, value: this.$t('Disable') }
       ],
       showList: [
         { Id: '0', value: '全部显示' },

@@ -74,7 +74,7 @@ export function stopSyncGameTask (id) {
     'taskids': id
   }
   return request({
-    url: '/v1/synctask/startSyncGameTasks',
+    url: '/v1/synctask/stopSyncGameTasks',
     method: 'post',
     data
   })

@@ -3,7 +3,6 @@
   "version": "0.1.5",
   "author": "admin@admin.com",
   "description": "product",
-  "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
     "publish": "node .electron-vue/build.js && build -p always",
@@ -35,15 +34,6 @@
     },
     "files": [
       "dist/electron/**/*"
-    ],
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "imxue",
-        "repo": "releaseResp",
-        "private": true,
-        "token": "3770f7e58abf05641a5f807fa1f4ab727e8f907c"
-      }
     ],
     "dmg": {
       "contents": [
@@ -78,6 +68,7 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "nedb": "^1.8.0",
     "qs": "^6.7.0",
     "vue": "^2.5.2",
     "vue-electron": "^1.0.6",

@@ -1,14 +1,15 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 // import router from '../router'
 // // import qs from 'qs'
-// import i18n from '../locale'
-// import iView from 'iview'
+// import store from '../store/index'
+// import { login } from '../api/login'
+let result = JSON.parse(localStorage.getItem('connectNet')) || { ip: '10.88.66.71', port: 12880 }
+let ip = result.ip
+let port = result.port
 const service = axios.create({
-  // baseURL: 'http://10.88.66.153:8080/',
-  // baseURL: 'http://127.0.0.1:12890',
-  baseURL: 'http://10.88.66.71:12880',
-  // baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 60000 // request timeout
+  baseURL: `http://${ip}:${port}`,
+  // baseURL: 'http://10.88.66.71:12880',
+  timeout: 10000 // request timeout
 })
 service.interceptors.request.use(
   (request) => {

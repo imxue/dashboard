@@ -39,6 +39,7 @@ export default {
   name: 'subType1-1',
   data () {
     return {
+      modal1: false,
       pageInfo: '',
       Pagelimit: 10, // 每页显示数
       model1: '',
@@ -62,8 +63,8 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
-          maxWidth: 90,
-          minWidth: 90,
+          minWidth: 110,
+          maxWidth: 120,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {
@@ -146,13 +147,6 @@ export default {
       } else {
         this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
       }
-      // let resp = await getAllGame({ offset: 0, limit: this.max, orderby: 'Name', gameName: '' })
-      // this.srcData = resp.data.data
-      // let data = this.srcData.filter(item => {
-      //   return item.TypeId === type
-      // })
-      // this.tableData = data.slice(0, this.Pagelimit)
-      // this.pageInfo.count = data.length
     },
     /**
      * 获取游戏类型
@@ -197,30 +191,56 @@ export default {
       this.getCheckboxVal = arr
       return this.getCheckboxVal
     },
-    async handleSubmit () {
-      try {
-        let info = { CenterGameId: this.Downid, DiskSymbol: this.Dg.data + '\\' }
-        let resp = await downloadGame(info.CenterGameId, info.DiskSymbol)
-        this.DownloadGameUp = false
-        this.notifyUserOfSucess('success')
-        console.log(resp)
-      } catch (error) {
-        this.notifyUserOfError(error.data.error)
-      }
+    /**
+     * 下载游戏
+    */
+    handleSubmit () {
+      this.CenterId.forEach(item => {
+        this.loadBtn = true
+        let info = { CenterGameId: item.Id, DiskSymbol: this.Dg.data + '\\' }
+        downloadGame(info.CenterGameId, info.DiskSymbol).then((response) => {
+          this.DownloadGameUp = false
+          this.$Message.success({
+            content: this.$t(`${response.data}`),
+            closable: true
+          })
+        }, (error) => {
+          this.$Message.error(this.$t(`${error.data.error}`))
+        }).catch((e) => {
+          this.$Message.error({ desc: '' + e, duration: 0 })
+        }).finally(() => {
+          this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+          this.loadBtn = false
+          this.getCheckboxVal = []
+        })
+      })
     },
-
+    /*
+     * 下载游戏弹窗
+    */
     handleDownGame (id) {
-      this.DownloadGameUp = true
-      this.Downid = id
+      if (typeof id !== 'string' && this.getCheckboxVal.length === 0) {
+        this.notifyUser('error', 'PleaseSelectAtLeastOneItemInTheList')
+        return
+      } else if (typeof id === 'string') {
+        this.DownloadGameUp = true
+        let x = [{ Id: id }]
+        this.CenterId = x
+      } else if (this.getCheckboxVal.length !== 0) {
+        this.DownloadGameUp = true
+        this.CenterId = this.getCheckboxVal
+      }
       getLogicalDrives().then(response => {
         this.disk = response.data
         this.disk.map(item => {
           item.free_space = bytesToSize2(item.FreeSpace)
         })
         this.Dg.data = this.disk[0].DeviceID
-      }, () => {
-        this.$Message.error(this.$t('kxLinuxErr.36873'))
-      }).catch(() => { this.$Message.info(this.$t('Getdiskinformationerror')) })
+      }, (error) => {
+        this.$Message.error(this.$t(`${error.data.error}`))
+      }).catch(() => {
+        this.notifyUser('info', 'Getdiskinformationerror')
+      })
     },
     handleGetTableList (e) {
       this.handleGetGameList({ offset: (e - 1) * this.Pagelimit, limit: this.Pagelimit, orderby: 'Name', gameName: this.GameName })
@@ -242,7 +262,7 @@ export default {
      */
     handleFixGame (index) {
       repairGame(index.Id).then((e) => {
-        this.$Message.success(this.$t('repairSucess'))
+        // this.$Message.success(this.$t('repairSucess'))
       }, () => {
         this.$Message.error(this.$t('FileNotFound'))
       }).catch((e) => {
@@ -258,7 +278,7 @@ export default {
         content: this.$t('DeleteDec'),
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.$Message.error(this.$t('DeleteGameSucess'))
+            // this.$Message.success(this.$t('DeleteGameSucess'))
           }, () => {
             this.$Message.error(this.$t('FileNotFound'))
           }).catch(() => {
@@ -276,8 +296,30 @@ export default {
         this.$Message.error(this.$t('PleaseSelectAtLeastOneItemInTheList'))
       } else {
         if (this.getCheckboxVal.length > 1) {
-          this.getCheckboxVal.forEach((item) => {
-            this.handleRemove(item)
+          this.$Modal.confirm({
+            title: this.$t('DeleteTip'),
+            content: this.$t('DeleteCurrentData'),
+            cancelText: this.$t('cancelText'),
+            okText: this.$t('Confirm'),
+            loading: true,
+            onOk: () => {
+              this.getCheckboxVal.forEach(item => {
+                deleteGame(item.Id).then(
+                  resp => {
+                  },
+                  (e) => {
+                    this.notifyUser('error', `${e.data.error}`)
+                    this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+                  }
+                ).finally(() => {
+                  this.$Modal.remove()
+                })
+              })
+              this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
+            },
+            onCancel: () => {
+              this.$Modal.remove()
+            }
           })
         } else {
           this.handleRemove(this.getCheckboxVal[0])

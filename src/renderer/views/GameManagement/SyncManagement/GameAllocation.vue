@@ -28,7 +28,7 @@
       </Row>
     </div>
     <!-- table -->
-    <Row>
+    <Row >
         <Col span="24">
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
         </Col>
@@ -110,11 +110,10 @@
           { id: 0, name: 'AllGame' }
         ],
         tableColumns: [
-          { type: 'selection', width: 60, align: 'center' },
+          { type: 'selection', minWidth: 60, align: 'center' },
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'state',
-            maxWidth: 90,
             minWidth: 90,
             render: (h, params) => {
               let type = params.row.state
@@ -136,39 +135,38 @@
               }
             }
           },
-          { key: 'display_name', minWidth: 109, maxWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { key: 'game_type', maxWidth: 105, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { key: 'popularity', sortable: true, maxWidth: 100, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { key: 'display_name', minWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'game_type', tooltip: true, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { key: 'popularity', sortable: true, minWidth: 105, renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
           { key: 'size',
             sortable: true,
-            maxWidth: 90,
             minWidth: 90,
             renderHeader: (h, params) => { return h('span', this.$t('Size')) },
             render: (h, params) => {
               return h('span', bytesToSize(params.row.size))
             }
           },
-          { key: 'local_version', maxWidth: 120, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
-          { key: 'target_symbol', maxWidth: 140, minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
-          { key: 'final_sync_version', maxWidth: 120, minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
+          { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
+          { key: 'target_symbol', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
+          { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
-  
+            minWidth: 220,
             render: (h, params) => {
               let type = params.row.state
               let a = h('Button',
-                { style: { marginRight: '3px', width: '70px' },
-                  props: { type: 'primary', size: 'small' },
+                { style: { marginRight: '3px' },
+                  props: { type: 'primary' },
                   on: { click: () => { this.handleAllowe(params.row) } }
                 }, this.$t('AssignGame'))
               let b = h('Button',
-                { style: { marginRight: '3px', width: '70px' },
-                  props: { type: 'primary', size: 'small' },
+                { style: { marginRight: '3px' },
+                  props: { type: 'primary' },
                   on: { click: () => { this.handleTableCancel(params.row) } }
                 }, this.$t('CancelAssign'))
               let c = h('Button',
-                { style: { marginRight: '3px', width: '86px' },
-                  props: { type: 'info', size: 'small' },
+                { style: { marginRight: '3px' },
+                  props: { type: 'info' },
                   on: { click: () => { this.handleButtonAddTask(params.row) } }
                 }, this.$t('AddSynchronizationTask'))
               switch (type) {
@@ -524,6 +522,9 @@
   .ivu-input-icon{right:55px;}
   .item {
     margin-bottom:10px;
+  }
+ .hide{
+    display: none;
   }
 </style>
 
