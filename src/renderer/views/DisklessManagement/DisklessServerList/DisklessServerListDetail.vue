@@ -30,6 +30,7 @@
       <Button
         type="error"
         class="topColumn"
+        :loading="loadingDel"
         @click="handleButtonDelete()"
       >{{$t('Delete')}}</Button>
       <Divider
@@ -265,6 +266,7 @@ export default {
       DiskSettingDialog: false, // 磁盘设置中提示
       spinShow: false, // 加载动画
       isMaster: '', // 是否为主服务器
+      loadingDel: false,
       isonline: '',
       selectedDisk: '', // 选择的磁盘信息
       selecteDiskF: '', // 映射盘符
@@ -675,6 +677,7 @@ export default {
         okText: this.$t('Delete'),
         cancelText: this.$t('cancelText'),
         onOk: () => {
+          this.loadingDel = true
           deleteserverx(this.currentPageServerip, this.masterIp).then((resp) => {
             deleteserverConfig(this.currentPageServerip)
             this.$Message.success(this.$t('DeleteSucess'))
@@ -682,15 +685,14 @@ export default {
               path: 'DisklessServerList'
             })
             if (this.currentPageServerip === this.masterIp) {
-              let info = {
-                key: 'master',
-                value: ''
-              }
-              this.setCustomConfig(info)
+              this.setCustomConfig({ key: 'master', value: '' })
             }
           }, (resp) => {
-            this.$Message.success(this.$t(`kxLinuxErr.${resp}`))
+            this.$Message.error(resp.data.error)
           })
+            .finally(() => {
+              this.loadingDel = false
+            })
         }
       })
     },

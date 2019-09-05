@@ -285,12 +285,20 @@ export default {
       获取主服务器
     */
     async HandleGetMaster () {
+      this.loading = true
       try {
         let resp = await getMasterIp()
         this.$store.dispatch('saveMaster', resp.data.value || '')
-        this.HandleGetServerListOrAdd(this.masterIp)
+        this.masterIp && await this.HandleGetServerListOrAdd(this.masterIp)
       } catch (e) {
-        this.notifyUserOfDiskError(36873)
+        this.notifyUser('error', e.data.error)
+        this.serverList = [{
+          online: '0',
+          isMaster: '1',
+          serverIp: this.masterIp
+        }]
+      } finally {
+        this.loading = false
       }
     },
     /**
@@ -303,7 +311,7 @@ export default {
         let serverList = respList.data.result.list ? respList.data.result.list : []
         return Promise.resolve(serverList)
       } catch (error) {
-        console.log(error)
+        return Promise.reject(error)
       }
     },
     /**
@@ -313,16 +321,12 @@ export default {
       if (!ip) return
       try {
         let serverList = await this.HandleGetServerList(ip) || []
-        if (serverList.length === 0) {
-          this.HandleAddServerx(ip, this.masterIp || ip)
-        } else {
-          this.serverList = serverList
-        }
+        serverList.length === 0 ? this.HandleAddServerx(ip, this.masterIp || ip) : this.serverList = serverList
       } catch (error) {
-        console.log(error)
+        return Promise.reject(error)
+      } finally {
         this.loading = false
       }
-      this.loading = false
     },
 
     /**
@@ -344,11 +348,7 @@ export default {
       持久化信息
     */
     async setCustomConfig (info) {
-      let data = {
-        key: info.key,
-        value: info.value
-      }
-      setValue(data).then(res => {
+      setValue({ key: info.key, value: info.value }).then(res => {
         this.$store.dispatch('saveMaster', info.value)
         return Promise.resolve(true)
       })
@@ -356,13 +356,11 @@ export default {
     handleSearch () {
       this.loading = true
       var arr = this.serverList
-      if (this.searchVal) {
-        setTimeout(() => {
-          this.loading = false
-          var newArr = arr.filter(item => item.serverIp === this.searchVal)
-          this.serverList = newArr
-        }, 1000)
-      }
+      this.searchVal && setTimeout(() => {
+        this.loading = false
+        var newArr = arr.filter(item => item.serverIp === this.searchVal)
+        this.serverList = newArr
+      }, 1000)
     },
     /**
      * 清除服务器信息
@@ -384,7 +382,7 @@ export default {
     /**
       刷新页面
     */
-    handleButtonRefesh (val) {
+    handleButtonRefesh () {
       this.loading = true
       this.HandleGetServerListOrAdd(this.masterIp)
     },
@@ -427,6 +425,7 @@ export default {
               // 已经存在主服务器
               await this.HandleAddServerx(OptServerip, this.masterIp)
             } else {
+              debugger
               // 不存在主服务
               let masterServer = resplist.filter(item => { return item.isMaster === '1' })
               if (masterServer) {
