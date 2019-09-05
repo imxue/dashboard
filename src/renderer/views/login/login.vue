@@ -137,7 +137,6 @@ export default {
     ok () {
       this.$refs['net'].validate((valid) => {
         if (valid) {
-          console.log(this.net.ip)
           localStorage.setItem('connectNet', JSON.stringify({ ip: this.net.ip, port: this.net.port }))
           ipcRenderer.sendSync('restart', 'ping')
           this.netup = false

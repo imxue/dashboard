@@ -323,3 +323,17 @@ export function syncToServers (id) {
     data
   })
 }
+/**
+ * 添加主服务器
+ */
+
+export function addMasterServer (ip) {
+  const data = {
+    ip: ip
+  }
+  return request({
+    url: `/v1/server/addMasterServer`,
+    method: 'post',
+    data
+  })
+}

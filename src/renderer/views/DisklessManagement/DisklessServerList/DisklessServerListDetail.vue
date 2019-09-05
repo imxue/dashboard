@@ -245,6 +245,7 @@ import {
   deleteserverConfig,
   RaidCreate,
   RaidRemove } from '@/api/wupan'
+import { addMasterServer } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
 import { setValue } from '@/api/common'
@@ -478,6 +479,7 @@ export default {
           }
         },
         { key: 'isHealth', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
+        { key: 'hit', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('HitRate')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
@@ -842,6 +844,7 @@ export default {
           key: 'master',
           value: this.currentPageServerip
         }
+        await addMasterServer(this.currentPageServerip)
         this.setCustomConfig(info)
         this.$store.dispatch('saveMaster', this.currentPageServerip || '')
         sucessflag = 0

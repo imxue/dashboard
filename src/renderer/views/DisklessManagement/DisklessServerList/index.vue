@@ -104,6 +104,7 @@ import {
   deleteserverConfig,
   login
 } from '@/api/wupan'
+import { addMasterServer } from '@/api/localGame'
 import { setValue, getMasterIp } from '@/api/common'
 export default {
   name: 'subType1-1',
@@ -333,6 +334,7 @@ export default {
         let guid = respGuid.data.result.guid
         await editServersNode(masterip, 1, 1, selfip)
         await addServersx(selfip, guid, masterip)
+        await addMasterServer(masterip)
       } catch (error) {
         return Promise.reject(error)
       }

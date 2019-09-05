@@ -42,23 +42,23 @@ export default {
           render: (h, params) => {
             let state = params.row.Status
             switch (state) {
-              case '-1':
+              case -1:
                 return h('span', { style: { color: '#999999' } }, this.$t('unknown'))
-              case '0':
+              case 0:
                 return h('span', { style: { color: 'red' } }, this.$t('error'))
-              case '1':
+              case 1:
                 return h('span', this.$t('seeding'))
-              case '2':
+              case 2:
                 return h('span', { style: { color: '#008000' } }, this.$t('downloading'))
-              case '3':
+              case 3:
                 return h('span', { style: { color: '#B47676' } }, this.$t('paused'))
-              case '4':
+              case 4:
                 return h('span', this.$t('stopped'))
-              case '5':
+              case 5:
                 return h('span', this.$t('checking'))
-              case '6':
+              case 6:
                 return h('span', this.$t('checking'))
-              case '7':
+              case 7:
                 return h('span', { style: { color: '#008000' } }, this.$t('finished'))
             }
           }

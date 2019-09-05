@@ -1,15 +1,15 @@
 ﻿import axios from 'axios'
 // import router from '../router'
 // // import qs from 'qs'
-// import store from '../store/index'
-// import { login } from '../api/login'
+import store from '../store/index'
+import { login } from '../api/login'
 let result = JSON.parse(localStorage.getItem('connectNet')) || { ip: '10.88.66.71', port: 12880 }
 let ip = result.ip
 let port = result.port
 const service = axios.create({
   baseURL: `http://${ip}:${port}`,
   // baseURL: 'http://10.88.66.71:12880',
-  timeout: 10000 // request timeout
+  timeout: 60000 // request timeout
 })
 service.interceptors.request.use(
   (request) => {
@@ -49,6 +49,13 @@ service.interceptors.response.use(
   },
 
   error => {
+    if (error.request && error.request.status === 401) {
+      if (store.state.app.barinfo) {
+        login(store.state.app.barinfo.bar_id).then(resp => {
+          localStorage.setItem('token', resp.token)
+        })
+      }
+    }
     return Promise.reject(error)
   }
 )

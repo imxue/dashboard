@@ -5,7 +5,6 @@ import store from '../store/index'
 import iView from 'iview'
 router.beforeEach(async (to, from, next) => {
   const barinfo = store.state.app.barinfo
-  console.log(barinfo)
   if (to.path !== '/login') {
     iView.Message.destroy()
   }

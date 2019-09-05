@@ -445,5 +445,6 @@
   "stopped":"停止",
   "checking":"检查中",
   "finished":"完成",
-  "cacheDisk":"缓存盘"
+  "cacheDisk":"缓存盘",
+  "HitRate":"命中率"
 }
