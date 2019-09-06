@@ -42,6 +42,7 @@
       :data="tableData"
       @on-selection-change="handleCheckBox"
       @on-row-dblclick="handleTableEdit"
+      @on-sort-change="handleSort"
       :loading="loading"
     ></Table>
 </div>
@@ -167,6 +168,7 @@ export default {
       imglist: '',
       addedip: '',
       canceledip: '',
+      max: 20000,
       selecteFormatValue: '',
       adddetail: false,
       popupVal: '',
@@ -225,8 +227,8 @@ export default {
           }
 
         },
-        { key: 'ip', minWidth: 130, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
+        { key: 'ip', minWidth: 130, maxWidth: 120, sortable: 'custom', renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
+        { key: 'pc', minWidth: 80, maxWidth: 100, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 135, maxWidth: 150, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
@@ -413,6 +415,31 @@ export default {
     edit
   },
   methods: {
+    compareAsc (x) {
+      return function (obj1, obj2) {
+        var p = obj1[x].split('.').pop()
+        var o = obj2[x].split('.').pop()
+        return o - p
+      }
+    },
+    compareDesc (x) {
+      return function (obj1, obj2) {
+        var p = obj1[x].split('.').pop()
+        var o = obj2[x].split('.').pop()
+        return p - o
+      }
+    },
+    async handleSort ({ columns, key, order }) {
+      if (order === 'desc') {
+        let resp = await this.handgetClienList()
+        this.sortData = resp.sort(this.compareAsc('ip'))
+        this.tableData = this.sortData.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
+      } else {
+        let resp = await this.handgetClienList()
+        this.sortData = resp.sort(this.compareDesc('ip'))
+        this.tableData = this.sortData.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
+      }
+    },
     /**
       获取主服务器
     */
@@ -541,6 +568,7 @@ export default {
         this.list = clientList
         this.tableData = this.list.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
       }
+      return this.list
     },
     async HandleSuper () {
       let resp = await getSuper(this.masterip)

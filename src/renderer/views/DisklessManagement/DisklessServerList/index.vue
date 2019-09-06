@@ -272,8 +272,12 @@ export default {
       }
     }
   },
-  created () {
-    this.HandleGetMaster()
+  async created () {
+    // setValue({ key: 'master', value: '10.88.66.188' }).then(res => {
+    //   // this.$store.dispatch('saveMaster', info.value)
+    //   return Promise.resolve(true)
+    // })
+    this.getTableData()
   },
   computed: {
     ...mapState({
@@ -281,24 +285,125 @@ export default {
     })
   },
   methods: {
-    /**
-      获取主服务器
-    */
-    async HandleGetMaster () {
+    async getTableData () {
       this.loading = true
+      let ip = await this.HandleMasterIp()
+      if (ip && ip !== -1) {
+        let isMasterip = await this.checkIpisMaster(ip)
+        if (isMasterip !== -1) {
+          if (isMasterip) {
+            let List = await this.getMasterList(ip)
+            if (List !== -1) {
+              this.serverList = List
+            } else {
+              this.HandleAddServerx(ip, ip)
+            }
+          } else {
+            let Masterip = await this.getMasteripByServerList(ip)
+            if (Masterip !== -1) {
+              this.$store.dispatch('saveMaster', Masterip || '')
+              let List = await this.getMasterList(ip)
+              if (List !== -1) {
+                this.serverList = List
+              } else {
+                this.HandleAddServerx(Masterip, Masterip)
+              }
+            } else {
+              await this.clearServerConfig(ip)
+              this.HandleAddServerx(Masterip, Masterip)
+            }
+          }
+        } else {
+          this.serverList = [
+            {
+              online: '0',
+              serverIp: ip,
+              isMaster: ''
+            }
+          ]
+        }
+      }
+      this.loading = false
+    },
+    /** 检查ip是否为主服务器
+     * @returns true 是
+     * @returns false 否
+     * @returns -1 error
+     */
+    async checkIpisMaster (ip) {
+      try {
+        let resp = await getServersNode(ip)
+        if (resp.data.result.isMaster === '1') {
+          this.$store.dispatch('saveMaster', resp.data.result.masterIp || '')
+          return Promise.resolve(true)
+        } else {
+          return Promise.resolve(false)
+        }
+      } catch (e) {
+        return -1
+      }
+    },
+
+    /**
+     * @returns 主副器ip 空 为 ''
+     * @returns -1 error
+     */
+    async HandleMasterIp () {
       try {
         let resp = await getMasterIp()
-        this.$store.dispatch('saveMaster', resp.data.value || '')
-        this.masterIp && await this.HandleGetServerListOrAdd(this.masterIp)
+        return resp.data.value && Promise.resolve(resp.data.value)
       } catch (e) {
-        this.notifyUser('error', e.data.error)
-        this.serverList = [{
-          online: '0',
-          isMaster: '1',
-          serverIp: this.masterIp
-        }]
-      } finally {
-        this.loading = false
+        return -1
+      }
+    },
+    /** 清除服务器信息
+     * @returns -1 error
+     */
+    async clearServerConfig (ip) {
+      try {
+        let resp = await deleteserverConfig(ip)
+        return resp.data.value && Promise.resolve(resp.data.value)
+      } catch (e) {
+        return -1
+      }
+    },
+    /** 获取主服务器列表
+     * @returns -1 error
+     */
+    async getMasterList (ip) {
+      try {
+        let respList = await getServers(ip)
+        let serverList = respList.data.result.list ? respList.data.result.list : []
+        return Promise.resolve(serverList)
+      } catch (e) {
+        return -1
+      }
+    },
+    /** 从当前服务器列表中获取主服务器ip
+     * @returns -1 error
+     */
+    async getMasteripByServerList (ip) {
+      try {
+        let respList = await getServers(ip)
+        let serverList = respList.data.result.list ? respList.data.result.list : []
+        let MasterIp = serverList.filter(item => {
+          return item.isMaster === '1' && item.serverIp
+        })
+        return Promise.resolve(MasterIp.serverIp)
+      } catch (e) {
+        return -1
+      }
+    },
+    /**
+     * 从主服务器获取列表
+     */
+    async getListByMasterip (ip) {
+      try {
+        let respList = await getServers(ip)
+        let serverList = respList.data.result.list ? respList.data.result.list : []
+        return Promise.resolve(serverList)
+      } catch (e) {
+        return -1
       }
     },
     /**
@@ -314,21 +419,6 @@ export default {
         return Promise.reject(error)
       }
     },
-    /**
-        获取服务器列表 如果为空 则添加
-    */
-    async HandleGetServerListOrAdd (ip) {
-      if (!ip) return
-      try {
-        let serverList = await this.HandleGetServerList(ip) || []
-        serverList.length === 0 ? this.HandleAddServerx(ip, this.masterIp || ip) : this.serverList = serverList
-      } catch (error) {
-        return Promise.reject(error)
-      } finally {
-        this.loading = false
-      }
-    },
-
     /**
           添加服务器
     */
@@ -384,7 +474,7 @@ export default {
     */
     handleButtonRefesh () {
       this.loading = true
-      this.HandleGetServerListOrAdd(this.masterIp)
+      this.getTableData()
     },
     /**
 
@@ -425,7 +515,6 @@ export default {
               // 已经存在主服务器
               await this.HandleAddServerx(OptServerip, this.masterIp)
             } else {
-              debugger
               // 不存在主服务
               let masterServer = resplist.filter(item => { return item.isMaster === '1' })
               if (masterServer) {
