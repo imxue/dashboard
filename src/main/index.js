@@ -1,6 +1,6 @@
 'use strict'
+
 import { app, BrowserWindow, ipcMain } from 'electron'
-// const electron = require('electron')
 
 /**
  * Set `__static` path to static files in production
@@ -9,6 +9,12 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
+// function sendStatusToWindow (text) {
+//   log.info(text)
+//   if (win) {
+//     win.webContents.send('message', text)
+//   }
+// }
 
 // let win
 let mainWindow
@@ -21,20 +27,64 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 801,
+    height: 900,
     useContentSize: true,
-    minWidth: 680,
-    width: 1380,
+    width: 1480,
     webPreferences: { webSecurity: false }
   })
   // mainWindow.webContents.openDevTools()
+  mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-  mainWindow.loadURL(winURL)
 }
+// autoUpdater.on('checking-for-update', () => {
+//   sendStatusToWindow('Checking for update...')
+// })
+
+// autoUpdater.on('update-available', (info) => {
+//   dialog.showMessageBox({
+//     type: 'info',
+//     title: '更新提示',
+//     message: '有更新',
+//     buttons: ['Yes', 'No']
+//   }, (index) => {
+//     if (index === 0) {
+//       autoUpdater.downloadUpdate()
+//       mainWindow.webContents.send('start', 'start')
+//     }
+//   })
+//   sendStatusToWindow('Update available.')
+// })
+
+// autoUpdater.on('error', (err) => {
+//   dialog.showErrorBox('An Error Message', '' + err)
+//   mainWindow.webContents.send('error', 'error')
+// })
+// autoUpdater.on('download-progress', (progressObj) => {
+//   mainWindow.webContents.send('progress', progressObj.percent)
+//   // let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
+//   // logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
+//   // logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+//   // sendStatusToWindow(logMessage)
+// })
+// autoUpdater.on('update-downloaded', (info) => {
+//   mainWindow.webContents.send('end', 'end')
+//   dialog.showMessageBox({
+//     type: 'info',
+//     title: 'Information',
+//     message: '立即安装',
+//     buttons: ['Yes', 'No']
+//   }, (index) => {
+//     if (index === 0) {
+//       autoUpdater.quitAndInstall()
+//     }
+//   })
+// })
+
 app.on('ready', function () {
   createWindow()
+  // autoUpdater.checkForUpdatesAndNotify()
 })
 
 app.on('window-all-closed', () => {
@@ -42,6 +92,7 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
