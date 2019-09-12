@@ -27,16 +27,16 @@ function createWindow () {
     width: 1380,
     webPreferences: { webSecurity: false }
   })
-  mainWindow.webContents.openDevTools()
-  mainWindow.loadURL(winURL)
+  // mainWindow.webContents.openDevTools()
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  mainWindow.loadURL(winURL)
 }
-
 app.on('ready', function () {
   createWindow()
 })
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
