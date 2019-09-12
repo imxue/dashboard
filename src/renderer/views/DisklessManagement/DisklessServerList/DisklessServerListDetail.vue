@@ -678,8 +678,8 @@ export default {
         cancelText: this.$t('cancelText'),
         onOk: () => {
           this.loadingDel = true
+          deleteserverConfig(this.currentPageServerip)
           deleteserverx(this.currentPageServerip, this.masterIp).then((resp) => {
-            deleteserverConfig(this.currentPageServerip)
             this.$Message.success(this.$t('DeleteSucess'))
             this.$router.push({
               path: 'DisklessServerList'

@@ -3,6 +3,7 @@ import alert from '../utils/alert'
 import { getNetCafe, login } from '../api/login'
 import store from '../store/index'
 import iView from 'iview'
+import i18n from '../locale/index'
 router.beforeEach(async (to, from, next) => {
   const barinfo = store.state.app.barinfo
   if (to.path !== '/login') {
@@ -26,10 +27,9 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     try {
-      // alert.notifyUser('info', '获取信息中...')
       iView.Spin.show({
         render: (h) => {
-          return h('div', '获取网吧信息...')
+          return h('div', i18n.t('getBarInfo'))
         }
       })
       let resp = await getNetCafe()

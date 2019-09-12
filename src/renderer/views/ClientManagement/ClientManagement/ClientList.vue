@@ -77,7 +77,7 @@
           </Select>
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleSubmitx('formValidatex')">{{$t('SetSuperWorkstation')}}</Button>
+          <Button type="primary" @click="handleSubmitx('formValidatex')" :loading='loadBtnSuper'>{{$t('SetSuperWorkstation')}}</Button>
         </FormItem>
       </Form>
     </Modal>
@@ -93,7 +93,7 @@
           <Input v-model="formValidate1.comment" type="text" />
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="handleCancelaction('formValidate1')">{{$t('Save')}}</Button>
+          <Button type="primary" @click="handleCancelaction('formValidate1')" :loading='loadBtnCancel'>{{$t('Save')}}</Button>
           <Button @click="handleReset('formValidate1')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
@@ -138,6 +138,8 @@ export default {
   data () {
     return {
       masterip: this.$store.state.app.masterip || '',
+      loadBtnSuper: false,
+      loadBtnCancel: false,
       clientArray: '',
       clientList: [],
       flag: '',
@@ -211,8 +213,8 @@ export default {
         { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          minWidth: 70,
-          maxWidth: 80,
+          minWidth: 80,
+          maxWidth: 90,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -228,14 +230,14 @@ export default {
 
         },
         { key: 'ip', minWidth: 130, maxWidth: 120, sortable: 'custom', renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, maxWidth: 100, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
+        { key: 'pc', minWidth: 140, maxWidth: 170, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 135, maxWidth: 150, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
-        { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
+        { key: 'curImg', minWidth: 110, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'super',
-          minWidth: 300,
+          minWidth: 380,
           render: (h, params) => {
             let that = this
             let a = ''
@@ -329,7 +331,7 @@ export default {
 
         },
         { key: 'ip', minWidth: 80, maxWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 80, maxWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
+        { key: 'pc', minWidth: 120, maxWidth: 160, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 100, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
@@ -359,7 +361,7 @@ export default {
       },
       formValidate1: {
         action: 'apply',
-        comment: '保存信息'
+        comment: 'SAVE DATA'
       },
       formInline: {
         disable: '0',
@@ -493,6 +495,7 @@ export default {
     handleButtonRefresh () {
       this.loading = true
       this.handgetClienList()
+      this.HandleSuper()
       this.clientArray = []
     },
     /**
@@ -575,6 +578,8 @@ export default {
       let respx = resp.data.result || ''
       if (respx) {
         this.currentSuper = [respx]
+      } else {
+        this.currentSuper = []
       }
     },
     /*
@@ -599,15 +604,18 @@ export default {
     取消超级工作站
     */
     handleCancelaction (name) {
+      this.loadBtnCancel = true
       let that = this
       this.$refs[name].validate(valid => {
         if (valid) {
           let data = { ip: this.canceledip, action: this.formValidate1.action, comment: this.formValidate1.comment }
           setCancelSuper(data, this.masterip).then(response => {
+            this.handleButtonRefresh()
+            that.loadBtnCancel = false
             this.cancleup = false
-            setTimeout(() => {
-              that.reload()
-            }, 0)
+          }, (e) => {
+            that.loadBtnCancel = false
+            that.$Message.error(this.$t(`kxLinuxErr.${e.data.error}`))
           })
         }
       })
@@ -746,6 +754,7 @@ export default {
     设置为超级工作站
     */
     handleSubmitx (name) {
+      this.loadBtnSuper = true
       var self = this
       self.$refs[name].validate(valid => {
         if (valid) {
@@ -760,12 +769,12 @@ export default {
           ).then(response => {
             if (response.data.error) {
               self.$Message.error(this.$t(`kxLinuxErr.${response.data.error}`))
+              this.loadBtnSuper = false
             } else {
               self.adddetail = false
+              this.loadBtnSuper = false
               self.currentSuperip = response.data.result.vdiskInfo.serverIp
-              setTimeout(() => {
-                self.reload()
-              }, 10)
+              this.handleButtonRefresh()
             }
           }, (err) => {
             self.$Message.error(this.$t(`kxLinuxErr.${err.data.error}`))

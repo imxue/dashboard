@@ -105,7 +105,7 @@ export default {
   watch: {},
   computed: {},
   created () {
-    let net = JSON.parse(localStorage.getItem('connectNet'))
+    let net = JSON.parse(localStorage.getItem('connectNet')) || ''
     this.net.ip = (net && net.ip) || '127.0.0.1'
     this.net.port = (net && net.port) || '12880'
   },

@@ -446,5 +446,6 @@
   "checking":"检查中",
   "finished":"完成",
   "cacheDisk":"缓存盘",
-  "HitRate":"命中率"
+  "HitRate":"命中率",
+  "getBarInfo":"获取网吧信息..."
 }

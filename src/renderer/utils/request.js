@@ -1,14 +1,14 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 // import router from '../router'
 // // import qs from 'qs'
 import store from '../store/index'
 import { login } from '../api/login'
-let result = JSON.parse(localStorage.getItem('connectNet')) || { ip: '10.88.66.71', port: 12880 }
+
+let result = JSON.parse(localStorage.getItem('connectNet')) || { ip: '127.0.0.1', port: 12880 }
 let ip = result.ip
 let port = result.port
 const service = axios.create({
   baseURL: `http://${ip}:${port}`,
-  // baseURL: 'http://10.88.66.71:12880',
   timeout: 60000 // request timeout
 })
 service.interceptors.request.use(

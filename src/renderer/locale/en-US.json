@@ -430,5 +430,22 @@
   "password":"Password",
   "cofirmPassword":"Confirm",
   "passwordError":"The two passwords you entered did not match",
-  "userDisk":"User Disk"
+  "userDisk":"User Disk",
+  "plInputNumber": "plInputNumber",
+  "User": "User",
+  "comment": "comment",
+  "Client": "Client",
+  "barinfoError": "barinfoError",
+  "MachineName": "MachineName",
+  "unknown": "unknown",
+  "error": "error",
+  "seeding": "seeding",
+  "downloading": "downloading",
+  "paused": "paused",
+  "stopped": "stopped",
+  "checking": "checking",
+  "finished": "finished",
+  "cacheDisk": "cacheDisk",
+  "HitRate": "HitRate",
+  "getBarInfo": "getBarInfo..."
 }

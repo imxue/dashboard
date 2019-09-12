@@ -62,6 +62,7 @@
         labelName: this.$t('ConfigurationName'),
         showImgPopup: false,
         showPopup: false,
+        btnRestore: false,
         configList: [],
         copyIndexData: [],
         configListIndexValue: '', // 当前配置点 row value
@@ -99,7 +100,7 @@
         ],
         MirrorsInfoDate: [],
         tableColumns: [
-          { key: 'name', width: 100, renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
+          { key: 'name', width: 200, renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPointName')) } },
           { key: 'fileSizeB',
             width: 200,
             renderHeader: (h, params) => { return h('span', this.$t('ConfigurationPackageSize')) },
@@ -222,6 +223,7 @@
        * 获取镜像类别
        */
       handleGetImageList () {
+        console.log(this.masterip)
         getImageListx(this.masterip).then((response) => {
           if (!response.data.error) {
             var arr = response.data.result.list
@@ -383,7 +385,7 @@
         let that = this
         let length = that.configPointDate.length
         if (length <= 1) {
-          revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), this.masterip).then((resp) => {
+          revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), that.masterip).then((resp) => {
             if (resp.data.error === null) {
               that.handleGetRestoreList(that.restoreListIndexValue)
             }
@@ -394,11 +396,16 @@
             'content': this.$t('RestorePointTip'),
             'cancel-text': this.$t('cancelText'),
             'okText': this.$t('KonwContinue'),
+            loading: this.btnRestore,
             onOk () {
-              revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), this.masterip).then((resp) => {
+              this.btnRestore = true
+              revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), that.masterip).then((resp) => {
                 if (resp.data.error === null) {
                   that.handleGetRestoreList(that.restoreListIndexValue)
                 }
+                that.$Modal.remove()
+              }, (e) => {
+                that.$Message.error(that.$t(`kxLinuxErr.${e}`))
               })
             }
           })
@@ -414,6 +421,8 @@
           } else {
             this.$Message.error(response.data.error)
           }
+        }, (e) => {
+          this.$Message.error(this.$t(`kxLinuxErr.${e}`))
         })
       }
     }
