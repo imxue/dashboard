@@ -19,6 +19,8 @@ Vue.use(iView, {
 Vue.use(lodash)
 Vue.prototype.$lodash = lodash
 
+if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+
 Object.keys(alert).forEach(item => {
   Vue.prototype[item] = alert[item]
 })
