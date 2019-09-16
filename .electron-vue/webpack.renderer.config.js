@@ -127,7 +127,7 @@ let rendererConfig = {
       template: path.resolve(__dirname, '../src/index.ejs'),
       minify: {
         collapseWhitespace: true,
-        removeAttributeQuotes: true,
+        // removeAttributeQuotes: true,
         removeComments: true
       },
       nodeModules: process.env.NODE_ENV !== 'production'

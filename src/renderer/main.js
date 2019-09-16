@@ -3,7 +3,6 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-// import './router/Hook'
 import i18n from './locale'
 
 import iView from 'iview'
@@ -24,7 +23,7 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Object.keys(alert).forEach(item => {
   Vue.prototype[item] = alert[item]
 })
-
+console.log(1)
 Vue.config.productionTip = false
 new Vue({
   i18n,

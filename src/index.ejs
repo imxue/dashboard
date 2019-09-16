@@ -4,16 +4,14 @@
     <meta charset="utf-8">
     <!-- <meta charset="GB"> -->
     <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
-    <title>bar</title>
+    <title>bar123</title>
     <% if (htmlWebpackPlugin.options.nodeModules) { %>
-      <script>
-        require('module').globalPaths.push("<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>")
-      </script> 
+      <script>require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')</script> 
     <% } %>
   </head>
   <body>
-    <div id="app">123</div>
-
+    <div id="app"></div>
+    <div id="app1">123</div>
     <% if (!process.browser) { %>
       <script>
         if (process.env.NODE_ENV !== 'development') window.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
