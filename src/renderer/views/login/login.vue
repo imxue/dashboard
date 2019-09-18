@@ -128,6 +128,8 @@ export default {
               this.notifyUser('error', e.message)
             }
           })
+        } else {
+          this.loading = false
         }
       })
     },

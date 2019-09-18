@@ -146,9 +146,9 @@
               return h('span', bytesToSize(params.row.size))
             }
           },
-          { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('本地游戏版本')) } },
-          { key: 'target_symbol', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('服务器存放磁盘')) } },
-          { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('最后同步版本')) } },
+          { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('LocalGameVersion')) } },
+          { key: 'target_symbol', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Serverdisk')) } },
+          { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('LasterSysVersion')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             key: 'operation',
             minWidth: 220,

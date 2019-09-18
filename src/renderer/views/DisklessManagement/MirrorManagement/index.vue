@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Button type="primary" class="topColumn" :disabled="!this.masterip" @click="handleButtonAdd">{{$t('Add')}}</Button>
+      <Button type="primary" class="topColumn" :disabled="!this.masterip" @click="handleButtonAdd" :loading="loadingAdd">{{$t('Add')}}</Button>
     </div>
     <!-- table -->
     <Table border stripe @on-row-dblclick="handleSet" ref="selection" :columns="tableColumns" :data="mirrorList"></Table>
@@ -135,7 +135,7 @@
           mountVol: 'z',
           isImportFormMaster: 'yes'
         },
-  
+        loadingAdd: false,
         ruleValidate: {
           name: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           size: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
@@ -144,6 +144,7 @@
       }
     },
     created () {
+      console.log(this.masterip)
       this.handleGetImageList()
     },
     methods: {
@@ -151,7 +152,10 @@
        * 获取磁盘
        */
       handleGetDiskStatus () {
-        if (!this.masterip) return
+        if (!this.masterip) {
+          this.loadingAdd = false
+          return
+        }
   
         getDiskStatusx(this.masterip).then((response) => {
           let temp = []
@@ -188,6 +192,8 @@
             this.mirrorData.path = this.diskList[0].path
             temp = []
           }
+        }).finally(() => {
+          this.loadingAdd = false
         })
       },
       /**
@@ -204,6 +210,7 @@
         })
       },
       handleButtonAdd (val) {
+        this.loadingAdd = true
         this.handleGetDiskStatus() // 获取磁盘路径list
       },
       handleSubmit (name) {

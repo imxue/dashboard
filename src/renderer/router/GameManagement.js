@@ -48,34 +48,6 @@ export default {
           meta: { title: 'SystemTool' },
           component: SystemTool
         }
-        // {
-        //   path: 'subType1-4',
-        //   name: '停服资源',
-        //   meta: { title: '停服资源' },
-        //   component: () => import('@/views/GameManagement/CenterResource/StopResource')
-        // },
-        // {
-        //   path: 'subType1-5',
-        //   name: 'SubType1-5',
-        //   meta: { title: '下载资源' },
-        //   component: () => import('@/views/GameManagement/CenterResource/DownloadResource')
-        // },
-        // {
-        //   path: 'subType1-download',
-        //   name: 'subType1-download',
-        //   meta: { title: 'Download', hidden: true },
-        //   // showBtn: true,
-        //   component: Download,
-        //   hidden: true
-        // }
-        // {
-        //   path: 'subType1-remove',
-        //   name: '本地移除',
-        //   meta: { title: '本地移除', hidden: true },
-        //   // showBtn: true,
-        //   component: remove,
-        //   hidden: true
-        // }
       ]
     },
     {
@@ -123,34 +95,6 @@ export default {
           meta: { title: 'BarGames' },
           component: BarGames
         },
-        // {
-        //   path: 'BarGameAdd',
-        //   name: 'BarGameAdd',
-        //   meta: { title: '添加', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/BarGameAdd'),
-        //   hidden: true
-        // },
-        // {
-        //   path: 'BarGamesEdit',
-        //   name: 'GameManagement-SubType3-1-edit',
-        //   meta: { title: '编辑', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/BarGamesEdit'),
-        //   hidden: true
-        // },
-        // {
-        //   path: 'SubType3-1-fix',
-        //   name: 'GameManagement-SubType3-1-fix',
-        //   meta: { title: '修复', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/subtype3-1-fix'),
-        //   hidden: true
-        // },
-        // {
-        //   path: 'SubType3-1-more',
-        //   name: 'GameManagement-SubType3-1-more',
-        //   meta: { title: '批量操作', hidden: true },
-        //   component: () => import('@/views/GameManagement/LocalResource/subtype3-1-more'),
-        //   hidden: true
-        // },
         {
           path: 'BarGameAdd',
           name: 'BarGameAdd',

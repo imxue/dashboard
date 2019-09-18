@@ -92,11 +92,15 @@
         :operations="[this.$t('Remove'),this.$t('Create')]"
         @on-change="handleChange1"
       ></Transfer>
-      <Spin fix v-show="setspin">
+      <Spin
+        fix
+        v-show="setspin"
+      >
         <Icon
           type="ios-loading"
           size=18
-          class="demo-spin-icon-load"></Icon>
+          class="demo-spin-icon-load"
+        ></Icon>
       </Spin>
     </Modal>
 
@@ -104,14 +108,17 @@
       border
       :columns="tableColumns3"
       :data="diskInfo"
-      @on-row-dblclick="ShowDiskPlan"></Table>
+      :row-class-name="rowClassName"
+      @on-row-dblclick="ShowDiskPlan"
+    ></Table>
     <div class="dig">
       <Modal
         v-model="DiskSettingDialog"
         :loading="loading"
         footer-hide
         :styles="{top: '400px'}"
-        :closable="false" >
+        :closable="false"
+      >
         <p class="textAlign">{{$t('DiskSetting')}}</p>
       </Modal>
     </div>
@@ -119,7 +126,8 @@
       :title="this.$t('DiskSetting')"
       v-model="DiskSetDialog"
       width="600"
-      footer-hide>
+      footer-hide
+    >
       <div class="wrapper">
         <div class="left">
           <Row class="rowlist">
@@ -136,20 +144,20 @@
           </Row>
           <Row class="rowlist">
             <Col span="24">
-              <Col span='7'>{{$t('DiskEffect')}}：</Col>
-              <Select
-                v-model="selecteDisk"
-                @on-change="handleSelect"
-                class="topColumn"
-                style="width:200px;"
-              >
-                <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
-                <Option value="dataDisk">{{$t('DataDisk')}}</Option>
-                <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
-                <Option value="cacheDisk">{{$t('cacheDisk')}}</Option>
-                <!-- <Option value="userDisk">{{$t('userDisk')}}</Option> -->
-                <Option value="unUsed">{{$t('Unused')}}</Option>
-              </Select>
+            <Col span='7'>{{$t('DiskEffect')}}：</Col>
+            <Select
+              v-model="selecteDisk"
+              @on-change="handleSelect"
+              class="topColumn"
+              style="width:200px;"
+            >
+              <Option value="imageDisk">{{$t('MirrorDisk')}}</Option>
+              <Option value="dataDisk">{{$t('DataDisk')}}</Option>
+              <Option value="writebackDisk">{{$t('WriteBackDisk')}}</Option>
+              <Option value="cacheDisk">{{$t('cacheDisk')}}</Option>
+              <!-- <Option value="userDisk">{{$t('userDisk')}}</Option> -->
+              <Option value="unUsed">{{$t('Unused')}}</Option>
+            </Select>
             </Col>
           </Row>
           <Row
@@ -157,16 +165,16 @@
             v-show="this.selecteDisk !== 'unUsed'"
           >
             <Col span="24">
-              <Col span='7'>{{$t('isFormat')}}：</Col>
-              <Select
-                v-model="selecteFormatValue"
-                class="topColumn"
-                style="width:200px;"
-                :placeholder="this.$t('pleaseInput')"
-              >
-                <Option value="yes">{{$t('Yes')}}</Option>
-                <Option value="no">{{$t('No')}}</Option>
-              </Select>
+            <Col span='7'>{{$t('isFormat')}}：</Col>
+            <Select
+              v-model="selecteFormatValue"
+              class="topColumn"
+              style="width:200px;"
+              :placeholder="this.$t('pleaseInput')"
+            >
+              <Option value="yes">{{$t('Yes')}}</Option>
+              <Option value="no">{{$t('No')}}</Option>
+            </Select>
             </Col>
           </Row>
           <Row
@@ -174,17 +182,22 @@
             class="rowlist"
           >
             <Col span="24">
-              <Col span='7'>{{$t('MappingDiskSymbol')}}：</Col>
-              <Select
-                v-model="selecteDiskF"
-                class="topColumn"
-                style="width:200px;"
-                :placeholder="this.$t('pleaseInput')"
+            <Col span='7'>{{$t('MappingDiskSymbol')}}：</Col>
+            <Select
+              v-model="selecteDiskF"
+              class="topColumn"
+              style="width:200px;"
+              :placeholder="this.$t('pleaseInput')"
+            >
+              <Option
+                v-for="item in DiskSymbolList"
+                :value="item.diskSymbol"
+                :key="item.value"
+                :disabled="item.exist"
               >
-                <Option v-for="item in DiskSymbolList" :value="item.diskSymbol"   :key="item.value" :disabled="item.exist">
-                      {{item.diskSymbol}}
-                </Option>
-              </Select>
+                {{item.diskSymbol}}
+              </Option>
+            </Select>
             </Col>
           </Row>
           <Row
@@ -192,17 +205,17 @@
             v-show="this.selecteDisk === 'dataDisk'"
           >
             <Col span="24">
-              <Col span='7'>{{$t('ExtendedType')}}：</Col>
-              <Select
-                v-model="ExtendedType"
-                class="topColumn"
-                style="width:200px;"
-                :placeholder="this.$t('pleaseInput')"
-              >
-                <Option value="0">{{$t('GameDisk')}}</Option>
-                <Option value="1">{{$t('HotGameDisk')}}</Option>
-                <Option value="2">{{$t('PrivateGameDisk')}}</Option>
-              </Select>
+            <Col span='7'>{{$t('ExtendedType')}}：</Col>
+            <Select
+              v-model="ExtendedType"
+              class="topColumn"
+              style="width:200px;"
+              :placeholder="this.$t('pleaseInput')"
+            >
+              <Option value="0">{{$t('GameDisk')}}</Option>
+              <Option value="1">{{$t('HotGameDisk')}}</Option>
+              <Option value="2">{{$t('PrivateGameDisk')}}</Option>
+            </Select>
             </Col>
           </Row>
         </div>
@@ -226,9 +239,15 @@
           </ul>
         </div>
       </div>
-      <div style="margin-top:20px;" >
-        <Button type="primary" @click="handleSetCard" >{{$t('Save')}}</Button>
-        <Button @click="handleResetCard" style="margin-left: 8px" >{{$t('cancelText')}}</Button>
+      <div style="margin-top:20px;">
+        <Button
+          type="primary"
+          @click="handleSetCard"
+        >{{$t('Save')}}</Button>
+        <Button
+          @click="handleResetCard"
+          style="margin-left: 8px"
+        >{{$t('cancelText')}}</Button>
       </div>
     </Modal>
   </div>
@@ -440,10 +459,10 @@ export default {
             }
           }
         },
-        { title: '映射盘符',
+        {
           key: 'vol',
           align: 'center',
-          minWidth: 90,
+          minWidth: 120,
           renderHeader: (h, params) => { return h('span', this.$t('MappingDiskSymbol')) },
           render: (h, params) => {
             return h('span', params.row.vol || '-')
@@ -480,7 +499,7 @@ export default {
             return h('span', bytesToSize(Number(params.row.writeTotal)))
           }
         },
-        { key: 'isHealth', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
+        { key: 'health', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) }, className: 'demo-table-infox-column' },
         { key: 'hit', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('HitRate')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
@@ -525,6 +544,12 @@ export default {
     this.handleGetDiskStatusx(this.currentPageServerip)
   },
   methods: {
+    rowClassName (row, index) {
+      if (row.health !== '100') {
+        return 'demo-table-info-row'
+      }
+      return ''
+    },
     handleChange1 (data, x, selected) {
       let _this = this
       let flagTip; let flag = false
@@ -678,6 +703,7 @@ export default {
         cancelText: this.$t('cancelText'),
         onOk: () => {
           this.loadingDel = true
+          this.setCustomConfig({ key: 'master', value: '' })
           deleteserverConfig(this.currentPageServerip)
           deleteserverx(this.currentPageServerip, this.masterIp).then((resp) => {
             this.$Message.success(this.$t('DeleteSucess'))
@@ -893,6 +919,7 @@ export default {
 .topColumn {
   float: none;
 }
+
 .ivu-divider-vertical {
   margin-left: -2px;
 }
@@ -940,6 +967,10 @@ li {
   max-width: 260px;
   font-size: 14px;
 }
+.demo-table-info-row {
+  background: red;
+}
+
 .demo-spin-icon-load {
   animation: ani-demo-spin 1s linear infinite;
 }

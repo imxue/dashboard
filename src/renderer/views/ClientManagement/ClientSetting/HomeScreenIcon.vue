@@ -185,7 +185,9 @@ export default {
         this.cityList = resp.data.filter(item => {
           return item.name !== 'default'
         })
-        this.plan = this.cityList[0].id
+        if (this.cityList.length !== 0) {
+          this.plan = this.cityList[0].id
+        }
       }, (resp) => {
         this.$Message.error(resp.data.error)
       })

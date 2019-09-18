@@ -113,7 +113,7 @@ export default {
         this.single = response.data.use_default_setting + ''
       }, (data) => {
         this.$Message.error({
-          content: data.response.statusText
+          content: (data.response && data.response.statusText) || data.data.error
         })
       })
     },

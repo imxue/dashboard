@@ -272,11 +272,8 @@ export default {
       }
     }
   },
-  async created () {
-    // setValue({ key: 'master', value: '10.88.66.188' }).then(res => {
-    //   // this.$store.dispatch('saveMaster', info.value)
-    //   return Promise.resolve(true)
-    // })
+  created () {
+    // this.$store.dispatch('GetMasterip')
     this.getTableData()
   },
   computed: {
@@ -301,7 +298,8 @@ export default {
           } else {
             let Masterip = await this.getMasteripByServerList(ip)
             if (Masterip !== -1) {
-              this.$store.dispatch('saveMaster', Masterip || '')
+              // this.$store.dispatch('saveMaster', Masterip || '')
+              this.$store.dispatch('SetMasterip', { key: 'masterip', value: Masterip })
               let List = await this.getMasterList(ip)
               if (List !== -1) {
                 this.serverList = List
@@ -351,6 +349,7 @@ export default {
     async HandleMasterIp () {
       try {
         let resp = await getMasterIp()
+        // this.$store.dispatch('GetMasterip')
         return resp.data.value && Promise.resolve(resp.data.value)
       } catch (e) {
         return -1
@@ -386,10 +385,11 @@ export default {
       try {
         let respList = await getServers(ip)
         let serverList = respList.data.result.list ? respList.data.result.list : []
+
         let MasterIp = serverList.filter(item => {
           return item.isMaster === '1' && item.serverIp
         })
-        return Promise.resolve(MasterIp.serverIp)
+        return Promise.resolve(MasterIp[0].serverIp)
       } catch (e) {
         return -1
       }

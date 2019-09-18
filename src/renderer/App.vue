@@ -28,21 +28,39 @@ export default {
   </script>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
-  html, body {
-    width: 100%;
-    height: 100%;
-    margin:0;
-    padding:0;
-  }
-  #app{
-    width: 100%;
-    height: 100%;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
-  }
-  .topItem{ height: 60px;line-height: 32px;}
-  .topColumn{ float:left; margin-right:10px;}
-  .modalBox .ivu-modal-footer{ display: none !important;}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+.ivu-table .demo-table-info-row td {
+  background-color: #cce4f7;
+  color: black;
+}
+.ivu-table td.demo-table-infox-column {
+  background-color: #2db7f5;
+  color: #fff;
+}
+.topItem {
+  height: 60px;
+  line-height: 32px;
+}
+.topColumn {
+  float: left;
+  margin-right: 10px;
+}
+.modalBox .ivu-modal-footer {
+  display: none !important;
+}
 </style>

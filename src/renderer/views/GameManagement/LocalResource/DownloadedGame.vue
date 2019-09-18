@@ -65,6 +65,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('UpdateMode')) },
             key: 'UpdateMode',
+            width: 120,
             render: (h, params) => {
               let type = params.row.UpdateMode
               switch (type) {

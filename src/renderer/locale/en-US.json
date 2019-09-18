@@ -447,5 +447,6 @@
   "finished": "finished",
   "cacheDisk": "cacheDisk",
   "HitRate": "HitRate",
-  "getBarInfo": "getBarInfo..."
+  "getBarInfo": "getBarInfo...",
+  "LasterSysVersion": "Laster Syns Version"
 }

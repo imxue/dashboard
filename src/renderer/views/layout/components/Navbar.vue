@@ -67,9 +67,6 @@ export default {
     return {
       expireTime: '',
       expireTimeState: 0,
-      netBarId: this.$store.state.app.barid || '',
-      onlineNetBar: '1000',
-      totalNetBar: '2000',
       localStorageLang: localStorage.getItem('lang'),
       x: this.$store.state.app.barinfo,
       localLanguage: [
@@ -93,11 +90,13 @@ export default {
   },
   methods: {
     handleExpireTime () {
-      let date = new Date(this.$store.state.app.barinfo.expire_time)
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let day = date.getMonth()
-      this.expireTime = `${year} / ${month} / ${day}`
+      if (this.$store.state.app.barinfo.expire_time) {
+        let date = new Date(this.$store.state.app.barinfo.expire_time)
+        let year = date.getFullYear()
+        let month = date.getMonth() + 1
+        let day = date.getMonth()
+        this.expireTime = `${year} / ${month} / ${day}`
+      }
     },
     ChangeLanguage (name) {
       this.$i18n.locale = name
@@ -105,6 +104,7 @@ export default {
       this.localStorageLang = name
     },
     handleExit () {
+      this.$store.dispatch('saveBarInfo', null)
       this.$router.push('/login')
     }
   },
