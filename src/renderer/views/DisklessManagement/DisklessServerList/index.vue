@@ -19,9 +19,16 @@
       <Button
         type="primary"
         class="topColumn"
+        @click="handleButtonclear"
+        :disabled="loading"
+      >{{$t('clear')}}</Button>
+      <Button
+        type="primary"
+        class="topColumn"
         @click="handleButtonRefesh"
-        :disabled="this.serverList.length === 0">
-      {{$t('Refresh')}}</Button>
+        :disabled="this.serverList.length === 0"
+      >
+        {{$t('Refresh')}}</Button>
     </div>
     <!-- table -->
     <Table
@@ -49,7 +56,10 @@
         :label-width="100"
         @keydown.native.enter.prevent="handleAddServer('formValidate')"
       >
-        <FormItem :label="$t('ServerIP')" prop="serverIP">
+        <FormItem
+          :label="$t('ServerIP')"
+          prop="serverIP"
+        >
           <Input
             ref="input"
             autofocus
@@ -59,7 +69,10 @@
           />
         </FormItem>
 
-        <FormItem :label="$t('ServerPW')" prop="password">
+        <FormItem
+          :label="$t('ServerPW')"
+          prop="password"
+        >
           <Input
             type="password"
             s
@@ -81,7 +94,7 @@
         </FormItem>
       </Form>
     </Modal>
-    
+
     <Modal
       v-model="modal4"
       :title="this.$t('Theservermayalreadybelongtoanothernode')"
@@ -273,7 +286,6 @@ export default {
     }
   },
   created () {
-    // this.$store.dispatch('GetMasterip')
     this.getTableData()
   },
   computed: {
@@ -282,6 +294,12 @@ export default {
     })
   },
   methods: {
+    handleButtonclear () {
+      setValue({ key: 'master', value: '' }).then(res => {
+        this.$store.dispatch('saveMaster', '')
+        this.serverList = []
+      })
+    },
     async getTableData () {
       this.loading = true
       let ip = await this.HandleMasterIp()

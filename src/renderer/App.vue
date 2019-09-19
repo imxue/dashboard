@@ -46,11 +46,10 @@ body {
 }
 .ivu-table .demo-table-info-row td {
   background-color: #cce4f7;
-  color: black;
 }
 .ivu-table td.demo-table-infox-column {
-  background-color: #2db7f5;
-  color: #fff;
+  background-color: #B3D6D4;
+  color: black;
 }
 .topItem {
   height: 60px;

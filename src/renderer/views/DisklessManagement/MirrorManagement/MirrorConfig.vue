@@ -63,6 +63,7 @@
         showImgPopup: false,
         showPopup: false,
         btnRestore: false,
+        loadSing: false, // brn loading
         configList: [],
         copyIndexData: [],
         configListIndexValue: '', // 当前配置点 row value
@@ -151,9 +152,11 @@
         ruleValidate: { config: [{ required: true, message: '不能为空', trigger: 'change' }] },
         configPointTable: [
           { key: 'no',
+            minWidth: 90,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePpointNo')) }
           },
           { key: 'comment',
+            minWidth: 150,
             renderHeader: (h, params) => { return h('span', this.$t('RestorePointNote')) }
           },
           {
@@ -169,7 +172,7 @@
             minWidth: 150,
             render: (h, params) => {
               let response = h('Button', {
-                props: { type: 'primary' },
+                props: { type: 'primary', loading: this.loadSing },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSetRestore(params.row) } }
               }, this.$t('Revert'))
@@ -382,6 +385,7 @@
        * 镜像名称 配置点 还原点
        */
       handleSetRestore (index) { // 还原点还原
+        this.loadSing = true
         let that = this
         let length = that.configPointDate.length
         if (length <= 1) {
@@ -389,6 +393,10 @@
             if (resp.data.error === null) {
               that.handleGetRestoreList(that.restoreListIndexValue)
             }
+          }, () => {
+            that.$Message.error(that.$t(`error`))
+          }).finally(() => {
+            this.loadSing = false
           })
         } else {
           this.$Modal.confirm({
@@ -396,16 +404,17 @@
             'content': this.$t('RestorePointTip'),
             'cancel-text': this.$t('cancelText'),
             'okText': this.$t('KonwContinue'),
-            loading: this.btnRestore,
+            'loading': this.btnRestore,
             onOk () {
               this.btnRestore = true
               revertImageRestore(that.MirrorsInfoDate[0].name, that.restoreListIndexValue.no, String(index.no), that.masterip).then((resp) => {
                 if (resp.data.error === null) {
                   that.handleGetRestoreList(that.restoreListIndexValue)
                 }
-                that.$Modal.remove()
               }, (e) => {
                 that.$Message.error(that.$t(`kxLinuxErr.${e}`))
+              }).finally(() => {
+                that.$Modal.remove()
               })
             }
           })

@@ -499,7 +499,7 @@ export default {
             return h('span', bytesToSize(Number(params.row.writeTotal)))
           }
         },
-        { key: 'health', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) }, className: 'demo-table-infox-column' },
+        { key: 'health', minWidth: 90, renderHeader: (h, params) => { return h('span', this.$t('Health')) } },
         { key: 'hit', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('HitRate')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('operation')) },
@@ -545,7 +545,7 @@ export default {
   },
   methods: {
     rowClassName (row, index) {
-      if (row.health !== '100') {
+      if (row.health && row.health !== '100') {
         return 'demo-table-info-row'
       }
       return ''
@@ -661,6 +661,11 @@ export default {
           if (item.vol) {
             this.vol.push(item.vol)
           }
+          if (item.health && item.health !== '100') {
+            item.cellClassName = {
+              health: 'demo-table-infox-column'
+            }
+          }
           item.size = bytesToSize(item.size)
           item.availableSize = bytesToSize(item.availableSize)
           let f = {}
@@ -669,9 +674,7 @@ export default {
             f['label'] = item.path
             f['isRaid'] = item.isRaid
             f['capacity'] = item.size
-            // if (item.isRaid === '0') {
             this.matrix.push(f)
-            // }
             if (item.isRaid === '1') {
               this.ExistsMatrixMember.push(f.label)
             }
@@ -703,7 +706,6 @@ export default {
         cancelText: this.$t('cancelText'),
         onOk: () => {
           this.loadingDel = true
-          this.setCustomConfig({ key: 'master', value: '' })
           deleteserverConfig(this.currentPageServerip)
           deleteserverx(this.currentPageServerip, this.masterIp).then((resp) => {
             this.$Message.success(this.$t('DeleteSucess'))
