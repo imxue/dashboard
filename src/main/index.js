@@ -56,6 +56,7 @@ ipcMain.on('restart', () => {
   app.relaunch()
   app.exit(0)
 })
+
 /**
  * Auto Updater
  *

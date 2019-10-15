@@ -124,8 +124,8 @@ export default {
             })
           }, (e) => {
             this.loading = false
-            if (e.message) {
-              this.notifyUser('error', e.message)
+            if (e) {
+              this.notifyUser('error', e.data.error)
             }
           })
         } else {
