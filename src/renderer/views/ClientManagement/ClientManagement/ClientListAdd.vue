@@ -206,7 +206,7 @@ export default {
         this.$refs[name].validate(valid => {
           if (valid) {
             let masterip = this.masterip
-            setPcConf(this.formValidate, masterip).then((resp) => {
+            setPcConf({ mac: this.formValidate.mac, pc: this.formValidate.pc, ip: this.formValidate.ip, disable: this.formValidate.disable, pcGp: this.formValidate.pcGp }, masterip).then((resp) => {
               this.$emit('childByValue')
             }, (error) => {
               console.log(error)

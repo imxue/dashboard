@@ -14,15 +14,17 @@
     <Modal
       :title="modalTitle"
       v-model="showImgPopup"
+      :mask-closable=false
       width= "500"
       footer-hide
       class-name="vertical-center-modal">
       <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="100">
         <FormItem :label="labelName" prop="nameVal">
-          <Input v-model="formValidate2.nameVal" :placeholder="this.$t('PleaseEnterConfigurationPointName')" clearable  />
+          <Input v-model="formValidate2.nameVal" :placeholder="this.$t('PleaseEnterConfigurationPointName')" />
+           <Input v-model="formValidate2.nameVal" style="display:none" />
         </FormItem>
         <FormItem class="buttonList">
-             <Button type="primary" @click="handeCheckModalSubmitType('formValidate2')">{{$t('Save')}}</Button>
+             <Button type="primary" @click.prevent="handeCheckModalSubmitType('formValidate2')" :loading='loadingbtn'>{{$t('Save')}}</Button>
              <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
         </FormItem>
       </Form>
@@ -43,7 +45,6 @@
   import {
     getImageListx,
     deleteImagex,
-    createImageProject,
     getImageRestore,
     deleteImageProject,
     editImageProject,
@@ -58,6 +59,7 @@
       return {
         masterip: this.$store.state.app.masterip || '',
         modalType: 'create',
+        loadingbtn: false,
         modalTitle: this.$t('CreateConfigurationPointName'),
         labelName: this.$t('ConfigurationName'),
         showImgPopup: false,
@@ -124,23 +126,23 @@
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSet(params.row) } }
               }, this.$t('RestorePoint'))
-              // let b = h('Button', {
-              //   props: { type: 'primary' },
-              //   style: { marginRight: '10px' },
-              //   on: { click: () => { this.handleCopy(params.row) } }
-              // }, this.$t('Copy'))
+              let b = h('Button', {
+                props: { type: 'primary' },
+                style: { marginRight: '10px' },
+                on: { click: () => { this.handleCopy(params.row) } }
+              }, this.$t('Copy'))
               let c = h('Button', {
                 props: { type: 'error' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleDelete(params.row) } }
               }, this.$t('Delete'))
-              let d = h('Button', { props: { type: 'info' },
-                on: { click: () => { this.handleFix(params.row) } }
-              }, this.$t('modify'))
+              // let d = h('Button', { props: { type: 'info' },
+              //   on: { click: () => { this.handleFix(params.row) } }
+              // }, this.$t('modify'))
               if (params.row.name === 'default') {
-                return [response]
+                return [response, b]
               } else {
-                return [response, c, d]
+                return [response, b, c]
               }
             }
           }
@@ -318,21 +320,25 @@
         })
       },
       handleSubmitCopy () {
-        var restoreNo = this.copyIndexData.rollbackList
-        if (restoreNo === null) {
-          restoreNo = ''
-        } else {
-          restoreNo = String(restoreNo.length)
+        this.loadingbtn = true
+        var pno = this.copyIndexData.no
+        if (pno === null) {
+          pno = ''
         }
-        // 创建配置点 image, projectNO, restoreNo, name, title
-        createImageProject(this.MirrorsInfoDate[0].name, this.copyIndexData.no, restoreNo, this.formValidate2.nameVal, this.MirrorsInfoDate[0].menuItemName).then((response) => {
+        let image = this.$route.query.data.name
+        let name = this.formValidate2.nameVal
+        let data = { image, name, pno }
+        createImageProjectx(data, this.masterip).then((response) => {
           if (response.data.error === null && response.data.result === null) {
-            this.$Message.success('创建成功！')
+            this.$Message.success('复制成功！')
             this.tableData = []
+            this.showImgPopup = false
             this.handleGetImageList() // 创建成功 获取配置列表
           } else {
             this.$Message.error(response.data.error)
           }
+        }).finally(() => {
+          this.loadingbtn = false
         })
       },
       handleCopy (index) {

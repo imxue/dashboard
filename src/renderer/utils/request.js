@@ -8,8 +8,7 @@ let result = JSON.parse(localStorage.getItem('connectNet')) || { ip: '127.0.0.1'
 let ip = result.ip
 let port = result.port
 const service = axios.create({
-  baseURL: `http://${ip}:${port}`,
-  timeout: 60000 // request timeout
+  baseURL: `http://${ip}:${port}`
 })
 service.interceptors.request.use(
   (request) => {

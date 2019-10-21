@@ -27,7 +27,7 @@ function createWindow () {
     backgroundColor: '#F5F7F9',
     webPreferences: { webSecurity: false }
   })
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
