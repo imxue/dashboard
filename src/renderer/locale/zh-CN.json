@@ -449,5 +449,7 @@
   "HitRate":"命中率",
   "getBarInfo":"获取网吧信息...",
   "LasterSysVersion":"最后同步版本",
-  "Serverdisk":"服务器存放磁盘"
+  "Serverdisk":"服务器存放磁盘",
+  "BindInternetCafeId":"绑定网吧ID",
+  "ChangeInternet": "切换网络"
 }

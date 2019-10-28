@@ -26,23 +26,23 @@
         
     </Modal>
     <div class="box">
-        <h3>{{$t('绑定网吧id')}}</h3>
+        <h3>{{$t('BindInternetCafeId')}}</h3>
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem prop="barid" style="width:100%;" class="item">
             <!-- <Row>服务器IP地址：</Row> -->
             <Row class="x"></Row>
-              <Input type="text" v-model="formInline.barid" :placeholder="this.$t('网吧id')" style="width:100%; dispaly:block;"></Input>
+              <Input size="large" type="text" v-model="formInline.barid" :placeholder="this.$t('id')" style="width:100%; dispaly:block;"></Input>
           </FormItem>
           <FormItem prop="password" style="width:100%;" class="item">
             <!-- <Row>管理密码：</Row> -->
-              <Input type="password" v-model="formInline.password" :placeholder="this.$t('password')"></Input>
+              <Input size="large" type="password" v-model="formInline.password" :placeholder="this.$t('password')" @keyup.enter.native="handleSubmit('formInline')"></Input>
           </FormItem>
-          <FormItem>
+          <FormItem style="width: 100%;">
              <Row class="y">
 
-              <Button type="primary" :loading="loading" @click="handleSubmit('formInline')" style="width:280px;">{{$t('Login')}}</Button>
+              <Button type="primary" :loading="loading" @click="handleSubmit('formInline')" long size="large">{{$t('Login')}}</Button>
              </Row>
-              <span @click="changeNet">切换连接网络</span>
+              <span @click="changeNet">{{$t('ChangeInternet')}}</span>
           </FormItem>
       </Form>
       <!-- <p style="text-align:right; color:#2b85e4;cursor: pointer;" @click="handleReset">忘记密码？</p> -->
@@ -57,6 +57,7 @@ export default {
   name: 'login',
   data () {
     return {
+      loginFlag: true,
       loading: false,
       modal1: false,
       formInline: {
@@ -105,33 +106,42 @@ export default {
   watch: {},
   computed: {},
   created () {
-    let net = JSON.parse(localStorage.getItem('connectNet')) || ''
-    this.net.ip = (net && net.ip) || '127.0.0.1'
-    this.net.port = (net && net.port) || '12880'
+    if (localStorage.getItem('connectNet')) {
+      let net = JSON.parse(localStorage.getItem('connectNet')) || ''
+      this.net.ip = (net && net.ip) || '127.0.0.1'
+      this.net.port = (net && net.port) || '12880'
+    }
   },
   methods: {
     handleSubmit (name) {
-      this.loading = true
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          netbarRegister(Number(this.formInline.barid), this.formInline.password).then((e) => {
-            login(Number(this.formInline.barid)).then(r => {
-              localStorage.setItem('token', r.token)
+      if (this.loginFlag) {
+        this.loading = true
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.loginFlag = false
+            netbarRegister(Number(this.formInline.barid), this.formInline.password).then((e) => {
+              login(Number(this.formInline.barid)).then(r => {
+                localStorage.setItem('token', r.token)
+                this.loading = false
+                this.$router.push('/game')
+              }, (e) => {
+                this.loading = false
+                this.notifyUser('error', e.data.error)
+              })
+            }, (e) => {
+              // 注册失败
               this.loading = false
-              this.$router.push('/game')
-            }, () => {
-              this.loading = false
+              if (e) {
+                this.notifyUser('error', e.data.error)
+              }
+            }).finally(() => {
+              this.loginFlag = true
             })
-          }, (e) => {
+          } else {
             this.loading = false
-            if (e) {
-              this.notifyUser('error', e.data.error)
-            }
-          })
-        } else {
-          this.loading = false
-        }
-      })
+          }
+        })
+      }
     },
     changeNet () {
       this.netup = true
@@ -173,10 +183,10 @@ export default {
     height: 350px;
     margin: 0 auto;
   }
-  .y button{
+  /* .y button{
     margin-top:10px; 
     margin-bottom:10px; 
-  }
+  } */
   .z button{
     margin-top:0px; 
   }
@@ -186,7 +196,5 @@ export default {
   .item{
     margin-bottom: 30px;
   }
-  .ivu-input, button{height: 36px !important;}
-  button{margin-top:30px; font-size: 14px; letter-spacing:4px;}
 </style>
 
