@@ -573,3 +573,9 @@ export function userDelete (info, ip) {
 export function userList (ip) {
   return makeRequestx('user_list', {}, ip)
 }
+/**
+ * 获取数据
+ */
+export function GetRegInfo (barid, ip) {
+  return makeRequestx('Get_RegInfo', { barid }, ip)
+}

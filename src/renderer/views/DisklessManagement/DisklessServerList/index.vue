@@ -115,7 +115,8 @@ import {
   editServersNode,
   getServers,
   deleteserverConfig,
-  login
+  login,
+  GetRegInfo
 } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { setValue, getMasterIp } from '@/api/common'
@@ -262,7 +263,23 @@ export default {
               },
               this.$t('View')
             )
-            return a
+            let b = h(
+              'Button',
+              {
+                props: { type: 'info', ghost: true },
+                on: {
+                  click: () => {
+                    this.handleSeeRegInfo(params.row)
+                  }
+                }
+              },
+              this.$t('查看注册信息')
+            )
+            if (params.row.isMaster === '1') {
+              return [a, b]
+            } else {
+              return a
+            }
           }
         }
       ],
@@ -282,6 +299,9 @@ export default {
             trigger: 'blur'
           }
         ]
+      },
+      RegInfo: {
+
       }
     }
   },
@@ -294,6 +314,16 @@ export default {
     })
   },
   methods: {
+    async handleSeeRegInfo () {
+      try {
+        let resp = await GetRegInfo(10015, this.masterIp)
+        if (resp.data.result.regStat === '1') {
+          this.$store.dispatch('savereginfo', resp.data.result)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
     handleButtonclear () {
       setValue({ key: 'master', value: '' }).then(res => {
         this.$store.dispatch('saveMaster', '')

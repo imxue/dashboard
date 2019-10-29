@@ -6,7 +6,8 @@ const state = {
   netWork: {
     ip: '127.0.0.1',
     port: '12880'
-  }
+  },
+  RegInfo: {}
 }
 const mutations = {
   SAVE_Master_IP (state, masterip) {
@@ -14,6 +15,9 @@ const mutations = {
   },
   SAVE_BAR_info (state, barinfo) {
     state.barinfo = barinfo
+  },
+  SAVE_REG_INFO (state, reginfo) {
+    state.RegInfo = reginfo
   }
 
 }
@@ -54,6 +58,9 @@ const actions = {
         reject(e)
       })
     })
+  },
+  savereginfo ({ commit, state }, reginfo) {
+    commit('SAVE_REG_INFO', reginfo)
   }
 }
 export default {
