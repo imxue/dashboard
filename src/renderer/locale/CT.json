@@ -449,5 +449,22 @@
   "HitRate":"命中率",
   "getBarInfo":"獲取網吧資訊...",
   "LasterSysVersion":"最後同步版本",
-  "Serverdisk":"伺服器存放磁片"
+  "Serverdisk":"伺服器存放磁片",
+  "clear": "清除服務器記錄",
+  "BindInternetCafeId":"綁定網吧",
+  "ChangeInternet":"切換網絡",
+  "place":"場所名:",
+  "regType": "授權類型:",
+  "pcCount": "客戶機數量:",
+  "validDay": "剩餘天數:",
+  "ObtainAuthorizationFail": "獲取授權失敗",
+  "ObtainAuthorization": "授權信息",
+  "AllocateGame": "分配遊戲",
+  "DistributionServer": "分配服務器",
+  "AllocateDisk": "分配磁盤",
+  "DisableSync": "禁止同步",
+  "Waitingfordiskallocation": "等待磁盤同步",
+  "Sync": "同步",
+  "Updatefailed": "更新失敗",
+  "SyncToServer": "同步到服務器"
 }

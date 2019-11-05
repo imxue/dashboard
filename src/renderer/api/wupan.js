@@ -576,6 +576,6 @@ export function userList (ip) {
 /**
  * 获取数据
  */
-export function GetRegInfo (barid, ip) {
-  return makeRequestx('Get_RegInfo', { barid }, ip)
+export function GetRegInfo (barId, ip) {
+  return makeRequestx('Get_RegInfo', { barId }, ip)
 }

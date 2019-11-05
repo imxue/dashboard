@@ -132,9 +132,6 @@ export default {
         this.archive_server_ip = response.data.archive_server_ip
         this.form = response.data
       }, (response) => {
-        this.$Message.info({
-          content: response.data.error
-        })
       })
     }
   }

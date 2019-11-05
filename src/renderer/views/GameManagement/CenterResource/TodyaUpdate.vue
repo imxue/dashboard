@@ -34,7 +34,7 @@
 <script>
 import { getTodayUpdateGames, repairGame, deleteGame, downloadGame, getLogicalDrives } from '@/api/localGame'
 import { getAllCenterGameTypes } from '@/api/game'
-import { bytesToSize2 } from '../../../utils/index'
+import { bytesToSize3, bytesToSize2 } from '../../../utils/index'
 export default {
   name: 'subType1-1',
   data () {
@@ -89,7 +89,7 @@ export default {
           key: 'Size',
           renderHeader: (h, params) => { return h('span', this.$t('Size')) },
           render: (h, params) => {
-            return h('span', bytesToSize2(params.row.Size))
+            return h('span', bytesToSize3(params.row.Size))
           } },
         { title: '中心游戏版本', minWidth: 130, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { title: '本地游戏版本', minWidth: 130, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },

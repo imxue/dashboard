@@ -7,7 +7,7 @@
             <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
           </Select>
             <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
-          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('同步到游戏服务器')}}</Button>
+          <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t('SyncToServer')}}</Button>
         </i-col>
         <i-col span="2" >
           <!-- <Button type="primary" class="topColumn" @click="handleButtonDelete">{{$t('Delete')}}</Button> -->
@@ -25,7 +25,7 @@
 <script>
   import { getDownloadedGames, deleteGame, syncToServers } from '@/api/localGame'
   import { getAllCenterGameTypes } from '@/api/game'
-  import { bytesToSize2 } from '../../../utils/index'
+  import { bytesToSize3 } from '../../../utils/index'
   export default {
     name: 'subType3-1',
     data () {
@@ -82,7 +82,7 @@
           { key: 'Size',
             renderHeader: (h, params) => { return h('span', this.$t('Size')) },
             render: (h, params) => {
-              return h('span', bytesToSize2(params.row.Size))
+              return h('span', bytesToSize3(params.row.Size))
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('ServerStoragePath')) },

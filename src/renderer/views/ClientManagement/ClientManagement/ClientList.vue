@@ -9,7 +9,7 @@
       
     <Row class="header">
         <Col span="12" >
-        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('')" style="width: 200px;"  @on-change='ChangeValue'  placeholder="请输入要查询的内容" />
+        <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('pleaseInput')+$t('MachineName')+$t('-ip')" style="width: 200px;"  @on-change='ChangeValue'  />
       <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{$t('Refresh')}}</Button>
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
        <Button type="primary" class="topColumn" @click="handleButtonEdit">{{$t('Edit')}}</Button>
@@ -390,6 +390,7 @@ export default {
     }
   },
   created () {
+    console.log(this.$store.state.app.masterip)
     if (this.masterip) {
       this.handgetClienList() // 获取客户机列表
       this.HandleGetMaster() // 获取主服务器

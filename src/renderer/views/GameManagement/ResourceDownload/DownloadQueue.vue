@@ -161,10 +161,10 @@ export default {
           this.pageinfo = response.data.pageino
         }
       }, (response) => {
-        this.$Message.info({
-          content: this.$t(response.data.error),
-          closable: true
-        })
+        // this.$Message.info({
+        //   content: this.$t(response.data.error),
+        //   closable: true
+        // })
       })
     },
     handleCheckBox (data) {

@@ -3,7 +3,7 @@
     <Modal
         v-model="netup"
         :styles="{top: '300px'}"
-        title="切换网络"
+        :title="this.$t('ChangeInternet')"
         footer-hide
        >
          <Form ref="net" :model="net" :rules="netrules" inline>
@@ -40,9 +40,12 @@
           <FormItem style="width: 100%;">
              <Row class="y">
 
-              <Button type="primary" :loading="loading" @click="handleSubmit('formInline')" long size="large">{{$t('Login')}}</Button>
+              <Button styel="marginBottom:60px;" type="primary" :loading="loading" @click="handleSubmit('formInline')" long size="large">{{$t('Login')}}</Button>
              </Row>
+             <div class="mt20">
+
               <span @click="changeNet">{{$t('ChangeInternet')}}</span>
+             </div>
           </FormItem>
       </Form>
       <!-- <p style="text-align:right; color:#2b85e4;cursor: pointer;" @click="handleReset">忘记密码？</p> -->
@@ -52,6 +55,7 @@
 
 <script>
 import { netbarRegister, login } from '../../api/login'
+import { GetRegInfo } from '../../api/wupan'
 import { ipcRenderer } from 'electron'
 export default {
   name: 'login',
@@ -110,9 +114,15 @@ export default {
       let net = JSON.parse(localStorage.getItem('connectNet')) || ''
       this.net.ip = (net && net.ip) || '127.0.0.1'
       this.net.port = (net && net.port) || '12880'
+    } else {
+      this.net.ip = '127.0.0.1'
+      this.net.port = '12880'
     }
   },
   methods: {
+    // 登录成功
+    // 获取主服务器
+    // 验证注册信息
     handleSubmit (name) {
       if (this.loginFlag) {
         this.loading = true
@@ -121,17 +131,33 @@ export default {
             this.loginFlag = false
             netbarRegister(Number(this.formInline.barid), this.formInline.password).then((e) => {
               login(Number(this.formInline.barid)).then(r => {
-                localStorage.setItem('token', r.token)
                 this.loading = false
-                this.$router.push('/game')
+                // 获取主服务
+                this.$store.dispatch('GetMasterip').then((e) => {
+                  if (e.data.value) {
+                    GetRegInfo(this.formInline.barid + '', e.data.value).then((e) => {
+                      if (e.data.result.regStat === '1') {
+                        this.$router.push('/game')
+                        localStorage.setItem('token', r.token)
+                      } else {
+                        this.notifyUser('error', '授权失败...')
+                      }
+                    })
+                  } else {
+                    this.$router.push('/game')
+                  }
+                })
               }, (e) => {
                 this.loading = false
                 this.notifyUser('error', e.data.error)
               })
             }, (e) => {
               // 注册失败
+              if (!e.response && e.message) {
+                this.notifyUser('error', e.message)
+              }
               this.loading = false
-              if (e) {
+              if (e.data) {
                 this.notifyUser('error', e.data.error)
               }
             }).finally(() => {
@@ -183,10 +209,7 @@ export default {
     height: 350px;
     margin: 0 auto;
   }
-  /* .y button{
-    margin-top:10px; 
-    margin-bottom:10px; 
-  } */
+
   .z button{
     margin-top:0px; 
   }
@@ -195,6 +218,9 @@ export default {
   }
   .item{
     margin-bottom: 30px;
+  }
+  .mt20{
+    margin-top:20px;
   }
 </style>
 

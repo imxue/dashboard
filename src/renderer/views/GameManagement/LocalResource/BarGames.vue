@@ -50,7 +50,7 @@ import {
   deleteLocalGame,
   repairGame
 } from '@/api/localGame'
-import { bytesToSize2 } from '../../../utils/index'
+import { bytesToSize3 } from '../../../utils/index'
 export default {
   name: 'subType3-2',
   data () {
@@ -121,7 +121,7 @@ export default {
             return h('span', this.$t('Size'))
           },
           render: (h, params) => {
-            return h('span', bytesToSize2(params.row.size))
+            return h('span', bytesToSize3(params.row.size))
           }
         },
         {

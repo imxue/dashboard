@@ -104,6 +104,45 @@
     >
       <p>{{$t("Needtocleartheinformationcontinue")}} + {{tempMasterIP}}</p>
     </Modal>
+    <Modal
+        v-model="regModal"
+        :title="this.$t('ObtainAuthorization')"
+      >
+    <div class="regWrapper">
+  <Form :label-width="80">
+    <FormItem  :label="this.$t('ID')" >
+          <p style="font-size:14px"> 
+          {{regInfo.id}}
+          </p>
+        </FormItem>
+        <FormItem :label="this.$t('place')" >
+          <p style="font-size:14px">
+            {{regInfo.name}}
+            </p>
+        </FormItem>
+        <FormItem  :label="this.$t('regType')">
+          <p style="font-size:14px"> 
+          {{regInfo.regType}}
+          </p>
+        </FormItem>
+        <FormItem  :label="this.$t('pcCount')">
+          <p style="font-size:14px"> 
+          {{regInfo.pcCount}}
+          </p>
+        </FormItem>
+        <!-- <FormItem label="hwid:" >
+          <p style="font-size:14px"> 
+          {{regInfo.hwid}}
+          </p>
+        </FormItem> -->
+        <FormItem :label="this.$t('validDay')">
+          <p style="font-size:14px">
+          {{regInfo.validDay}}
+          </p>
+        </FormItem>
+    </Form>
+    </div>
+    </Modal>
   </div>
 </template>
 
@@ -146,7 +185,9 @@ export default {
       callback()
     }
     return {
+      regInfo: '', // 注册信息
       spinShow: false,
+      regModal: false,
       searchVal: '',
       modal4: false,
       loading: false,
@@ -267,6 +308,7 @@ export default {
               'Button',
               {
                 props: { type: 'info', ghost: true },
+                style: { marginLeft: '10px' },
                 on: {
                   click: () => {
                     this.handleSeeRegInfo(params.row)
@@ -315,10 +357,20 @@ export default {
   },
   methods: {
     async handleSeeRegInfo () {
+      this.regModal = true
       try {
-        let resp = await GetRegInfo(10015, this.masterIp)
+        let barid = this.$store.state.app.barinfo.bar_id.toString()
+        let resp = await GetRegInfo(barid, this.masterIp)
         if (resp.data.result.regStat === '1') {
           this.$store.dispatch('savereginfo', resp.data.result)
+          this.regInfo = resp.data.result
+        } else {
+          this.$Message.warning({
+            content: this.$t('ObtainAuthorizationFail')
+          })
+          this.$router.push({
+            path: '/login'
+          })
         }
       } catch (error) {
         console.log(error)
@@ -546,6 +598,10 @@ export default {
           let OptServerip = this.formValidate.serverIP
           let optPassword = this.formValidate.password
           await this.HandleLogin(optPassword, OptServerip)
+          if (!this.$store.state.app.masterip) {
+            let resp = await this.HandleSetCheck(OptServerip)
+            console.log(resp)
+          }
           var resplist = await this.HandleGetServerList(OptServerip)
           if (resplist.length === 0) {
             // 服务器没有额外的类表
@@ -599,11 +655,27 @@ export default {
     */
     async HandleLogin (password, ip) {
       try {
-        let resp = await login(password, ip)
-        return Promise.resolve(resp)
+        await login(password, ip)
       } catch (error) {
         return Promise.reject(error)
       }
+    },
+
+    async HandleSetCheck (ip) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let resp = await GetRegInfo(this.$store.state.app.barinfo.bar_id, ip)
+          if (resp.data.result.regStat !== '1') {
+            // eslint-disable-next-line prefer-promise-reject-errors
+            return reject('99')
+          } else {
+          // 授权失败
+            return resolve(resp)
+          }
+        } catch (error) {
+          return reject(error)
+        }
+      })
     },
     handleAddReset (name) {
       this.serverPopup = false
@@ -614,3 +686,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.regWrapper .ivu-form-item {
+   margin-bottom: 0px !important;
+}
+.regWrapper .ivu-form-item-content {
+   font-size: 14px !important;
+}
+.regWrapper  {
+   font-size: 14px !important;
+}
+</style>

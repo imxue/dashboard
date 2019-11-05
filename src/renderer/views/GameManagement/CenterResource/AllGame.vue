@@ -35,7 +35,7 @@
 // import { getAllGame, getLogicalDrives, downloadGame, repairGame, deleteGame } from '@/api/localGame'
 import { getAllGame, getLogicalDrives, repairGame, deleteGame } from '@/api/localGame'
 import { getAllCenterGameTypes } from '@/api/game'
-import { bytesToSize2 } from '../../../utils/index'
+import { bytesToSize3, bytesToSize2 } from '../../../utils/index'
 import { download } from '@/utils/common'
 export default {
   name: 'allGame',
@@ -106,7 +106,7 @@ export default {
           sortable: 'custom',
           renderHeader: (h, params) => { return h('span', this.$t('Size')) },
           render: (h, params) => {
-            return h('span', bytesToSize2(params.row.Size))
+            return h('span', bytesToSize3(params.row.Size))
           }
         },
         { key: 'CenterVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },

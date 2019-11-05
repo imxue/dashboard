@@ -6,9 +6,8 @@ import iView from 'iview'
 import i18n from '../locale/index'
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach(async (to, from, next) => {
-  if (to.path !== '/login') {
-    iView.Message.destroy()
-  }
+  // 获取网吧信息
+  iView.Message.destroy()
   if (store.state.app.barinfo) {
     if (to.path === '/login') {
       next({ path: '/' })
@@ -27,8 +26,12 @@ router.beforeEach(async (to, from, next) => {
       iView.Spin.hide()
       store.dispatch('GetbarInfo').then(resp => {
         next({ path: '/' })
-      }).catch(() => {
-        alert.notifyUser('error', '获取网吧信息失败...')
+      }).catch((e) => {
+        if (!e.response) {
+          alert.notifyUser('error', e.message)
+        } else {
+          alert.notifyUser('error', i18n.t('barinfoError'))
+        }
         router.push('/login')
       })
     }

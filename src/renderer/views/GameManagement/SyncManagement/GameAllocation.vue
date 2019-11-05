@@ -41,12 +41,12 @@
     </Row>
     <Modal
         v-model="distributionPanel"
-        title="分配游戏"
+        :title="this.$t('AllocateGame')"
         @on-ok="ok"
        >
        <Row class="item">
            <Col span="5">
-          <span>分配服务器</span>
+          <span>{{$t('DistributionServer')}}</span>
           </Col>
                 <Col span="18">
          <Select v-model="serversIpValue1" clearable @on-change="handleSelectChangeserversIp1"  class="topColumn" label-in-value disabled>
@@ -56,7 +56,7 @@
         </Row>
      <Row class="item">
        <Col span="5">
-<span>分配磁盘</span>
+<span>{{$t('AllocateDisk')}}</span>
         </Col>
             <Col span=18>
           <!-- <Select v-model="serversDisk1" clearable @on-change="handleSelectChangeDisk1"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')"> -->
@@ -119,19 +119,19 @@
               let type = params.row.state
               switch (type) {
                 case 0:
-                  return h('span', { style: { color: '#999999' } }, '禁止同步')
+                  return h('span', { style: { color: '#999999' } }, this.$t('DisableSync'))
                 case 1:
-                  return h('span', { style: { color: '#999999' } }, '未分配')
+                  return h('span', { style: { color: '#999999' } }, this.$t('Unallocated'))
                 case 2:
-                  return h('span', '待更新')
+                  return h('span', this.$t('PendingUpgrade'))
                 case 3:
-                  return h('span', '等待磁盘分配')
+                  return h('span', this.$t('Waitingfordiskallocation'))
                 case 4:
-                  return h('span', '同步中')
+                  return h('span', this.$t('Sync'))
                 case 5:
-                  return h('span', '更新失败')
+                  return h('span', this.$t('Updatefailed'))
                 case 6:
-                  return h('span', { style: { color: '#47cb89' } }, '成功')
+                  return h('span', { style: { color: '#47cb89' } }, this.$t(' success'))
               }
             }
           },

@@ -17,7 +17,7 @@
 
 <script>
 import { getSystemTools, repairGame } from '@/api/localGame'
-import { bytesToSize2 } from '../../../utils/index'
+import { bytesToSize3 } from '../../../utils/index'
 export default {
   name: 'SystemTool',
   data () {
@@ -51,7 +51,7 @@ export default {
         { key: 'Size',
           renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) },
           render: (h, params) => {
-            return h('span', bytesToSize2(params.row.Size))
+            return h('span', bytesToSize3(params.row.Size))
           } },
         { key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
         { key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },

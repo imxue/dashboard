@@ -338,7 +338,8 @@
         "7" : "移除软阵列失败",
         "8" : "磁盘正在使用",
         "9" : "已经存在超级终端",
-        "49": "镜像已存在"
+        "49": "镜像已存在",
+        "99": "硬件ID不匹配"
     },
 "RestorePpointNo":"还原点编号",
 "operationTip":"操作提示",
@@ -451,5 +452,20 @@
   "LasterSysVersion":"最后同步版本",
   "Serverdisk":"服务器存放磁盘",
   "BindInternetCafeId":"绑定网吧ID",
-  "ChangeInternet": "切换网络"
+  "ChangeInternet": "切换网络",
+  "clear":"清除服务器记录",
+  "regType":"授权类型:",
+  "pcCount": "客户机数:",
+  "validDay": "剩余天数:",
+  "ObtainAuthorizationFail":"获取授权失败",
+  "place":"场所:",
+  "ObtainAuthorization":"授权信息",
+  "AllocateGame":"分配游戏",
+  "DistributionServer":"分配服务器",
+  "AllocateDisk":"分配磁盘",
+  "DisableSync":"禁止同步",
+  "Waitingfordiskallocation":"等待磁盘同步",
+  "Sync":"同步",
+  "Updatefailed":"更新失败",
+  "SyncToServer":"同步到游戏服务器"
 }

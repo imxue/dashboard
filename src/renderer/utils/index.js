@@ -33,6 +33,15 @@ export function formatSize (value) {
   // }
   return size
 }
+
+export function bytesToSize3 (bytes) {
+  if (bytes === 0 || bytes === '0') return '0'
+  var k = 1024 // or 1000
+  var sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+}
+
 // 数据容量单位转换(kb,mb,gb,tb)
 export function bytesToSize (bytes) {
   if (bytes === 0 || bytes === '0') return '0'
