@@ -133,12 +133,12 @@ export default {
               login(Number(this.formInline.barid)).then(r => {
                 this.loading = false
                 // 获取主服务
+                localStorage.setItem('token', r.token)
                 this.$store.dispatch('GetMasterip').then((e) => {
                   if (e.data.value) {
                     GetRegInfo(this.formInline.barid + '', e.data.value).then((e) => {
                       if (e.data.result.regStat === '1') {
                         this.$router.push('/game')
-                        localStorage.setItem('token', r.token)
                       } else {
                         this.notifyUser('error', '授权失败...')
                       }
@@ -146,6 +146,8 @@ export default {
                   } else {
                     this.$router.push('/game')
                   }
+                }, () => {
+                  this.$router.push('/Diskless')
                 })
               }, (e) => {
                 this.loading = false
