@@ -143,6 +143,7 @@ export default {
     imgUpload (data) {
       let file = data.target.files[0]
       this.localimgUrl = file.path
+      this.formValidate.IconUrl = file.path
       this.temp = file
     },
     handleAdd () {},

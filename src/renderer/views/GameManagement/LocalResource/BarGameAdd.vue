@@ -142,7 +142,6 @@
           that.$refs[name].validate((valid) => {
             if (e.target.result) {
               if (valid) {
-                console.log(that.formValidate)
                 addLocalGame(that.formValidate, e.target.result).then((res) => {
                   that.$router.push({ path: 'BarGames' })
                 }, (err) => {

@@ -186,7 +186,7 @@ export default {
       this.handgetAllGame(0, this.Pagelimit, 'Name', data)
     },
     handleGetTableList (e) {
-      this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name')
+      this.handgetAllGame((e - 1) * this.Pagelimit, this.Pagelimit, 'Name', '')
     },
     handgetAllGame (offset, limit, orderby, name) {
       getAllLocalGames(offset, limit, orderby, name)

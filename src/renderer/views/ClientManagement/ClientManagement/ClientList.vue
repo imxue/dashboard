@@ -651,7 +651,7 @@ export default {
         title: this.$t('DeleteTip'),
         // content: this.$t('DeleteCurrentData'),
         // content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
-        content: `是否${this.$t('Delete')}所选择的 ${this.clientArray.length} 台${this.$t('Client')} `,
+        content: `${this.$t('Delete')}${this.clientArray.length} ${this.$t('Client')} `,
         onOk: async () => {
           try {
             await deletePcsConfigx(client, this.masterip)

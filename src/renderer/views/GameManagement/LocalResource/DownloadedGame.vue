@@ -17,7 +17,8 @@
     <!-- table -->
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" @on-row-dblclick="handleTableEdit" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px;">
-      <i-col span="24"><Page :current="pageinfo.page_index + 1" :page-size="Pagelimit" :total="pageinfo.count" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
+      <i-col span="24">
+        <Page :current="pageinfo.page_index + 1" :page-size="Pagelimit" :total="pageinfo.count" show-total style=" float:right;" @on-change="hanbleChangePage"/></i-col>
     </Row>
   </div>
 </template>
@@ -186,7 +187,7 @@
         } else {
           num = (this.Pagelimit * num) - this.Pagelimit
         }
-        this.handleGetTableList(num, this.Pagelimit)
+        this.handleGetTableList(num, this.Pagelimit, '')
       },
       handleCallBackVaild (res) {
         var code = res.data.Code

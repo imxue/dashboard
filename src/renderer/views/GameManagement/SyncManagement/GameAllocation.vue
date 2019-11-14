@@ -82,7 +82,7 @@
           count: 0,
           page_index: 0
         },
-        Pagelimit: 6,
+        Pagelimit: 10,
         distributionPanel: false, //  分配游戏面板
         currentIp: '', // 当前页ip
         serversDisk: '',

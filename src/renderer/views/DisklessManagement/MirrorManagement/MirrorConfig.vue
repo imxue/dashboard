@@ -342,7 +342,7 @@
         })
       },
       handleCopy (index) {
-        this.modalTitle = '配置点名称'
+        this.modalTitle = this.$t('ConfigurationPointName')
         this.modalType = 'copy'
         this.showImgPopup = true
         this.copyIndexData = index
