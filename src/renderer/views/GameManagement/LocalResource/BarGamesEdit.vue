@@ -162,7 +162,6 @@ export default {
           if (this.localimgUrl) {
             UploadImg(this.temp).then((e) => {
               editLocalGame(this.formValidate, e.target.result, this.Id).then((e) => {
-                this.$Message.success(e.data)
                 this.$router.go(-1)
               })
             })
