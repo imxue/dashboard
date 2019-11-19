@@ -162,13 +162,13 @@ export default {
           if (this.localimgUrl) {
             UploadImg(this.temp).then((e) => {
               editLocalGame(this.formValidate, e.target.result, this.Id).then((e) => {
-                this.$router.go(-1)
+                this.$router.push({ path: 'BarGames' })
               })
             })
           } else {
             this.formValidate.IconUrl = null
             editLocalGame(this.formValidate, this.formValidate.IconUrl, this.Id).then((resp) => {
-              this.$router.go(-1)
+              this.$router.push({ path: 'BarGames' })
             }, (e) => {
               this.$Notice.error({ desc: '' + e, duration: 0 })
             })

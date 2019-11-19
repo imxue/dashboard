@@ -84,7 +84,7 @@ export default {
           }
         },
         {
-          key: 'display_name',
+          key: 'DisplayName',
           minWidth: 120,
           renderHeader: (h, params) => {
             return h('span', this.$t('gameName'))

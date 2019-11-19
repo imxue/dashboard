@@ -20,8 +20,8 @@ router.beforeEach(async (to, from, next) => {
       }
     })
     if (whiteList.indexOf(to.path) !== -1) {
-      iView.Spin.hide()
       next()
+      iView.Spin.hide()
     } else {
       iView.Spin.hide()
       store.dispatch('GetbarInfo').then(resp => {

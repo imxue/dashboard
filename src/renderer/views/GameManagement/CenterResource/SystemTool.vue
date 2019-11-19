@@ -47,7 +47,7 @@ export default {
           }
         },
         { key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('Type')) } },
-        { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
+        { key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('ToolName')) } },
         { key: 'Size',
           renderHeader: (h, params) => { return h('span', this.$t('ToolSize')) },
           render: (h, params) => {

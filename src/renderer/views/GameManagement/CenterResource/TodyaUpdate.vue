@@ -82,7 +82,7 @@ export default {
           }
         },
         { title: '游戏类型', minWidth: 120, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', minWidth: 120, key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '游戏名称', minWidth: 120, key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { title: '当前热度', minWidth: 120, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
         { title: '游戏大小',
           minWidth: 120,

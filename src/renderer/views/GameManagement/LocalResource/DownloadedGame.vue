@@ -58,7 +58,7 @@
               }
             }
           },
-          { key: 'Name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
           {
             key: `TypeName`,
             renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }

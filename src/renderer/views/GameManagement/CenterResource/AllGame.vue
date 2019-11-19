@@ -93,7 +93,7 @@ export default {
           maxWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
-        { key: 'Name', maxWidth: 108, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'DisplayName', maxWidth: 108, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
           minWidth: 120,
           maxWidth: 120,
@@ -152,7 +152,7 @@ export default {
     }
   },
   created () {
-    // this.TypeName = `TypeName.${Vue.config.lang}` // 从数据库取游戏名
+    this.$store.dispatch('GetbarInfo')
     this.handleGetGameType()
     this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: '' })
   },

@@ -91,7 +91,7 @@ export default {
         },
         {
           path: 'BarGames',
-          name: 'GameManagement-SubType3-2',
+          name: 'BarGames',
           meta: { title: 'BarGames' },
           component: BarGames
         },

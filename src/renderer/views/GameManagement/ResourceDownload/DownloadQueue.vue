@@ -64,7 +64,7 @@ export default {
           }
         },
         { key: 'TypeName', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { key: 'Name', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'DisplayName', minWidth: 120, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'TotalBytes',
           minWidth: 120,
           renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) },
