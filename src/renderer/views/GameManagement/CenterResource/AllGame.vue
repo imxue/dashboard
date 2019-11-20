@@ -152,7 +152,7 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('GetbarInfo')
+    // this.$store.dispatch('GetbarInfo')
     this.handleGetGameType()
     this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: '' })
   },
