@@ -252,3 +252,31 @@ export function remoteControl (info) {
     data
   })
 }
+/**
+ *  获取所有客户机配置信息
+ */
+export function getAllPcConfigs (info) {
+  return request({
+    url: `/v1/pc/getAllPcConfigs?offset=${info ? info.offset : 0}&limit=${info ? info.limit : 10000}&orderby=${info ? info.orderby : 'name'}`,
+    method: 'get'
+  })
+}
+/**
+ *  确认
+ */
+export function confirm (data) {
+  return request({
+    url: `/v1/pc/confirm`,
+    method: 'post',
+    data
+  })
+}
+/**
+ *  确认
+ */
+export function getConfigChangeDetail (name) {
+  return request({
+    url: `/v1/pc/getConfigChangeDetail?pcname=${name}`,
+    method: 'get'
+  })
+}

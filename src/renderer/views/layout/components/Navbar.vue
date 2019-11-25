@@ -4,18 +4,38 @@
       <div class="wrapper">
         <Menu mode="horizontal" theme="dark" active-name="1">
           <template v-for="item in routes">
-            <template v-if="!item.hidden&&item.children">
+   
+
+
+            <template  v-if="!item.hidden&&item.children" >
               <router-link
                 :to="item.redirect||item.path+'/'+item.children[0].path"
                 :key="item.children[0].name"
               >
                 <Menu-item :name="item.name">
+                  <template v-if="'ClientManagement' === item.meta.title && flag.length !== 0">
+                  <Icon type="ios-paper"/>
+                  <Badge :count="flag.length">
+                  {{ $t(item.meta.title) }}
+                  </Badge>
+                  <span
+                    v-if="item.meta&&item.meta.title"
+                    slot="title"
+                  >
+                       <Badge :count="flag.length">
+                  {{item.meta.title}}
+                       </Badge>
+                  </span>
+                  </template>
+
+                  <template v-else>
                   <Icon type="ios-paper"/>
                   {{ $t(item.meta.title) }}
                   <span
                     v-if="item.meta&&item.meta.title"
                     slot="title"
                   >{{item.meta.title}}</span>
+                  </template>
                 </Menu-item>
               </router-link>
             </template>
@@ -111,6 +131,9 @@ export default {
   computed: {
     routes () {
       return this.$router.options.routes
+    },
+    flag () {
+      return this.$store.state.app.HardwareInformation
     }
   }
 }
@@ -118,7 +141,7 @@ export default {
 
 
 
-<style scoped>
+<style lang="scss" scoped>
 .redColor {
   color: #ff4d43;
 }
@@ -138,5 +161,13 @@ export default {
 }
 a {
   color: white;
+}
+
+.myheader {
+  .wrapper {
+  .ivu-badge-count {
+   top:8px !important;
+  }
+  }
 }
 </style>

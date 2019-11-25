@@ -466,5 +466,6 @@
   "Waitingfordiskallocation": "等待磁盤同步",
   "Sync": "同步",
   "Updatefailed": "更新失敗",
-  "SyncToServer": "同步到服務器"
+  "SyncToServer": "同步到服務器",
+  "Remote": "遠程"
 }

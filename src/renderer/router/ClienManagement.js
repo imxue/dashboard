@@ -1,6 +1,7 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
 import ClientList from '@/views/ClientManagement/ClientManagement/ClientList'
+import hardwareinformation from '@/views/ClientManagement/ClientManagement/hardwareinformation'
 import ClientSetting from '@/views/ClientManagement/ClientManagement/subtype1-add'
 import BaseSetting from '@/views/ClientManagement/ClientSetting/BaseSetting'
 import HomeScreenIcon from '@/views/ClientManagement/ClientSetting/HomeScreenIcon'
@@ -24,6 +25,12 @@ export default {
           alias: '/disklesslist',
           meta: { title: 'ClientList' },
           component: ClientList
+        },
+        {
+          path: 'hardwareinformation',
+          name: 'hardwareinformation',
+          meta: { title: 'HardwareInformation' },
+          component: hardwareinformation
         },
         {
           path: 'clientData',

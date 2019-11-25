@@ -1,12 +1,5 @@
 <template>
   <div>
- 
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonFilter">硬件筛选</Button>
-     
-      <Button type="primary" class="topColumn" @click="handleButtonDelete">删除</Button>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonImport">导入</Button>-->
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemove">移动至方案</Button> -->
-      
     <Row class="header">
         <Col span="12" >
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('pleaseInput')+$t('MachineName')+$t('-ip')" style="width: 200px;"  @on-change='ChangeValue'  />
@@ -14,12 +7,6 @@
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t('Add')}}</Button>
        <Button type="primary" class="topColumn" @click="handleButtonEdit">{{$t('Edit')}}</Button>
          <Button type="error" class="topColumn" @click="handAllDetele">{{$t('Delete')}}</Button>
-        </Col>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonRemotely">{{$t('Remotely')}}</Button> -->
-        <Col span="" offset="17">
-      <Button type="primary" class="topColumn" @click="handleButtonwakeup" :loading="loading">{{$t('wakeup')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonShutdown" :loading="loading">{{$t('shoudown')}}</Button>
-      <Button type="primary" class="topColumn" @click="handleButtonRestart" :loading="loading">{{$t('Restart')}}</Button>
         </Col>
     </Row>
   
@@ -32,6 +19,12 @@
     
 </div>
 <h4 style="margin-bottom:5px;">{{$t('ClientList')}}</h4>
+<div style="display:flex;flex-direction:column">
+  <div style="display:flex;margin-bottom:10px;">
+   <Button type="primary" class="topColumn" @click="handleButtonwakeup" :loading="loadingwakeup">{{$t('wakeup')}}</Button>
+   <Button type="primary" class="topColumn" @click="handleButtonShutdown" :loading="loadingshoudown">{{$t('shoudown')}}</Button>
+   <Button type="primary" class="topColumn" @click="handleButtonRestart" :loading="loadingRestart">{{$t('Restart')}}</Button>
+  </div>
 <div ref="demox" class="xt">
     <Table
       border
@@ -50,6 +43,8 @@
     <Row style="margin-top:10px; ">
       <Col span="24"><Page :total="this.pageInfo.count"  show-total :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
     </Row>
+</div>
+
     <!-- 删除提示 -->
     <Modal
       v-model="showDeleteBox"
@@ -128,16 +123,16 @@
 </template>
 
 <script>
-import { setSuper, getSuper, setCancelSuper, restart, shutdown, wakeup, batchSetPcConf } from '@/api/client'
-import { getPcListConfig, getImageListx, deletePcsConfigx, getPcGroupx } from '@/api/wupan'
+import { setSuper, getSuper, setCancelSuper, batchSetPcConf } from '@/api/client'
+import { getPcListConfig, getImageListx, deletePcsConfigx, getPcGroupx, PcRemote, CtrlPcsConf } from '@/api/wupan'
 import edit from './ClientListAdd'
 import { getMasterIp } from '@/api/common'
+const { ipcRenderer } = require('electron')
 export default {
   name: 'ClientList',
-  inject: ['reload'],
+  // inject: ['reload'],
   data () {
     return {
-      masterip: this.$store.state.app.masterip || '',
       loadBtnSuper: false,
       loadBtnCancel: false,
       clientArray: '',
@@ -213,8 +208,8 @@ export default {
         { type: 'selection', width: 50, align: 'center' },
         { renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'stat',
-          minWidth: 80,
-          maxWidth: 90,
+          minWidth: 70,
+          maxWidth: 80,
           render: (h, params) => {
             let a = ''
             switch (params.row.stat) {
@@ -230,7 +225,7 @@ export default {
 
         },
         { key: 'ip', minWidth: 130, maxWidth: 120, sortable: 'custom', renderHeader: (h, params) => { return h('span', this.$t('ClientIP')) } },
-        { key: 'pc', minWidth: 140, maxWidth: 170, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
+        { key: 'pc', minWidth: 100, maxWidth: 110, sortable: true, renderHeader: (h, params) => { return h('span', this.$t('MachineName')) } },
         { key: 'mac', minWidth: 135, maxWidth: 150, renderHeader: (h, params) => { return h('span', this.$t('ClientMAC')) } },
         { key: 'pcGp', minWidth: 100, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('StartUpPlan')) } },
         { key: 'curImg', minWidth: 110, maxWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
@@ -303,7 +298,19 @@ export default {
                   }
                 },
                 this.$t('Delete')
-              )])
+              ), h(
+                'Button',
+                {
+                  props: { type: 'info', disabled: params.row.stat !== '1' },
+                  style: { marginLeft: '10px' },
+                  on: {
+                    click: () => {
+                      this.handleButtonRemoth(params.row)
+                    }
+                  }
+                },
+                this.$t('Remote')
+              ) ])
             }
 
             return a
@@ -386,21 +393,25 @@ export default {
         comment: [
           { required: true, message: this.$t('ChooseAtLeastOne'), trigger: 'blur' }
         ]
-      }
+      },
+      loadingwakeup: false,
+      loadingshoudown: false,
+      loadingRestart: false,
+      timer: null
     }
   },
-  created () {
-    console.log(this.$store.state.app.masterip)
-    if (this.masterip) {
-      this.handgetClienList() // 获取客户机列表
-      this.HandleGetMaster() // 获取主服务器
-    }
+  async created () {
+    await this.HandleGetMaster() // 获取主服务器
+    this.handgetClienList() // 获取客户机列表
   },
   mounted () {
-    let div = this.$refs.demox
-    div.addEventListener('scroll', () => {
-      this.tableData = this.list.slice(10, 20)
-    })
+    // let div = this.$refs.demox
+    // div.addEventListener('scroll', () => {
+    //   this.tableData = this.list.slice(10, 20)
+    // })
+    // setTimeout(() => {
+    //   this.start()
+    // }, 1000)
   },
   computed: {
     profileList () {
@@ -411,35 +422,60 @@ export default {
         this.formValidatex.profileList = xx[0].profileList[0].name
         return xx[0].profileList
       }
+    },
+    masterip () {
+      return this.$store.state.app.masterip
     }
   },
 
   components: {
     edit
   },
+  beforeRouteLeave (to, from, next) {
+    clearTimeout(this.timer)
+    next()
+  },
   methods: {
-    compareAsc (x) {
-      return function (obj1, obj2) {
-        var p = obj1[x].split('.').pop()
-        var o = obj2[x].split('.').pop()
-        return o - p
+    start () {
+      this.timer = setTimeout(() => {
+        this.handgetClienList()
+        this.start()
+      }, 2000)
+    },
+    async handleButtonRemoth (obj) {
+      try {
+        let resp = await PcRemote({ mac: obj.mac, ip: obj.ip, pwd: obj.passwd }, this.masterip)
+        console.log(resp)
+        ipcRenderer.send('cmd', { ip: obj.ip, password: obj.passwd })
+        ipcRenderer.on('cmd', (event, arg) => {
+          console.log(arg)
+        })
+      } catch (error) {
+        this.$Message.error(this.$t(`kxLinuxErr.${error}`))
       }
     },
-    compareDesc (x) {
+    compareAsc (x) {
       return function (obj1, obj2) {
         var p = obj1[x].split('.').pop()
         var o = obj2[x].split('.').pop()
         return p - o
       }
     },
+    compareDesc (x) {
+      return function (obj1, obj2) {
+        var p = obj1[x].split('.').pop()
+        var o = obj2[x].split('.').pop()
+        return o - p
+      }
+    },
     async handleSort ({ columns, key, order }) {
       if (order === 'desc') {
         let resp = await this.handgetClienList()
-        this.sortData = resp.sort(this.compareAsc('ip'))
+        this.sortData = resp.sort(this.compareAsc('stat'))
         this.tableData = this.sortData.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
       } else {
         let resp = await this.handgetClienList()
-        this.sortData = resp.sort(this.compareDesc('ip'))
+        this.sortData = resp.sort(this.compareDesc('stat'))
         this.tableData = this.sortData.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
       }
     },
@@ -447,12 +483,15 @@ export default {
       获取主服务器
     */
     async HandleGetMaster () {
-      try {
-        let resp = await getMasterIp()
-        this.$store.dispatch('saveMaster', resp.data.value || '')
-      } catch (e) {
-        this.notifyUserOfDiskError(36873)
-      }
+      return new Promise(async (resolve, reject) => {
+        try {
+          let resp = await getMasterIp()
+          this.$store.dispatch('saveMaster', resp.data.value || '')
+          resolve()
+        } catch (error) {
+          reject(error)
+        }
+      })
     },
     ChangeValue (value) {
       if (!value) {
@@ -499,35 +538,35 @@ export default {
       this.HandleSuper()
       this.clientArray = []
     },
-    /**
-        唤醒 关机 重启 函数模板
-    */
-    formatFunction (func) {
-      if (this.macArray.length === 0) {
-        return
-      }
-      this.loading = true
-      func(this.macArray.toString()).then(resp => {
-        this.notifyUserOfSucess('sucess')
-        this.loading = false
-      }, (err) => {
-        setTimeout(() => { this.loading = false }, 500)
-        this.$Message.error(err.data.error)
-      }).catch(err => {
-        setTimeout(() => { this.loading = false }, 500)
-        this.$Message.error(this.$t(err))
-      }).finally(() => {
-        setTimeout(() => {
-          this.handleButtonRefresh()
-        }, 1000)
-      })
-    },
+
     /** 唤醒 */
-    handleButtonwakeup () { this.formatFunction(wakeup) },
+    handleButtonwakeup () {
+      this.formatFunction('4')
+    },
     /** 关机 */
-    handleButtonShutdown () { this.formatFunction(shutdown) },
+    handleButtonShutdown () {
+      this.formatFunction('1')
+    },
     /** 重启 */
-    handleButtonRestart () { this.formatFunction(restart) },
+    handleButtonRestart () {
+      this.formatFunction('2')
+    },
+    async formatFunction (opt) {
+      if (this.clientArray.length !== 0) {
+        let a = []
+        this.clientArray.forEach(item => {
+          a.push({ mac: item.mac, ip: item.ip, pc: item.pc })
+        })
+        try {
+          await CtrlPcsConf({ macList: a, operate: opt }, this.masterip)
+        } catch (error) {
+          console.log(error)
+        } finally {
+          this.handgetClienList()
+          this.HandleSuper()
+        }
+      }
+    },
 
     /**
      * 获取客户机列表
@@ -562,6 +601,10 @@ export default {
             }
             return superip.data.result.ip !== item.ip
           })
+          this.list.sort((a, b) => {
+            console.log(a)
+            return b.stat - a.stat
+          })
           this.tableData = this.list.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
           if (flag) {
             this.show = true
@@ -570,7 +613,11 @@ export default {
         }
       } else {
         this.list = clientList
+        this.list.sort((a, b) => {
+          return b.stat - a.stat
+        })
         this.tableData = this.list.slice((this.pageInfo.page_index - 1) * this.Pagelimit, (this.pageInfo.page_index - 1) * this.Pagelimit + this.Pagelimit)
+        console.log(this.tableData)
       }
       return this.list
     },
@@ -806,7 +853,7 @@ export default {
 }
 .footer{
   /* margin-top:20px; */
-  margin-bottom:40px;
+  margin-bottom:10px;
 }
 /* .xt{
   height:519px;

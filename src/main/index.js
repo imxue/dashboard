@@ -1,7 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-
+import { start } from './cmd/index'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -23,7 +23,7 @@ function createWindow () {
     height: 900,
     useContentSize: true,
     width: 1480,
-    minWidth: 1300,
+    minWidth: 1525,
     backgroundColor: '#F5F7F9',
     webPreferences: { webSecurity: false }
   })
@@ -38,6 +38,7 @@ function createWindow () {
 }
 
 app.on('ready', function () {
+  console.log(app.getAppPath())
   createWindow()
 })
 
@@ -55,6 +56,10 @@ app.on('activate', () => {
 ipcMain.on('restart', () => {
   app.relaunch()
   app.exit(0)
+})
+
+ipcMain.on('cmd', (e, arg) => {
+  start(arg)
 })
 
 /**

@@ -579,3 +579,15 @@ export function userList (ip) {
 export function GetRegInfo (barId, ip) {
   return makeRequestx('Get_RegInfo', { barId }, ip)
 }
+/**
+ * 获取数据
+ */
+export function PcRemote (obj, ip) {
+  return makeRequestx('Pc_Remote', obj, ip)
+}
+/**
+ * 客户机列表
+ */
+export function CtrlPcsConf (obj, ip) {
+  return makeRequestx('Ctrl_PcsConf', obj, ip)
+}

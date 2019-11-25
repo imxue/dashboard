@@ -174,7 +174,7 @@
             minWidth: 150,
             render: (h, params) => {
               let response = h('Button', {
-                props: { type: 'primary', loading: this.loadSing },
+                props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleSetRestore(params.row) } }
               }, this.$t('Revert'))
@@ -391,7 +391,6 @@
        * 镜像名称 配置点 还原点
        */
       handleSetRestore (index) { // 还原点还原
-        this.loadSing = true
         let that = this
         let length = that.configPointDate.length
         if (length <= 1) {
@@ -401,8 +400,6 @@
             }
           }, () => {
             that.$Message.error(that.$t(`error`))
-          }).finally(() => {
-            this.loadSing = false
           })
         } else {
           this.$Modal.confirm({

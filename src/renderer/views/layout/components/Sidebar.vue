@@ -9,7 +9,18 @@
           </template>
           <template v-for="(subItem) in item.children" >
            <!-- {{subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path}} -->
-            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">{{ $t(subItem.meta.title) }} </Menu-item>
+           
+            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">
+            <template v-if="'HardwareInformation' === subItem.meta.title && flag.length !== 0">
+            <!-- <Icon type="md-warning"  class="flag"/> -->
+            <Badge :count="flag.length">
+            {{ $t(subItem.meta.title) }} 
+            </Badge>
+            </template>
+             <template v-else> 
+          {{ $t(subItem.meta.title) }} 
+             </template>
+            </Menu-item>
           </template>
         </Submenu>
       </template>
@@ -26,6 +37,7 @@
       }
     },
     created () {
+      console.log(this.$store.state.app.HardwareInformation)
     },
     computed: {
       routes () {
@@ -39,6 +51,9 @@
           // this.$refs.side_menu.updateActiveName()
         })
         return matched[0]
+      },
+      flag () {
+        return this.$store.state.app.HardwareInformation
       }
     },
     methods: {

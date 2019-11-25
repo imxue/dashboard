@@ -467,5 +467,16 @@
   "Waitingfordiskallocation":"等待磁盘同步",
   "Sync":"同步",
   "Updatefailed":"更新失败",
-  "SyncToServer":"同步到游戏服务器"
+  "SyncToServer":"同步到游戏服务器",
+  "HardwareInformation":"硬件信息",
+  "Remote":"远程",
+  "RAM":"内存",
+  "NetworkCard":"网卡",
+  "GraphicsCard":"显卡",
+  "Cpu":"处理器",
+  "MainBoard":"主板",
+  "ConfigState":"客户机状态",
+  "Change":"待确认",
+  "confirmed":"已确认",
+  "tip1":"客户机配置信息未改变，无法获取配置变更详情"
 }

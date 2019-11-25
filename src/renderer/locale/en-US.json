@@ -449,5 +449,7 @@
   "HitRate":"Hit Rate",
   "getBarInfo":"Getting icafe info...",
   "LasterSysVersion":"Last Version",
-  "Serverdisk":"Server Disk"
+  "Serverdisk":"Server Disk",
+  "HardwareInformation": "Hardware Information",
+  "Remote": "Remote"
 }

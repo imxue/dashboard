@@ -62,4 +62,8 @@ body {
 .modalBox .ivu-modal-footer {
   display: none !important;
 }
+.ivu-badge-count {
+    position: relative !important;
+    box-shadow: none !important;
+  }
 </style>

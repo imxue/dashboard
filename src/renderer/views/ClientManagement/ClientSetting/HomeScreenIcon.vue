@@ -4,7 +4,6 @@
         <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
           <div class="main">
             <Button type="primary" v-on:click="handSetIcon">{{$t('AddIcon')}}</Button>
-            <!-- <Button type="error">{{$t('DeleteIcon')}}</Button> -->
           </div>
             <Table border :columns="columns1" :data="imgreSource"></Table>  
         </TabPane>
@@ -16,7 +15,6 @@
             </Select>
              <Checkbox size="large" false-value='0' true-value='1' v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
             <Button type="primary" v-on:click="handSetIcon" :disabled="single === '1'">{{$t('AddIcon')}}</Button>
-            <!-- <Button type="error" :disabled="!!planCopy">{{$t('DeleteIcon')}}</Button> -->
           </div>
           <div class="xx">
           <Table v-show='single !== "1"' border ref="selection" :columns="columns1" :data="imgreSource"></Table>
@@ -107,7 +105,7 @@ export default {
   created () {
     // this.HandleGetDefaultHomeIcon() // 获取默认图标信息
     this.HandleGetAllHomeIcon()
-    this.handleGetPcGroup()
+    // this.handleGetPcGroup()
   },
   computed: {
   },
@@ -130,9 +128,11 @@ export default {
       let tempGameid = this.imgreSource.filter(item => {
         return v.game_id !== item.game_id
       })
-      tempGameid.forEach(item => {
-        infox.gameids.push(item.game_id)
-      })
+      if (tempGameid.length !== 0) {
+        tempGameid.forEach(item => {
+          infox.gameids.push(item.game_id)
+        })
+      }
 
       setSchemeIcon(infox).then(resp => {
         this.notifyUserOfSucess('Sucess')
@@ -207,7 +207,7 @@ export default {
         if (this.single === '1' && this.currentTab !== 'DefaultSetting') {
           this.imgreSource = []
         } else {
-          this.imgreSource = resp.data.scheme_icon_settings
+          this.imgreSource = resp.data.scheme_icon_settings || []
         }
       })
     },

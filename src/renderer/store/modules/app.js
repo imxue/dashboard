@@ -8,7 +8,8 @@ const state = {
     ip: '127.0.0.1',
     port: '12880'
   },
-  RegInfo: {}
+  RegInfo: {},
+  HardwareInformation: ''
 }
 const mutations = {
   SAVE_Master_IP (state, masterip) {
@@ -19,6 +20,9 @@ const mutations = {
   },
   SAVE_REG_INFO (state, reginfo) {
     state.RegInfo = reginfo
+  },
+  SAVE_HardwareInformation (state, flag) {
+    state.HardwareInformation = flag
   }
 
 }
@@ -27,50 +31,62 @@ const actions = {
     // do something async
     commit('SAVE_Master_IP', masterip)
   },
+  SAVEHardwareInformation ({ commit }, flag) {
+    // do something async
+    commit('SAVE_HardwareInformation', flag)
+  },
   saveBarInfo ({ commit }, barinfo) {
     // do something async
     commit('SAVE_BAR_info', barinfo)
   },
   GetbarInfo ({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getNetCafe().then(response => {
-        commit('SAVE_BAR_info', response.data)
-        resolve(response)
-      }).catch((e) => {
-        reject(e)
-      })
+      getNetCafe()
+        .then(response => {
+          commit('SAVE_BAR_info', response.data)
+          resolve(response)
+        })
+        .catch(e => {
+          reject(e)
+        })
     })
   },
   GetMasterip ({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getMasterIp().then(response => {
-        commit('SAVE_Master_IP', response.data.value)
-        resolve(response)
-      }).catch((e) => {
-        reject(e)
-      })
+      getMasterIp()
+        .then(response => {
+          commit('SAVE_Master_IP', response.data.value)
+          resolve(response)
+        })
+        .catch(e => {
+          reject(e)
+        })
     })
   },
   // 获取注册信息
   GetReg ({ commit, state }) {
     return new Promise((resolve, reject) => {
       if (state.barinfo) {
-        GetRegInfo(state.barinfo.bar_id + '', state.masterip).then(response => {
-          commit('SAVE_REG_INFO', response.data.value)
-          resolve(response)
-        }).catch((e) => {
-          reject(e)
-        })
+        GetRegInfo(state.barinfo.bar_id + '', state.masterip)
+          .then(response => {
+            commit('SAVE_REG_INFO', response.data.value)
+            resolve(response)
+          })
+          .catch(e => {
+            reject(e)
+          })
       }
     })
   },
   SetMasterip ({ commit, state }) {
     return new Promise((resolve, reject) => {
-      setValue({ key: 'master', value: state.masterip }).then(response => {
-        resolve()
-      }).catch((e) => {
-        reject(e)
-      })
+      setValue({ key: 'master', value: state.masterip })
+        .then(response => {
+          resolve()
+        })
+        .catch(e => {
+          reject(e)
+        })
     })
   },
   savereginfo ({ commit, state }, reginfo) {
