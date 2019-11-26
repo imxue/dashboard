@@ -240,7 +240,7 @@ export default {
               a = h('div', [ h(
                 'Button',
                 {
-                  props: { type: 'info' },
+                  props: { type: 'dashed' },
                   style: { marginLeft: '10px' },
                   on: {
                     click: () => {
@@ -252,7 +252,7 @@ export default {
               ), h(
                 'Button',
                 {
-                  props: { type: 'error' },
+                  props: { type: 'dashed' },
                   style: { marginLeft: '10px' },
                   on: {
                     click: () => {
@@ -266,7 +266,7 @@ export default {
               a = h('div', [h(
                 'Button',
                 {
-                  props: { type: 'info' },
+                  props: { type: 'primary', ghost: true },
                   on: {
                     click: () => {
                       this.setSuperList(params.row)
@@ -277,7 +277,7 @@ export default {
               ), h(
                 'Button',
                 {
-                  props: { type: 'info' },
+                  props: { type: 'primary', ghost: true },
                   style: { marginLeft: '10px' },
                   on: {
                     click: () => {
@@ -289,7 +289,7 @@ export default {
               ), h(
                 'Button',
                 {
-                  props: { type: 'error' },
+                  props: { type: 'error', ghost: true },
                   style: { marginLeft: '10px' },
                   on: {
                     click: () => {
@@ -301,7 +301,7 @@ export default {
               ), h(
                 'Button',
                 {
-                  props: { type: 'info', disabled: params.row.stat !== '1' },
+                  props: { type: 'info', disabled: params.row.stat !== '1', ghost: true },
                   style: { marginLeft: '10px' },
                   on: {
                     click: () => {

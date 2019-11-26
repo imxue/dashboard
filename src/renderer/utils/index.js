@@ -164,7 +164,6 @@ export function formatTime1 (_seconds) {
   hours = parseInt(_seconds / 3600)
 
   if (hours) { result = `${PadZero(hours)}:${PadZero(mins)}:${PadZero(seconds)}` } else { result = `${PadZero(mins)}:${PadZero(seconds)}` }
-  console.log(result)
   return result
 }
 export function cleanArray (actual) {

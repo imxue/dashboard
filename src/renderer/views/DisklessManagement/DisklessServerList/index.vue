@@ -16,12 +16,12 @@
         @click="handleButtonAdd"
         :disabled="loading"
       >{{$t('AddServer')}}</Button>
-      <Button
+      <!-- <Button
         type="primary"
         class="topColumn"
         @click="handleButtonclear"
         :disabled="loading"
-      >{{$t('clear')}}</Button>
+      >{{$t('clear')}}</Button> -->
       <Button
         type="primary"
         class="topColumn"
@@ -29,6 +29,14 @@
         :disabled="this.serverList.length === 0"
       >
         {{$t('Refresh')}}</Button>
+        <router-link to="back">
+        <Button
+        type="primary"
+        class="topColumn"
+        @click="handleButtonRefesh"
+      >
+        {{$t('back')}}</Button>
+        </router-link>
     </div>
     <!-- table -->
     <Table
@@ -376,12 +384,12 @@ export default {
         console.log(error)
       }
     },
-    handleButtonclear () {
-      setValue({ key: 'master', value: '' }).then(res => {
-        this.$store.dispatch('saveMaster', '')
-        this.serverList = []
-      })
-    },
+    // handleButtonclear () {
+    //   setValue({ key: 'master', value: '' }).then(res => {
+    //     this.$store.dispatch('saveMaster', '')
+    //     this.serverList = []
+    //   })
+    // },
     async getTableData () {
       this.loading = true
       let ip = await this.HandleMasterIp()
