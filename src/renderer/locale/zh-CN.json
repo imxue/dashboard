@@ -478,5 +478,10 @@
   "ConfigState":"客户机状态",
   "Change":"待确认",
   "confirmed":"已确认",
-  "tip1":"客户机配置信息未改变，无法获取配置变更详情"
+  "tip1":"客户机配置信息未改变，无法获取配置变更详情",
+  "BackUp":"备份",
+  "CreateBackUp": "创建备份",
+  "BackUpOpt": "备份选项",
+  "Remark":"备注",
+  "DHCP":"动态主机设置协议"
 }

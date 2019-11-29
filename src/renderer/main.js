@@ -11,7 +11,8 @@ import 'iview/dist/styles/iview.css'
 
 import alert from './utils/alert'
 import './router/Hook'
-// import './init/index'
+import './init/index'
+
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })

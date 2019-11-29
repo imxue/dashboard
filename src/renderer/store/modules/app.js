@@ -9,7 +9,8 @@ const state = {
     port: '12880'
   },
   RegInfo: {},
-  HardwareInformation: ''
+  HardwareInformation: '',
+  fileName: '' // 选中的文件
 }
 const mutations = {
   SAVE_Master_IP (state, masterip) {
@@ -23,6 +24,9 @@ const mutations = {
   },
   SAVE_HardwareInformation (state, flag) {
     state.HardwareInformation = flag
+  },
+  SAVE_fileName (state, name) {
+    state.fileName = name
   }
 
 }
@@ -38,6 +42,10 @@ const actions = {
   saveBarInfo ({ commit }, barinfo) {
     // do something async
     commit('SAVE_BAR_info', barinfo)
+  },
+  savefileName ({ commit }, name) {
+    // do something async
+    commit('SAVE_fileName', name)
   },
   GetbarInfo ({ commit, state }) {
     return new Promise((resolve, reject) => {

@@ -477,5 +477,10 @@
   "MainBoard":"Motherboard",
   "ConfigState":"Client Status",
   "Change":"Change",
-  "confirmed":"Ok"
+  "confirmed":"Ok",
+  "tip1": "Client configuration information has not changed, unable to get configuration change details",
+  "BackUp": "BackUp",
+  "CreateBackUp": "Create BackUp",
+  "BackUpOpt": "Backup options",
+  "Remark": "Remark"
 }

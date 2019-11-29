@@ -1,11 +1,11 @@
+import { app } from 'electron'
 const exec = require('child_process').exec
-// const path = require('path')
+const path = require('path')
 export function start (obj) {
   // 任何你期望执行的cmd命令，ls都可以
   let cmdStr1 = `tvnviewer ${obj.ip}::5900 -password=${obj.password}`
-  // let cmdPath = path.resolve(app.getAppPath(), '../cmd/')
-  let cmdPath = 'G:\\2019Task\\dashBoard\\cmd'
-  console.log(cmdPath)
+  let cmdPath = path.resolve(app.getAppPath(), '../cmd/')
+  // let cmdPath = 'G:\\2019Task\\dashBoard\\cmd'
   // 子进程名称
   let workerProcess
   runExec(cmdStr1)

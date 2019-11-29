@@ -25,7 +25,18 @@
         class="topColumn"
         @click="handleButtonRefresh"
       >{{$t('Refresh')}}</Button>
-
+<Button
+        type="primary"
+        class="topColumn"
+        @click="openfiledialog"
+      >
+        {{$t('BackUp')}}</Button>
+        <Button
+        type="primary"
+        class="topColumn"
+        @click="openFile"
+      >
+        {{$t('备份恢复')}}</Button>
       <Divider type="vertical" />
       <Button
         type="error"
@@ -250,6 +261,20 @@
         >{{$t('cancelText')}}</Button>
       </div>
     </Modal>
+    <Modal
+        v-model="modalx"
+        title="Details"
+    >
+        <label>客户机数已恢复:</label><span>{{this.clientCount}}</span>
+        <span v-if="this.clientCount === this.clientLength" style="color:green">DONE！</span>
+        <br/>
+        <!-- <span v-if="{{this.clientCount.length === this.clientLength}}">DONE</span> -->
+        <label>启动方案已恢复:</label>  <span>{{this.PcGroupCount}}</span>
+        <span v-if="this.PcGroupCount === this.StartListLength" style="color:green">DONE！</span>
+        <br/>
+       <label>DHCP已恢复:</label>  <span>{{this.DHCPCount}}</span>
+       <span v-if="this.DHCPCount === 1" style="color:green">DONE！</span>
+    </Modal>
   </div>
 </template>
 
@@ -264,15 +289,24 @@ import {
   setVdiskEthernetx,
   deleteserverConfig,
   RaidCreate,
+  editPcGroupx,
+  editDHCPConfigx,
+  getPcListConfig, getPcGroupx, getDHCPConfig,
   RaidRemove } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { bytesToSize, bytesToRate } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
 import { setValue } from '@/api/common'
+import { ipcRenderer } from 'electron'
+import { setPcConf } from '@/api/client'
+import fs from 'fs'
+import path from 'path'
+// import { getPcListConfig, getPcGroupx, getDHCPConfig, editPcGroupx, editDHCPConfigx } from '@/api/wupan'
 export default {
   name: 'DisklessServerListDetail',
   data () {
     return {
+      modalx: false,
       masterIp: this.$store.state.app.masterip || '', // 服务器存储的
       currentPageServerip: '', // 当前页服务器ip
       CurrentPageserverInfo: [], // 当前页服务器信息
@@ -310,6 +344,11 @@ export default {
         width: '300px',
         height: '300px'
       },
+      clientCount: 0,
+      clientLength: 0, // 备份数
+      PcGroupCount: 0,
+      StartListLength: 0, // 启动方案
+      DHCPCount: 0,
       serverTableStructure: [ // 服务器表格结构
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
@@ -544,6 +583,113 @@ export default {
     this.handleGetDiskStatusx(this.currentPageServerip)
   },
   methods: {
+    openfiledialog () {
+      console.log('我发送了事件')
+      let resp = ipcRenderer.sendSync('open-file-dialog')
+      if (resp) {
+        this.HandleBackUP(resp)
+      }
+    },
+    openFile () {
+      let path = ipcRenderer.sendSync('open-file')
+      if (path) {
+        fs.readFile(path[0], (e, f) => {
+          if (e) {
+            console.log(e)
+          } else {
+            this.modalx = true
+            let data = JSON.parse(f.toString())
+            data.forEach(async item => {
+              if (item.Client) {
+                this.clientCount = 0
+                this.clientLength = item.Client.length
+                item.Client.forEach(async itemx => {
+                  let { mac, pc, ip, disable, pcGp } = itemx
+                  try {
+                    await setPcConf({ mac, pc, ip, disable, pcGp }, this.$store.state.app.masterip)
+                    this.clientCount++
+                  } catch (error) {
+                    this.$Message.error('error')
+                  }
+                })
+              }
+              if (item.DHCP) {
+                this.DHCPCount = 0
+                let { prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp } = item.DHCP
+                try {
+                  await editDHCPConfigx({ prefix, numbetLength, numberBegin, ipBegin, addMode, pcGp }, this.$store.state.app.masterip)
+                  this.flagDHCP = true
+                  this.DHCPCount++
+                } catch (error) {
+                  this.$Message.error('error')
+                }
+              }
+              if (item.StartList) {
+                this.PcGroupCount = 0
+                this.StartListLength = item.StartList.length
+                item.StartList.forEach(async itemx => {
+                  let{ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps } = itemx
+                  try {
+                    await editPcGroupx({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, this.$store.state.app.masterip)
+                    this.flagStartList = true
+                    this.PcGroupCount++
+                  } catch (error) {
+                    this.$Message.error('error')
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    },
+    HandleBackUP (path) {
+      Promise.all([this.HandleGetImageList(), this.HandleGetStartList(), this.HandleGetDHCP()]).then(resp => {
+        this.handleEdit(path[0], resp)
+      })
+    },
+    // 获取客户机
+    HandleGetImageList () {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let resp = await getPcListConfig(this.$store.state.app.masterip)
+          resolve({ Client: resp.data.result.list })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+    // 获取启动方案
+    HandleGetStartList () {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let resp = await getPcGroupx(this.$store.state.app.masterip)
+          resolve({ StartList: resp.data.result.list })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+    // 获取DHCP
+    HandleGetDHCP () {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let resp = await getDHCPConfig(this.$store.state.app.masterip)
+          resolve({ DHCP: resp.data.result })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+    handleEdit (path1, data) {
+      fs.writeFile(path.resolve(path1, `${new Date().getTime()}.json`), JSON.stringify(data, null, 4), err => {
+        if (err) {
+          console.log(err)
+        } else {
+          this.$Message.success('备份成功')
+        }
+      })
+    },
     rowClassName (row, index) {
       if (row.health && row.health !== '100') {
         return 'demo-table-info-row'

@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { start } from './cmd/index'
 /**
  * Set `__static` path to static files in production
@@ -38,7 +38,7 @@ function createWindow () {
 }
 
 app.on('ready', function () {
-  console.log(app.getAppPath())
+  console.log(app.getPath('userData'))
   createWindow()
 })
 
@@ -60,6 +60,35 @@ ipcMain.on('restart', () => {
 
 ipcMain.on('cmd', (e, arg) => {
   start(arg)
+})
+ipcMain.on('open-file-dialog', (event) => {
+  dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory']
+  }, (files) => {
+    if (files) {
+      console.log(1)
+      console.log(files)
+      // event.sender.send('selected-directory', files)
+      event.returnValue = files
+    } else {
+      event.returnValue = ''
+    }
+  })
+})
+ipcMain.on('open-file', (event) => {
+  dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: '*', extensions: ['json'] }
+    ]
+  }, (files) => {
+    if (files) {
+      event.returnValue = files
+      event.sender.send('selected-file', files)
+    } else {
+      event.returnValue = ''
+    }
+  })
 })
 
 /**

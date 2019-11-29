@@ -131,7 +131,8 @@ export default {
       getSchemeBasics().then((response) => {
         this.archive_server_ip = response.data.archive_server_ip
         this.form = response.data
-      }, (response) => {
+      }, (e) => {
+        this.archive_server_ip = ''
       })
     }
   }

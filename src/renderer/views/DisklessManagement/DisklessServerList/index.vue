@@ -29,14 +29,6 @@
         :disabled="this.serverList.length === 0"
       >
         {{$t('Refresh')}}</Button>
-        <router-link to="back">
-        <Button
-        type="primary"
-        class="topColumn"
-        @click="handleButtonRefesh"
-      >
-        {{$t('back')}}</Button>
-        </router-link>
     </div>
     <!-- table -->
     <Table
@@ -537,6 +529,10 @@ export default {
         await editServersNode(masterip, 1, 1, selfip)
         await addServersx(selfip, guid, masterip)
         await addMasterServer(masterip)
+        if (!this.$store.state.app.masterip) {
+          let resp = await this.HandleSetCheck(masterip)
+          console.log(resp)
+        }
       } catch (error) {
         return Promise.reject(error)
       }
@@ -606,10 +602,7 @@ export default {
           let OptServerip = this.formValidate.serverIP
           let optPassword = this.formValidate.password
           await this.HandleLogin(optPassword, OptServerip)
-          if (!this.$store.state.app.masterip) {
-            let resp = await this.HandleSetCheck(OptServerip)
-            console.log(resp)
-          }
+
           var resplist = await this.HandleGetServerList(OptServerip)
           if (resplist.length === 0) {
             // 服务器没有额外的类表

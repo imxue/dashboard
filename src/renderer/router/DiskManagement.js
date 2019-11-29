@@ -8,7 +8,6 @@ import ConfigPoint from '@/views/DisklessManagement/MirrorManagement/MirrorConfi
 import StartUpPlan from '@/views/DisklessManagement/ClientStartup/StartUpPlan'
 import dpcp from '@/views/DisklessManagement/ClientStartup/dpcp'
 import Edit from '@/views/DisklessManagement/ClientStartup/StartUpPlanEdit'
-import back from '@/views/DisklessManagement/DisklessServerList/back'
 export default {
   path: '/Diskless',
   name: '无盘管理',
@@ -40,13 +39,6 @@ export default {
           name: '查看详情',
           meta: { title: 'DisklessServerListDetail' },
           component: DisklessServerListDetail,
-          hidden: true
-        },
-        {
-          path: 'back',
-          name: 'back',
-          meta: { title: 'back' },
-          component: back,
           hidden: true
         }
       ]

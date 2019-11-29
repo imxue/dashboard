@@ -477,5 +477,11 @@
   "MainBoard":"主機板",
   "ConfigState":"客戶機狀態",
   "Change":"變更",
-  "confirmed":"以確認"
+  "confirmed":"以確認",
+  "tip1": "客户机配置信息未改变，无法获取配置变更详情",
+  "BackUp": "備份",
+  "CreateBackUp": "創建備份",
+  "BackUpOpt": "備份選項",
+  "Remark": "備註",
+  "DHCP": "动态主机設定協定"
 }

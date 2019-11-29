@@ -5,12 +5,11 @@ import gamemanagement from './GameManagement'
 import clienmanagement from './ClienManagement'
 import diskmanagement from './DiskManagement'
 import { login, enroll, login2, login3, all } from './others'
-
-Vue.use(Router)
-const originalPush = Router.prototype.push
+const routerPush = Router.prototype.push
 Router.prototype.push = function push (location) {
-  return originalPush.call(this, location).catch(err => err)
+  return routerPush.call(this, location).catch(error => error)
 }
+Vue.use(Router)
 export default new Router({
   routes: [
     {

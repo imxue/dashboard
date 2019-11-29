@@ -21,6 +21,7 @@ function makeRequestx (method, param, ip) {
  * @param {*} ip
  */
 export function setClienConf ({ list }, ip) {
+  console.log(list)
   return makeRequestx('Set_PcConf', { list }, ip)
 }
 

@@ -150,6 +150,8 @@
                 if (!response.data.error) {
                   this.handleGetPcGroup()
                 }
+              }, (e) => {
+                this.$Message.error(this.$t(`kxLinuxErr.${e}`))
               })
             }
           })
