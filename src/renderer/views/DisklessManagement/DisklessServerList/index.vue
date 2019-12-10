@@ -422,6 +422,7 @@ export default {
         }
       }
       this.loading = false
+      await addMasterServer(ip)
     },
     /** 检查ip是否为主服务器
      * @returns true 是

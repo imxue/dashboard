@@ -31,7 +31,9 @@
     "files": [
       "dist/electron/**/*"
     ],
-    "extraResources": ["./cmd/**"],
+    "extraResources": [
+      "./cmd/**"
+    ],
     "win": {
       "icon": "build/icons/icon.ico"
     },

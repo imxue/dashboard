@@ -100,9 +100,19 @@ export default {
     }
   },
   created () {
+    this.init()
     this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state' })
   },
+
   methods: {
+    init () {
+      getAllPcConfigs().then(res => {
+        let changeClient = res.data.data.filter(item => {
+          return item.config_state === 1
+        })
+        this.$store.dispatch('SAVEHardwareInformation', changeClient)
+      })
+    },
     HandleDetail (row) {
       this.modal1 = true
       this.oldData = [row]

@@ -96,7 +96,9 @@
     <Row style="margin-bottom:20px;">
       <Button type="primary"  @click="handleButtonAdd">{{$t('AddMirror')}}</Button>
     </Row>
-    <Table border :columns="tableColumns1" :data="tableData1"></Table>
+    <div style="overflow:auto"> 
+      <Table border :columns="tableColumns1" :data="tableData1"></Table>
+    </div>
     <Modal
       :title="this.$t('AddMirror')"
       v-model="showPopup"

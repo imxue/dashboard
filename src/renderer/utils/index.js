@@ -395,3 +395,33 @@ export function checkIpformat (rule, value, callback) {
     }
   }
 }
+export function CreateAt (dom, wh, height) {
+  var _this = this
+
+  var bar = document.createElement('div')
+  var content = document.createElement('div')
+  bar.appendChild(content)
+  bar.style.width = '19px'
+  bar.style.overflowY = 'scroll'
+  bar.style.backgroundColor = 'white'
+  bar.style.overflowX = 'hidden'
+  content.style.backgroundColor = 'white'
+  content.style.borderRadius = '10px'
+  content.style.width = '1px'
+  this.bar = bar
+  this.content = content
+
+  if (typeof dom === 'string') {
+    dom = document.getElementById(dom)
+  }
+  dom.innerHTML = ''
+  dom.appendChild(this.bar)
+  this.created = true
+  if (!_this.created) return
+  // _this.bar.style.height = _this.options.size + 'px'
+  _this.bar.style.height = wh + 'px'
+  _this.content.style.height = height + 'px'
+}
+export function OnScroll (dom, d) {
+  this.bar.scrollTop += d
+}
