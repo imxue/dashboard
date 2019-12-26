@@ -9,29 +9,29 @@
     <div  v-if="this.table.name">
         <Row class="expand-row">
             <Col span="8">
-                <span class="expand-key">客户机: </span>
+                <span class="expand-key">{{$t('MachineName')}}: </span>
                 <span class="expand-value">{{ table.name }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">主板: </span>
+                <span class="expand-key">{{$t('MainBoard')}}: </span>
                 <span class="expand-value">{{ table.main_board }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">cpu: </span>
+                <span class="expand-key">{{$t('Cpu')}}: </span>
                 <span class="expand-value">{{ table.cpu }}</span>
             </Col>
         </Row>
         <Row>
             <Col span="8">
-                <span class="expand-key">显卡: </span>
+                <span class="expand-key">{{$t('GraphicsCard')}}: </span>
                 <span class="expand-value">{{ table.graphics_card }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">网卡: </span>
+                <span class="expand-key">{{$t('NetworkCard')}}: </span>
                 <span class="expand-value">{{ table.network_card }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">内存: </span>
+                <span class="expand-key">{{$t('RAM')}}: </span>
                 <span class="expand-value">{{ table.memory_board }}</span>
             </Col>
             <Col span="8" style="marginTop:10px;" v-if="this.table.length !== 0">

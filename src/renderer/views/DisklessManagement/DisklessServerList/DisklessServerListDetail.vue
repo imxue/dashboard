@@ -36,7 +36,7 @@
         class="topColumn"
         @click="openFile"
       >
-        {{$t('备份恢复')}}</Button>
+        {{$t('BackupRestore')}}</Button>
       <Divider type="vertical" />
       <Button
         type="error"
@@ -265,14 +265,14 @@
         v-model="modalx"
         title="Details"
     >
-        <label>客户机数已恢复:</label><span>{{this.clientCount}}</span>
+        <label>{{$t('clientCountRE')}}:</label><span>{{this.clientCount}}</span>
         <span v-if="this.clientCount === this.clientLength" style="color:green">DONE！</span>
         <br/>
         <!-- <span v-if="{{this.clientCount.length === this.clientLength}}">DONE</span> -->
-        <label>启动方案已恢复:</label>  <span>{{this.PcGroupCount}}</span>
+        <label>{{$t('PcGpRE')}}:</label>  <span>{{this.PcGroupCount}}</span>
         <span v-if="this.PcGroupCount === this.StartListLength" style="color:green">DONE！</span>
         <br/>
-       <label>DHCP已恢复:</label>  <span>{{this.DHCPCount}}</span>
+       <label>{{$t('DHCPRE')}}:</label>  <span>{{this.DHCPCount}}</span>
        <span v-if="this.DHCPCount === 1" style="color:green">DONE！</span>
     </Modal>
   </div>
@@ -400,7 +400,8 @@ export default {
           }
         },
         { key: 'serverIp', renderHeader: (h, params) => { return h('span', this.$t('ServerIP')) } },
-        { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } }
+        { key: 'dataVer', renderHeader: (h, params) => { return h('span', this.$t('ServiceVersion')) } },
+        { key: 'softVer', renderHeader: (h, params) => { return h('span', this.$t('softVer')) } }
       ],
       tableColumns2: [
         { type: 'selection', width: 60, align: 'center' },
@@ -583,6 +584,10 @@ export default {
     this.handleGetDiskStatusx(this.currentPageServerip)
   },
   methods: {
+    openMonute () {
+      let resp = ipcRenderer.sendSync('cmd', { mount: '' })
+      console.log(resp)
+    },
     openfiledialog () {
       console.log('我发送了事件')
       let resp = ipcRenderer.sendSync('open-file-dialog')
@@ -686,7 +691,7 @@ export default {
         if (err) {
           console.log(err)
         } else {
-          this.$Message.success('备份成功')
+          this.$Message.success(this.$t('success'))
         }
       })
     },

@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="header">
-     <Input class="search" search enter-button="Search" placeholder="Enter something..." @on-search="hadnleSearch" />
+     <Input class="search" search :enter-button="this.$t('Search')" :placeholder="this.$t('MachineName')" @on-search="hadnleSearch" />
     <Button type="info" @click="handleConfirm">{{$t('Confirm')}}</Button>
   </div>
     <Table :row-class-name="rowClassName" border ref="selection" :columns="columns1" :data="data1" @on-selection-change="handleChange" ></Table>
@@ -142,8 +142,8 @@ export default {
         })
       }
       try {
-        let resp = await confirm({ pcnames: str.substring(0, str.length - 1) })
-        this.$Message.success({ content: `${resp.data}`, 'closable': true })
+        await confirm({ pcnames: str.substring(0, str.length - 1) })
+        this.$Message.success({ content: `${this.$t('ConfigurationConfirmed')}`, 'closable': true })
       } catch (error) {
         this.$Message.info({ content: `${error.data.error}`, 'closable': true })
       } finally {

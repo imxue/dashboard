@@ -9,6 +9,7 @@ function init () {
     })
     store.dispatch('SAVEHardwareInformation', changeClient)
   })
+  store.dispatch('GetbarInfo')
 }
 
 function start () {

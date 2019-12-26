@@ -46,7 +46,8 @@
     </div>
     <h4 style="margin-bottom:5px;">{{ $t("ClientList") }}</h4>
     <div style="display:flex;flex-direction:column">
-      <div style="display:flex;margin-bottom:10px;">
+      <div style="display:flex;margin-bottom:10px;justify-content:space-between;">
+             <div>
         <Button
           type="primary"
           class="topColumn"
@@ -59,15 +60,24 @@
           class="topColumn"
           @click="handleButtonShutdown"
           :loading="loadingshoudown"
-          >{{ $t("shoudown") }}</Button
-        >
+          >{{ $t("shoudown") }}</Button>
         <Button
           type="primary"
           class="topColumn"
           @click="handleButtonRestart"
           :loading="loadingRestart"
-          >{{ $t("Restart") }}</Button
-        >
+          >{{ $t("Restart") }}</Button>
+     
+
+          </div>
+          <div style="float:right">
+
+          <label>{{$t('ClientCount')}}：</label>
+          <span>
+            {{this.list.length}}
+          </span>
+           <label>{{$t('Station')}}</label>
+          </div>
       </div>
       <div ref="viewTable" class="box">
                 <Table
@@ -357,7 +367,7 @@ export default {
             return h('span', this.$t('Status'))
           },
           key: 'stat',
-          minWidth: 70,
+          minWidth: 60,
           maxWidth: 80,
           render: (h, params) => {
             let a = ''
@@ -378,8 +388,8 @@ export default {
         },
         {
           key: 'ip',
-          minWidth: 130,
-          maxWidth: 120,
+          minWidth: 120,
+          maxWidth: 130,
           sortable: 'custom',
           renderHeader: (h, params) => {
             return h('span', this.$t('ClientIP'))
@@ -389,35 +399,48 @@ export default {
           key: 'pc',
           minWidth: 100,
           maxWidth: 110,
-          sortable: true,
+          sortable: 'custom',
           renderHeader: (h, params) => {
             return h('span', this.$t('MachineName'))
           }
         },
         {
           key: 'mac',
-          minWidth: 135,
-          maxWidth: 150,
+          minWidth: 130,
+          maxWidth: 135,
           renderHeader: (h, params) => {
             return h('span', this.$t('ClientMAC'))
           }
         },
         {
+          key: 'curDaSV',
+          minWidth: 120,
+          maxWidth: 130,
+          sortable: 'custom',
+          renderHeader: (h, params) => {
+            return h('span', this.$t('TheServer'))
+          }
+        },
+        {
           key: 'pcGp',
           minWidth: 100,
-          maxWidth: 130,
+          maxWidth: 105,
+          filters: [],
+          filterMultiple: false,
+          filterRemote: this.fiterFunction,
           renderHeader: (h, params) => {
             return h('span', this.$t('StartUpPlan'))
           }
         },
         {
           key: 'curImg',
-          minWidth: 110,
+          minWidth: 115,
           maxWidth: 130,
           renderHeader: (h, params) => {
             return h('span', this.$t('MirrorName'))
           }
         },
+
         {
           renderHeader: (h, params) => {
             return h('span', this.$t('operation'))
@@ -432,7 +455,7 @@ export default {
                 h(
                   'Button',
                   {
-                    props: { type: 'dashed' },
+                    props: { type: 'primary', ghost: true },
                     style: { marginLeft: '10px' },
                     on: {
                       click: () => {
@@ -445,7 +468,7 @@ export default {
                 h(
                   'Button',
                   {
-                    props: { type: 'dashed' },
+                    props: { type: 'primary', ghost: true },
                     style: { marginLeft: '10px' },
                     on: {
                       click: () => {
@@ -665,6 +688,9 @@ export default {
         imglist: '',
         profileList: ''
       },
+      bar: {
+        scrollTop: 0
+      },
       formValidate1: {
         action: 'apply',
         comment: 'SAVE DATA'
@@ -677,6 +703,7 @@ export default {
         { value: '0', label: this.$t('Enable') },
         { value: '1', label: this.$t('Disable') }
       ],
+      pcGpListx: [], // 启动方案列表
       ruleValidatex: {
         imglist: [
           {
@@ -718,24 +745,25 @@ export default {
   async created () {
     await this.HandleGetMaster() // 获取主服务器
     this.handgetClienList() // 获取客户机列表
+    this.handleGetPcGroup()
   },
   mounted () {
-    this.$refs.viewTable.addEventListener('mousewheel', (e) => {
-      let offset = 0
-      if (e.deltaY < 0) {
-        this.bar.scrollTop -= 48
-      } else {
-        this.bar.scrollTop += 48
-      }
-      OnScroll.call(this, this.$refs.divScroll, offset)
-    }, true)
-    this.$refs.divScroll.addEventListener('scroll', (e) => {
-      this.scrollTop = this.bar.scrollTop
-      console.log(parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit)
-      this.tableData = this.list.slice(
-        parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
-      )
-    }, true)
+    if (document.querySelector('#divScroll')) {
+      this.$refs.viewTable.addEventListener('mousewheel', (e) => {
+        let offset = 0
+        if (e.deltaY < 0) {
+          this.bar.scrollTop -= 48
+        } else {
+          this.bar.scrollTop += 48
+        }
+        OnScroll.call(this, this.$refs.divScroll, offset)
+      }, true)
+      this.$refs.divScroll.addEventListener('scroll', (e) => {
+        this.tableData = this.list.slice(
+          parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+        )
+      }, true)
+    }
   },
   computed: {
     profileList () {
@@ -751,7 +779,6 @@ export default {
       return this.$store.state.app.masterip
     }
   },
-
   components: {
     edit
   },
@@ -760,6 +787,34 @@ export default {
     next()
   },
   methods: {
+    async fiterFunction (value) {
+      if (value.length === 0) {
+        this.handgetClienList()
+        this.tableData = this.list.slice(
+          parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+        )
+        return
+      }
+      let xx = await this.handgetClienList()
+      let filterList = xx.filter(item => {
+        return item.pcGp === value[0]
+      })
+      this.list = filterList
+      if (this.list.length < this.Pagelimit) {
+        document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
+        if (this.list.length > 11) {
+          CreateAt.call(this, this.$refs.divScroll, this.list.length * 48, this.list.length * 48)
+        }
+      } else {
+        document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
+        if (this.list.length > 11) {
+          CreateAt.call(this, this.$refs.divScroll, this.list.length * 48, this.list.length * 48)
+        }
+      }
+      this.tableData = this.list.slice(
+        parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+      )
+    },
     onSelectAll () {
       this.list.forEach(item => {
         item._checked = true
@@ -794,7 +849,9 @@ export default {
           item._checked = false
         }
       })
-      this.clientArray = selected
+      this.clientArray = this.list.filter(item => {
+        return item._checked
+      })
     },
     // 选择某一项
     onSelect (selected, now) {
@@ -803,7 +860,9 @@ export default {
           item._checked = true
         }
       })
-      this.clientArray = selected
+      this.clientArray = this.list.filter(item => {
+        return item._checked
+      })
     },
     start () {
       this.timer = setTimeout(() => {
@@ -857,11 +916,57 @@ export default {
           item.pc = parseInt(item.pc)
         })
         let zimu = this.list.filter(item => { return (!Number(item.pc)) })
-        this.list = shuzi.sort().concat(zimu.sort())
+        this.list = shuzi.sort((obj, obj1) => { return obj.pc - obj1.pc }).concat(zimu.sort((o, o1) => {
+          return o.pc.localeCompare(o1.pc)
+        }))
       } else if (key === 'pc' && order === 'desc') {
-        this.list.reverse()
+        let shuzi = this.list.filter(item => { return (parseInt(item.pc)) })
+        shuzi.forEach(item => {
+          item.pc = parseInt(item.pc)
+        })
+        let zimu = this.list.filter(item => { return (!Number(item.pc)) })
+        this.list = shuzi.sort((obj, obj1) => { return obj1.pc - obj.pc }).concat(zimu.sort((o, o1) => {
+          return o1.pc.localeCompare(o.pc)
+        }))
+      } else if (key === 'curDaSV' && order === 'desc') {
+        this.list.sort((a, b) => {
+          if (a.curDaSV && b.curDaSV) {
+            let arr1 = a.curDaSV.split('.')
+            let arr2 = b.curDaSV.split('.')
+            for (let i = 0; i < 4; i++) {
+              if (arr1[i] > arr2[i]) {
+                return 1
+              } else if (arr1[i] < arr2[i]) {
+                return -1
+              } else {
+                return -1
+              }
+            }
+          } else if (!a.curDaSV && b.curDaSV) {
+            return 1
+          } else if (!b.curDaSV && a.curDaSV) {
+            return -1
+          }
+        })
+      } else if (key === 'curDaSV' && order === 'asc') {
+        this.list.sort((a, b) => {
+          if (a.curDaSV && b.curDaSV) {
+            let arr1 = a.curDaSV.split('.')
+            let arr2 = b.curDaSV.split('.')
+            for (let i = 0; i < 4; i++) {
+              if (arr1[i] < arr2[i]) {
+                return 1
+              } else if (arr1[i] > arr2[i]) {
+                return -1
+              }
+            }
+          } else if (!a.curDaSV && b.curDaSV) {
+            return -1
+          } else if (!b.curDaSV && a.curDaSV) {
+            return 1
+          }
+        })
       }
-
       this.tableData = this.list.slice(
         parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
       )
@@ -903,7 +1008,6 @@ export default {
       }
     },
     test (hide) {
-      // this.handgetClienList()
       if (!hide) {
         setTimeout(() => {
           this.temp = false
@@ -989,7 +1093,9 @@ export default {
             }
             return superip.data.result.ip !== item.ip
           })
-          CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+          if (this.list.length > 11) {
+            CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+          }
           this.list.sort((a, b) => {
             return b.stat - a.stat
           })
@@ -1003,7 +1109,9 @@ export default {
         }
       } else {
         this.list = clientList
-        CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+        if (this.list.length > 11) {
+          CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+        }
         this.list.sort((a, b) => {
           return b.stat - a.stat
         })
@@ -1078,6 +1186,14 @@ export default {
           try {
             await deletePcsConfigx([data.mac], this.masterip)
             this.handgetClienList()
+            if (this.list.length < 11 || this.list.length === 11) {
+              if (document.querySelector('#divScroll') && document.querySelector('#bar')) {
+                this.$nextTick(() => {
+                  document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
+                  document.querySelector('#box').removeChild(document.querySelector('#divScroll'))
+                })
+              }
+            }
           } catch (error) {
             console.log(error)
           }
@@ -1098,30 +1214,27 @@ export default {
         // content: this.$t('DeleteCurrentData'),
         // content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
         content: `${this.$t('Delete')}${this.clientArray.length} ${this.$t(
-          'Client'
+          ' Client'
         )} `,
         onOk: async () => {
           try {
             await deletePcsConfigx(client, this.masterip)
             this.clientArray = []
-            this.handgetClienList()
+            await this.handgetClienList()
+            if (this.list.length < 11 || this.list.length === 11) {
+              if (document.querySelector('#divScroll') && document.querySelector('#bar')) {
+                this.$nextTick(() => {
+                  document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
+                  document.querySelector('#box').removeChild(document.querySelector('#divScroll'))
+                })
+              }
+            }
           } catch (error) {
             console.log(error)
           }
         }
       })
     },
-    // /**
-    //  * 选择客户机
-    //  */
-    // handleCheckBox (arr) {
-    //   this.clientArray = arr
-    //   this.macArray = []
-    //   if (!arr) return ''
-    //   arr.forEach(item => {
-    //     this.macArray.push(item.mac)
-    //   })
-    // },
     /**
      * 获取客户机启动方案
      */
@@ -1134,6 +1247,25 @@ export default {
         e => {
           this.pcGpList = e.data.result.list
           this.formInline.pcGp = this.pcGpList[0].name
+        },
+        e => {
+          this.$Message.error(e.data.error)
+        }
+      )
+    },
+    // 获取启动方案
+    handleGetPcGroup () {
+      getPcGroupx(this.masterip).then(
+        e => {
+          let demo = []
+          this.pcGpListx = e.data.result.list
+          this.pcGpListx.forEach(item => {
+            let lable = item.name
+            demo.push({ label: lable, value: lable })
+          })
+          this.$nextTick(() => {
+            this.tableColumns[6].filters = demo
+          })
         },
         e => {
           this.$Message.error(e.data.error)
@@ -1270,11 +1402,12 @@ export default {
   margin-bottom: 10px;
 }
   .box{
-      display: flex;
+      position: relative;
     }
   #divScroll{
     margin-top:42px;
-    position: relative;
-    right: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 </style>

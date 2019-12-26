@@ -402,10 +402,12 @@ export function CreateAt (dom, wh, height) {
   var content = document.createElement('div')
   bar.appendChild(content)
   bar.style.width = '19px'
+  bar.id = 'bar'
   bar.style.overflowY = 'scroll'
   bar.style.backgroundColor = 'white'
   bar.style.overflowX = 'hidden'
   content.style.backgroundColor = 'white'
+  content.id = 'content'
   content.style.borderRadius = '10px'
   content.style.width = '1px'
   this.bar = bar

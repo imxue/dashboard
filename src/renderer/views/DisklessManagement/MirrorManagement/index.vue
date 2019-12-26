@@ -50,7 +50,7 @@
 
 <script>
   import { getImageListx, createImagex, getDiskStatusx, deleteImagex, getServers } from '@/api/wupan'
-  import { bytesToSize2 } from '@/utils/index'
+  import { bytesToSize2, bytesToSize } from '@/utils/index'
   export default {
     name: 'mirrorManagement',
     data () {
@@ -185,7 +185,7 @@
             for (var i in newArr) {
               temp.push({
                 path: newArr[i].path,
-                availableSize: bytesToSize2(Number(newArr[i].availableSize))
+                availableSize: bytesToSize(Number(newArr[i].availableSize))
               })
             }
             this.diskList = temp

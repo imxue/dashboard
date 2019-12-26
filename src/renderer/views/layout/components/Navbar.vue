@@ -114,7 +114,7 @@ export default {
         let date = new Date(this.$store.state.app.barinfo.expire_time)
         let year = date.getFullYear()
         let month = date.getMonth() + 1
-        let day = date.getMonth()
+        let day = date.getDate()
         this.expireTime = `${year} / ${month} / ${day}`
       }
     },

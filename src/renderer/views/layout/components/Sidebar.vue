@@ -1,5 +1,5 @@
 <template>
-  <div class="nav">
+  <div class="nav" >
     <Menu :active-name="activeName" theme="light" width="auto" :open-names="openname" ref="side_menu" class="nav">
       <template v-for="(item,index) in routes.children">
         <Submenu :name="index + ''" :key="index">

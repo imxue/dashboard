@@ -483,5 +483,19 @@
   "CreateBackUp": "创建备份",
   "BackUpOpt": "备份选项",
   "Remark":"备注",
-  "DHCP":"动态主机设置协议"
+  "DHCP":"动态主机设置协议",
+  "Mount":"映射",
+  "Resolution":"分辨率",
+  "ConfigurationConfirmed":"配置已经确认",
+  "ClientCount":"客户机总数",
+  "Station": "台",
+  "checkInfo":"查看注册信息",
+  "ID":"网吧ID:",
+  "name":"网吧名称:",
+  "BackupRestore": "备份恢复",
+  "TheServer":"所在服务器",
+  "softVer":"软件版本",
+  "clientCountRE":"客户机数已恢复",
+  "PcGpRE":"启动方案已恢复",
+  "DHCPRE":"DHCP已恢复"
 }

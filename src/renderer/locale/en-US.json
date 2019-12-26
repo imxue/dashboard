@@ -482,5 +482,19 @@
   "BackUp": "BackUp",
   "CreateBackUp": "Create BackUp",
   "BackUpOpt": "Backup options",
-  "Remark": "Remark"
+  "Remark": "Remark",
+  "Mount": "Mount",
+  "Resolution": "Resolution",
+  "ConfigurationConfirmed": "Configuration Confirmed",
+  "ClientCount": "ClientCount",
+  "Station":"station",
+  "checkInfo": "View reg info",
+  "ID": "ID:",
+  "name": "Name:",
+  "BackupRestore": "BackupRestore",
+  "TheServer": "The Server",
+  "softVer": "soft Version",
+  "clientCountRE": "client Count Re",
+  "PcGpRE": "PcGp Re",
+  "DHCPRE": "DHCP Re"
 }

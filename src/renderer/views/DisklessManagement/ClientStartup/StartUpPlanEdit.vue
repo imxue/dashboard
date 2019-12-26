@@ -64,24 +64,28 @@
           </Row>
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" :label-width="140">
-          <Row>
-            <i-col span="10"><i-input v-model="formValidate.cach" style="width:190px;"></i-input>*M
-            </i-col>
+          <Row >
+            <i-col span="10" style="display:flex"><i-input v-model="formValidate.cach" style="width:160px;"> </i-input> *M</i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
+        <FormItem prop="wieh" :label="this.$t('Resolution') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col>
+            <!-- <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col> -->
+            <Select v-model="Resolution" style="width:200px">
+               <Option v-for="item in ResolutionList" :value="item.label" :key="item.label">{{ item.label }}</Option>
+          </Select>
           </Row>
         </FormItem>
-        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
+        <!-- <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.hith" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
-        </FormItem>
+        </FormItem> -->
         <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.resh" placeholder="" :label-width="140"></i-input></i-col>
+            <i-col span="10"><Select v-model="formValidate.resh" style="width:200px">
+               <Option v-for="item in HzList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select></i-col>
           </Row>
         </FormItem>
         <FormItem prop="deps" :label="this.$t('Color') + '：'" :label-width="140">
@@ -136,10 +140,13 @@
 
 <script>
   import { getImageListx, editPcGroupx, getServers } from '@/api/wupan'
+  import foo from './ResolutionList.js'
   export default {
     name: 'subType3-edit',
     data () {
       return {
+        ResolutionList: foo.ResolutionList,
+        HzList: foo.HZ,
         masterip: this.$store.state.app.masterip || '',
         imgCount: 0,
         flag: false, // 修改标志
@@ -200,8 +207,8 @@
           hith: '768',
           resh: '60',
           deps: '32'
-
         },
+        Resolution: '1024x768',
         // 验证添加方案字段
         ruleValidate: {
           name: [
@@ -237,6 +244,13 @@
       this.handleGetDataLength()
       this.handlegetServerlist()
     },
+    watch: {
+      Resolution (e) {
+        let x = e.split('x')
+        this.formValidate.wieh = x[0]
+        this.formValidate.hith = x[1]
+      }
+    },
     methods: {
       handleGetDataLength () {
         if (this.tableData1) {
@@ -253,6 +267,8 @@
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
+          this.Resolution = `${data.wieh}x${data.hith}`
+          console.log(this.Resolution)
           // 镜像列表
           if (data.imgG) {
             this.tableData1 = data.imgG

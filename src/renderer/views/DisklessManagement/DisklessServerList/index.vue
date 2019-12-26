@@ -29,6 +29,14 @@
         :disabled="this.serverList.length === 0"
       >
         {{$t('Refresh')}}</Button>
+
+        <Button
+        type="primary"
+        class="topColumn"
+        @click="openMonute"
+        :disabled="this.serverList.length === 0"
+      >
+        {{$t('Mount')}}</Button>
     </div>
     <!-- table -->
     <Table
@@ -115,7 +123,7 @@
           {{regInfo.id}}
           </p>
         </FormItem>
-        <FormItem :label="this.$t('place')" >
+        <FormItem :label="this.$t('name')" >
           <p style="font-size:14px">
             {{regInfo.name}}
             </p>
@@ -159,6 +167,7 @@ import {
 } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { setValue, getMasterIp } from '@/api/common'
+import { ipcRenderer } from 'electron'
 export default {
   name: 'subType1-1',
   data () {
@@ -287,6 +296,12 @@ export default {
           }
         },
         {
+          key: 'softVer',
+          renderHeader: (h, params) => {
+            return h('span', this.$t('softVer'))
+          }
+        },
+        {
           renderHeader: (h, params) => {
             return h('span', this.$t('operation'))
           },
@@ -315,7 +330,7 @@ export default {
                   }
                 }
               },
-              this.$t('查看注册信息')
+              this.$t('checkInfo')
             )
             if (params.row.isMaster === '1') {
               return [a, b]
@@ -356,6 +371,10 @@ export default {
     })
   },
   methods: {
+    openMonute () {
+      let resp = ipcRenderer.sendSync('cmd', { mount: 'diskmappingtools.exe' })
+      console.log(resp)
+    },
     async handleSeeRegInfo () {
       this.regModal = true
       try {

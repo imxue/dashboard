@@ -17,6 +17,7 @@ const mutations = {
     state.masterip = masterip
   },
   SAVE_BAR_info (state, barinfo) {
+    console.log(barinfo)
     state.barinfo = barinfo
   },
   SAVE_REG_INFO (state, reginfo) {
@@ -51,6 +52,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getNetCafe()
         .then(response => {
+          console.log(response)
           commit('SAVE_BAR_info', response.data)
           resolve(response)
         })
