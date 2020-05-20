@@ -81,20 +81,11 @@ export default {
         { key: 'Progress',
           minWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('progress')) },
-          // render: (h, params) => {
-          //   return h('span', `${parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100)}%`)
-          // }
           render: (h, params) => {
-            // return h[('div',[
-            //   h('Progress',{
-            //     percent:100
-            //   })
-            // ])
-            console.log(parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100))
             return h('div', [
               h('Progress', {
                 props: {
-                  percent: parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100),
+                  percent: parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100) || 0,
                   'stroke-width': 10
                 }
               })
