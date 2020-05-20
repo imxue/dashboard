@@ -502,5 +502,6 @@
   "OriginalHardware":"原硬件",
   "HardwareType":"硬件类型",
   "HardwareInformationComparison":"硬件信息对比",
-  "NIC speed":"网卡速率"
+  "NIC speed":"网卡速率",
+  "UpdateFailed":"更新失败"
 }
