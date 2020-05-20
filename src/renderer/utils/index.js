@@ -16,13 +16,13 @@ export function formatSize (value) {
   if (value === '0' || value === 'undefined' || value === 'null') {
     size = '0'
   } else if (limit < 0.1 * 1024) { // 小于0.1KB，则转化成B
-    size = limit.toFixed(2) + 'B/s'
+    size = limit.toFixed(2) + 'KB/s'
   } else if (limit < 0.1 * 1024 * 1024) { // 小于0.1MB，则转化成KB
-    size = (limit / 1024).toFixed(2) + 'KB/s'
+    size = (limit / 1024).toFixed(2) + 'MB/s'
   } else if (limit < 0.1 * 1024 * 1024 * 1024) { // 小于0.1GB，则转化成MB
-    size = (limit / (1024 * 1024)).toFixed(2) + 'MB/s'
+    size = (limit / (1024 * 1024)).toFixed(2) + 'GB/s'
   } else { // 其他转化成GB
-    size = (limit / (1024 * 1024 * 1024)).toFixed(2) + 'GB/s'
+    size = (limit / (1024 * 1024 * 1024)).toFixed(2) + 'TB/s'
   }
 
   // var sizeStr = size + '' // 转成字符串
@@ -58,8 +58,20 @@ export function bytesToSize2 (bytes) {
   var i = Math.floor(Math.log(bytes) / Math.log(k))
   return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
 }
+
 // 数据容量单位转换速率
 export function bytesToRate (bytes) {
+  if (!bytes) return '-'
+  if (bytes === '0' || bytes === '0') return '0'
+  var k = 1024 // or 1000
+  var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i] + '/s'
+}
+
+// 数据容量单位转换速率
+export function bytesToRate1 (bytes) {
+  if (!bytes) return '-'
   if (bytes === '0' || bytes === '0') return '0'
   var k = 1024 // or 1000
   var sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
@@ -420,10 +432,22 @@ export function CreateAt (dom, wh, height) {
   dom.appendChild(this.bar)
   this.created = true
   if (!_this.created) return
-  // _this.bar.style.height = _this.options.size + 'px'
   _this.bar.style.height = wh + 'px'
   _this.content.style.height = height + 'px'
 }
+
+export function CreateScroll (dom, contentHe, contentHeight, allhe, AllHeight) {
+  contentHe.appendChild(allhe)
+  dom.appendChild(contentHe)
+  dom.style.height = contentHeight + 'px'
+  contentHe.style.height = contentHeight + 'px' // 展示的内容的高
+  allhe.style.height = AllHeight + 'px' // 所有元素的高
+  contentHe.style.overflow = 'auto'
+  contentHe.style.width = '17px'
+  contentHe.style.overflowX = 'hidden'
+  return contentHe
+}
+
 export function OnScroll (dom, d) {
   this.bar.scrollTop += d
 }

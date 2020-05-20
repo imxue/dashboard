@@ -1,8 +1,8 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
 import ClientList from '@/views/ClientManagement/ClientManagement/ClientList'
+// import ClientListBeta from '@/views/ClientManagement/ClientManagement/clientListBeta'
 import hardwareinformation from '@/views/ClientManagement/ClientManagement/hardwareinformation'
-import ClientSetting from '@/views/ClientManagement/ClientManagement/subtype1-add'
 import BaseSetting from '@/views/ClientManagement/ClientSetting/BaseSetting'
 import HomeScreenIcon from '@/views/ClientManagement/ClientSetting/HomeScreenIcon'
 import BootPath from '@/views/ClientManagement/ClientSetting/BootPath'
@@ -25,19 +25,21 @@ export default {
           alias: '/disklesslist',
           meta: { title: 'ClientList' },
           component: ClientList
+
         },
+        // {
+        //   path: 'subType1-2',
+        //   name: 'ClientManagementList2',
+        //   alias: '/disklesslist',
+        //   meta: { title: 'ClientListBeta' },
+        //   component: ClientListBeta
+
+        // },
         {
           path: 'hardwareinformation',
           name: 'hardwareinformation',
           meta: { title: 'HardwareInformation' },
           component: hardwareinformation
-        },
-        {
-          path: 'clientData',
-          name: 'type3-SubType1-add',
-          meta: { title: 'ClientSetting' },
-          component: ClientSetting,
-          hidden: true
         }
       ]
     },

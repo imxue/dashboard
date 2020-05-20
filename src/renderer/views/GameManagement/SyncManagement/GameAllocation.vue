@@ -148,47 +148,47 @@
           },
           { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('LocalGameVersion')) } },
           { key: 'target_symbol', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Serverdisk')) } },
-          { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('LasterSysVersion')) } },
-          { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            key: 'operation',
-            minWidth: 220,
-            render: (h, params) => {
-              let type = params.row.state
-              let a = h('Button',
-                { style: { marginRight: '3px' },
-                  props: { type: 'primary' },
-                  on: { click: () => { this.handleAllowe(params.row) } }
-                }, this.$t('AssignGame'))
-              let b = h('Button',
-                { style: { marginRight: '3px' },
-                  props: { type: 'primary' },
-                  on: { click: () => { this.handleTableCancel(params.row) } }
-                }, this.$t('CancelAssign'))
-              let c = h('Button',
-                { style: { marginRight: '3px' },
-                  props: { type: 'info' },
-                  on: { click: () => { this.handleButtonAddTask(params.row) } }
-                }, this.$t('AddSynchronizationTask'))
-              switch (type) {
-                case 0:
-                  return h('span', [a, b])
-                case 1:
-                  return h('span', [a])
-                case 2:
-                  return h('span', [b])
-                case 3:
-                  return h('span', [c])
-                case 4:
-                  return h('span', [c])
-                case 5:
-                  return h('span', [c])
-                case 6:
-                  return h('span', [c])
-                default:
-                  return '-'
-              }
-            }
-          }
+          { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('LasterSysVersion')) } }
+          // { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
+          //   key: 'operation',
+          //   minWidth: 220,
+          //   render: (h, params) => {
+          //     let type = params.row.state
+          //     let a = h('Button',
+          //       { style: { marginRight: '3px' },
+          //         props: { type: 'primary' },
+          //         on: { click: () => { this.handleAllowe(params.row) } }
+          //       }, this.$t('AssignGame'))
+          //     let b = h('Button',
+          //       { style: { marginRight: '3px' },
+          //         props: { type: 'primary' },
+          //         on: { click: () => { this.handleTableCancel(params.row) } }
+          //       }, this.$t('CancelAssign'))
+          //     let c = h('Button',
+          //       { style: { marginRight: '3px' },
+          //         props: { type: 'info' },
+          //         on: { click: () => { this.handleButtonAddTask(params.row) } }
+          //       }, this.$t('AddSynchronizationTask'))
+          //     switch (type) {
+          //       case 0:
+          //         return h('span', [a, b])
+          //       case 1:
+          //         return h('span', [a])
+          //       case 2:
+          //         return h('span', [b])
+          //       case 3:
+          //         return h('span', [c])
+          //       case 4:
+          //         return h('span', [c])
+          //       case 5:
+          //         return h('span', [c])
+          //       case 6:
+          //         return h('span', [c])
+          //       default:
+          //         return '-'
+          //     }
+          //   }
+          // }
         ],
         tableData: []
       }

@@ -1,7 +1,9 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+// import './ipc'
 import { start } from './cmd/index'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -20,15 +22,14 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 1000,
-    useContentSize: true,
-    width: 1480,
-    minWidth: 1525,
-    minHeight: 1000,
+    height: 500,
+    width: 1200,
+    minWidth: 1200,
+    minHeight: 500,
     backgroundColor: '#F5F7F9',
     webPreferences: { webSecurity: false }
   })
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -39,7 +40,6 @@ function createWindow () {
 }
 
 app.on('ready', function () {
-  console.log(app.getPath('userData'))
   createWindow()
 })
 

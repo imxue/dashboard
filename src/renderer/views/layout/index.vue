@@ -1,18 +1,16 @@
 <template>
   <div class="layout">
-    <Row>
-      <!-- <Col :xxl="{ span: 24, offset: 0 }" :xl="{ span: 24, offset: 0 }" :lg="{span: 24, offset: 0 }"	:xs='{span:24,offset: 0}'> -->
-      <Col class="navbar"> 
+    <div class="navbar">
       <Navbar></Navbar>
-    </Col>
-    </Row>
+    </div>
    
       <div class="wrapper">
         <Col  class="siderbar" style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 4, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
           <!-- <Col  class="siderbar" style="background:#fff"> -->
           <Sidebar ></Sidebar>
         </Col>
-        <Col  class="main"  :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 20, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'>
+        <!-- <Col  class="main"  :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 20, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'> -->
+         <Col  class="main" >
             <Breadcrumb :style="{margin: '10px 10px'}">
               <template v-for="item  in levelList" >
                 <BreadcrumbItem :key="item.path">
@@ -23,9 +21,11 @@
               </template>
             </Breadcrumb>
             <!-- <Card dis-hover :style="{margin: '0 10px',minHeight: '800px'}"> -->
+          <div class="mainWrapper" >
               <Card dis-hover :style="{margin: '0 10px'}">
               <AppMain></AppMain>
             </Card>
+          </div>
         </col>
       </div>
   </div>  
@@ -76,32 +76,37 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    min-width: 1200px;
     background: #f5f7f9;
   }
   .navbar{
-    width: 100%
+    width: 100%;
+    position: fixed;
+    z-index: 1030;
   }
   .wrapper {
-    display: flex;
-    flex-grow:1; 
-    /* overflow-y: scroll;  */
+    position: relative;
+    top: 60px;
   }
   .siderbar{
-    position: relative;
-    /* width: 220px; */
+    position: fixed;
+    top: 60px;
+    z-index: 1030;
     bottom: 0;
     overflow-y: scroll; 
+    width: 200px;
   }
   .siderbar::-webkit-scrollbar{
     display: none; 
   }
   .main{
     position: relative;
-    bottom:0;
+    margin-left: 200px;
     background: #f5f7f9;
-    height: 100%;
-    /* overflow-y: scroll;  */
+    height: calc(100vh - 60px);
+  }
+  .mainWrapper {
+    overflow: auto;
+    height: calc(100vh - 100px);
   }
 </style>
 

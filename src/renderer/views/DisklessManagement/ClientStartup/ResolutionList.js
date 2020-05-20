@@ -76,6 +76,11 @@ export default {
     width: '1440'
   },
   {
+    label: '3840x1080',
+    heigth: '3840',
+    width: '1080'
+  },
+  {
     label: '3840x2160',
     heigth: '3840',
     width: '2160'

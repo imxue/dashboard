@@ -11,7 +11,7 @@
             <img v-if="this.formValidate.IconUrl" :src='this.formValidate.IconUrl' style='margin-top:-35px;margin-left:10px;width:40px;'>
               </div>
                  
-           <p style='margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here to upload</p>
+           <p style='margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">点击上传图标</p>
            
             <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="!(this.formValidate.IconUrl)">Click here to upload</p>
             </i-col>

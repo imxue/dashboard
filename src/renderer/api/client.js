@@ -258,7 +258,7 @@ export function remoteControl (info) {
  */
 export function getAllPcConfigs (info) {
   return request({
-    url: `/v1/pc/getAllPcConfigs?offset=${info ? info.offset : 0}&limit=${info ? info.limit : 10000}&orderby=${info ? info.orderby : 'name'}`,
+    url: `/v1/pc/getAllPcConfigs?offset=${info ? info.offset : 0}&limit=${info ? info.limit : 10000}&orderby=${info ? info.orderby : 'name'}&config_state=${info ? info.config_state : ''}`,
     method: 'get'
   })
 }

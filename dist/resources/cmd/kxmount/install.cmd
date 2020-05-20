@@ -1,0 +1,1 @@
+devcon64.exe /install kxdsk64.inf kxdsk

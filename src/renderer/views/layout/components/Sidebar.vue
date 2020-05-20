@@ -4,7 +4,6 @@
       <template v-for="(item,index) in routes.children">
         <Submenu :name="index + ''" :key="index">
           <template slot="title">
-            <Icon type="ios-keypad"></Icon>
             {{ $t(item.meta.title) }}
           </template>
           <template v-for="(subItem) in item.children" >

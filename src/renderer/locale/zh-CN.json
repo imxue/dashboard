@@ -496,6 +496,11 @@
   "TheServer":"所在服务器",
   "softVer":"软件版本",
   "clientCountRE":"客户机数已恢复",
-  "PcGpRE":"启动方案已恢复",
-  "DHCPRE":"DHCP已恢复"
+  "PcGpRE":"启动方案已恢复",  
+  "DHCPRE":"DHCP已恢复",
+  "NewHardware":"新硬件",
+  "OriginalHardware":"原硬件",
+  "HardwareType":"硬件类型",
+  "HardwareInformationComparison":"硬件信息对比",
+  "NIC speed":"网卡速率"
 }

@@ -16,12 +16,6 @@
         @click="handleButtonAdd"
         :disabled="loading"
       >{{$t('AddServer')}}</Button>
-      <!-- <Button
-        type="primary"
-        class="topColumn"
-        @click="handleButtonclear"
-        :disabled="loading"
-      >{{$t('clear')}}</Button> -->
       <Button
         type="primary"
         class="topColumn"
@@ -213,6 +207,8 @@ export default {
             return h('span', this.$t('CurrentStatus'))
           },
           key: 'online',
+          maxWidth: 180,
+          minWidth: 180,
           render: (h, params) => {
             let type = params.row.online
             let isMaster = params.row.isMaster
@@ -285,18 +281,24 @@ export default {
         },
         {
           key: 'serverIp',
+          maxWidth: 110,
+          minWidth: 110,
           renderHeader: (h, params) => {
             return h('span', this.$t('ServerIP'))
           }
         },
         {
           key: 'dataVer',
+          maxWidth: 140,
+          minWidth: 140,
           renderHeader: (h, params) => {
             return h('span', this.$t('ServiceVersion'))
           }
         },
         {
           key: 'softVer',
+          maxWidth: 110,
+          minWidth: 110,
           renderHeader: (h, params) => {
             return h('span', this.$t('softVer'))
           }

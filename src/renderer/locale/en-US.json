@@ -496,5 +496,6 @@
   "softVer": "soft Version",
   "clientCountRE": "client Count Re",
   "PcGpRE": "PcGp Re",
-  "DHCPRE": "DHCP Re"
+  "DHCPRE": "DHCP Re",
+  "NIC speed": "NIC speed"
 }

@@ -113,6 +113,11 @@ export default {
   },
   watch: {},
   computed: {},
+  mounted () {
+    this.$store.dispatch('GetbarInfo').then(() => {
+      this.$router.push('/')
+    })
+  },
   created () {
     if (localStorage.getItem('connectNet')) {
       let net = JSON.parse(localStorage.getItem('connectNet')) || ''

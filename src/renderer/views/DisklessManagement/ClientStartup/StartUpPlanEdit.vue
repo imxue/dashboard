@@ -2,8 +2,7 @@
   <div style="margin-top:20px;">
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-position="right" :label-width="120">
         <Row>
-          <i-col span="10" offset="2">
-     
+          <i-col span="10" offset="1">
           <FormItem prop="name" :label="this.$t('StartupScenarioName') + '：'">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.name" placeholder="" :disabled='flag' ></i-input></i-col>
@@ -52,40 +51,56 @@
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit') + ' (G)：'" :label-width="140">
+        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit')" :label-width="140">
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder=""></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder="">
+               <span slot="append">G</span>
+              </i-input></i-col>
           </Row>
         </FormItem>
         <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'" :label-width="140">
           <Row>
-            <i-col span="20"><i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}}
+            <i-col span="10">
+            <Poptip trigger="focus">
+             <Input v-model="formValidate.gTim" placeholder="" >
+             <span slot="append">S</span>
+             </Input>
+             <div slot="content">{{$t('tip')}}</div>
+            </Poptip>
             </i-col>
+            <!-- <i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}} -->
           </Row>
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" :label-width="140">
           <Row >
-            <i-col span="10" style="display:flex"><i-input v-model="formValidate.cach" style="width:160px;"> </i-input> *M</i-col>
+            <i-col span="10" ><i-input v-model="formValidate.cach" > <span slot="append">M</span> </i-input>  </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" :label="this.$t('Resolution') + '：'" :label-width="140">
+        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
           <Row>
-            <!-- <i-col span="10"><i-input v-model="formValidate.wieh" placeholder=""></i-input></i-col> -->
-            <Select v-model="Resolution" style="width:200px">
+            <i-col span="10">
+              <i-input v-model="formValidate.wieh" placeholder=""></i-input>
+              </i-col>
+            <!-- <Select v-model="Resolution" style="width:200px">
                <Option v-for="item in ResolutionList" :value="item.label" :key="item.label">{{ item.label }}</Option>
-          </Select>
+          </Select> -->
           </Row>
         </FormItem>
-        <!-- <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
+        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
           <Row>
             <i-col span="10"><i-input v-model="formValidate.hith" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
-        </FormItem> -->
+        </FormItem>
         <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'" :label-width="140">
           <Row>
-            <i-col span="10"><Select v-model="formValidate.resh" style="width:200px">
+            <i-col span="10">
+              <!-- <Select v-model="formValidate.resh" style="width:200px">
                <Option v-for="item in HzList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select></i-col>
+          </Select> -->
+          <i-input v-model="formValidate.resh" placeholder="" :label-width="140">
+             <span slot="append">Hz</span>
+          </i-input>
+          </i-col>
           </Row>
         </FormItem>
         <FormItem prop="deps" :label="this.$t('Color') + '：'" :label-width="140">
@@ -93,7 +108,6 @@
             <i-col span="10"><i-input v-model="formValidate.deps" placeholder="" :label-width="140"></i-input></i-col>
           </Row>
         </FormItem>
-
         </i-col>
         </Row>
     </Form>
@@ -140,13 +154,10 @@
 
 <script>
   import { getImageListx, editPcGroupx, getServers } from '@/api/wupan'
-  import foo from './ResolutionList.js'
   export default {
     name: 'subType3-edit',
     data () {
       return {
-        ResolutionList: foo.ResolutionList,
-        HzList: foo.HZ,
         masterip: this.$store.state.app.masterip || '',
         imgCount: 0,
         flag: false, // 修改标志
@@ -201,14 +212,13 @@
           disable: '0',
           wrLimG: '10',
           imgG: [],
-          gTim: '',
+          gTim: '10',
           cach: '512',
           wieh: '1024',
           hith: '768',
           resh: '60',
           deps: '32'
         },
-        Resolution: '1024x768',
         // 验证添加方案字段
         ruleValidate: {
           name: [
@@ -244,13 +254,6 @@
       this.handleGetDataLength()
       this.handlegetServerlist()
     },
-    watch: {
-      Resolution (e) {
-        let x = e.split('x')
-        this.formValidate.wieh = x[0]
-        this.formValidate.hith = x[1]
-      }
-    },
     methods: {
       handleGetDataLength () {
         if (this.tableData1) {
@@ -267,8 +270,6 @@
         var data = this.$route.query.data
         if (data) {
           this.formValidate = data
-          this.Resolution = `${data.wieh}x${data.hith}`
-          console.log(this.Resolution)
           // 镜像列表
           if (data.imgG) {
             this.tableData1 = data.imgG
@@ -382,9 +383,9 @@
         this.handleGetDataLength()
       },
       handleMoveBottom (index) {
-        let i = this.tableData1[index + 1]
-        this.$set(this.tableData1, index + 1, this.tableList[index])
-        this.$set(this.tableData1, index, i)
+        let temp = this.tableData1[index + 1]
+        this.$set(this.tableData1, index + 1, this.tableData1[index])
+        this.$set(this.tableData1, index, temp)
         this.handleGetDataLength()
       },
       handleReset () {

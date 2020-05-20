@@ -497,5 +497,10 @@
   "softVer": "軟件版本",
   "clientCountRE": "客戶機數已恢復",
   "PcGpRE": "啟動方案已恢復",
-  "DHCPRE": "DHCP已恢復"
+  "DHCPRE": "DHCP已恢復",
+  "NewHardware": "新硬件",
+  "OriginalHardware": "原硬件",
+  "HardwareType": "硬件类型",
+  "HardwareInformationComparison": "硬件信息对比",
+  "NIC speed": "網卡速率"
 }

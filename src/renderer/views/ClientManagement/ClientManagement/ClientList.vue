@@ -1,32 +1,23 @@
 <template>
   <div>
-    <Row class="header">
-      <Col span="12">
-        <AutoComplete
-          icon="ios-search"
-          class="topColumn"
-          :placeholder="$t('pleaseInput') + $t('MachineName') + $t('-ip')"
-          style="width: 200px;"
-          @on-change="ChangeValue"
-        />
-        <Button type="primary" class="topColumn" @click="handleButtonRefresh">{{
+    <div style="marginBottom:10px;display:flex;">
+         <Input v-model="searchVal" @on-search="ChangeValue" style="width:200px;margin-right:10px;" search enter-button :placeholder="$t('pleaseInput') + $t('MachineName') + $t('-ip')" />
+        <Button style="margin-right:10px;" type="primary"  @click="handleButtonRefresh">{{
           $t("Refresh")
         }}</Button>
-        <Button type="primary" class="topColumn" @click="handleButtonAdd">{{
+        <Button style="margin-right:10px;" type="primary" @click="handleButtonAdd">{{
           $t("Add")
         }}</Button>
-        <Button type="primary" class="topColumn" @click="handleButtonEdit">{{
+        <Button style="margin-right:10px;" type="primary" @click="handleButtonEdit">{{
           $t("Edit")
         }}</Button>
-        <Button type="error" class="topColumn" @click="handAllDetele">{{
+        <Button  style="margin-right:10px;" type="error" @click="handAllDetele">{{
           $t("Delete")
         }}</Button>
-      </Col>
-    </Row>
+    </div>
 
     <!-- table -->
     <div class="footer">
-      <Divider />
       <h4 style="margin-bottom:5px;">{{ $t("SuperWorkstation") }}</h4>
       <Table
         v-if="show"
@@ -34,7 +25,6 @@
         :data="currentSuper"
         :columns="currentSuperCol"
         :loading="loading"
-       
       ></Table>
       <Table
         v-if="!show"
@@ -46,41 +36,42 @@
     </div>
     <h4 style="margin-bottom:5px;">{{ $t("ClientList") }}</h4>
     <div style="display:flex;flex-direction:column">
-      <div style="display:flex;margin-bottom:10px;justify-content:space-between;">
-             <div>
-        <Button
-          type="primary"
-          class="topColumn"
-          @click="handleButtonwakeup"
-          :loading="loadingwakeup"
-          >{{ $t("wakeup") }}</Button
-        >
-        <Button
-          type="primary"
-          class="topColumn"
-          @click="handleButtonShutdown"
-          :loading="loadingshoudown"
-          >{{ $t("shoudown") }}</Button>
-        <Button
-          type="primary"
-          class="topColumn"
-          @click="handleButtonRestart"
-          :loading="loadingRestart"
-          >{{ $t("Restart") }}</Button>
-     
-
-          </div>
-          <div style="float:right">
-
-          <label>{{$t('ClientCount')}}：</label>
+      <div
+        style="display:flex;margin-bottom:10px;justify-content:space-between;"
+      >
+        <div>
+          <Button
+            type="primary"
+            class="topColumn"
+            @click="handleButtonwakeup"
+            :loading="loadingwakeup"
+            >{{ $t("wakeup") }}</Button
+          >
+          <Button
+            type="primary"
+            class="topColumn"
+            @click="handleButtonShutdown"
+            :loading="loadingshoudown"
+            >{{ $t("shoudown") }}</Button
+          >
+          <Button
+            type="primary"
+            class="topColumn"
+            @click="handleButtonRestart"
+            :loading="loadingRestart"
+            >{{ $t("Restart") }}</Button
+          >
+        </div>
+        <div style="float:right">
+          <label>{{ $t("ClientCount") }}：</label>
           <span>
-            {{this.list.length}}
+            {{ this.list.length }}
           </span>
-           <label>{{$t('Station')}}</label>
-          </div>
+          <label>{{ $t("Station") }}</label>
+        </div>
       </div>
-      <div ref="viewTable" class="box">
-                <Table
+      <div ref="viewTable" class="box  ggggg">
+        <Table
           border
           stripe
           highlight-row
@@ -95,7 +86,11 @@
           @on-selection-change="onSelectionChange"
           :loading="loading"
         ></Table>
-        <div ref="divScroll" id="divScroll"></div>
+        <div ref="scroll" id="scroll">
+          <div ref="content" id="content">
+            <div ref="all" id="all"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -261,19 +256,21 @@ import {
 } from '@/api/wupan'
 import edit from './ClientListAdd'
 import { getMasterIp } from '@/api/common'
-import { CreateAt, OnScroll } from '@/utils/index'
+// OnScroll, CreateAt,
+import { CreateScroll } from '@/utils/index'
 const { ipcRenderer } = require('electron')
 export default {
   name: 'ClientList',
   // inject: ['reload'],
   data () {
     return {
+      searchVal: '',
       loadBtnSuper: false,
       loadBtnCancel: false,
       clientArray: '',
       clientList: [],
       flag: '',
-      Pagelimit: 11,
+      Pagelimit: 10,
       pageInfo: {
         count: 0,
         page_index: 1
@@ -287,7 +284,7 @@ export default {
       clientIp: [], // 客户机ip
       Iptemp: '',
       PCtemp: '',
-      clientMacSet: [], // mac 地址
+      clientMacSet: new Set(), // mac 地址
       pc: [],
       show: false,
       xx: '', // temp
@@ -307,7 +304,6 @@ export default {
       curroffset: 0,
       currlimit: 5,
       totalPageNumber: 0,
-      pageSize: 10,
       currentPage: 1,
       cancleup: false,
       tableListPage: true,
@@ -318,7 +314,10 @@ export default {
       tableData: [],
       tableDataList: [], // 批量编辑时，传值到下一页
       currentSuper: [], // 超级工作站
+      elementScroll: null,
+      fiterPcGp: '', // 已选择的客户机启动方案
       currentSuperCol: [
+        { type: 'selection', width: 50, align: 'center' },
         {
           key: 'ip',
           renderHeader: (h, params) => {
@@ -367,7 +366,7 @@ export default {
             return h('span', this.$t('Status'))
           },
           key: 'stat',
-          minWidth: 60,
+          minWidth: 75,
           maxWidth: 80,
           render: (h, params) => {
             let a = ''
@@ -396,9 +395,19 @@ export default {
           }
         },
         {
+          key: 'rate',
+          minWidth: 110,
+          render: (h, params) => {
+            return h('span', `${params.row.rate || 0} Mb/s`)
+          },
+          renderHeader: (h, params) => {
+            return h('span', this.$t('NIC speed'))
+          }
+        },
+        {
           key: 'pc',
           minWidth: 100,
-          maxWidth: 110,
+          maxWidth: 120,
           sortable: 'custom',
           renderHeader: (h, params) => {
             return h('span', this.$t('MachineName'))
@@ -406,8 +415,8 @@ export default {
         },
         {
           key: 'mac',
-          minWidth: 130,
-          maxWidth: 135,
+          minWidth: 135,
+          maxWidth: 138,
           renderHeader: (h, params) => {
             return h('span', this.$t('ClientMAC'))
           }
@@ -423,7 +432,7 @@ export default {
         },
         {
           key: 'pcGp',
-          minWidth: 100,
+          minWidth: 105,
           maxWidth: 105,
           filters: [],
           filterMultiple: false,
@@ -447,6 +456,7 @@ export default {
           },
           key: 'super',
           minWidth: 380,
+          fixed: 'right',
           render: (h, params) => {
             let that = this
             let a = ''
@@ -596,8 +606,8 @@ export default {
         },
         {
           key: 'pc',
-          minWidth: 120,
-          maxWidth: 160,
+          minWidth: 90,
+          maxWidth: 90,
           renderHeader: (h, params) => {
             return h('span', this.$t('MachineName'))
           }
@@ -613,15 +623,15 @@ export default {
         {
           key: 'pcGp',
           minWidth: 100,
-          maxWidth: 130,
+          maxWidth: 100,
           renderHeader: (h, params) => {
             return h('span', this.$t('StartUpPlan'))
           }
         },
         {
           key: 'curImg',
-          minWidth: 100,
-          maxWidth: 130,
+          minWidth: 110,
+          maxWidth: 110,
           renderHeader: (h, params) => {
             return h('span', this.$t('MirrorName'))
           }
@@ -632,24 +642,12 @@ export default {
             return h('span', this.$t('operation'))
           },
           render: (h, params) => {
-            // let a = h(
-            //   'Button',
-            //   {
-            //     props: { type: 'error' },
-            //     on: {
-            //       click: () => {
-            //         this.setcancle(params.row)
-            //       }
-            //     }
-            //   },
-            //   this.$t('cancelText')
-            // )
-            // return [a]
             let a = h('div', [
               h(
                 'Button',
                 {
                   props: { type: 'error' },
+                  style: { marginRight: '10px' },
                   on: {
                     click: () => {
                       this.setcancle(params.row)
@@ -657,6 +655,19 @@ export default {
                   }
                 },
                 this.$t('cancelText')
+              ),
+              h(
+                'Button',
+                {
+                  props: { type: 'info', ghost: true, disabled: params.row.stat !== '0' },
+                  style: { marginRihgt: '10px' },
+                  on: {
+                    click: () => {
+                      this.WarkSuper(params.row)
+                    }
+                  }
+                },
+                this.$t('wakeup')
               ),
               h(
                 'Button',
@@ -681,6 +692,12 @@ export default {
         }
       ],
       tempx: [],
+      pcdesc: false,
+      pcasc: true,
+      ipasc: false,
+      ipdesc: false,
+      curDaSVasc: false,
+      curDaSVdesc: false,
       srcLis: [],
       nameList: [],
       formValidate: { nameVal: '' },
@@ -739,31 +756,24 @@ export default {
       loadingwakeup: false,
       loadingshoudown: false,
       loadingRestart: false,
-      timer: null
+      timer: null,
+      srcList: ''
     }
   },
   async created () {
     await this.HandleGetMaster() // 获取主服务器
-    this.handgetClienList() // 获取客户机列表
-    this.handleGetPcGroup()
+    await this.handgetClienList() // 获取客户机列表
+    await this.handleGetPcGroup()
   },
   mounted () {
-    if (document.querySelector('#divScroll')) {
-      this.$refs.viewTable.addEventListener('mousewheel', (e) => {
-        let offset = 0
-        if (e.deltaY < 0) {
-          this.bar.scrollTop -= 48
-        } else {
-          this.bar.scrollTop += 48
-        }
-        OnScroll.call(this, this.$refs.divScroll, offset)
-      }, true)
-      this.$refs.divScroll.addEventListener('scroll', (e) => {
-        this.tableData = this.list.slice(
-          parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
-        )
-      }, true)
-    }
+    this.$refs.viewTable.addEventListener('mousewheel', e => {
+      e.preventDefault && e.preventDefault()
+      if (e.deltaY < 0) {
+        this.elementScroll.scrollTop -= 48
+      } else {
+        this.elementScroll.scrollTop += 48
+      }
+    })
   },
   computed: {
     profileList () {
@@ -787,33 +797,37 @@ export default {
     next()
   },
   methods: {
-    async fiterFunction (value) {
-      if (value.length === 0) {
-        this.handgetClienList()
+    HandleCreateScroll (view, all) {
+      this.elementScroll = CreateScroll(document.querySelector('#scroll'), document.querySelector('#content'), view * 48, document.querySelector('#all'), all * 48)
+      this.elementScroll.addEventListener('scroll', e => {
         this.tableData = this.list.slice(
-          parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+          parseInt(this.elementScroll.scrollTop / 48),
+          this.elementScroll.scrollTop / 48 + this.Pagelimit
         )
+      })
+    },
+    async fiterFunction (value) {
+      this.fiterPcGp = value[0]
+      this.elementScroll.scrollTop = 0
+      let list = await this.getClienList()
+      if (value.length === 0) {
+        this.list = list
+        this.tableData = list.slice(
+          parseInt(this.elementScroll.scrollTop / 48),
+          parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit
+        )
+        this.HandleCreateScroll(this.tableData.length, list.length)
         return
       }
-      let xx = await this.handgetClienList()
-      let filterList = xx.filter(item => {
+      let filterList = list.filter(item => {
         return item.pcGp === value[0]
       })
       this.list = filterList
-      if (this.list.length < this.Pagelimit) {
-        document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
-        if (this.list.length > 11) {
-          CreateAt.call(this, this.$refs.divScroll, this.list.length * 48, this.list.length * 48)
-        }
-      } else {
-        document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
-        if (this.list.length > 11) {
-          CreateAt.call(this, this.$refs.divScroll, this.list.length * 48, this.list.length * 48)
-        }
-      }
-      this.tableData = this.list.slice(
-        parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+      this.tableData = filterList.slice(
+        parseInt(this.elementScroll.scrollTop / 48),
+        parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit
       )
+      this.HandleCreateScroll(this.tableData.length, filterList.length)
     },
     onSelectAll () {
       this.list.forEach(item => {
@@ -872,14 +886,13 @@ export default {
     },
     async handleButtonRemoth (obj) {
       try {
-        let resp = await PcRemote(
+        await PcRemote(
           { mac: obj.mac, ip: obj.ip, pwd: obj.passwd },
           this.masterip
         )
-        console.log(resp)
         ipcRenderer.send('cmd', { ip: obj.ip, password: obj.passwd })
         ipcRenderer.on('cmd', (event, arg) => {
-          console.log(arg)
+          this.$Message.error(arg)
         })
       } catch (error) {
         this.$Message.error(this.$t(`kxLinuxErr.${error}`))
@@ -887,89 +900,65 @@ export default {
     },
     async handleSort ({ columns, key, order }) {
       if (key === 'ip' && order === 'asc') {
-        this.list.sort((a, b) => {
-          let arr1 = a.ip.split('.')
-          let arr2 = b.ip.split('.')
-          for (let i = 0; i < 4; i++) {
-            if (arr1[i] > arr2[i]) {
-              return 1
-            } else if (arr1[i] < arr2[i]) {
-              return -1
-            }
-          }
-        })
+        this.ipasc = true
+        this.ipdesc = false
+        this.pcasc = false
+        this.pcdesc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
       } else if (key === 'ip' && order === 'desc') {
-        this.list.sort((a, b) => {
-          let arr1 = a.ip.split('.')
-          let arr2 = b.ip.split('.')
-          for (let i = 0; i < 4; i++) {
-            if (arr1[i] < arr2[i]) {
-              return 1
-            } else if (arr1[i] > arr2[i]) {
-              return -1
-            }
-          }
-        })
+        this.ipdesc = true
+        this.ipasc = false
+        this.pcasc = false
+        this.pcdesc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
+      } else if (key === 'ip' && order === 'normal') {
+        this.ipdesc = false
+        this.ipasc = false
+        this.pcasc = true
+        this.pcdesc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
       } else if (key === 'pc' && order === 'asc') {
-        let shuzi = this.list.filter(item => { return (parseInt(item.pc)) })
-        shuzi.forEach(item => {
-          item.pc = parseInt(item.pc)
-        })
-        let zimu = this.list.filter(item => { return (!Number(item.pc)) })
-        this.list = shuzi.sort((obj, obj1) => { return obj.pc - obj1.pc }).concat(zimu.sort((o, o1) => {
-          return o.pc.localeCompare(o1.pc)
-        }))
+        this.pcdesc = false
+        this.pcasc = true
+        this.ipasc = false
+        this.ipdesc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
       } else if (key === 'pc' && order === 'desc') {
-        let shuzi = this.list.filter(item => { return (parseInt(item.pc)) })
-        shuzi.forEach(item => {
-          item.pc = parseInt(item.pc)
-        })
-        let zimu = this.list.filter(item => { return (!Number(item.pc)) })
-        this.list = shuzi.sort((obj, obj1) => { return obj1.pc - obj.pc }).concat(zimu.sort((o, o1) => {
-          return o1.pc.localeCompare(o.pc)
-        }))
+        this.pcdesc = true
+        this.pcasc = false
+        this.ipasc = false
+        this.ipdesc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
+      } else if (key === 'pc' && order === 'normal') {
+        this.pcdesc = false
+        this.pcasc = false
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
       } else if (key === 'curDaSV' && order === 'desc') {
-        this.list.sort((a, b) => {
-          if (a.curDaSV && b.curDaSV) {
-            let arr1 = a.curDaSV.split('.')
-            let arr2 = b.curDaSV.split('.')
-            for (let i = 0; i < 4; i++) {
-              if (arr1[i] > arr2[i]) {
-                return 1
-              } else if (arr1[i] < arr2[i]) {
-                return -1
-              } else {
-                return -1
-              }
-            }
-          } else if (!a.curDaSV && b.curDaSV) {
-            return 1
-          } else if (!b.curDaSV && a.curDaSV) {
-            return -1
-          }
-        })
+        this.curDaSVdesc = true
+        this.curDaSVasc = false
+        this.pcdesc = false
+        this.pcasc = false
+        this.ipasc = false
+        this.ipdesc = false
       } else if (key === 'curDaSV' && order === 'asc') {
-        this.list.sort((a, b) => {
-          if (a.curDaSV && b.curDaSV) {
-            let arr1 = a.curDaSV.split('.')
-            let arr2 = b.curDaSV.split('.')
-            for (let i = 0; i < 4; i++) {
-              if (arr1[i] < arr2[i]) {
-                return 1
-              } else if (arr1[i] > arr2[i]) {
-                return -1
-              }
-            }
-          } else if (!a.curDaSV && b.curDaSV) {
-            return -1
-          } else if (!b.curDaSV && a.curDaSV) {
-            return 1
-          }
-        })
+        this.curDaSVdesc = false
+        this.curDaSVasc = true
+        this.pcdesc = false
+        this.pcasc = false
+        this.ipasc = false
+        this.ipdesc = false
+      } else if (key === 'curDaSV' && order === 'normal') {
+        this.curDaSVdesc = false
+        this.curDaSVasc = false
+        this.pcasc = true
       }
-      this.tableData = this.list.slice(
-        parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
-      )
+      this.handgetClienList()
     },
     /**
       获取主服务器
@@ -985,13 +974,15 @@ export default {
         }
       })
     },
-    ChangeValue (value) {
+    async ChangeValue (value) {
       if (!value) {
         this.handgetClienList()
         return
       }
+      let list = await this.getClienList()
+      if (!list) return
       this.tempx = []
-      this.srcList.forEach(item => {
+      list.forEach(item => {
         if (
           item.pc.indexOf(value) !== -1 ||
           item.ip.indexOf(value) !== -1 ||
@@ -1001,11 +992,9 @@ export default {
           this.tempx.push(item)
         }
       })
+      this.list = this.tempx
       this.tableData = this.tempx.slice(0, 10)
-      if (this.tempx) {
-        this.pageInfo.count = this.tempx.length
-        this.list = this.tempx
-      }
+      // this.searchVal = ''
     },
     test (hide) {
       if (!hide) {
@@ -1029,6 +1018,7 @@ export default {
       this.handgetClienList()
       this.HandleSuper()
       this.clientArray = []
+      this.searchVal = ''
     },
 
     /** 唤醒 */
@@ -1051,20 +1041,33 @@ export default {
         })
         try {
           await CtrlPcsConf({ macList: a, operate: opt }, this.masterip)
-        } catch (error) {
-          console.log(error)
+        } catch (e) {
+          this.$Message.error(this.$t(`kxLinuxErr.${e}`))
         } finally {
           this.handgetClienList()
           this.HandleSuper()
         }
       }
     },
-
     /**
-     * 获取客户机列表
+   * 唤醒超级工作站
+   */
+    async WarkSuper (item) {
+      try {
+        await CtrlPcsConf({ macList: [{ mac: item.mac, ip: item.ip, pc: item.pc }], operate: '4' }, this.masterip)
+      } catch (e) {
+        this.$Message.error(this.$t(`kxLinuxErr.${e}`))
+      } finally {
+        this.handgetClienList()
+        this.HandleSuper()
+      }
+    },
+    /**
+     * 获取客户机列
      */
     async handgetClienList () {
       this.clientMac = []
+      this.searchVal = ''
       let superip = await getSuper(this.masterip)
       let client = await getPcListConfig(this.masterip)
       let clientList = client.data.result && (client.data.result.list || [])
@@ -1093,33 +1096,158 @@ export default {
             }
             return superip.data.result.ip !== item.ip
           })
-          if (this.list.length > 11) {
-            CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+          var list = this.list
+          if (this.fiterPcGp) {
+            list = list.filter(item => {
+              return this.fiterPcGp === item.pcGp
+            })
+            this.list = list
           }
-          this.list.sort((a, b) => {
-            return b.stat - a.stat
-          })
-          this.tableData = this.list.slice(
-            parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
-          )
+          if (this.curDaSVasc) {
+            this.ipSort(this.list, 'curDaSV', 'asc')
+          }
+          if (this.curDaSVdesc) {
+            this.ipSort(this.list, 'curDaSV', 'desc')
+          }
+          if (this.ipasc) {
+            this.ipSort(this.list, 'ip', 'asc')
+          }
+          if (this.ipdesc) {
+            this.ipSort(this.list, 'ip', 'desc')
+          }
+          if (this.pcasc) {
+            let shuzi = this.list.filter(item => {
+              return parseInt(item.pc)
+            })
+            shuzi.forEach(item => {
+              item.pc = parseInt(item.pc)
+            })
+            let zimu = this.list.filter(item => {
+              return !Number(item.pc)
+            })
+            this.list = shuzi
+              .sort((obj, obj1) => {
+                return obj.pc - obj1.pc
+              })
+              .concat(
+                zimu.sort((o, o1) => {
+                  return o.pc.localeCompare(o1.pc)
+                })
+              )
+          } else if (this.pcdesc) {
+            let shuzi = this.list.filter(item => {
+              return parseInt(item.pc)
+            })
+            shuzi.forEach(item => {
+              item.pc = parseInt(item.pc)
+            })
+            let zimu = this.list.filter(item => {
+              return !Number(item.pc)
+            })
+            this.list = shuzi
+              .sort((obj, obj1) => {
+                return obj1.pc - obj.pc
+              })
+              .concat(
+                zimu.sort((o, o1) => {
+                  return o1.pc.localeCompare(o.pc)
+                })
+              )
+          }
           if (flag) {
             this.show = true
             this.currentSuper = [superip.data.result]
           }
+          this.tableData = this.list.slice(
+            parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+          )
         }
       } else {
-        this.list = clientList
-        if (this.list.length > 11) {
-          CreateAt.call(this, this.$refs.divScroll, this.Pagelimit * 48, this.list.length * 48)
+        let list = await this.getClienList()
+        if (this.fiterPcGp) {
+          list = list.filter(item => {
+            return this.fiterPcGp === item.pcGp
+          })
+          this.list = list
+        } else {
+          this.list = clientList
         }
-        this.list.sort((a, b) => {
-          return b.stat - a.stat
-        })
+        if (this.curDaSVasc) {
+          this.ipSort(this.list, 'curDaSV', 'asc')
+        }
+        if (this.curDaSVdesc) {
+          this.ipSort(this.list, 'curDaSV', 'desc')
+        }
+        if (this.ipasc) {
+          this.ipSort(this.list, 'ip', 'asc')
+        }
+        if (this.ipdesc) {
+          this.ipSort(this.list, 'ip', 'desc')
+        }
+        if (this.pcasc) {
+          let shuzi = this.list.filter(item => {
+            return parseInt(item.pc)
+          })
+          shuzi.forEach(item => {
+            item.pc = parseInt(item.pc)
+          })
+          let zimu = this.list.filter(item => {
+            return !Number(item.pc)
+          })
+          this.list = shuzi
+            .sort((obj, obj1) => {
+              return obj.pc - obj1.pc
+            })
+            .concat(
+              zimu.sort((o, o1) => {
+                return o.pc.localeCompare(o1.pc)
+              })
+            )
+        } else if (this.pcdesc) {
+          let shuzi = this.list.filter(item => {
+            return parseInt(item.pc)
+          })
+          shuzi.forEach(item => {
+            item.pc = parseInt(item.pc)
+          })
+          let zimu = this.list.filter(item => {
+            return !Number(item.pc)
+          })
+          this.list = shuzi
+            .sort((obj, obj1) => {
+              return obj1.pc - obj.pc
+            })
+            .concat(
+              zimu.sort((o, o1) => {
+                return o1.pc.localeCompare(o.pc)
+              })
+            )
+        }
         this.tableData = this.list.slice(
           parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
         )
       }
+      this.HandleCreateScroll(this.tableData.length, this.list.length)
       return this.list
+    },
+    async getClienList () {
+      let superip = await getSuper(this.masterip)
+      let client = await getPcListConfig(this.masterip)
+      let clientList = client.data.result && (client.data.result.list || [])
+      if (superip.data.result) {
+        if (clientList.length > 0) {
+          let list = clientList.filter(item => {
+            if (superip.data.result.ip === item.ip) {
+              this.currentSuper = [item]
+            }
+            return superip.data.result.ip !== item.ip
+          })
+
+          return list
+        }
+      } else {
+        return clientList
+      }
     },
     async HandleSuper () {
       let resp = await getSuper(this.masterip)
@@ -1169,7 +1297,7 @@ export default {
             },
             e => {
               that.loadBtnCancel = false
-              that.$Message.error(this.$t(`kxLinuxErr.${e.data.error}`))
+              that.$Message.error(this.$t(`kxLinuxErr.${e}`))
             }
           )
         }
@@ -1187,10 +1315,17 @@ export default {
             await deletePcsConfigx([data.mac], this.masterip)
             this.handgetClienList()
             if (this.list.length < 11 || this.list.length === 11) {
-              if (document.querySelector('#divScroll') && document.querySelector('#bar')) {
+              if (
+                document.querySelector('#divScroll') &&
+                document.querySelector('#bar')
+              ) {
                 this.$nextTick(() => {
-                  document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
-                  document.querySelector('#box').removeChild(document.querySelector('#divScroll'))
+                  document
+                    .querySelector('#divScroll')
+                    .removeChild(document.querySelector('#bar'))
+                  document
+                    .querySelector('#box')
+                    .removeChild(document.querySelector('#divScroll'))
                 })
               }
             }
@@ -1211,24 +1346,13 @@ export default {
       })
       this.$Modal.confirm({
         title: this.$t('DeleteTip'),
-        // content: this.$t('DeleteCurrentData'),
-        // content: `${this.$t('Delete')} 【${this.clientArray.length > 2 ? x.slice(0, 2) + ' ...' : x}】 ${this.$t('Client')} `,
-        content: `${this.$t('Delete')}${this.clientArray.length} ${this.$t(
-          ' Client'
-        )} `,
+        content: `${this.$t('DeleteDec')}  ${this.clientArray.length}${this.$t('Station')}${this.$t(
+          'Client')}？`,
         onOk: async () => {
           try {
             await deletePcsConfigx(client, this.masterip)
             this.clientArray = []
             await this.handgetClienList()
-            if (this.list.length < 11 || this.list.length === 11) {
-              if (document.querySelector('#divScroll') && document.querySelector('#bar')) {
-                this.$nextTick(() => {
-                  document.querySelector('#divScroll').removeChild(document.querySelector('#bar'))
-                  document.querySelector('#box').removeChild(document.querySelector('#divScroll'))
-                })
-              }
-            }
           } catch (error) {
             console.log(error)
           }
@@ -1255,6 +1379,7 @@ export default {
     },
     // 获取启动方案
     handleGetPcGroup () {
+      console.log(this.masterip)
       getPcGroupx(this.masterip).then(
         e => {
           let demo = []
@@ -1263,9 +1388,7 @@ export default {
             let lable = item.name
             demo.push({ label: lable, value: lable })
           })
-          this.$nextTick(() => {
-            this.tableColumns[6].filters = demo
-          })
+          this.tableColumns[7].filters = demo
         },
         e => {
           this.$Message.error(e.data.error)
@@ -1370,7 +1493,8 @@ export default {
               }
             },
             err => {
-              self.$Message.error(this.$t(`kxLinuxErr.${err.data.error}`))
+              this.loadBtnSuper = false
+              self.$Message.error(this.$t(`kxLinuxErr.${err}`))
             }
           )
         }
@@ -1388,26 +1512,44 @@ export default {
       setTimeout(() => {
         this.temp = false
       }, 200)
+    },
+    ipSort (obj, filed, desc) {
+      let n = desc === 'asc' ? 1 : -1
+      obj.sort((a, b) => {
+        if (a[filed] && b[filed]) {
+          a = a[filed].split('.')
+          b = b[filed].split('.')
+          for (let i = 0; i < 4; i++) {
+            if (a[i] - b[i] > 0) {
+              return n
+            } else if (a[i] - b[i] < 0) {
+              return -n
+            } else {
+              return 0
+            }
+          }
+        } else if (!a[filed] || !b[filed]) {
+          return 1
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-.header {
-  margin-bottom: 20px;
-}
 .footer {
   /* margin-top:20px; */
   margin-bottom: 10px;
 }
-  .box{
-      position: relative;
-    }
-  #divScroll{
-    margin-top:42px;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
+.box {
+  position: relative;
+}
+#scroll {
+  margin-top: 42px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 9;
+}
 </style>

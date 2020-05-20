@@ -39,8 +39,8 @@ export default {
           }
         },
         { title: '游戏类型', key: 'type_name', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { title: '下载版本', key: 'version_name', renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
+        { title: '游戏名称', key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '下载版本', key: 'version_code', renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
         { title: '更新量',
           key: 'total_bytes',
           renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) }

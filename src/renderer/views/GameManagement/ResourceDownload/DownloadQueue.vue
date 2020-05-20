@@ -81,8 +81,24 @@ export default {
         { key: 'Progress',
           minWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('progress')) },
+          // render: (h, params) => {
+          //   return h('span', `${parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100)}%`)
+          // }
           render: (h, params) => {
-            return h('span', `${parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100)}%`)
+            // return h[('div',[
+            //   h('Progress',{
+            //     percent:100
+            //   })
+            // ])
+            console.log(parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100))
+            return h('div', [
+              h('Progress', {
+                props: {
+                  percent: parseInt((params.row.UpdateBytes / params.row.TotalBytes) * 100),
+                  'stroke-width': 10
+                }
+              })
+            ])
           }
         },
         { key: 'UpdateSpeed',
@@ -139,16 +155,31 @@ export default {
     this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
   },
   mounted () {
-    // this.test()
+    this.Strat()
   },
   computed: {
     routes () {
       return this.$router.options.routes
     }
   },
+
+  beforeRouteLeave (to, from, next) {
+    clearTimeout(this.timer)
+    this.timer = null
+    next()
+  },
   methods: {
     handleButtonRefesh () {
       this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
+    },
+    fetch () {
+      this.HandleGetLoadQueue(this.offset, this.Pagelimit, 'name')
+    },
+    Strat () {
+      this.timer = setTimeout(() => {
+        this.Strat()
+        this.handleButtonRefesh()
+      }, 2000)
     },
     /**
      * 获取下载队列
@@ -209,13 +240,9 @@ export default {
         })
     },
     changePage (index) {
+      this.offset = (index - 1) * this.Pagelimit
       this.HandleGetLoadQueue((index - 1) * this.Pagelimit, this.Pagelimit)
     }
-  },
-  beforeRouteLeave (to, from, next) {
-    window.clearInterval(this.timer)
-    this.timer = null
-    next()
   }
 
 }

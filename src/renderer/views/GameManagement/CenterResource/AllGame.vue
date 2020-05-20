@@ -48,7 +48,9 @@ export default {
       temp: [],
       tempx: [],
       tableDataAll: [],
-      pageInfo: '',
+      pageInfo: {
+        page_index: 0
+      },
       Pagelimit: 10, // 页面展示的数量
       DownLoadCount: '0', // 已下载的数
       max: 20000,
@@ -93,15 +95,15 @@ export default {
           maxWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
-        { key: 'DisplayName', maxWidth: 108, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'DisplayName', maxWidth: 158, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
           minWidth: 120,
-          maxWidth: 120,
+          maxWidth: 150,
           sortable: true,
           renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
         },
         { key: 'Size',
-          minWidth: 80,
+          minWidth: 90,
           maxWidth: 100,
           sortable: 'custom',
           renderHeader: (h, params) => { return h('span', this.$t('Size')) },
@@ -109,8 +111,8 @@ export default {
             return h('span', bytesToSize3(params.row.Size))
           }
         },
-        { key: 'CenterVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { key: 'LocalVersion', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { key: 'CenterVersion', minWidth: 130, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', minWidth: 130, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           minWidth: 170,
