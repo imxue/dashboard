@@ -37,7 +37,7 @@ export function formatSize (value) {
 export function bytesToSize3 (bytes) {
   if (bytes === 0 || bytes === '0') return '0'
   var k = 1024 // or 1000
-  var sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   var i = Math.floor(Math.log(bytes) / Math.log(k))
   return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
 }
