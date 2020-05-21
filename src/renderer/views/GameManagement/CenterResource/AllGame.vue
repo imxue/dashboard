@@ -370,7 +370,7 @@ export default {
         loading: true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.notifyUser('success', 'sucess')
+            this.notifyUser('success', '移除成功')
           }, (e) => {
             this.notifyUser('error', `${e.data.error}`)
           }).catch(() => {

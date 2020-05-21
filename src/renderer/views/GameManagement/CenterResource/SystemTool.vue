@@ -34,13 +34,13 @@ export default {
             let type = params.row.State
             switch (type) {
               case 0:
-                return h('span', { style: { color: '#008000' } }, this.$t('LatestVersion'))
+                return h('span', this.$t('Undownload'))
               case 1:
-                return h('span', { style: { color: '#999999' } }, this.$t('Undownload'))
+                return h('span', { style: { color: '#999999' } }, this.$t('PendingUpgrade'))
               case 2:
                 return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
               case 3:
-                return h('span', { style: { color: '#ff0000' } }, this.$t('UpdateFailed'))
+                return h('span', { style: { color: '#008000' } }, this.$t('LatestVersion'))
               default:
                 return '-'
             }

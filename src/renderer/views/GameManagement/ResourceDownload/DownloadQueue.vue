@@ -36,30 +36,82 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          minWidth: 90,
+          minWidth: 100,
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'Status',
           render: (h, params) => {
-            let state = params.row.Status
-            switch (state) {
-              case -1:
-                return h('span', { style: { color: '#999999' } }, this.$t('unknown'))
-              case 0:
-                return h('span', { style: { color: 'red' } }, this.$t('error'))
+            let operate = {
+              1: '下载',
+              2: '上传',
+              3: '做种',
+              4: '停止上传',
+              5: '删除游戏'
+            }
+            let state = {
+              1: '等待中',
+              2: '中',
+              3: '成功',
+              4: '失败'
+            }
+            switch (params.row.OperateType) {
               case 1:
-                return h('span', this.$t('seeding'))
+                return h('div', [
+                  h('Icon', {
+                    props: {
+                      type: 'md-arrow-down',
+                      color: 'green',
+                      size: '20'
+                    }
+                  }),
+                  h(
+                    'span',
+                    operate[params.row.OperateType] +
+                      state[params.row.TaskStatus]
+                  )
+                ])
               case 2:
-                return h('span', { style: { color: '#008000' } }, this.$t('downloading'))
-              case 3:
-                return h('span', { style: { color: '#B47676' } }, this.$t('paused'))
+                return h('div', [
+                  h('Icon', {
+                    props: {
+                      type: 'md-arrow-up',
+                      color: 'green',
+                      size: '20'
+                    }
+                  }),
+                  h(
+                    'span',
+                    operate[params.row.OperateType] +
+                      state[params.row.TaskStatus]
+                  )
+                ])
+
               case 4:
-                return h('span', this.$t('stopped'))
-              case 5:
-                return h('span', this.$t('checking'))
-              case 6:
-                return h('span', this.$t('checking'))
-              case 7:
-                return h('span', { style: { color: '#008000' } }, this.$t('finished'))
+                return h('div', [
+                  h('Icon', {
+                    props: {
+                      type: 'ios-pause-outline',
+                      color: 'green',
+                      size: '20'
+                    }
+                  }),
+                  h(
+                    'span',
+                    operate[params.row.OperateType] +
+                      state[params.row.TaskStatus]
+                  )
+                ])
+              default:
+                return h('div', [
+                  h('Icon', {
+                    props: {
+                      type: 'ios-arrow-round-up',
+                      color: 'green',
+                      size: '20'
+                    }
+                  }),
+                  h('span', operate[params.row.OperateType]),
+                  h('span', state[params.row.TaskStatus])
+                ])
             }
           }
         },
