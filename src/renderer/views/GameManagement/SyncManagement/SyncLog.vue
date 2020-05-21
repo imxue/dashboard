@@ -52,11 +52,9 @@
                 case 0:
                   return h('span', { style: { color: '#25da30' } }, this.$t('NotInitiated'))
                 case 1:
-                  return h('span', { style: { color: '#ff0000' } }, this.$t('Running'))
+                  return h('span', { style: { color: '#19be6b' } }, this.$t('success'))
                 case 2:
                   return h('span', { style: { color: '#ff0000' } }, this.$t('fail'))
-                case 3:
-                  return h('span', { style: { color: '#47cb89' } }, this.$t('success'))
               }
             }
           },
