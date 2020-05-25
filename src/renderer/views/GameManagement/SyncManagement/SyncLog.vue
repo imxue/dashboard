@@ -28,6 +28,7 @@
 <script>
   import { getAllSyncGameLogs, resync } from '@/api/sync'
   import { getAllCenterGameTypes } from '@/api/game'
+  // import { formatTime1 } from '@/utils/index'
   export default {
     name: 'subType4-3',
     data () {
@@ -139,7 +140,6 @@
           pagetypeid: gametypeid === 0 ? '' : gametypeid,
           letter
         }
-        console.log(info)
         getAllSyncGameLogs(info).then((resp) => {
           this.tableData = resp.data.data
           this.tableData.forEach(item => {
@@ -176,10 +176,19 @@
         let date = new Date(item)
         let year = date.getFullYear()
         let month = date.getMonth() + 1
+        month = month.toString()
+        if (('' + month) && month.length < 2) {
+          month = '0' + month
+        }
         let day = date.getDate()
         let houters = date.getHours()
         let Minutes = date.getMinutes()
-        return `${year}-${month}-${day}-${houters}:${Minutes}`
+        let Seconds = date.getSeconds()
+        Seconds = Seconds.toString()
+        if (('' + Seconds) && Seconds.length < 2) {
+          Seconds = '0' + Seconds
+        }
+        return `${year}-${month}-${day} ${houters}:${Minutes}:${Seconds}`
       },
       changePage (key, type) {
         console.log('排序字段:' + key)

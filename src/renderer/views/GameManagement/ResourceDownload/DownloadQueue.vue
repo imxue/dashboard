@@ -196,7 +196,7 @@ export default {
     }
   },
   created () {
-    // this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
+    this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
   },
   mounted () {
     this.Strat()

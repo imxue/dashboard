@@ -129,7 +129,7 @@
       }
     },
     created () {
-      // this.handleGetTableList()
+      this.handleGetTableList()
       this.handleGameType()
       this.start()
     },
@@ -214,16 +214,22 @@
         this.getCheckboxVal = name
       },
       formatTime (item) {
-        if (item === -1) {
-          return '-'
-        }
         let date = new Date(item)
         let year = date.getFullYear()
         let month = date.getMonth() + 1
-        let day = date.getMonth()
+        month = month.toString()
+        if (('' + month) && month.length < 2) {
+          month = '0' + month
+        }
+        let day = date.getDate()
         let houters = date.getHours()
         let Minutes = date.getMinutes()
-        return `${year}/${month}/${day}:${houters}:${Minutes}`
+        let Seconds = date.getSeconds()
+        Seconds = Seconds.toString()
+        if (('' + Seconds) && Seconds.length < 2) {
+          Seconds = '0' + Seconds
+        }
+        return `${year}-${month}-${day} ${houters}:${Minutes}:${Seconds}`
       },
       handleButtonDelete (val) {
         val = this.getCheckboxVal.length

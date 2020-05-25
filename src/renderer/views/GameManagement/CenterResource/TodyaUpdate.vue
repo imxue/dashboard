@@ -91,8 +91,8 @@ export default {
           render: (h, params) => {
             return h('span', bytesToSize3(params.row.Size))
           } },
-        { title: '中心游戏版本', minWidth: 130, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { title: '本地游戏版本', minWidth: 130, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { title: '中心游戏版本', minWidth: 140, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { title: '本地游戏版本', minWidth: 140, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           minWidth: 190,
