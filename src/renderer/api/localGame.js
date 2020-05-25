@@ -42,6 +42,22 @@ export function localEdit (clientStartPath, isAutoUpdate, localId, runExe, serve
     data
   })
 }
+// 修改；本地资源 已下载游戏
+export function localEdit1 (clientStartPath, isAutoUpdate, localId, runExe, serverSavePath, starterScheme) { // 已下载编辑
+  const data = {
+    ClientStartPath: clientStartPath,
+    IsAutoUpdate: isAutoUpdate,
+    LocalId: localId,
+    RunExe: runExe,
+    ServerSavePath: serverSavePath,
+    StarterScheme: starterScheme
+  }
+  return request({
+    url: '/v1/localresource/editLocalGame',
+    method: 'post',
+    data
+  })
+}
 /**
  * 添加游戏同步人物
  * @param {*} id

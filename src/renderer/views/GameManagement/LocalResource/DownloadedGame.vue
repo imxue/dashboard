@@ -107,11 +107,12 @@
               //   props: { type: 'error', size: 'small' },
               //   on: { click: () => { this.handleTableDelete(params.row) } }
               // }, this.$t('Delete'))
-              let a = h('Button',
-                { style: { marginRight: '5px', width: '70px' },
-                  props: { type: 'primary', size: 'small' },
-                  on: { click: () => { this.handleTableEdit(params.row) } }
-                }, this.$t('Edit'))
+              // let a = h('Button',
+              //   { style: { marginRight: '5px', width: '70px' },
+              //     props: { type: 'primary', size: 'small' },
+              //     on: { click: () => { this.handleTableEdit(params.row) } }
+              //   }, this.$t('Edit'))
+              let a = ''
               let b = h('Button',
                 { style: { marginRight: '5px', width: '70px' },
                   props: { type: 'error', size: 'small' },

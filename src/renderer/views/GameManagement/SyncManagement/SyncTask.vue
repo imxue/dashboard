@@ -124,19 +124,34 @@
           page_index: 0,
           page_size: 0
         },
-        Pagelimit: 10
+        Pagelimit: 10,
+        timer: null
       }
     },
     created () {
-      this.handleGetTableList()
+      // this.handleGetTableList()
       this.handleGameType()
+      this.start()
     },
     computed: {
       routes () {
         return this.$router.options.routes
       }
     },
+    // beforeRouteEnter () {
+    //   this.start()
+    // },
+    beforeRouteLeave (to, from, next) {
+      window.clearTimeout(this.timer)
+      next()
+    },
     methods: {
+      start () {
+        this.handleGetTableList(this.offset, this.Pagelimit)
+        this.timer = setTimeout(() => {
+          this.start()
+        }, 2000)
+      },
       /**
        * 通过游戏类型查询游戏
        */
@@ -184,6 +199,7 @@
        * 切换页码
        */
       hanbleChangePage (e) {
+        this.offset = (e - 1) * this.Pagelimit
         this.handleGetTableList((e - 1) * this.Pagelimit, this.Pagelimit)
       },
       handleCallBackVaild (res) {

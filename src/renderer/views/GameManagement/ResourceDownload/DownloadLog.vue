@@ -14,6 +14,7 @@
 
 <script>
 import { getDownloadLogs, repairGame } from '@/api/localGame'
+import { bytesToSize2 } from '@/utils/index'
 export default {
   name: 'subType2-2',
   data () {
@@ -43,7 +44,8 @@ export default {
         { title: '下载版本', key: 'version_code', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
         { title: '更新量',
           key: 'total_bytes',
-          renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) }
+          renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) },
+          render: (h, params) => { return h('span', bytesToSize2(params.row.total_bytes)) }
         },
         { title: '开始时间',
           key: 'start_time',

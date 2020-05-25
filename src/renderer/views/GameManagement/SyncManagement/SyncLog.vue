@@ -176,10 +176,10 @@
         let date = new Date(item)
         let year = date.getFullYear()
         let month = date.getMonth() + 1
-        let day = date.getMonth()
+        let day = date.getDate()
         let houters = date.getHours()
         let Minutes = date.getMinutes()
-        return `${year}/${month}/${day}-${houters}:${Minutes}`
+        return `${year}-${month}-${day}-${houters}:${Minutes}`
       },
       changePage (key, type) {
         console.log('排序字段:' + key)

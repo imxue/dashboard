@@ -191,11 +191,12 @@ export default {
         count: 0,
         page_index: 0
       },
+      offset: 0,
       Pagelimit: 10
     }
   },
   created () {
-    this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
+    // this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
   },
   mounted () {
     this.Strat()
@@ -213,7 +214,7 @@ export default {
   },
   methods: {
     handleButtonRefesh () {
-      this.HandleGetLoadQueue(0, this.Pagelimit, 'name')
+      this.HandleGetLoadQueue(this.offset, this.Pagelimit, 'name')
     },
     fetch () {
       this.HandleGetLoadQueue(this.offset, this.Pagelimit, 'name')
@@ -239,6 +240,7 @@ export default {
         //   content: this.$t(response.data.error),
         //   closable: true
         // })
+        window.clearTimeout(this.timer)
       })
     },
     handleCheckBox (data) {

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-  import { localEdit } from '@/api/localGame'
+  import { localEdit1 } from '@/api/localGame'
   export default {
     name: 'subType3-1-edit',
     data () {
@@ -124,7 +124,7 @@
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            localEdit(this.formValidate.startPath, this.autoupdate, this.$route.query.data.Id, this.formValidate.run, this.formValidate.savePath, -1).then((res) => {
+            localEdit1(this.formValidate.startPath, this.autoupdate, this.$route.query.data.Id, this.formValidate.run, this.formValidate.savePath, -1).then((res) => {
               this.handleCallBackVaild(res)
             }, () => {
               this.$Message.error('请求出错，请稍后再试')

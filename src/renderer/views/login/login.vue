@@ -114,9 +114,9 @@ export default {
   watch: {},
   computed: {},
   mounted () {
-    this.$store.dispatch('GetbarInfo').then(() => {
-      this.$router.push('/')
-    })
+    // this.$store.dispatch('GetbarInfo').then(() => {
+    //   this.$router.push('/')
+    // })
   },
   created () {
     if (localStorage.getItem('connectNet')) {

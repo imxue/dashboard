@@ -73,7 +73,7 @@
 <script>
   import { distributeGame, canceldistributeGame, syncGame, getAllServers, getAllServerDisks, getAllServerGamesByIp } from '@/api/sync'
   import { getAllCenterGameTypes } from '@/api/game'
-  import { bytesToSize } from '../../../utils/index'
+  import { bytesToSize3 } from '../../../utils/index'
   export default {
     name: 'ServerSyncSet',
     data () {
@@ -131,7 +131,7 @@
                 case 5:
                   return h('span', this.$t('Updatefailed'))
                 case 6:
-                  return h('span', { style: { color: '#47cb89' } }, this.$t(' success'))
+                  return h('span', { style: { color: '#47cb89' } }, this.$t('success'))
               }
             }
           },
@@ -143,7 +143,7 @@
             minWidth: 90,
             renderHeader: (h, params) => { return h('span', this.$t('Size')) },
             render: (h, params) => {
-              return h('span', bytesToSize(params.row.size))
+              return h('span', bytesToSize3(params.row.size))
             }
           },
           { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('LocalGameVersion')) } },
