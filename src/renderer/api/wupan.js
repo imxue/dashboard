@@ -330,8 +330,8 @@ export function deletePcGroup (list, ip) {
   }, ip)
 }
 
-export function editPcGroupx ({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip) {
-  return makeRequestx('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps }, ip)
+export function editPcGroupx ({ name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps, pnps }, ip) {
+  return makeRequestx('Set_PcGp', { name, netMk, netGW, dns1, dns2, daSV, bala, wrLimG, disable, imgG, imageList, gTim, cach, wieh, hith, resh, deps, pnps }, ip)
 }
 
 /**
@@ -590,4 +590,8 @@ export function PcRemote (obj, ip) {
  */
 export function CtrlPcsConf (obj, ip) {
   return makeRequestx('Ctrl_PcsConf', obj, ip)
+}
+
+export function GetServerHardInfo (ip) {
+  return makeRequestx('Get_DeviceInfo', {}, ip)
 }

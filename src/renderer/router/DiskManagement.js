@@ -1,6 +1,7 @@
 import NullLayout from '@/views/layout/null'
 import Layout from '@/views/layout/index'
 import DisklessServerList from '@/views/DisklessManagement/DisklessServerList/index'
+import ServerHardInfo from '@/views/DisklessManagement/DisklessServerList/ServerHardInfo'
 import DisklessServerListAdd from '@/views/DisklessManagement/DisklessServerList/DisklessServerListAdd'
 import DisklessServerListDetail from '@/views/DisklessManagement/DisklessServerList/DisklessServerListDetail'
 import AllMirror from '@/views/DisklessManagement/MirrorManagement/index'
@@ -39,6 +40,13 @@ export default {
           name: '查看详情',
           meta: { title: 'DisklessServerListDetail' },
           component: DisklessServerListDetail,
+          hidden: true
+        },
+        {
+          path: 'ServerHardInfo',
+          name: '查看详情',
+          meta: { title: 'ServerHardInfo' },
+          component: ServerHardInfo,
           hidden: true
         }
       ]

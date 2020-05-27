@@ -294,7 +294,7 @@ import {
   getPcListConfig, getPcGroupx, getDHCPConfig,
   RaidRemove } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
-import { bytesToSize, bytesToRate } from '@/utils/index'
+import { bytesToSize, bytesToRate, bytesToRate1 } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
 import { setValue } from '@/api/common'
 import { ipcRenderer } from 'electron'
@@ -437,6 +437,16 @@ export default {
           }
         },
         { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('NetwokDeviceName')) } },
+        { key: 'sendRate',
+          renderHeader: (h, params) => { return h('span', this.$t('sendRate')) },
+          render: (h, params) => {
+            return h('span', bytesToRate1(params.row.sendRate))
+          } },
+        { key: 'recvRate',
+          renderHeader: (h, params) => { return h('span', this.$t('recvRate')) },
+          render: (h, params) => {
+            return h('span', bytesToRate1(params.row.recvRate))
+          } },
         { key: 'ip', renderHeader: (h, params) => { return h('span', this.$t('IPAddress')) } },
         {
           renderHeader: (h, params) => { return h('span', this.$t('NICSpeed')) },

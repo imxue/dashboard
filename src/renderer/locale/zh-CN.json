@@ -3,7 +3,7 @@
     "Start": "开始",
     "Pause": "暂停",
     "Delete":"删除",
-    "Remove":"移除",
+    "Remove":"删除",
     "MoveUp":"上移",
     "MoveDown":"下移",
     "Assign":"分配",
@@ -101,7 +101,7 @@
     "cancelText": "取消",
     "DownloadGames": "下载",
     "RepairGame":"修复",
-    "LocalRemoval": "移除",
+    "LocalRemoval": "删除",
     "Type": "类型",
     "ToolName": "工具名称",
     "ToolSize":"工具大小",
@@ -145,7 +145,7 @@
     "DataLoad":"数据负载",
     "NetwokDeviceName":"网络设备名",
     "IPAddress":"IP地址",
-    "NICSpeed":"网卡速率",
+    "NICSpeed":"速度",
     "View":"查看",
     "SystemDisk":"系统盘",
     "MirrorDisk":"镜像盘",
@@ -503,5 +503,8 @@
   "HardwareType":"硬件类型",
   "HardwareInformationComparison":"硬件信息对比",
   "NIC speed":"网卡速率",
-  "UpdateFailed":"更新失败"
+  "UpdateFailed":"更新失败",
+  "ServerHardInfo":"服务器硬件信息",
+  "recvRate":"接收速率",
+  "sendRate":"发送速率"
 }

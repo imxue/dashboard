@@ -157,7 +157,8 @@ import {
   getServers,
   deleteserverConfig,
   login,
-  GetRegInfo
+  GetRegInfo,
+  GetServerHardInfo
 } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { setValue, getMasterIp } from '@/api/common'
@@ -308,19 +309,23 @@ export default {
             return h('span', this.$t('operation'))
           },
           key: 'operation',
+          maxWidth: 500,
+          minWidth: 500,
           render: (h, params) => {
-            let a = h(
-              'Button',
-              {
-                props: { type: 'info', ghost: true },
-                on: {
-                  click: () => {
-                    this.handleSeeDetail(params.row)
+            let a =
+              h(
+                'Button',
+                {
+                  props: { type: 'info', ghost: true },
+                  style: { marginRight: '10px' },
+                  on: {
+                    click: () => {
+                      this.handleSeeDetail(params.row)
+                    }
                   }
-                }
-              },
-              this.$t('View')
-            )
+                },
+                this.$t('View')
+              )
             let b = h(
               'Button',
               {
@@ -334,12 +339,28 @@ export default {
               },
               this.$t('checkInfo')
             )
+            let c = h(
+              'Button',
+              {
+                props: { type: 'info', ghost: true },
+                on: {
+                  click: () => {
+                    this.handleSeeServeHanrdInfo(params.row)
+                  }
+                }
+              },
+              this.$t('服务器硬件信息')
+            )
             if (params.row.isMaster === '1') {
-              return [a, b]
+              return [a, c, b]
             } else {
-              return a
+              return [a, c]
             }
           }
+        },
+        {
+          key: '',
+          title: ' '
         }
       ],
       serverList: [],
@@ -376,6 +397,19 @@ export default {
     openMonute () {
       let resp = ipcRenderer.sendSync('cmd', { mount: 'diskmappingtools.exe' })
       console.log(resp)
+    },
+    async  handleSeeServeHanrdInfo (row) {
+      try {
+        let resp = await GetServerHardInfo(row.serverIp)
+        this.$router.push({
+          path: 'ServerHardInfo',
+          query: { data: resp }
+        })
+      } catch (error) {
+        this.$Message.error({
+          content: this.$t(error)
+        })
+      }
     },
     async handleSeeRegInfo () {
       this.regModal = true

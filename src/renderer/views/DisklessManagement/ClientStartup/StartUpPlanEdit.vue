@@ -28,7 +28,6 @@
             <i-col span="10"><i-input v-model="formValidate.dns2" placeholder=""></i-input></i-col>
           </Row>
         </FormItem>
-     
         <FormItem prop="bala"  :label="this.$t('LoadBalancing') + '：'">
           <Row>
             <i-col span="10">
@@ -51,61 +50,88 @@
         </FormItem>
       </i-col>
       <i-col span="10">
-        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit')" :label-width="140">
-          <Row>
-            <i-col span="10"><i-input v-model="formValidate.wrLimG" placeholder="">
-               <span slot="append">G</span>
-              </i-input></i-col>
-          </Row>
-        </FormItem>
-        <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'" :label-width="140">
+        <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit')" >
           <Row>
             <i-col span="10">
-            <Poptip trigger="focus">
+                  <Tooltip max-width="200" content="当设置会写为零的时候，回写量是回写盘的十分之一">
+              <i-input v-model="formValidate.wrLimG" placeholder="">
+               <span slot="append">G</span>
+              </i-input>
+               </Tooltip>
+               </i-col>
+          </Row>
+        </FormItem>
+        <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'" >
+          <Row>
+            <i-col span="10">
+            <!-- <Poptip trigger="focus"> -->
+             <Tooltip max-width="200" :content="this.$t('tip')">
              <Input v-model="formValidate.gTim" placeholder="" >
              <span slot="append">S</span>
              </Input>
-             <div slot="content">{{$t('tip')}}</div>
-            </Poptip>
+                </Tooltip>
+             <!-- <div slot="content">{{$t('tip')}}</div> -->
+            <!-- </Poptip> -->
             </i-col>
             <!-- <i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}} -->
           </Row>
         </FormItem>
-        <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" :label-width="140">
+        <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" >
           <Row >
-            <i-col span="10" ><i-input v-model="formValidate.cach" > <span slot="append">M</span> </i-input>  </i-col>
+            <i-col span="10" >
+              <i-input v-model="formValidate.cach" > <span slot="append">M</span> </i-input>
+            </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
+        <!-- <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
           <Row>
             <i-col span="10">
               <i-input v-model="formValidate.wieh" placeholder=""></i-input>
               </i-col>
-            <!-- <Select v-model="Resolution" style="width:200px">
-               <Option v-for="item in ResolutionList" :value="item.label" :key="item.label">{{ item.label }}</Option>
-          </Select> -->
           </Row>
-        </FormItem>
-        <FormItem prop="hith" :label="this.$t('HighResolution') + '：'" :label-width="140">
-          <Row>
-            <i-col span="10"><i-input v-model="formValidate.hith" placeholder="" :label-width="140"></i-input></i-col>
-          </Row>
-        </FormItem>
-        <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'" :label-width="140">
+        </FormItem> -->
+        
+        <FormItem prop="PNPvalue" label="PNP设置：">
           <Row>
             <i-col span="10">
-              <!-- <Select v-model="formValidate.resh" style="width:200px">
-               <Option v-for="item in HzList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select> -->
-          <i-input v-model="formValidate.resh" placeholder="" :label-width="140">
+            <Select v-model="formValidate.pnps" multiple >
+             <Option value="disp">{{$t('显卡')}}</Option>
+              <Option value="usb">{{$t('usb')}}</Option>
+               <Option value="base">{{$t('主板')}}</Option>
+              <Option value="aud">{{$t('声卡')}}</Option>
+              <Option value="mon">{{$t('显示器')}}</Option>
+             </Select>
+             </i-col>
+          </Row>
+        </FormItem>
+        <FormItem prop="hith" :label="this.$t('Resolution') + '：'" >
+          <Row>
+             <i-col span="5">
+                    <Poptip trigger="focus">
+                     <i-input v-model="formValidate.wieh" placeholder=""></i-input>
+                   <div slot="content">{{$t('宽')}}</div>
+                   </Poptip>
+              </i-col>
+            <i-col span="5">
+                  <Poptip trigger="focus">
+                <i-input v-model="formValidate.hith" placeholder="" ></i-input>
+                <div slot="content">{{$t('高')}}</div>
+                      </Poptip>
+            </i-col>
+          </Row>
+        </FormItem>
+        <FormItem prop="resh" :label="this.$t('RefreshRate') + '：'" >
+          <Row>
+            <i-col span="10">
+          <i-input v-model="formValidate.resh" placeholder="" >
              <span slot="append">Hz</span>
           </i-input>
           </i-col>
           </Row>
         </FormItem>
-        <FormItem prop="deps" :label="this.$t('Color') + '：'" :label-width="140">
+        <FormItem prop="deps" :label="this.$t('Color') + '：'" >
           <Row>
-            <i-col span="10"><i-input v-model="formValidate.deps" placeholder="" :label-width="140"></i-input></i-col>
+            <i-col span="10"><i-input v-model="formValidate.deps" placeholder="" ></i-input></i-col>
           </Row>
         </FormItem>
         </i-col>
@@ -149,6 +175,7 @@
         <Button type="primary" @click="handleSubmit('formValidate')">{{$t('Save')}}</Button>
         <Button @click="handleReset('formValidate')" style="margin-left: 8px">{{$t('return')}}</Button>
     </div>
+    
   </div>
 </template>
 
@@ -157,11 +184,28 @@
   export default {
     name: 'subType3-edit',
     data () {
+      var checkIpformat = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error(this.$t('Thisfieldcannotbeempty')))
+        } else {
+          let reg = '^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.' +
+                  '(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$'
+          let regexp = new RegExp(reg)
+          if (regexp.test(value)) {
+            callback()
+          } else {
+            return callback(new Error(this.$t('IPAddressIsIncorrect')))
+          }
+        }
+      }
       return {
         masterip: this.$store.state.app.masterip || '',
         imgCount: 0,
         flag: false, // 修改标志
         showPopup: false,
+        PNPvalue: [],
         name01: '',
         name02: '',
         serverlist: '',
@@ -209,13 +253,14 @@
           dns2: '',
           daSV: '',
           bala: '0',
+          pnps: [],
           disable: '0',
           wrLimG: '10',
           imgG: [],
           gTim: '10',
           cach: '512',
-          wieh: '1024',
-          hith: '768',
+          wieh: '1980',
+          hith: '1080',
           resh: '60',
           deps: '32'
         },
@@ -223,11 +268,11 @@
         ruleValidate: {
           name: [
             { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' } ],
-          netMk: [ { required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }
+          netMk: [ { required: true, validator: checkIpformat, trigger: 'blur' }
           ],
-          netGW: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          dns1: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
-          dns2: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
+          netGW: [{ required: true, validator: checkIpformat, trigger: 'blur' }],
+          dns1: [{ required: true, validator: checkIpformat, trigger: 'blur' }],
+          dns2: [{ required: true, validator: checkIpformat, trigger: 'blur' }],
           daSV: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           bala: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           disable: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
@@ -326,7 +371,6 @@
        */
       handleSubmit (name) {
         let that = this
-        console.log(this.$route.query.flag)
         this.$refs[name].validate(valid => {
           if (valid) {
             if (that.tableData1 && that.tableData1.length === 0) {

@@ -95,10 +95,10 @@ export default {
           maxWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
-        { key: 'DisplayName', maxWidth: 158, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'DisplayName', maxWidth: 200, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
-          minWidth: 120,
-          maxWidth: 150,
+          minWidth: 100,
+          maxWidth: 100,
           sortable: true,
           renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
         },
@@ -111,11 +111,12 @@ export default {
             return h('span', bytesToSize3(params.row.Size))
           }
         },
-        { key: 'CenterVersion', minWidth: 130, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { key: 'LocalVersion', minWidth: 130, maxWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { key: 'CenterVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          minWidth: 170,
+          minWidth: 150,
+          maxWidth: 150,
           render: (h, params) => {
             let type = params.row.State
             let a = h('Button',
@@ -146,6 +147,9 @@ export default {
                 return '-'
             }
           }
+        },
+        { key: '',
+          title: ' '
         }
       ],
       tableData: [],
@@ -222,7 +226,7 @@ export default {
         if (resp !== 0) {
           this.DownloadGameUp = false
           this.loadBtn = false
-          this.notifyUser('success', resp.data)
+          this.notifyUser('success', '游戏添加到下载队列')
           this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
         }
         this.loadBtn = false

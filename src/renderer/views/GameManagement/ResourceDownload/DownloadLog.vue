@@ -126,6 +126,10 @@ export default {
       let day = date.getDate()
       let houters = date.getHours()
       let Minutes = date.getMinutes()
+      Minutes = Minutes.toString()
+      if (('' + Minutes) && Minutes.length < 2) {
+        Minutes = '0' + Minutes
+      }
       let Seconds = date.getSeconds()
       Seconds = Seconds.toString()
       if (('' + Seconds) && Seconds.length < 2) {

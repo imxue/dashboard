@@ -75,8 +75,8 @@
           { title: '目标服务器地址', key: 'server_ip', maxWidth: 130, minWidth: 140, renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
           { title: '源路径', key: 'src_dir', maxWidth: 110, minWidth: 110, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
           { title: '目标路径', key: 'dst_dir', maxWidth: 122, minWidth: 110, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '更新量', key: 'total_bytes', maxWidth: 109, minWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
-          { title: '已更新', key: 'update_bytes', maxWidth: 100, minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
+          // { title: '更新量', key: 'total_bytes', maxWidth: 109, minWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
+          // { title: '已更新', key: 'update_bytes', maxWidth: 100, minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
           // { title: '更新速度', key: 'update_speed', maxWidth: 100, minWidth: 100, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
           { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
           // { title: '操作',
@@ -224,6 +224,10 @@
         let day = date.getDate()
         let houters = date.getHours()
         let Minutes = date.getMinutes()
+        Minutes = Minutes.toString()
+        if (('' + Minutes) && Minutes.length < 2) {
+          Minutes = '0' + Minutes
+        }
         let Seconds = date.getSeconds()
         Seconds = Seconds.toString()
         if (('' + Seconds) && Seconds.length < 2) {

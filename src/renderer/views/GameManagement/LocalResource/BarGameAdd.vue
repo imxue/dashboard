@@ -7,11 +7,8 @@
     <!-- Form -->
  
 
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" style="width:800px;">
-        <FormItem prop="file">
-         <Row>
-            <i-col span="4">{{$t('GameIcon')}}：</i-col>
-            <i-col span="8">
+    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate"  :label-width="100">
+        <FormItem :label="$t('GameIcon')" prop="file" style="width:400px;">
               <div style='border: 1px solid #ccc!important;  border-radius: 16px; '>
           <input type="file" accept="image/*" v-on:change='imgUpload' placeholder="Upload files"  style='opacity:0;'>
             <img :src='this.imgUrl' style='margin-top:-35px;margin-left:10px; width:60px;'>
@@ -19,21 +16,20 @@
            <p style='margin-top:-35px; text-align:center' v-if="!this.formValidate.IconUrl">点击上传图标</p>   
             <p style='border: 1px solid #ccc!important; border-radius: 16px; margin-top:-35px; text-align:center' v-if="this.formValidate.IconUrl">Click here1 to upload</p>
               <div class="ivu-form-item-error-tip" v-show="msg !== ''">{{msg}}</div>
-            </i-col>
-          </Row>
         </FormItem>
   
-        <FormItem prop="name">
-          <Row>
-            <i-col span="4">{{$t('gameName')}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input></i-col>
-          </Row>
+        <FormItem  :label="$t('gameName')" prop="name"  style="width:400px;">
+            <i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
-        <FormItem prop="path">
-          <Row>
-            <i-col span="4">{{$t('ServerPath')}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.path" :placeholder="$t('pleaseInput')"></i-input></i-col>
-          </Row>
+         <FormItem  label="运行参数" prop="run_parameter"  style="width:400px;">
+            <i-input v-model="formValidate.run_parameter"  :placeholder="$t('pleaseInput')"></i-input>
+        </FormItem>
+        <FormItem  label="存档路径" prop="save_path"  style="width:400px;">
+            <i-input v-model="formValidate.save_path"  :placeholder="$t('pleaseInput')"></i-input>
+        </FormItem>
+        <FormItem :label="$t('ServerPath')"  prop="path"  style="width:400px;">
+          
+        <i-input v-model="formValidate.path" :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
         <!-- <FormItem prop="exepath">
           <Row>
@@ -41,20 +37,14 @@
             <i-col span="8"><i-input v-model="formValidate.exepath" :placeholder="$t('pleaseInput')"></i-input></i-col>
           </Row>
         </FormItem> -->
-        <FormItem prop="exename">
-          <Row>
-            <i-col span="4">{{$t('ExecuteProgram')}}：</i-col>
-            <i-col span="8"><i-input v-model="formValidate.exename" :placeholder="$t('pleaseInput')"></i-input></i-col>
-          </Row>
+        <FormItem :label="$t('ExecuteProgram')"  prop="exename"  style="width:400px;">
+     <i-input v-model="formValidate.exename" :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
-        <FormItem prop="isServerSync">
-          <Row>
-            <i-col span="4">{{$t('ServerSyncSet')}}：</i-col>
-            <i-col span="8">
+        <FormItem :label="$t('ServerSyncSet')" prop="isServerSync"  style="width:400px;">
+      
               <Select v-model="formValidate.isEnableSync" @on-change="handleSelectUpdataWays" :placeholder="$t('ChooseAtLeastOne')">
                 <Option v-for="item in updataWayList" :value="item.Id" :key="item.Id">{{ item.value }}</Option>
               </Select>
-            </i-col>
           </Row>
         </FormItem>
         <FormItem class="buttonList">
@@ -85,6 +75,8 @@
           path: '',
           exepath: '',
           exename: '',
+          save_path: '',
+          run_parameter: '',
           isEnableSync: 0
         },
         updataWayList: [

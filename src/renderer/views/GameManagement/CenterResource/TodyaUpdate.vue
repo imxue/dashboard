@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Select v-model="model1"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType">
+      <Select v-model="gametypeid"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType">
         <Option v-for="item in gameList" :value="item.id" :key="item.id" >{{ item.dispaly_name }}</Option>
       </Select>
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
@@ -42,7 +42,7 @@ export default {
       modal1: false,
       pageInfo: '',
       Pagelimit: 10, // 每页显示数
-      model1: '',
+      gametypeid: '',
       DownloadGameUp: false,
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
@@ -81,21 +81,23 @@ export default {
             }
           }
         },
-        { title: '游戏类型', minWidth: 120, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', minWidth: 120, key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { title: '当前热度', minWidth: 120, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        { title: '游戏类型', minWidth: 110, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { title: '游戏名称', minWidth: 110, key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '当前热度', minWidth: 110, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
         { title: '游戏大小',
           minWidth: 120,
+          maxWidth: 120,
           key: 'Size',
           renderHeader: (h, params) => { return h('span', this.$t('Size')) },
           render: (h, params) => {
             return h('span', bytesToSize3(params.row.Size))
           } },
-        { title: '中心游戏版本', minWidth: 140, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { title: '本地游戏版本', minWidth: 140, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { title: '中心游戏版本', minWidth: 140, maxWidth: 140, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { title: '本地游戏版本', minWidth: 140, maxWidth: 140, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          minWidth: 190,
+          minWidth: 180,
+          maxWidth: 180,
           render: (h, params) => {
             let type = params.row.State
             let a = h('Button',
@@ -145,7 +147,8 @@ export default {
       if (type === 0) {
         this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name' })
       } else {
-        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: type })
+        this.gametypeid = type
+        this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: this.gametypeid })
       }
     },
     /**
@@ -278,7 +281,8 @@ export default {
         content: this.$t('DeleteDec'),
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            // this.$Message.success(this.$t('DeleteGameSucess'))
+            this.$Message.success(this.$t('DeleteGameSucess') + this.$t('success'))
+            this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: this.gametypeid })
           }, () => {
             this.$Message.error(this.$t('FileNotFound'))
           }).catch(() => {
@@ -351,5 +355,6 @@ export default {
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
+
 </style>
 

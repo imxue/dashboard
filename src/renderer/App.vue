@@ -45,6 +45,9 @@ body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
+.ivu-table-overflowX {
+  overflow-x: hidden !important;
+}
 .ivu-table .demo-table-info-row td {
   background-color: #cce4f7;
 }

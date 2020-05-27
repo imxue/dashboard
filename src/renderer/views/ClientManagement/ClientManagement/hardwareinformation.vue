@@ -235,6 +235,7 @@ export default {
       } finally {
         this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state' })
         this.$refs.selection.selectAll(false)
+        this.init()
       }
     },
     handleChange (e) {
