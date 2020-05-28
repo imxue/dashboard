@@ -48,6 +48,9 @@ body {
 .ivu-table-overflowX {
   overflow-x: hidden !important;
 }
+.ive-table-tip {
+  overflow: hidden !important;
+}
 .ivu-table .demo-table-info-row td {
   background-color: #cce4f7;
 }

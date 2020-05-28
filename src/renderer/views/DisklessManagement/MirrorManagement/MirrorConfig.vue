@@ -330,7 +330,7 @@
         let data = { image, name, pno }
         createImageProjectx(data, this.masterip).then((response) => {
           if (response.data.error === null && response.data.result === null) {
-            this.$Message.success('复制成功！')
+            this.$Message.success(this.$t('copySuccess'))
             this.tableData = []
             this.showImgPopup = false
             this.handleGetImageList() // 创建成功 获取配置列表

@@ -65,7 +65,7 @@ export default {
       getCheckboxVal: [], // 勾选复选框值
       tableSelectVal: [],
       gameList: [
-        { id: 0, dispaly_name: '全部游戏' }
+        { id: 0, dispaly_name: this.$t('AllGame') }
       ],
       tableColumns: [
         { type: 'selection', width: '50px', align: 'center' },
@@ -226,7 +226,7 @@ export default {
         if (resp !== 0) {
           this.DownloadGameUp = false
           this.loadBtn = false
-          this.notifyUser('success', '游戏添加到下载队列')
+          this.notifyUser('success', `$t('gsd')`)
           this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
         }
         this.loadBtn = false
@@ -374,7 +374,7 @@ export default {
         loading: true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.notifyUser('success', '移除成功')
+            this.notifyUser('success', `$t('sd')`)
           }, (e) => {
             this.notifyUser('error', `${e.data.error}`)
           }).catch(() => {

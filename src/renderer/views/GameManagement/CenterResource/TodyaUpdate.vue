@@ -10,7 +10,7 @@
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t("LocalRemoval")}}</Button>
     </div>
     <!-- table -->
-    <Table border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
+    <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData"  @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
     <Row style="margin-top:10px; ">
       <!-- <Col span="6">{{$t('Resource')}}：{{this.pageInfo.count}} {{$t('Downloaded')}}：{{DownLoadCount}}</Col> -->
       <Col span="24"><Page show-total :total="this.pageInfo.count" :current="pageInfo.page_index + 1 " :page-size="Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
@@ -81,10 +81,10 @@ export default {
             }
           }
         },
-        { title: '游戏类型', minWidth: 110, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', minWidth: 110, key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { title: '当前热度', minWidth: 110, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-        { title: '游戏大小',
+        { minWidth: 110, maxWidth: 111, key: 'TypeName', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { minWidth: 110, maxWidth: 111, key: 'DisplayName', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { minWidth: 110, maxWidth: 111, key: 'Popularity', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+        {
           minWidth: 120,
           maxWidth: 120,
           key: 'Size',
@@ -92,8 +92,8 @@ export default {
           render: (h, params) => {
             return h('span', bytesToSize3(params.row.Size))
           } },
-        { title: '中心游戏版本', minWidth: 140, maxWidth: 140, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { title: '本地游戏版本', minWidth: 140, maxWidth: 140, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { minWidth: 140, maxWidth: 140, key: 'CenterVersion', renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { minWidth: 140, maxWidth: 140, key: 'LocalVersion', renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           minWidth: 180,
@@ -128,6 +128,9 @@ export default {
                 return '-'
             }
           }
+        },
+        { key: '',
+          title: ' '
         }
       ],
       tableData: []
@@ -355,6 +358,8 @@ export default {
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
-
+.ive-table-tip {
+  overflow: hidden !important;
+}
 </style>
 

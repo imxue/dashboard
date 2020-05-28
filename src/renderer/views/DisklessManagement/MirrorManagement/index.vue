@@ -22,7 +22,7 @@
         
                    <Option  :value="item.path" v-for="(item, index) in diskList" :key="index" >
                      {{item.path}}
-              <Poptip title="Title" content="content">
+              <Poptip :title="Title" :content="content">
                   <p>{{$t('AvailableSpace')}} {{item.availableSize}}</p>
                    </Poptip>
                    </Option>        
@@ -164,8 +164,8 @@
           var newArr = arr.filter(item => item.fun === 'imageDisk') // 获取镜像盘
           if (newArr.length === 0) {
             this.$Modal.confirm({
-              title: 'Title',
-              content: '找不到主服务器镜像盘，点击确定立即去设置镜像盘',
+              title: this.$t('prompt'),
+              content: this.$t('tip2'),
               onOk: () => {
                 let serverList
                 let data = {}

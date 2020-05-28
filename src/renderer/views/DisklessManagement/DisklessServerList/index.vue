@@ -201,8 +201,19 @@ export default {
       tableSelectVal: [],
       guid: '', // 服务器guid
       tempMasterIP: '',
+      stateMpa: new Map(
+        [['0', {
+          text: this.$t('Offline'),
+          color: '#999999'
+        }], ['1', {
+          text: this.$t('online'),
+          color: '#0ecf1f'
+        }], ['2', {
+          text: this.$t('OnlineException'),
+          color: '#f90'
+        }]]
+      ),
       tableColumns: [
-        // { type: 'selection', width: 60, align: 'center' },
         {
           renderHeader: (h, params) => {
             return h('span', this.$t('CurrentStatus'))
@@ -214,70 +225,12 @@ export default {
             let type = params.row.online
             let isMaster = params.row.isMaster
             if (isMaster === '1') {
-              switch (type) {
-                case '0':
-                  return h('div', [
-                    h(
-                      'span',
-                      { style: { color: '#999999' } },
-                      this.$t('Offline')
-                    ),
-                    h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))
-                  ])
-                case '1':
-                  return h('div', [
-                    h(
-                      'span',
-                      { style: { color: '#0ecf1f' } },
-                      this.$t('online')
-                    ),
-                    h(
-                      'Tag',
-                      {
-                        props: { color: 'red' },
-                        style: {
-                          marginLeft: '8px'
-                        }
-                      },
-                      this.$t('MasterIp')
-                    )
-                  ])
-                case '2':
-                  return h('div', [
-                    h(
-                      'span',
-                      { style: { color: '#f90' } },
-                      this.$t('OnlineException')
-                    ),
-                    h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))
-                  ])
-                default:
-                  return '-'
-              }
-            } else {
-              switch (type) {
-                case '0':
-                  return h(
-                    'span',
-                    { style: { color: '#999999' } },
-                    this.$t('Offline')
-                  )
-                case '1':
-                  return h(
-                    'span',
-                    { style: { color: '#0ecf1f' } },
-                    this.$t('online')
-                  )
-                case '2':
-                  return h(
-                    'span',
-                    { style: { color: '#f90' } },
-                    this.$t('OnlineException')
-                  )
-                default:
-                  return '-'
-              }
+              return h('div', [
+                h('Tag', { props: { color: 'red' } }, this.$t('MasterIp')),
+                h('span', { style: { color: this.stateMpa.get(type).color } }, this.stateMpa.get(type).text)
+              ])
             }
+            return h('span', { style: { color: this.stateMpa.get(type).color } }, this.stateMpa.get(type).text)
           }
         },
         {
@@ -349,7 +302,7 @@ export default {
                   }
                 }
               },
-              this.$t('服务器硬件信息')
+              this.$t('ServerHardInfo')
             )
             if (params.row.isMaster === '1') {
               return [a, c, b]
@@ -395,8 +348,7 @@ export default {
   },
   methods: {
     openMonute () {
-      let resp = ipcRenderer.sendSync('cmd', { mount: 'diskmappingtools.exe' })
-      console.log(resp)
+      ipcRenderer.sendSync('cmd', { mount: 'diskmappingtools.exe' })
     },
     async  handleSeeServeHanrdInfo (row) {
       try {
@@ -431,12 +383,6 @@ export default {
         console.log(error)
       }
     },
-    // handleButtonclear () {
-    //   setValue({ key: 'master', value: '' }).then(res => {
-    //     this.$store.dispatch('saveMaster', '')
-    //     this.serverList = []
-    //   })
-    // },
     async getTableData () {
       this.loading = true
       let ip = await this.HandleMasterIp()
@@ -479,6 +425,7 @@ export default {
       this.loading = false
       await addMasterServer(ip)
     },
+
     /** 检查ip是否为主服务器
      * @returns true 是
      * @returns false 否

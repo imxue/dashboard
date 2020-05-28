@@ -78,7 +78,10 @@
           // { title: '更新量', key: 'total_bytes', maxWidth: 109, minWidth: 109, renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) } },
           // { title: '已更新', key: 'update_bytes', maxWidth: 100, minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('Updated')) } },
           // { title: '更新速度', key: 'update_speed', maxWidth: 100, minWidth: 100, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('UpdateSpeed')) } },
-          { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } }
+          { title: '预计完成时间', key: 'expect_complete_time', minWidth: 130, maxWidth: 130, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('EstimatedFinishTime')) } },
+          { key: '',
+            title: ' '
+          }
           // { title: '操作',
           //   key: 'operation',
           //   render: (h, params) => {

@@ -156,5 +156,8 @@ export default {
   .topItem{ height: 60px;}
   .topColumn{ float:left; margin-right:10px;}
   .ivu-input-icon{right:55px;}
+.ivu-table-overflowX {
+  overflow-x: hidden !important;
+}
 </style>
 

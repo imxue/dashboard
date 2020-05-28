@@ -59,36 +59,14 @@
               }
             }
           },
-          { title: '游戏名称', maxWidth: 107, minWidth: 107, tooltip: true, key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-          { title: '游戏类型', maxWidth: 105, minWidth: 106, tooltip: true, key: 'game_type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-          { title: '热度', maxWidth: 100, minWidth: 100, key: 'popularity', align: 'center', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
-          { title: '目标服务器地址', maxWidth: 160, minWidth: 114, key: 'server_ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
-          { title: '源路径', key: 'src_dir', tooltip: true, maxWidth: 120, minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
-          { title: '目标路径', key: 'dst_dir', maxWidth: 105, minWidth: 106, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
-          { title: '结束时间', maxWidth: 200, minWidth: 90, tooltip: true, key: 'end_time', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
-          { title: '错误信息', minWidth: 100, tooltip: true, key: 'error', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } }
-          // { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-          //   key: 'operation',
-          //   minWidth: 100,
-          //   render: (h, params) => {
-          //     let type = params.row.sync_result
-          //     let a = h('Button',
-          //       { style: { marginRight: '5px', width: '70px' },
-          //         props: { type: 'primary', size: 'small' },
-          //         on: { click: () => { this.handleTableResync(params.row) } }
-          //       }, this.$t('Resync'))
-          //     switch (type) {
-          //       case 0:
-          //         return h('div', [a])
-          //       case 1:
-          //         return h('div', [a])
-          //       case 2:
-          //         return h('div', [a])
-          //       default :
-          //         return h('div', '-')
-          //     }
-          //   }
-          // }
+          { maxWidth: 107, minWidth: 107, tooltip: true, key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+          { maxWidth: 105, minWidth: 106, tooltip: true, key: 'game_type', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+          { maxWidth: 100, minWidth: 100, key: 'popularity', align: 'center', renderHeader: (h, params) => { return h('span', this.$t('Popularity')) } },
+          { maxWidth: 160, minWidth: 114, key: 'server_ip', renderHeader: (h, params) => { return h('span', this.$t('TargetServerAddress')) } },
+          { key: 'src_dir', tooltip: true, maxWidth: 120, minWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('SourcePath')) } },
+          { key: 'dst_dir', maxWidth: 105, minWidth: 106, tooltip: true, renderHeader: (h, params) => { return h('span', this.$t('TargetPath')) } },
+          { maxWidth: 200, minWidth: 90, tooltip: true, key: 'end_time', renderHeader: (h, params) => { return h('span', this.$t('EndTime')) } },
+          { minWidth: 100, tooltip: true, key: 'error', renderHeader: (h, params) => { return h('span', this.$t('ErrorMessage')) } }
         ],
         tableData: [],
         pageinfo: {

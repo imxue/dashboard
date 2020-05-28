@@ -1,14 +1,14 @@
 <template>
  <div>
-     <h4>主板</h4>
+     <h4>{{$t('MainBoard')}}</h4>
       <Table :columns="baseBoardcol" :data="baseBoard" border></Table>
       <h4 style="margin-top:10px;">cpu</h4>
       <Table :columns="cpuListcol" :data="cpuList" border></Table>
-        <h4 style="margin-top:10px;">网卡</h4>
+        <h4 style="margin-top:10px;">{{$t('NetworkCard')}}</h4>
        <Table :columns="ethernetListcol" :data="ethernetList" border></Table>
-           <h4 style="margin-top:10px;">内存</h4>
+           <h4 style="margin-top:10px;">{{$t('RAM')}}</h4>
         <Table :columns="meminfocol" :data="meminfo[0].dimmList" border></Table>
-        <h4 style="margin-top:10px;">硬盘</h4>
+        <h4 style="margin-top:10px;">{{$t('HardDisk')}}</h4>
         <template v-for="item in storageList">
          <Table :columns="storageListcol" :data="item.diskList" border></Table>
         </template>
@@ -32,19 +32,19 @@ export default {
       return [
         {
           key: 'manuFacturer',
-          title: '厂商'
+          title: this.$t('manuFacturer')
         },
         {
           key: 'productName',
-          title: '产品名称'
+          title: this.$t('productName')
         },
         {
           key: 'biosDate',
-          title: '日期'
+          title: this.$t('Date')
         },
         {
           key: 'biosVersion',
-          title: '版本'
+          title: this.$t('version')
         }
 
       ]
@@ -53,27 +53,28 @@ export default {
       return [
         {
           key: 'model',
-          title: '型号',
+          title: this.$t('model'),
           minWidth: 300,
           maxWidth: 300
         },
         {
           key: 'name',
-          title: '名称',
+          title: this.$t('n'),
           minWidth: 100,
           maxWidth: 120
         },
         {
           key: 'supportVt',
-          title: '支持虚拟化'
+          title: this.$t('supportVt')
         },
         {
           key: 'temperature',
-          title: '温度'
+          title: this.$t('temperature')
+
         },
         {
           key: 'util',
-          title: '占用率'
+          title: this.$t('util')
         }
       ]
     },
@@ -81,7 +82,7 @@ export default {
       return [
         {
           key: 'name',
-          title: '名称',
+          title: this.$t('n'),
           minWidth: 80,
           maxWidth: 80
         },
@@ -92,13 +93,13 @@ export default {
           maxWidth: 108
         }, {
           key: 'linkRate',
-          title: '链接速率',
+          title: this.$t('linkRate'),
           minWidth: 90,
           maxWidth: 90
         },
         {
           key: 'linkStatic',
-          title: '状态',
+          title: this.$t('linkStatic'),
           minWidth: 100,
           maxWidth: 100
         },
@@ -111,13 +112,13 @@ export default {
 
         {
           key: 'netmask',
-          title: '子网掩码',
+          title: this.$t('netmask'),
           minWidth: 100,
           maxWidth: 120
         },
         {
           key: 'controller',
-          title: '型号',
+          title: this.$t('controller'),
           minWidth: 350
         }
         // {
@@ -131,27 +132,29 @@ export default {
       return [
         {
           key: 'locator',
-          title: '插槽'
+          title: this.$t('locator')
         },
         {
           key: 'manufacturer',
-          title: '厂商'
+          title: this.$t('manuFacturer')
         },
         {
           key: 'serialNumber',
-          title: '序列号'
+          title: this.$t('serialNumber')
         },
         {
           key: 'size',
-          title: '大小'
+          title: this.$t('Size')
         },
         {
           key: 'speed',
-          title: '速度'
+          title: this.$t('speed')
+
         },
         {
           key: 'temperature',
-          title: '温度'
+          title: this.$t('temperature')
+
         }
       ]
     },
@@ -159,39 +162,39 @@ export default {
       return [
         {
           key: 'name',
-          title: '名称',
+          title: this.$t('n'),
           minWidth: 100,
           maxWidth: 100
         },
         {
           key: 'health',
-          title: '健康值',
+          title: this.$t('health'),
           minWidth: 90,
           maxWidth: 90
         },
         {
           key: 'interfaceRate',
-          title: '接口',
+          title: this.$t('interfaceRate'),
           minWidth: 200,
           maxWidth: 200
         },
         {
           key: 'model',
-          title: '型号',
+          title: this.$t('model'),
           minWidth: 200,
           maxWidth: 200
         },
         {
           key: 'serial',
-          title: '序列号'
+          title: this.$t('serialNumber')
         },
         {
           key: 'sizeK',
-          title: '大小'
+          title: this.$t('Size')
         },
         {
           key: 'temperature',
-          title: '温度'
+          title: this.$t('temperature')
         }
       ]
     }
