@@ -599,7 +599,6 @@ export default {
       console.log(resp)
     },
     openfiledialog () {
-      console.log('我发送了事件')
       let resp = ipcRenderer.sendSync('open-file-dialog')
       if (resp) {
         this.HandleBackUP(resp)

@@ -15,6 +15,7 @@
  </div>
 </template>
 <script>
+import { bytesToSize } from '@/utils/index'
 export default {
   name: 'ServerHardInfo',
   data () {
@@ -52,29 +53,29 @@ export default {
     cpuListcol () {
       return [
         {
-          key: 'model',
-          title: this.$t('model'),
-          minWidth: 300,
-          maxWidth: 300
-        },
-        {
           key: 'name',
           title: this.$t('n'),
           minWidth: 100,
           maxWidth: 120
         },
         {
+          key: 'model',
+          title: this.$t('model'),
+          minWidth: 300,
+          maxWidth: 300
+        },
+        {
           key: 'supportVt',
           title: this.$t('supportVt')
+        },
+        {
+          key: 'util',
+          title: this.$t('util')
         },
         {
           key: 'temperature',
           title: this.$t('temperature')
 
-        },
-        {
-          key: 'util',
-          title: this.$t('util')
         }
       ]
     },
@@ -121,11 +122,6 @@ export default {
           title: this.$t('controller'),
           minWidth: 350
         }
-        // {
-        //   key: '',
-        //   title: ' '
-
-        // }
       ]
     },
     meminfocol () {
@@ -133,6 +129,11 @@ export default {
         {
           key: 'locator',
           title: this.$t('locator')
+        },
+        {
+          key: 'type',
+          title: this.$t('Type')
+
         },
         {
           key: 'manufacturer',
@@ -145,15 +146,11 @@ export default {
         {
           key: 'size',
           title: this.$t('Size')
+
         },
         {
           key: 'speed',
           title: this.$t('speed')
-
-        },
-        {
-          key: 'temperature',
-          title: this.$t('temperature')
 
         }
       ]
@@ -190,7 +187,10 @@ export default {
         },
         {
           key: 'sizeK',
-          title: this.$t('Size')
+          title: this.$t('Size'),
+          render: (h, params) => {
+            return h('span', bytesToSize(params.row.sizeK))
+          }
         },
         {
           key: 'temperature',
