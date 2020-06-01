@@ -40,78 +40,82 @@ export default {
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'Status',
           render: (h, params) => {
-            let operate = {
-              1: '下载',
-              2: '上传',
-              3: '做种',
-              4: '停止上传',
-              5: '删除游戏'
-            }
-            let state = {
-              1: '等待中',
-              2: '中',
-              3: '成功',
-              4: '失败'
-            }
-            switch (params.row.OperateType) {
-              case 1:
-                return h('div', [
-                  h('Icon', {
-                    props: {
-                      type: 'md-arrow-down',
-                      color: 'green',
-                      size: '20'
-                    }
-                  }),
-                  h(
-                    'span',
-                    operate[params.row.OperateType] +
-                      state[params.row.TaskStatus]
-                  )
-                ])
-              case 2:
-                return h('div', [
-                  h('Icon', {
-                    props: {
-                      type: 'md-arrow-up',
-                      color: 'green',
-                      size: '20'
-                    }
-                  }),
-                  h(
-                    'span',
-                    operate[params.row.OperateType] +
-                      state[params.row.TaskStatus]
-                  )
-                ])
+            if (params.row.TaskStatus === 2) {
+              return h('span', '正在对比文件')
+            } else {
+              let operate = {
+                1: '下载',
+                2: '上传',
+                3: '做种',
+                4: '停止上传',
+                5: '删除游戏'
+              }
+              let state = {
+                1: '等待中',
+                2: '中',
+                3: '成功',
+                4: '失败'
+              }
+              switch (params.row.OperateType) {
+                case 1:
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: 'md-arrow-down',
+                        color: 'green',
+                        size: '20'
+                      }
+                    }),
+                    h(
+                      'span',
+                      operate[params.row.OperateType] +
+                        state[params.row.TaskStatus]
+                    )
+                  ])
+                case 2:
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: 'md-arrow-up',
+                        color: 'green',
+                        size: '20'
+                      }
+                    }),
+                    h(
+                      'span',
+                      operate[params.row.OperateType] +
+                        state[params.row.TaskStatus]
+                    )
+                  ])
 
-              case 4:
-                return h('div', [
-                  h('Icon', {
-                    props: {
-                      type: 'ios-pause-outline',
-                      color: 'green',
-                      size: '20'
-                    }
-                  }),
-                  h(
-                    'span',
-                    operate[params.row.OperateType] +
-                      state[params.row.TaskStatus]
-                  )
-                ])
-              default:
-                return h('div', [
-                  h('Icon', {
-                    props: {
-                      type: 'ios-arrow-round-up',
-                      color: 'green',
-                      size: '20'
-                    }
-                  }),
-                  h('span', operate[params.row.OperateType]),
-                  h('span', state[params.row.TaskStatus])
-                ])
+                case 4:
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: 'ios-pause-outline',
+                        color: 'green',
+                        size: '20'
+                      }
+                    }),
+                    h(
+                      'span',
+                      operate[params.row.OperateType] +
+                        state[params.row.TaskStatus]
+                    )
+                  ])
+                default:
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: 'ios-arrow-round-up',
+                        color: 'green',
+                        size: '20'
+                      }
+                    }),
+                    h('span', operate[params.row.OperateType]),
+                    h('span', state[params.row.TaskStatus])
+                  ])
+              }
             }
           }
         },
@@ -134,6 +138,9 @@ export default {
           minWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('progress')) },
           render: (h, params) => {
+            // if (params.row.UpdateBytes === 0) {
+            //   return h('span', '正在对比文件')
+            // } else {
             return h('div', [
               h('Progress', {
                 props: {
@@ -142,6 +149,7 @@ export default {
                 }
               })
             ])
+            // }
           }
         },
         { key: 'UpdateSpeed',
@@ -160,31 +168,12 @@ export default {
               return h('span', formatTime1(params.row.PreFinishedTime))
             }
           }
+        },
+        {
+          key: '',
+          title: ' '
         }
-        // { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-        //   key: 'operation',
-        //   minWidth: 130,
-        //   render: (h, params) => {
-        //     let type = params.row.id
-        //     let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-        //       on: { click: () => { this.handleTableDelete(params.row.CenterGameId) } }
-        //     }, this.$t('Delete'))
-        //     // let b = h('span', {
-        //     //   style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
-        //     //   on: { click: () => { this.handleTableMove(params.row) } }
-        //     // }, this.$t('MoveUp'))
-        //     // let c = h('span', {
-        //     //   style: { color: '#2d8cf0', textDecoration: 'underline' },
-        //     //   on: { click: () => { this.handleTableTop(params.row) } }
-        //     // }, this.$t('Topping'))
-        //     switch (type) {
-        //       case 0:
-        //         return h('div', [a])
-        //       default:
-        //         return h('span', [a])
-        //     }
-        //   }
-        // }
+
       ],
       tableData: [], // 队列数据
       pageinfo: {
@@ -241,6 +230,8 @@ export default {
         //   closable: true
         // })
         window.clearTimeout(this.timer)
+        this.tableData = []
+        this.pageinfo = { count: 0, page_index: 0 }
       })
     },
     handleCheckBox (data) {

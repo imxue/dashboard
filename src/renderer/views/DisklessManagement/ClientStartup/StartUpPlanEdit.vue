@@ -106,12 +106,16 @@
         </FormItem>
         <FormItem prop="hith" :label="this.$t('Resolution') + '：'" >
           <Row>
-             <i-col span="5">
+             <i-col span="4">
                     <Poptip trigger="focus">
-                     <i-input v-model="formValidate.wieh" placeholder=""></i-input>
+                     <i-input v-model="formValidate.wieh" placeholder="">
+                     </i-input>
                    <div slot="content">{{$t('宽')}}</div>
                    </Poptip>
               </i-col>
+                    <i-col span="1" style="text-align:center;">
+                        <span>X</span>
+                   </i-col>
             <i-col span="5">
                   <Poptip trigger="focus">
                 <i-input v-model="formValidate.hith" placeholder="" ></i-input>

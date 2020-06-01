@@ -45,9 +45,6 @@ body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
-.ivu-table-overflowX {
-  overflow-x: hidden !important;
-}
 .ive-table-tip {
   overflow: hidden !important;
 }
@@ -65,6 +62,12 @@ body {
 .topColumn {
   float: left;
   margin-right: 10px;
+}
+.ivu-modal-mask  {
+  z-index: 1082 !important;
+}
+.ivu-modal-wrap {
+ z-index: 9999 !important;
 }
 .modalBox .ivu-modal-footer {
   display: none !important;

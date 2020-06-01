@@ -102,16 +102,16 @@ export default {
             let type = params.row.State
             let a = h('Button',
               { style: { marginRight: '5px', width: '70px' },
-                props: { type: 'primary', size: 'small' },
+                props: { type: 'primary' },
                 on: { click: () => { this.handleFixGame(params.row) } }
               }, this.$t('RepairGame'))
             let b = h('Button', {
               style: { width: '70px' },
-              props: { type: 'error', size: 'small' },
+              props: { type: 'error' },
               on: { click: () => { this.handleRemove(params.row) } }
             }, this.$t('LocalRemoval'))
             let c = h('Button', {
-              props: { type: 'primary', size: 'small' },
+              props: { type: 'primary' },
               style: { width: '70px' },
               on: { click: () => { this.handleDownGame(params.row.Id) } }
             }, this.$t('DownloadGames'))

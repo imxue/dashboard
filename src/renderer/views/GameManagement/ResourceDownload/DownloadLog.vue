@@ -41,7 +41,7 @@ export default {
         },
         { title: '游戏类型', key: 'type_name', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
         { title: '游戏名称', key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
-        { title: '下载版本', key: 'version_code', minWidth: 100, renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
+        { title: '下载版本', key: 'version_code', minWidth: 135, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
         { title: '更新量',
           key: 'total_bytes',
           renderHeader: (h, params) => { return h('span', this.$t('UpdateVolume')) },
@@ -49,7 +49,8 @@ export default {
         },
         { title: '开始时间',
           key: 'start_time',
-          minWidth: 80,
+          minWidth: 145,
+          maxWidth: 145,
           renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) },
           render: (h, params) => {
             return h('span', this.formatTime1(params.row.start_time))
@@ -57,7 +58,8 @@ export default {
         },
         { title: '结束时间',
           key: 'end_time',
-          minWidth: 80,
+          minWidth: 145,
+          maxWidth: 145,
           renderHeader: (h, params) => { return h('span', this.$t('EndTime')) },
           render: (h, params) => {
             return h('span', this.formatTime1(params.row.end_time))
@@ -70,17 +72,17 @@ export default {
             // let a = h('span', { style: { color: '#2d8cf0', textDecoration: 'underline', marginRight: '10px' },
             //   on: { click: () => { this.handleTableDw(params.row) } }
             // }, this.$t('DownloadAgain'))
-            let c = h('Button',
+            return h('Button',
               { style: { marginRight: '10px' },
-                props: { type: 'primary', size: 'small' },
+                props: { type: 'info', disabled: type === 1 },
                 on: { click: () => { this.handleTableDw(params.row) } }
               }, this.$t('RepairGame'))
-            switch (type) {
-              case 2:
-                return h('div', [c])
-              case 1:
-                return h('div', '-')
-            }
+            // switch (type) {
+            //   case 2:
+            //     return h('div', [c])
+            //   case 1:
+            //     return h('div', '-')
+            // }
           }
         }
       ],
@@ -105,14 +107,10 @@ export default {
       if (('' + month) && month.length < 2) {
         month = '0' + month
       }
-      let day = date.getDate()
-      // let houters = date.getHours()
-      // let Minutes = date.getMinutes()
-      // let Seconds = date.getSeconds()
-      // Seconds = Seconds.toString()
-      // if (('' + Seconds) && Seconds.length < 2) {
-      //   Seconds = '0' + Seconds
-      // }
+      let day = date.getDate() + ''
+      if (('' + day) && day.length < 2) {
+        day = '0' + day
+      }
       return `${year}-${month}-${day}`
     },
     formatTime1 (item) {
@@ -143,7 +141,7 @@ export default {
       this.handTableData(0, 10, this.timer)
     },
     handleTableDw (index) {
-      repairGame(index.game_id).then(resp => {
+      repairGame(index.id).then(resp => {
         this.handTableData(0, 10, this.timer)
       }, err => {
         console.log(err)

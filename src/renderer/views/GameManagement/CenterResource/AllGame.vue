@@ -115,37 +115,59 @@ export default {
         { key: 'LocalVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          minWidth: 150,
-          maxWidth: 150,
+          minWidth: 210,
+          maxWidth: 210,
           render: (h, params) => {
             let type = params.row.State
-            let a = h('Button',
-              { style: { marginRight: '5px', width: '70px' },
-                props: { type: 'primary', size: 'small' },
-                on: { click: () => { this.handleFixGame(params.row) } }
-              }, this.$t('RepairGame'))
-            let b = h('Button', {
-              style: { width: '70px' },
-              props: { type: 'error', size: 'small' },
-              on: { click: () => { this.handleRemove(params.row) } }
-            }, this.$t('LocalRemoval'))
-            let c = h('Button', {
-              style: { width: '70px' },
-              props: { type: 'primary', size: 'small' },
-              on: { click: () => { this.handleDownGame(params.row.Id) } }
-            }, this.$t('DownloadGames'))
-            switch (type) {
-              case 0:
-                return h('div', [c])
-              case 1:
-                return h('span', [a, b])
-              case 2:
-                return h('span', [b])
-              case 3:
-                return h('span', [b])
-              default:
-                return '-'
-            }
+            // let a = h('Button',
+            //   { style: { marginRight: '5px', width: '70px' },
+            //     props: { type: 'primary', size: 'small' },
+            //     on: { click: () => { this.handleFixGame(params.row) } }
+            //   }, this.$t('RepairGame'))
+            // let b = h('Button', {
+            //   style: { width: '70px' },
+            //   props: { type: 'error', size: 'small' },
+            //   on: { click: () => { this.handleRemove(params.row) } }
+            // }, this.$t('LocalRemoval'))
+            // let c = h('Button', {
+            //   style: { width: '70px' },
+            //   props: { type: 'primary', size: 'small' },
+            //   on: { click: () => { this.handleDownGame(params.row.Id) } }
+            // }, this.$t('DownloadGames'))
+            // switch (type) {
+            //   case 0:
+            //     return h('div', [c])
+            //   case 1:
+            //     return h('div', {
+            //       style: { display: 'flex' }
+            //     }, [a, b])
+            //   case 2:
+            //     return h('span', [b])
+            //   case 3:
+            //     return h('span', [b])
+            //   default:
+            //     return '-'
+            // }
+            return h('div', { style: {
+              display: 'flex'
+            } }, [
+              h('Button', {
+                style: { width: '70px' },
+                props: { type: 'primary', disabled: type !== 0 },
+                on: { click: () => { this.handleDownGame(params.row.Id) } }
+              }, this.$t('DownloadGames')),
+              h('Button',
+                { style: { marginLeft: '5px', width: '70px' },
+                  props: { type: 'primary', disabled: type !== 1 },
+                  on: { click: () => { this.handleFixGame(params.row) } }
+                }, this.$t('RepairGame')),
+              h('Button', {
+                style: { width: '70px', marginLeft: '5px' },
+                props: { type: 'error', disabled: type === 0 },
+                on: { click: () => { this.handleRemove(params.row) } }
+              }, this.$t('LocalRemoval'))
+
+            ])
           }
         },
         { key: '',
@@ -226,7 +248,7 @@ export default {
         if (resp !== 0) {
           this.DownloadGameUp = false
           this.loadBtn = false
-          this.notifyUser('success', `$t('gsd')`)
+          this.notifyUser('success', this.$t('gsd'))
           this.handleGetGameList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gameName: '' })
         }
         this.loadBtn = false
@@ -374,7 +396,7 @@ export default {
         loading: true,
         onOk: () => {
           deleteGame(index.Id).then((e) => {
-            this.notifyUser('success', `$t('sd')`)
+            this.notifyUser('success', this.$t('sd'))
           }, (e) => {
             this.notifyUser('error', `${e.data.error}`)
           }).catch(() => {
