@@ -331,7 +331,22 @@ export default {
         { diskSymbol: 'H:', value: '6' },
         { diskSymbol: 'I:', value: '7' },
         { diskSymbol: 'J:', value: '8' },
-        { diskSymbol: 'K:', value: '9' }
+        { diskSymbol: 'K:', value: '9' },
+        { diskSymbol: 'L:', value: '10' },
+        { diskSymbol: 'M:', value: '11' },
+        { diskSymbol: 'N:', value: '12' },
+        { diskSymbol: 'O:', value: '13' },
+        { diskSymbol: 'P:', value: '14' },
+        { diskSymbol: 'Q:', value: '15' },
+        { diskSymbol: 'R:', value: '16' },
+        { diskSymbol: 'S:', value: '17' },
+        { diskSymbol: 'T:', value: '18' },
+        { diskSymbol: 'U:', value: '19' },
+        { diskSymbol: 'V:', value: '20' },
+        { diskSymbol: 'W:', value: '21' },
+        { diskSymbol: 'X:', value: '22' },
+        { diskSymbol: 'Y:', value: '23' },
+        { diskSymbol: 'Z:', value: '24' }
       ], // 盘符列表
       vol: [], // 已存在磁盘
       selecteDisk: 'imageDisk', // 选择的磁盘功能

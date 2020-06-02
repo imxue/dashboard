@@ -36,11 +36,11 @@ export default {
       tableColumns: [
         { type: 'selection', width: 60, align: 'center' },
         {
-          minWidth: 100,
+          minWidth: 110,
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'Status',
           render: (h, params) => {
-            if (params.row.TaskStatus === 2) {
+            if (params.row.TaskStatus === 2 && params.row.UpdateBytes === 0) {
               return h('span', '正在对比文件')
             } else {
               let operate = {

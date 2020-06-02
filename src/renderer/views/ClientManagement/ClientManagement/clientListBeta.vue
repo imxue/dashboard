@@ -79,7 +79,6 @@ export default {
     HandleOpenMpdal (param) {
       this.showClientTemplate = true
       this.flag = param.type
-      debugger
       this.client = param.data
     },
     HandleVisibleclientTemplateVisible (show) {

@@ -186,7 +186,7 @@ export default {
     }
   },
   created () {
-    this.init()
+    // this.init()
     this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state', config_state: this.ConfigState })
   },
 
@@ -214,6 +214,10 @@ export default {
       getAllPcConfigs(info).then((e) => {
         this.data1 = e.data.data
         this.pageinfo = e.data.pageino
+        let changeClient = this.data1.filter(item => {
+          return item.config_state === 1
+        })
+        this.$store.dispatch('SAVEHardwareInformation', changeClient)
       })
     },
     HandleChangePage (e) {
@@ -235,7 +239,7 @@ export default {
       } finally {
         this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state' })
         this.$refs.selection.selectAll(false)
-        this.init()
+        // this.init()
       }
     },
     handleChange (e) {
