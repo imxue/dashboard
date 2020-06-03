@@ -387,6 +387,7 @@ export default {
       this.loading = true
       let ip = await this.HandleMasterIp()
       if (ip && ip !== -1) {
+        // await addMasterServer(ip)
         let isMasterip = await this.checkIpisMaster(ip)
         if (isMasterip !== -1) {
           if (isMasterip) {
@@ -398,8 +399,7 @@ export default {
             }
           } else {
             let Masterip = await this.getMasteripByServerList(ip)
-            if (Masterip !== -1) {
-              // this.$store.dispatch('saveMaster', Masterip || '')
+            if (Masterip !== -1 && Masterip) {
               this.$store.dispatch('SetMasterip', { key: 'masterip', value: Masterip })
               let List = await this.getMasterList(ip)
               if (List !== -1) {
@@ -410,6 +410,7 @@ export default {
             } else {
               await this.clearServerConfig(ip)
               this.HandleAddServerx(Masterip, Masterip)
+              await addMasterServer(Masterip)
             }
           }
         } else {
@@ -423,7 +424,7 @@ export default {
         }
       }
       this.loading = false
-      await addMasterServer(ip)
+      // await addMasterServer(ip)
     },
 
     /** 检查ip是否为主服务器
@@ -597,55 +598,56 @@ export default {
      * 添加服务器
      */
     async handleAddServer (name) {
-      let fail
-      this.$refs[name].validate(valid => { if (valid) { fail = true } else { fail = false } })
-      if (fail) {
-        this.loadingBtn = true
-        try {
-          let OptServerip = this.formValidate.serverIP
-          let optPassword = this.formValidate.password
-          await this.HandleLogin(optPassword, OptServerip)
+      this.$refs[name].validate(async valid => {
+        if (valid) {
+          this.loadingBtn = true
+          try {
+            let OptServerip = this.formValidate.serverIP
+            let optPassword = this.formValidate.password
+            await this.HandleLogin(optPassword, OptServerip)
 
-          var resplist = await this.HandleGetServerList(OptServerip)
-          if (resplist.length === 0) {
-            // 服务器没有额外的类表
-            if (this.masterIp) {
-              await this.HandleAddServerx(OptServerip, this.masterIp)
-            } else {
-              await this.HandleAddServerx(OptServerip, OptServerip)
-              await this.setCustomConfig({ key: 'master', value: OptServerip })
-            }
-            await this.sleep(800)
-            this.serverList = await this.HandleGetServerList(this.masterIp)
-          } else {
-            // 服务器有额外的类表
-            if (this.masterIp) {
-              // 已经存在主服务器
-              await this.HandleAddServerx(OptServerip, this.masterIp)
-            } else {
-              // 不存在主服务
-              let masterServer = resplist.filter(item => { return item.isMaster === '1' })
-              if (masterServer) {
-                await this.setCustomConfig({ key: 'master', value: masterServer[0].serverIp })
+            var resplist = await this.HandleGetServerList(OptServerip)
+            if (resplist.length === 0) {
+              // 服务器没有额外的类表
+              if (this.masterIp) {
+                await this.HandleAddServerx(OptServerip, this.masterIp)
               } else {
-                this.modal4 = true
+                await this.HandleAddServerx(OptServerip, OptServerip)
+                await this.setCustomConfig({ key: 'master', value: OptServerip })
               }
+              await this.sleep(800)
+              this.serverList = await this.HandleGetServerList(this.masterIp)
+            } else {
+              // 服务器有额外的类表
+              if (this.masterIp) {
+                // 已经存在主服务器
+                await this.HandleAddServerx(OptServerip, this.masterIp)
+              } else {
+                // 不存在主服务
+                let masterServer = resplist.filter(item => { return item.isMaster === '1' })
+                if (masterServer) {
+                  await this.setCustomConfig({ key: 'master', value: masterServer[0].serverIp })
+                } else {
+                  this.modal4 = true
+                }
+              }
+              await this.sleep(800)
+              this.serverList = await this.HandleGetServerList(this.masterIp)
             }
-            await this.sleep(800)
-            this.serverList = await this.HandleGetServerList(this.masterIp)
+            this.serverPopup = false
+          } catch (error) {
+            const isObject = obj => obj === Object(obj)
+            if (isObject(error)) {
+              this.notifyUserOfDiskError(36)
+            } else {
+              this.notifyUserOfDiskError(error)
+            }
           }
-          this.serverPopup = false
-        } catch (error) {
-          const isObject = obj => obj === Object(obj)
-          if (isObject(error)) {
-            this.notifyUserOfDiskError(36)
-          } else {
-            this.notifyUserOfDiskError(error)
-          }
+          await this.sleep(500)
+          this.loadingBtn = false
         }
-        await this.sleep(500)
-        this.loadingBtn = false
-      }
+      })
+
       this.loading = false
     },
     /**

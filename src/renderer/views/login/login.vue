@@ -165,7 +165,6 @@ export default {
             if (!e.response && e.message) {
               this.notifyUser('error', e.message)
             }
-            console.log(e)
             if (e.data) {
               this.notifyUser('error', e.data.error)
             }

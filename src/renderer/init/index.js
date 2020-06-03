@@ -2,9 +2,13 @@ import { getAllPcConfigs } from '../api/client'
 import store from '../store/index'
 
 import alert from '../utils/alert'
-store.dispatch('GetbarInfo').catch((e) => {
+store.dispatch('GetbarInfo').then((e) => {
+}, (e) => {
+  alert.notifyUserOfError(e)
+}).catch((e) => {
   alert.notifyUserOfError('获取网吧信息失败')
 })
+
 function init () {
   // 获取客户机变动
   if (store.state.app.barinfo) {
@@ -23,7 +27,7 @@ function start () {
   init()
   setTimeout(() => {
     start()
-  }, 900000)
+  }, 8000)
 }
 
 setTimeout(() => {
