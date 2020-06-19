@@ -68,6 +68,14 @@
             {{ this.list.length }}
           </span>
           <label>{{ $t("Station") }}</label>
+
+          <label style="margin-left:10px;">{{ $t("onlineClientCount") }}：</label>
+          <span>
+            {{ this.statCount }}
+          </span>
+          <label>{{ $t("Station") }}</label>
+
+
         </div>
       </div>
       <div ref="viewTable" class="box  ggggg">
@@ -258,7 +266,7 @@ import {
 import edit from './ClientListAdd'
 import { getMasterIp } from '@/api/common'
 // OnScroll, CreateAt,
-import { CreateScroll } from '@/utils/index'
+import { CreateScroll, bytesToSize, formatSize } from '@/utils/index'
 const { ipcRenderer } = require('electron')
 export default {
   name: 'ClientList',
@@ -483,6 +491,7 @@ export default {
           }
         }
       ],
+      statCount: 0,
       tempx: [],
       pcdesc: false,
       pcasc: true,
@@ -567,7 +576,9 @@ export default {
       this.initStatFilterValue = ['1']
     }
 
-    await this.handgetClienList() // 获取客户机列表
+    await this.handgetClienList().then(() => {
+      this.start()
+    })// 获取客户机列表
   },
   mounted () {
     this.$refs.viewTable.addEventListener('mousewheel', e => {
@@ -703,10 +714,17 @@ export default {
         },
         {
           key: 'reRe',
-          minWidth: 115,
-          maxWidth: 130,
+          minWidth: 105,
+          maxWidth: 120,
           renderHeader: (h, params) => {
             return h('span', this.$t('reRe'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', formatSize(params.row.reRe))
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
@@ -715,6 +733,13 @@ export default {
           maxWidth: 130,
           renderHeader: (h, params) => {
             return h('span', this.$t('reTo'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', bytesToSize(params.row.reTo))
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
@@ -723,6 +748,13 @@ export default {
           maxWidth: 130,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrRe'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', formatSize(params.row.wrRe))
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
@@ -731,6 +763,27 @@ export default {
           maxWidth: 130,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrTo'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', bytesToSize(params.row.wrTo))
+            } else {
+              return h('span', '-')
+            }
+          }
+        },
+        {
+          key: 'liTi',
+          width: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('liTi'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', params.row.liTi)
+            } else {
+              return h('span', '-')
+            }
           }
         },
         {
@@ -818,6 +871,12 @@ export default {
     }
   },
   methods: {
+    async start () {
+      await this.handgetClienList()
+      this.timer = setTimeout(() => {
+        this.start()
+      }, 3000)
+    },
     async getMasterList () {
       try {
         let respList = await getServers(this.masterip)
@@ -942,12 +1001,12 @@ export default {
         return item._checked
       })
     },
-    start () {
-      this.timer = setTimeout(() => {
-        this.handgetClienList()
-        this.start()
-      }, 2000)
-    },
+    // start () {
+    //   this.timer = setTimeout(() => {
+    //     this.handgetClienList()
+    //     this.start()
+    //   }, 2000)
+    // },
     async handleButtonRemoth (obj) {
       try {
         await PcRemote(
@@ -1112,12 +1171,16 @@ export default {
      * 获取客户机列
      */
     async handgetClienList () {
+      this.statCount = 0
       this.clientMac = []
       this.searchVal = ''
       let superip = await getSuper(this.masterip)
       let client = await getPcListConfig(this.masterip)
       let clientList = client.data.result && (client.data.result.list || [])
       clientList.forEach(item => {
+        if (item.stat === '1') {
+          this.statCount++
+        }
         this.clientMac.push(item.mac)
       })
       clientList.forEach(item => {
@@ -1126,6 +1189,7 @@ export default {
       clientList.forEach(item => {
         this.pc.push(item.pc)
       })
+
       this.srcList = clientList // 保存原数组
       if (clientList) {
         this.pageInfo.count = clientList.length

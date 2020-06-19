@@ -182,22 +182,27 @@ export default {
       offset: 0,
       ConfigState: '',
       Datax: {},
-      oldDatax: {}
+      oldDatax: {},
+      timer: null
     }
   },
   created () {
     // this.init()
     this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state', config_state: this.ConfigState })
-  },
-
-  methods: {
-    init () {
-      getAllPcConfigs().then(res => {
-        let changeClient = res.data.data.filter(item => {
-          return item.config_state === 1
-        })
-        this.$store.dispatch('SAVEHardwareInformation', changeClient)
+      .then(() => {
+        this.start()
       })
+  },
+  beforeRouteLeave (to, from, next) {
+    clearTimeout(this.timer)
+    next()
+  },
+  methods: {
+    async start () {
+      await this.HandleGetInfo({ offset: this.offset, limit: this.limit, orderby: 'config_state', config_state: this.ConfigState })
+      this.timer = setTimeout(() => {
+        this.start()
+      }, 3000)
     },
     HandleDetail (row) {
       this.modal1 = true
@@ -210,15 +215,18 @@ export default {
         return ''
       }
     },
-    HandleGetInfo (info) {
-      getAllPcConfigs(info).then((e) => {
+    async HandleGetInfo (info) {
+      try {
+        let e = await getAllPcConfigs()
         this.data1 = e.data.data
         this.pageinfo = e.data.pageino
         let changeClient = this.data1.filter(item => {
           return item.config_state === 1
         })
         this.$store.dispatch('SAVEHardwareInformation', changeClient)
-      })
+      } catch (error) {
+        this.$Message.error({ content: `${error.data.error}`, 'closable': true })
+      }
     },
     HandleChangePage (e) {
       this.offset = (e - 1) * this.limit

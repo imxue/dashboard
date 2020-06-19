@@ -157,8 +157,7 @@ import {
   getServers,
   deleteserverConfig,
   login,
-  GetRegInfo,
-  GetServerHardInfo
+  GetRegInfo
 } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { setValue, getMasterIp } from '@/api/common'
@@ -377,10 +376,10 @@ export default {
     },
     async  handleSeeServeHanrdInfo (row) {
       try {
-        let resp = await GetServerHardInfo(row.serverIp)
+        // let resp = await GetServerHardInfo(row.serverIp)
         this.$router.push({
           path: 'ServerHardInfo',
-          query: { data: resp }
+          query: { serverIp: row.serverIp }
         })
       } catch (error) {
         this.$Message.error({

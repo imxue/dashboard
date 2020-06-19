@@ -64,6 +64,7 @@
 
      <Table
       border
+      style="margin-top:10px;"
       :columns="SrvStatTableStructure"
       :data="SrvStat"
     ></Table>
@@ -610,29 +611,26 @@ export default {
       SrvStatTableStructure: [
         {
           key: 'load',
-          title: 'load'
+          title: this.$t('Load')
         },
         {
           key: 'pcOnlineCount',
-          title: 'pcOnlineCount'
+          title: this.$t('pcOnlineCount')
         },
         {
           key: 'runningTime',
-          title: 'runningTime'
+          title: this.$t('runningTime')
         },
         {
           key: 'sendRate',
-          title: 'sendRate'
+          title: this.$t('sendRate')
         },
         {
           key: 'recvRate',
-          title: 'recvRate'
-        },
-        {
-          key: 'liTi',
-          title: 'liTi'
+          title: this.$t('recvRate')
         }
-      ]
+      ],
+      timer: null
     }
   },
   created () {
@@ -641,9 +639,24 @@ export default {
     this.handleGetNetworkx(this.currentPageServerip)
     this.handleGetDiskStatusx(this.currentPageServerip)
 
-    this.HandleGetSrvStat() // 获取服务器信息
+    this.HandleGetSrvStat().then(() => {
+      this.start()
+    }) // 获取服务器信息
+  },
+  beforeRouteLeave (to, from, next) {
+    clearTimeout(this.timer)
+    next()
   },
   methods: {
+    async start () {
+      this.HandleGetSrvStat()
+      this.handleGetCurrentPageServerInfo()
+      this.handleGetNetworkx(this.currentPageServerip)
+      this.handleGetDiskStatusx(this.currentPageServerip)
+      this.timer = setTimeout(() => {
+        this.start()
+      }, 3000)
+    },
     openMonute () {
       let resp = ipcRenderer.sendSync('cmd', { mount: '' })
       console.log(resp)
@@ -839,7 +852,7 @@ export default {
     handleGetCurrentPageServerInfo () {
       var data = this.$route.query.data
       this.currentPageServerip = data.serverIp
-      this.CurrentPageserverInfo.push(data)
+      this.CurrentPageserverInfo = [data]
       this.isMaster = this.CurrentPageserverInfo[0].isMaster
       this.isonline = this.CurrentPageserverInfo[0].online
     },

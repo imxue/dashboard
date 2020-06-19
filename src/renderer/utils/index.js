@@ -14,7 +14,7 @@ export function formatSize (value) {
   var limit = parseFloat(value)
   var size = ''
   if (value === '0' || value === 'undefined' || value === 'null') {
-    size = '0'
+    size = '0KB/s'
   } else if (limit < 0.1 * 1024) { // 小于0.1KB，则转化成B
     size = limit.toFixed(2) + 'KB/s'
   } else if (limit < 0.1 * 1024 * 1024) { // 小于0.1MB，则转化成KB
@@ -146,7 +146,6 @@ export function formatTime (time, option) {
   }
 }
 
-// 格式化时间
 export function getQueryObject (url) {
   url = url == null ? window.location.href : url
   const search = url.substring(url.lastIndexOf('?') + 1)
@@ -161,7 +160,18 @@ export function getQueryObject (url) {
   })
   return obj
 }
-// 格式化时间
+
+export function transformTime (timestamp = +new Date()) {
+  var date = new Date(timestamp * 1000)
+  var Y = date.getFullYear() + '-'
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+  var D = date.getDate() + ' '
+  var h = date.getHours() + ':'
+  var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':'
+  var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds())
+  return Y + M + D + h + m + s
+}
+
 function PadZero (str) {
   // 补零
   return new RegExp(/^\d$/g).test(str) ? `0${str}` : str
@@ -255,45 +265,6 @@ export function toggleClass (element, className) {
   }
   element.className = classString
 }
-
-export const pickerOptions = [
-  {
-    text: '今天',
-    onClick (picker) {
-      const end = new Date()
-      const start = new Date(new Date().toDateString())
-      end.setTime(start.getTime())
-      picker.$emit('pick', [start, end])
-    }
-  },
-  {
-    text: '最近一周',
-    onClick (picker) {
-      const end = new Date(new Date().toDateString())
-      const start = new Date()
-      start.setTime(end.getTime() - 3600 * 1000 * 24 * 7)
-      picker.$emit('pick', [start, end])
-    }
-  },
-  {
-    text: '最近一个月',
-    onClick (picker) {
-      const end = new Date(new Date().toDateString())
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      picker.$emit('pick', [start, end])
-    }
-  },
-  {
-    text: '最近三个月',
-    onClick (picker) {
-      const end = new Date(new Date().toDateString())
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      picker.$emit('pick', [start, end])
-    }
-  }
-]
 
 export function getTime (type) {
   if (type === 'start') {

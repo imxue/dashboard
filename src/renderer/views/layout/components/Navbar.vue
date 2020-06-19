@@ -115,7 +115,8 @@ export default {
   methods: {
     async HandleGetUpdate () {
       try {
-        await getUpdate()
+        let resp = await getUpdate('10019')
+        console.log(resp)
       } catch (error) {
         this.OnlienVersion = error.data.Version
       }

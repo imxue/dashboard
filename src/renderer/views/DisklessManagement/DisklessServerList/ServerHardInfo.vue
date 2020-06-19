@@ -16,6 +16,9 @@
 </template>
 <script>
 import { bytesToSize } from '@/utils/index'
+import {
+  GetServerHardInfo
+} from '@/api/wupan'
 export default {
   name: 'ServerHardInfo',
   data () {
@@ -25,7 +28,9 @@ export default {
       ethernetList: [],
       meminfo: [],
       storageList: [],
-      supportKVM: ''
+      supportKVM: '',
+      ip: '',
+      timer: null
     }
   },
   computed: {
@@ -200,11 +205,35 @@ export default {
     }
   },
   created () {
-    this.baseBoard = [this.$route.query.data.data.result.baseBoard]
-    this.cpuList = this.$route.query.data.data.result.cpuList
-    this.ethernetList = this.$route.query.data.data.result.ethernetList
-    this.meminfo = [this.$route.query.data.data.result.meminfo]
-    this.storageList = this.$route.query.data.data.result.storageList
+    // this.baseBoard = [this.$route.query.data.data.result.baseBoard]
+    // this.cpuList = this.$route.query.data.data.result.cpuList
+    // this.ethernetList = this.$route.query.data.data.result.ethernetList
+    // this.meminfo = [this.$route.query.data.data.result.meminfo]
+    // this.storageList = this.$route.query.data.data.result.storageList
+    this.ip = this.$route.query.serverIp
+    this.HandleGetHardInfo(this.ip).then(() => {
+      this.start()
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    clearTimeout(this.timer)
+    next()
+  },
+  methods: {
+    async HandleGetHardInfo (ip) {
+      let resp = await GetServerHardInfo(ip)
+      this.baseBoard = [resp.data.result.baseBoard]
+      this.cpuList = resp.data.result.cpuList
+      this.ethernetList = resp.data.result.ethernetList
+      this.meminfo = [resp.data.result.meminfo]
+      this.storageList = resp.data.result.storageList
+    },
+    async start () {
+      this.HandleGetHardInfo(this.ip)
+      this.timer = setTimeout(() => {
+        this.start()
+      }, 3000)
+    }
   }
 }
 </script>

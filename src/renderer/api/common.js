@@ -95,9 +95,20 @@ export function defaultparam () {
   })
 }
 
-export function getUpdate (ip) {
+// export function getUpdate (ip) {
+//   return request({
+//     baseURL: `http://10.88.66.158:88/update.json`,
+//     method: 'get'
+//   })
+// }
+/**
+ * 获取更新地址
+ */
+
+export function getUpdate (barid) {
   return request({
-    baseURL: `http://10.88.66.158:88/update.json`,
+    url: `/v1/sysbase/getUpgradeUrl?barid=${barid}`,
     method: 'get'
+
   })
 }
