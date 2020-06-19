@@ -4,37 +4,43 @@
       <div class="wrapper">
         <Menu mode="horizontal" theme="dark" active-name="1">
           <template v-for="item in routes">
-   
-
-
             <template  v-if="!item.hidden&&item.children" >
               <router-link
                 :to="item.redirect||item.path+'/'+item.children[0].path"
                 :key="item.children[0].name"
               >
                 <Menu-item :name="item.name">
+
+          
                   <template v-if="'ClientManagement' === item.meta.title && flag.length !== 0">
-                  <Icon type="ios-paper"/>
+
+                  <Icon :type='item.meta.icon'/>
                   <Badge :count="flag.length">
-                  {{ $t(item.meta.title) }}
+                     {{ $t(item.meta.title) }}
                   </Badge>
+
                   <span
                     v-if="item.meta&&item.meta.title"
                     slot="title"
                   >
-                       <Badge :count="flag.length">
+                  <Badge :count="flag.length">
+                      <Icon :type='item.meta.icon'/>
                   {{item.meta.title}}
-                       </Badge>
+                  </Badge>
+
                   </span>
+
                   </template>
 
                   <template v-else>
-                  <Icon type="ios-paper"/>
+              
+
+                  <Icon :type='item.meta.icon'/>
+
                   {{ $t(item.meta.title) }}
-                  <span
-                    v-if="item.meta&&item.meta.title"
-                    slot="title"
-                  >{{item.meta.title}}</span>
+
+                  <span v-if="item.meta&&item.meta.title" slot="title">{{item.meta.title}}</span>
+
                   </template>
                 </Menu-item>
               </router-link>
@@ -42,37 +48,33 @@
           </template>
         </Menu>
         <div class="headerFooter">
-          <span>{{ $t("BarId") }}：{{x.bar_id}}</span>
-          <span>{{ $t("OnlineTerminal") }} / {{ $t("AllTerminal") }} {{x.online_client_count}} / {{x.client_count}}</span>
-          <span>
-            {{ $t("AuthorizationIsValidUntil") }}：
-            <span :class="this.expireTimeState === 1 ? 'redColor' :  'normalColor'">{{this.expireTime}}</span>
-          </span>
-
-          <Dropdown trigger="click" @on-click="ChangeLanguage">
+        <template v-if="localVersion && OnlienVersion">
+      <Icon type="md-bulb"  style="margin-right:4px;color:#A5D6A7;font-size:20px;"/>
+       <span  style="color:#A5D6A7;cursor: pointer;" v-if="OnlienVersion !== localVersion + ''" @click="HandleUpdate">{{$t('CurrentNewVersion')}}</span>
+        </template>
+              <Dropdown trigger="click" @on-click="ChangeLanguage" style="margin-Left:10px;">
             <a href="javascript:void(0)">
-              {{$t('Language')}}
+              {{$t('Set')}}
               <Icon type="ios-arrow-down"></Icon>
             </a>
             <DropdownMenu slot="list">
-              <template v-for="item in localLanguage" :name="item.value">
-                <template v-if="localStorageLang">
-                  <DropdownItem
-                    v-if="item.value !== localStorageLang"
-                    v-bind:key="item.value"
-                    :name="item.value"
-                  >{{item.name}}</DropdownItem>
-                </template>
-                <template v-else>
-                  <DropdownItem
-                    v-if="item.value !== 'zh-CN'"
-                    v-bind:key="item.value"
-                    :name="item.value"
-                  >{{item.name}}</DropdownItem>
-                </template>
-              </template>
+              <DropdownItem name="about">{{$t('about')}}</DropdownItem>
+              <DropdownItem name="update">{{$t('checkUpdate')}}</DropdownItem>
+              <Dropdown placement="right-start">
+                 <DropdownItem>
+                    {{$t('Language')}}
+                    <Icon type="ios-arrow-down"></Icon>
+                </DropdownItem>
+                 <DropdownMenu slot="list">
+                    <DropdownItem name="zh-CN"  :selected='localStorageLang === "zh-CN"'>中文简体</DropdownItem>
+                    <DropdownItem name="zh-TW" :selected='localStorageLang === "zh-TW"'>中文繁體</DropdownItem>
+                    <DropdownItem name="en-US" :selected='localStorageLang === "en-US"'>English</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </DropdownMenu>
           </Dropdown>
+
+
           <Button @click="handleExit">{{$t('logout')}}</Button>
         </div>
       </div>
@@ -81,14 +83,14 @@
 </template>
 
 <script>
-// import moment from 'moment'
+import { ipcRenderer } from 'electron'
+import { getUpdate } from '../../../api/common'
 export default {
   data () {
     return {
       expireTime: '',
       expireTimeState: 0,
       localStorageLang: localStorage.getItem('lang'),
-      x: this.$store.state.app.barinfo,
       localLanguage: [
         {
           value: 'zh-CN',
@@ -102,38 +104,54 @@ export default {
           value: 'zh-TW',
           name: '中文繁體'
         }
-      ]
+      ],
+      OnlienVersion: ''
+
     }
   },
-  created () {
-    this.handleExpireTime()
+  async created () {
+    await this.HandleGetUpdate()
   },
   methods: {
-    handleExpireTime () {
-      if (this.$store.state.app.barinfo.expire_time) {
-        let date = new Date(this.$store.state.app.barinfo.expire_time)
-        let year = date.getFullYear()
-        let month = date.getMonth() + 1
-        let day = date.getDate()
-        this.expireTime = `${year} / ${month} / ${day}`
+    async HandleGetUpdate () {
+      try {
+        await getUpdate()
+      } catch (error) {
+        this.OnlienVersion = error.data.Version
       }
     },
     ChangeLanguage (name) {
-      this.$i18n.locale = name
-      localStorage.setItem('lang', name)
-      this.localStorageLang = name
+      if (!name) return
+
+      if (name === 'update') {
+        ipcRenderer.sendSync('cmd', { update: 'Updater -url:"http://127.0.0.1:88/update.json"' })
+      } else if (name === 'zh-CN' || name === 'zh-TW' || name === 'en-US') {
+        this.$i18n.locale = name
+        localStorage.setItem('lang', name)
+        this.localStorageLang = name
+      }
     },
     handleExit () {
       this.$store.dispatch('saveBarInfo', null)
       this.$router.push('/login')
+    },
+    HandleUpdate () {
+      ipcRenderer.sendSync('cmd', { update: 'Updater -url:"http://127.0.0.1:88/update.json"' })
     }
   },
   computed: {
     routes () {
-      return this.$router.options.routes
+      return this.$router.options.routes || ''
     },
     flag () {
-      return this.$store.state.app.HardwareInformation
+      return this.$store.state.app.HardwareInformation || ''
+    },
+    localVersion () {
+      if (this.$store.state.app.propraminfo) {
+        return this.$store.state.app.propraminfo.Version || ''
+      } else {
+        return ''
+      }
     }
   }
 }
@@ -145,19 +163,20 @@ export default {
 .redColor {
   color: #ff4d43;
 }
+
 .wrapper {
   display: flex;
   color: white;
   justify-content: space-between;
-}
-.wrapper span {
-  margin-right: 10px;
 }
 .headerFooter {
   margin-right: 10px;
 }
 .headerFooter button {
   margin-left: 15px;
+}
+.headerFooter .ivu-dropdown-menu {
+  line-height: 0 !important;
 }
 a {
   color: white;

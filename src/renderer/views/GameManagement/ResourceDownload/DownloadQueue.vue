@@ -41,7 +41,7 @@ export default {
           key: 'Status',
           render: (h, params) => {
             if (params.row.TaskStatus === 2 && params.row.UpdateBytes === 0) {
-              return h('span', '正在对比文件')
+              return h('span', '正在分配磁盘空间')
             } else {
               let operate = {
                 1: '下载',

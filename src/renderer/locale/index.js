@@ -11,6 +11,10 @@ import zhTW from './CT.json'
 
 Vue.use(VueI18n)
 const navLang = navigator.language
+
+if (!localStorage.getItem('lang')) {
+  localStorage.setItem('lang', 'zh-TW')
+}
 const lang = localStorage.getItem('lang') || navLang || 'en-US'
 
 Vue.locale = () => {}
@@ -20,9 +24,6 @@ const messages = {
   'zh-TW': { ...zhTw, ...zhTW }
 }
 
-if (!localStorage.getItem('lang')) {
-  localStorage.setItem('lang', lang)
-}
 const i18n = new VueI18n({
   locale: lang, // set locale
   messages, // set locale messages

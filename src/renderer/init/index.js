@@ -1,10 +1,13 @@
 import { getAllPcConfigs } from '../api/client'
 import store from '../store/index'
-
 import alert from '../utils/alert'
+import fs from 'fs'
+import path from 'path'
+const { app } = require('electron').remote
+
 store.dispatch('GetbarInfo').then((e) => {
 }, (e) => {
-  alert.notifyUserOfError(e)
+  console.log(e)
 }).catch((e) => {
   alert.notifyUserOfError('获取网吧信息失败')
 })
@@ -27,9 +30,17 @@ function start () {
   init()
   setTimeout(() => {
     start()
-  }, 8000)
+  }, 250560000)
 }
+let p = process.env.NODE_ENV === 'development' ? path.join(app.getAppPath(), '../../../../../cmd/Update/version.dat') : path.join(app.getAppPath(), '../../../Update/version.dat')
+fs.readFile(p, (_err, data) => {
+  if (_err) {
+    store.dispatch('propraminfo', null)
+  } else {
+    // eslint-disable-next-line no-new-func
+    var propram = new Function('return ' + data.toString())()
+    store.dispatch('propraminfo', propram)
+  }
+})
 
-setTimeout(() => {
-  start()
-}, 2000)
+start()

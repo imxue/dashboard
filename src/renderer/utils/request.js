@@ -16,7 +16,7 @@ service.interceptors.request.use(
       request.headers['Authorization'] = localStorage.getItem('token')
     }
     // 转发 无盘
-    if (request.url.includes('startHttpRequest')) {
+    if (request.url && request.url.includes('startHttpRequest')) {
       request.data.url = request.url1
       request.data.param = {
         ...request.data
@@ -48,7 +48,7 @@ service.interceptors.response.use(
   },
 
   error => {
-    if (error.request && error.request.status === 401) {
+    if (error.request && error.request.status === 403) {
       if (store.state.app.barinfo) {
         login(store.state.app.barinfo.bar_id).then(resp => {
           localStorage.setItem('token', resp.token)

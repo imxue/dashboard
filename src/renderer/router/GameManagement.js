@@ -21,29 +21,30 @@ export default {
   path: '/game',
   name: '游戏管理',
   component: Layout,
-  redirect: '/game/subType1/subType1-1',
-  meta: { title: 'GameManagement', icon: 'example' },
+  redirect: '/game/centerResources/AllGame',
+  meta: { title: 'GameManagement', icon: 'md-game-controller-b' },
   children: [
     {
-      path: 'subType1',
+      path: 'centerResources',
       name: '中心资源',
+      redirect: '/game/centerResources/AllGame',
       meta: { title: 'CenterResource', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'subType1-1',
+          path: 'AllGame',
           name: '全部游戏',
           meta: { title: 'AllGame' },
           component: AllGame
         },
         {
-          path: 'subType1-2',
+          path: 'TodyaUpdate',
           name: '今日更新',
           meta: { title: 'TodyaUpdate' },
           component: TodyaUpdate
         },
         {
-          path: 'subType1-3',
+          path: 'SystemTool',
           name: '系统工具',
           meta: { title: 'SystemTool' },
           component: SystemTool
@@ -51,26 +52,27 @@ export default {
       ]
     },
     {
-      path: 'subType2',
+      path: 'resourceDownload',
       name: '资源下载',
+      redirect: '/game/resourceDownload/DownloadQueue',
       meta: { title: 'ResourceDownload', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'subType2-1',
+          path: 'DownloadQueue',
           name: '下载队列',
           meta: { title: 'DownloadQueue' },
           component: DownloadQueue
         },
         {
-          path: 'subType2-2',
-          name: 'GameManagement-SubType2-2',
+          path: 'downloadLog',
+          name: 'downloadLog',
           meta: { title: 'DownloadLog' },
           component: DownloadLog
         },
         {
           path: 'DownloadSet',
-          name: 'subType2-set',
+          name: 'DownloadSet',
           meta: { title: 'DownloadSet', hidden: true },
           component: DownloadSet,
           hidden: true
@@ -78,14 +80,15 @@ export default {
       ]
     },
     {
-      path: 'subType3',
-      name: 'GameManagement-SubType3',
+      path: 'LocalResource',
+      name: 'LocalResource',
+      redirect: '/game/LocalResource/DownloadedGame',
       meta: { title: 'LocalResource', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'SubType3-1',
-          name: '已下载游戏',
+          path: 'DownloadedGame',
+          name: 'DownloadedGame',
           meta: { title: 'DownloadedGame' },
           component: DownloadedGame
         },
@@ -121,6 +124,7 @@ export default {
     {
       path: 'SyncSetManagement',
       name: 'SyncSetManagemen',
+      redirect: '/game/SyncSetManagement/AssignGame',
       meta: { title: 'SyncManagement', hidden: true },
       component: NullLayout,
       children: [
@@ -131,8 +135,8 @@ export default {
           component: AssignGame
         },
         {
-          path: 'SubType4-2',
-          name: 'GameManagement-SubType4-2',
+          path: 'SyncTask',
+          name: 'SyncTask',
           meta: { title: 'SyncTask' },
           component: SyncTask
         },

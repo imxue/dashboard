@@ -7,11 +7,8 @@
             {{ $t(item.meta.title) }}
           </template>
           <template v-for="(subItem) in item.children" >
-           <!-- {{subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path}} -->
-           
-            <Menu-item :name="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">
+            <Menu-item :name="subItem.redirect|| routes.path + '/' + item.path + '/' + subItem.path" v-if="!subItem.hidden"  :to="subItem.redirect||routes.path + '/' + item.path + '/' + subItem.path" :key="subItem.path">
             <template v-if="'HardwareInformation' === subItem.meta.title && flag.length !== 0">
-            <!-- <Icon type="md-warning"  class="flag"/> -->
             <Badge :count="flag.length">
             {{ $t(subItem.meta.title) }} 
             </Badge>
@@ -44,15 +41,22 @@
           return item.path === this.$route.matched[0].path
         })
         this.openname = ['0', '1', '2', '3']
-        this.$nextTick(() => {
-          this.$refs.side_menu.updateOpened()
-          this.activeName = matched[0]['redirect']
-          // this.$refs.side_menu.updateActiveName()
-        })
+        // this.$nextTick(() => {
+        //   this.$refs.side_menu.updateOpened()
+        //   this.activeName = matched[0]['redirect']
+        // })
         return matched[0]
       },
       flag () {
         return this.$store.state.app.HardwareInformation
+      }
+    },
+    watch: {
+      '$route' (to, from) {
+        this.$nextTick(() => {
+          this.$refs.side_menu.updateOpened()
+          this.activeName = to.path
+        })
       }
     },
     methods: {

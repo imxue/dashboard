@@ -252,7 +252,8 @@ import {
   deletePcsConfigx,
   getPcGroupx,
   PcRemote,
-  CtrlPcsConf
+  CtrlPcsConf,
+  getServers
 } from '@/api/wupan'
 import edit from './ClientListAdd'
 import { getMasterIp } from '@/api/common'
@@ -314,8 +315,11 @@ export default {
       tableData: [],
       tableDataList: [], // 批量编辑时，传值到下一页
       currentSuper: [], // 超级工作站
-      elementScroll: null,
+      elementScroll: {
+        scrollTop: 0
+      },
       fiterPcGp: '', // 已选择的客户机启动方案
+      filtercurDasc: '', // 所在服务器
       currentSuperCol: [
         { type: 'selection', width: 50, align: 'center' },
         {
@@ -359,219 +363,8 @@ export default {
           }
         }
       ],
-      tableColumns: [
-        { type: 'selection', width: 50, align: 'center' },
-        {
-          renderHeader: (h, params) => {
-            return h('span', this.$t('Status'))
-          },
-          key: 'stat',
-          minWidth: 75,
-          maxWidth: 80,
-          render: (h, params) => {
-            let a = ''
-            switch (params.row.stat) {
-              case '1':
-                a = h('Icon', {
-                  props: { type: 'md-desktop', size: '20', color: '#33AFFF' }
-                })
-                break
-              case '0':
-                a = h('Icon', {
-                  props: { type: 'md-desktop', size: '20', color: '#B5B6BE' }
-                })
-                break
-            }
-            return a
-          }
-        },
-        {
-          key: 'ip',
-          minWidth: 120,
-          maxWidth: 130,
-          sortable: 'custom',
-          renderHeader: (h, params) => {
-            return h('span', this.$t('ClientIP'))
-          }
-        },
-        {
-          key: 'rate',
-          minWidth: 110,
-          render: (h, params) => {
-            return h('span', `${params.row.rate || 0} Mb/s`)
-          },
-          renderHeader: (h, params) => {
-            return h('span', this.$t('NIC speed'))
-          }
-        },
-        {
-          key: 'pc',
-          minWidth: 100,
-          maxWidth: 120,
-          sortable: 'custom',
-          renderHeader: (h, params) => {
-            return h('span', this.$t('MachineName'))
-          }
-        },
-        {
-          key: 'mac',
-          minWidth: 135,
-          maxWidth: 138,
-          renderHeader: (h, params) => {
-            return h('span', this.$t('ClientMAC'))
-          }
-        },
-        {
-          key: 'curDaSV',
-          minWidth: 120,
-          maxWidth: 130,
-          sortable: 'custom',
-          renderHeader: (h, params) => {
-            return h('span', this.$t('TheServer'))
-          }
-        },
-        {
-          key: 'pcGp',
-          minWidth: 105,
-          maxWidth: 105,
-          filters: [],
-          filterMultiple: false,
-          filterRemote: this.fiterFunction,
-          renderHeader: (h, params) => {
-            return h('span', this.$t('StartUpPlan'))
-          }
-        },
-        {
-          key: 'curImg',
-          minWidth: 115,
-          maxWidth: 130,
-          renderHeader: (h, params) => {
-            return h('span', this.$t('MirrorName'))
-          }
-        },
 
-        {
-          renderHeader: (h, params) => {
-            return h('span', this.$t('operation'))
-          },
-          key: 'super',
-          minWidth: 380,
-          fixed: 'right',
-          render: (h, params) => {
-            let that = this
-            let a = ''
-            if (that.currentSuper.length > 0) {
-              a = h('div', [
-                h(
-                  'Button',
-                  {
-                    props: { type: 'primary', ghost: true },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handleTableEdit(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Edit')
-                ),
-                h(
-                  'Button',
-                  {
-                    props: { type: 'primary', ghost: true },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handDetele(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Delete')
-                ),
-                h(
-                  'Button',
-                  {
-                    props: {
-                      type: 'info',
-                      disabled: params.row.stat !== '1',
-                      ghost: true
-                    },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handleButtonRemoth(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Remote')
-                )
-              ])
-            } else {
-              a = h('div', [
-                h(
-                  'Button',
-                  {
-                    props: { type: 'primary', ghost: true },
-                    on: {
-                      click: () => {
-                        this.setSuperList(params.row)
-                      }
-                    }
-                  },
-                  this.$t('SetSuperWorkstation')
-                ),
-                h(
-                  'Button',
-                  {
-                    props: { type: 'primary', ghost: true },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handleTableEdit(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Edit')
-                ),
-                h(
-                  'Button',
-                  {
-                    props: { type: 'error', ghost: true },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handDetele(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Delete')
-                ),
-                h(
-                  'Button',
-                  {
-                    props: {
-                      type: 'info',
-                      disabled: params.row.stat !== '1',
-                      ghost: true
-                    },
-                    style: { marginLeft: '10px' },
-                    on: {
-                      click: () => {
-                        this.handleButtonRemoth(params.row)
-                      }
-                    }
-                  },
-                  this.$t('Remote')
-                )
-              ])
-            }
-
-            return a
-          }
-        }
-      ],
       tableColumns1: [
-        // { type: 'selection', width: 50, align: 'center' },
         {
           renderHeader: (h, params) => {
             return h('span', this.$t('Status'))
@@ -659,7 +452,7 @@ export default {
               h(
                 'Button',
                 {
-                  props: { type: 'info', ghost: true, disabled: params.row.stat !== '0' },
+                  props: { type: 'info', disabled: params.row.stat !== '0' },
                   style: { marginRihgt: '10px' },
                   on: {
                     click: () => {
@@ -674,8 +467,7 @@ export default {
                 {
                   props: {
                     type: 'info',
-                    disabled: params.row.stat !== '1',
-                    ghost: true
+                    disabled: params.row.stat !== '1'
                   },
                   style: { marginLeft: '10px' },
                   on: {
@@ -696,8 +488,6 @@ export default {
       pcasc: true,
       ipasc: false,
       ipdesc: false,
-      curDaSVasc: false,
-      curDaSVdesc: false,
       srcLis: [],
       nameList: [],
       formValidate: { nameVal: '' },
@@ -757,13 +547,27 @@ export default {
       loadingshoudown: false,
       loadingRestart: false,
       timer: null,
-      srcList: ''
+      srcList: '',
+      filterServerIp: '',
+      filtersCurDasv: [],
+      filterspcGp: [],
+      initCurDascFilterValue: [],
+      initStatFilterValue: [],
+      initPcGpFilterValue: []
     }
   },
   async created () {
     await this.HandleGetMaster() // 获取主服务器
-    await this.handgetClienList() // 获取客户机列表
     await this.handleGetPcGroup()
+    await this.getMasterList()
+    if (this.$route.query.ip) {
+      this.filtercurDasc = this.$route.query.ip
+      this.initCurDascFilterValue = [this.$route.query.ip]
+      this.filterStat = '1'
+      this.initStatFilterValue = ['1']
+    }
+
+    await this.handgetClienList() // 获取客户机列表
   },
   mounted () {
     this.$refs.viewTable.addEventListener('mousewheel', e => {
@@ -787,7 +591,217 @@ export default {
     },
     masterip () {
       return this.$store.state.app.masterip
+    },
+    tableColumns () {
+      return [
+        { type: 'selection', width: 50, align: 'center' },
+        {
+          renderHeader: (h, params) => {
+            return h('span', this.$t('Status'))
+          },
+          key: 'stat',
+          minWidth: 85,
+          maxWidth: 85,
+          resizable: true,
+          filters: [
+            {
+              label: '在线',
+              value: '1'
+            },
+            {
+              label: '离线',
+              value: '0'
+            }
+          ],
+          filteredValue: this.initStatFilterValue,
+          filterMultiple: false,
+          filterRemote: this.fiterStatFunction,
+          render: (h, params) => {
+            let a = ''
+            switch (params.row.stat) {
+              case '1':
+                a = h('Icon', {
+                  props: { type: 'md-desktop', size: '20', color: '#33AFFF' }
+                })
+                break
+              case '0':
+                a = h('Icon', {
+                  props: { type: 'md-desktop', size: '20', color: '#B5B6BE' }
+                })
+                break
+            }
+            return a
+          }
+        },
+        {
+          key: 'ip',
+          minWidth: 120,
+          maxWidth: 130,
+          sortable: 'custom',
+          renderHeader: (h, params) => {
+            return h('span', this.$t('ClientIP'))
+          }
+        },
+        {
+          key: 'rate',
+          minWidth: 110,
+          render: (h, params) => {
+            return h('span', `${params.row.rate || 0} Mb/s`)
+          },
+          renderHeader: (h, params) => {
+            return h('span', this.$t('NIC speed'))
+          }
+        },
+        {
+          key: 'pc',
+          minWidth: 110,
+          maxWidth: 120,
+          sortable: 'custom',
+          renderHeader: (h, params) => {
+            return h('span', this.$t('MachineName'))
+          }
+        },
+        {
+          key: 'mac',
+          minWidth: 135,
+          maxWidth: 138,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('ClientMAC'))
+          }
+        },
+        {
+          key: 'curDaSV',
+          minWidth: 120,
+          maxWidth: 130,
+          filters: this.filtersCurDasv,
+          filteredValue: this.initCurDascFilterValue,
+          filterMultiple: false,
+          filterRemote: this.fitercurIpFunction,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('TheServer'))
+          }
+        },
+        {
+          key: 'pcGp',
+          minWidth: 110,
+          maxWidth: 110,
+          filters: this.filterspcGp,
+          filterMultiple: false,
+          filteredValue: this.initPcGpFilterValue,
+          filterRemote: this.fiterFunction,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('StartUpPlan'))
+          }
+        },
+        {
+          key: 'curImg',
+          minWidth: 115,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('MirrorName'))
+          }
+        },
+        {
+          key: 'reRe',
+          minWidth: 115,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('reRe'))
+          }
+        },
+        {
+          key: 'reTo',
+          minWidth: 115,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('reTo'))
+          }
+        },
+        {
+          key: 'wrRe',
+          minWidth: 115,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('wrRe'))
+          }
+        },
+        {
+          key: 'wrTo',
+          minWidth: 115,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('wrTo'))
+          }
+        },
+        {
+          renderHeader: (h, params) => {
+            return h('span', this.$t('operation'))
+          },
+          key: 'super',
+          minWidth: 280,
+          fixed: 'right',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: { type: 'primary' },
+                style: { marginRight: '10px' },
+                on: {
+                  click: () => {
+                    this.handleTableEdit(params.row)
+                  }
+                }
+              }, this.$t('Edit')),
+              h('Button', {
+                props: { type: 'error' },
+                style: { marginRight: '10px' },
+                on: {
+                  click: () => {
+                    this.handDetele(params.row)
+                  }
+                }
+              }, this.$t('Delete')),
+              h('Dropdown', {
+                props: {
+                  trigger: 'click'
+                }
+              }, [
+                h('Button', [
+                  h('span', '更多'),
+                  h('Icon', {
+                    props: {
+                      'type': 'ios-arrow-down'
+                    }
+                  })
+                ]),
+
+                h('DropdownMenu', {
+                  slot: 'list',
+                  props: {
+                    placement: 'top-start'
+                  }
+                }, [
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: () => {
+                        this.handleButtonRemoth(params.row)
+                      }
+                    }
+                  }, this.$t('Remote')),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: () => {
+                        this.setSuperList(params.row)
+                      }
+                    }
+                  }, this.$t('SetSuperWorkstation'))
+                ])
+              ])
+            ])
+          }
+        }
+      ]
     }
+
   },
   components: {
     edit
@@ -796,7 +810,28 @@ export default {
     clearTimeout(this.timer)
     next()
   },
+  watch: {
+    async masterip (v) {
+      if (v) {
+        await this.getMasterList(v)
+      }
+    }
+  },
   methods: {
+    async getMasterList () {
+      try {
+        let respList = await getServers(this.masterip)
+        this.serverList = respList.data.result.list ? respList.data.result.list : []
+        this.filtersCurDasv = this.serverList.map((e, i) => {
+          let obj = {}
+          obj.label = e.serverIp
+          obj.value = e.serverIp
+          return obj
+        })
+      } catch (e) {
+        return -1
+      }
+    },
     HandleCreateScroll (view, all) {
       this.elementScroll = CreateScroll(document.querySelector('#scroll'), document.querySelector('#content'), view * 48, document.querySelector('#all'), all * 48)
       this.elementScroll.addEventListener('scroll', e => {
@@ -828,6 +863,35 @@ export default {
         parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit
       )
       this.HandleCreateScroll(this.tableData.length, filterList.length)
+    },
+    async fitercurIpFunction (value) {
+      if (value.length === 0) {
+        value = value[0]
+        this.filtercurDasc = value
+      }
+      if (typeof value === 'string') {
+        value = value + ''
+        this.filtercurDasc = value
+      } else if (value instanceof Array) {
+        value = value[0]
+        this.filtercurDasc = value
+      }
+      this.handgetClienList()
+    },
+
+    async fiterStatFunction (value) {
+      if (value.length === 0) {
+        value = value[0]
+        this.filterStat = value
+      }
+      if (typeof value === 'string') {
+        value = value + ''
+        this.filterStat = value
+      } else if (value instanceof Array) {
+        value = value[0]
+        this.filterStat = value
+      }
+      this.handgetClienList()
     },
     onSelectAll () {
       this.list.forEach(item => {
@@ -904,58 +968,40 @@ export default {
         this.ipdesc = false
         this.pcasc = false
         this.pcdesc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'ip' && order === 'desc') {
         this.ipdesc = true
         this.ipasc = false
         this.pcasc = false
         this.pcdesc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'ip' && order === 'normal') {
         this.ipdesc = false
         this.ipasc = false
         this.pcasc = true
         this.pcdesc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'pc' && order === 'asc') {
         this.pcdesc = false
         this.pcasc = true
         this.ipasc = false
         this.ipdesc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'pc' && order === 'desc') {
         this.pcdesc = true
         this.pcasc = false
         this.ipasc = false
         this.ipdesc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'pc' && order === 'normal') {
         this.pcdesc = false
         this.pcasc = false
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
       } else if (key === 'curDaSV' && order === 'desc') {
-        this.curDaSVdesc = true
-        this.curDaSVasc = false
         this.pcdesc = false
         this.pcasc = false
         this.ipasc = false
         this.ipdesc = false
       } else if (key === 'curDaSV' && order === 'asc') {
-        this.curDaSVdesc = false
-        this.curDaSVasc = true
         this.pcdesc = false
         this.pcasc = false
         this.ipasc = false
         this.ipdesc = false
       } else if (key === 'curDaSV' && order === 'normal') {
-        this.curDaSVdesc = false
-        this.curDaSVasc = false
         this.pcasc = true
       }
       this.handgetClienList()
@@ -1103,12 +1149,21 @@ export default {
             })
             this.list = list
           }
-          if (this.curDaSVasc) {
-            this.ipSort(this.list, 'curDaSV', 'asc')
+
+          if (this.filtercurDasc) {
+            list = list.filter(item => {
+              return this.filtercurDasc === item.curDaSV
+            })
+            this.list = list
           }
-          if (this.curDaSVdesc) {
-            this.ipSort(this.list, 'curDaSV', 'desc')
+
+          if (this.filterStat) {
+            list = list.filter(item => {
+              return this.filterStat === item.stat
+            })
+            this.list = list
           }
+
           if (this.ipasc) {
             this.ipSort(this.list, 'ip', 'asc')
           }
@@ -1172,11 +1227,17 @@ export default {
         } else {
           this.list = clientList
         }
-        if (this.curDaSVasc) {
-          this.ipSort(this.list, 'curDaSV', 'asc')
+        if (this.filtercurDasc) {
+          list = list.filter(item => {
+            return this.filtercurDasc === item.curDaSV
+          })
+          this.list = list
         }
-        if (this.curDaSVdesc) {
-          this.ipSort(this.list, 'curDaSV', 'desc')
+        if (this.filterStat) {
+          list = list.filter(item => {
+            return this.filterStat === item.stat
+          })
+          this.list = list
         }
         if (this.ipasc) {
           this.ipSort(this.list, 'ip', 'asc')
@@ -1379,16 +1440,14 @@ export default {
     },
     // 获取启动方案
     handleGetPcGroup () {
-      console.log(this.masterip)
       getPcGroupx(this.masterip).then(
         e => {
-          let demo = []
-          this.pcGpListx = e.data.result.list
-          this.pcGpListx.forEach(item => {
-            let lable = item.name
-            demo.push({ label: lable, value: lable })
+          this.filterspcGp = e.data.result.list.map((i) => {
+            let o = {}
+            o.label = i.name
+            o.value = i.name
+            return o
           })
-          this.tableColumns[7].filters = demo
         },
         e => {
           this.$Message.error(e.data.error)

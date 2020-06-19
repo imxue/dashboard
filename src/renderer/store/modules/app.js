@@ -10,7 +10,9 @@ const state = {
   },
   RegInfo: {},
   HardwareInformation: '',
-  fileName: '' // 选中的文件
+  fileName: '', // 选中的文件
+  propraminfo: '',
+  propraminfox: ''
 }
 const mutations = {
   SAVE_Master_IP (state, masterip) {
@@ -27,14 +29,20 @@ const mutations = {
   },
   SAVE_fileName (state, name) {
     state.fileName = name
+  },
+  SAVE_PROPRAM_INFO (state, data) {
+    state.propraminfo = data
   }
-
 }
 const actions = {
   saveMaster ({ commit }, masterip) {
     // do something async
     commit('SAVE_Master_IP', masterip)
   },
+  propraminfo ({ commit }, data) {
+    commit('SAVE_PROPRAM_INFO', data)
+  },
+
   SAVEHardwareInformation ({ commit }, flag) {
     // do something async
     commit('SAVE_HardwareInformation', flag)

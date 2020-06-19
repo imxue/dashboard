@@ -32,8 +32,8 @@
           <Row>
             <i-col span="10">
               <Select v-model="formValidate.bala">
-                <Option value="0">{{$t('Enable')}}</Option>
-                <Option value="1">{{$t('Disable')}}</Option>
+                <Option value="1">{{$t('Enable')}}</Option>
+                <Option value="0">{{$t('Disable')}}</Option>
               </Select>
             </i-col>
           </Row>
@@ -222,17 +222,17 @@
             key: 'operation',
             render: (h, params) => {
               let resp = h('Button', {
-                props: { type: 'error', ghost: true },
+                props: { type: 'error' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMove(params.index) } }
               }, this.$t('Remove'))
               let b = h('Button', {
-                props: { type: 'info', ghost: true },
+                props: { type: 'info' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMoveTop(params.index) } }
               }, this.$t('MoveUp'))
               let c = h('Button', {
-                props: { type: 'primary', ghost: true },
+                props: { type: 'primary' },
                 style: { marginRight: '10px' },
                 on: { click: () => { this.handleMoveBottom(params.index) } }
               }, this.$t('MoveDown'))

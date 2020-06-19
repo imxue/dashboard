@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { getDownloadedGames, deleteGame, syncToServers } from '@/api/localGame'
+  import { getDownloadedGames, deleteGame, syncToServers, repairGame } from '@/api/localGame'
   import { getAllCenterGameTypes } from '@/api/game'
   import { bytesToSize3 } from '../../../utils/index'
   export default {
@@ -98,30 +98,16 @@
             key: 'operation',
             minWidth: 100,
             render: (h, params) => {
-              // let a = h('Button', {
-              //   props: { type: 'primary', size: 'small' },
-              //   style: { 'margin-right': '10px' },
-              //   on: { click: () => { this.handleTableEdit(params.row) } }
-              // }, this.$t('Edit'))
-              // let b = h('Button', {
-              //   props: { type: 'error', size: 'small' },
-              //   on: { click: () => { this.handleTableDelete(params.row) } }
-              // }, this.$t('Delete'))
-              // let a = h('Button',
-              //   { style: { marginRight: '5px', width: '70px' },
-              //     props: { type: 'primary', size: 'small' },
-              //     on: { click: () => { this.handleTableEdit(params.row) } }
-              //   }, this.$t('Edit'))
-              let a = ''
-              let b = h('Button',
-                { style: { marginRight: '5px', width: '70px' },
+              return h('div', [
+                h('Button', { style: { marginRight: '5px', width: '70px' },
+                  props: { type: 'info', size: 'small', disabled: params.row.State === 1 },
+                  on: { click: () => { this.handleTableRapir(params.row) } }
+                }, '修复'),
+                h('Button', { style: { marginRight: '5px', width: '70px' },
                   props: { type: 'error', size: 'small' },
                   on: { click: () => { this.handleTableDelete(params.row) } }
-                }, this.$t('Delete'))
-              switch (params) {
-                default:
-                  return h('span', [a, b])
-              }
+                }, '删除')
+              ])
             }
           }
         ],
@@ -171,6 +157,14 @@
           this.handleGetTableList({ offset: 0, limit: this.Pagelimit, orderby: 'Name', gametypeid: id })
         }
       },
+      async handleTableRapir (row) {
+        try {
+          await repairGame(row.Id)
+          this.$Message.success(this.$t('修复成功'))
+        } catch (error) {
+          this.$Message.error(error)
+        }
+      },
       /**
        * 获取已下载游戏
       */
@@ -190,7 +184,7 @@
         } else {
           num = (this.Pagelimit * num) - this.Pagelimit
         }
-        this.handleGetTableList(num, this.Pagelimit, '')
+        this.handleGetTableList({ offset: num, limit: this.Pagelimit, orderby: '' })
       },
       handleCallBackVaild (res) {
         var code = res.data.Code

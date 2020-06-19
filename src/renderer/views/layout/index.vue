@@ -6,10 +6,8 @@
    
       <div class="wrapper">
         <Col  class="siderbar" style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 4, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
-          <!-- <Col  class="siderbar" style="background:#fff"> -->
           <Sidebar ></Sidebar>
         </Col>
-        <!-- <Col  class="main"  :xxl="{ span: 20, offset: 0 }" :xl="{ span: 20, offset: 0 }" :lg="{span: 20, offset: 0 }"	:md="{ span: 20, offset: 0 }" :xs='{span:20,offset: 0}'> -->
          <Col  class="main" >
             <Breadcrumb :style="{margin: '10px 10px'}">
               <template v-for="item  in levelList" >
@@ -20,7 +18,6 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-            <!-- <Card dis-hover :style="{margin: '0 10px',minHeight: '800px'}"> -->
           <div class="mainWrapper" >
               <Card dis-hover :style="{margin: '0 10px'}">
               <AppMain></AppMain>
@@ -106,7 +103,7 @@
   }
   .mainWrapper {
     overflow: auto;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 122px);
   }
 </style>
 

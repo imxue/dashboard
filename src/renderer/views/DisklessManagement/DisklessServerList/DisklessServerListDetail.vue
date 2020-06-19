@@ -62,6 +62,12 @@
       :data="CurrentPageserverInfo"
     ></Table>
 
+     <Table
+      border
+      :columns="SrvStatTableStructure"
+      :data="SrvStat"
+    ></Table>
+
     <Row style="margin:10px 0;">
       <span>{{$t('NetworkSetting')}}</span>
       <Divider />
@@ -292,7 +298,7 @@ import {
   editPcGroupx,
   editDHCPConfigx,
   getPcListConfig, getPcGroupx, getDHCPConfig,
-  RaidRemove } from '@/api/wupan'
+  RaidRemove, GetSrvStat } from '@/api/wupan'
 import { addMasterServer } from '@/api/localGame'
 import { bytesToSize, bytesToRate, bytesToRate1 } from '@/utils/index'
 import { setDiskAttribute } from '@/api/sync'
@@ -575,7 +581,7 @@ export default {
             let a = h(
               'Button',
               {
-                props: { type: 'info', ghost: true },
+                props: { type: 'info' },
                 on: {
                   click: () => {
                     this.ShowDiskPlan(params.row)
@@ -599,7 +605,34 @@ export default {
           }
         }
       ],
-      diskInfo: [] // 磁盘信息类别
+      diskInfo: [], // 磁盘信息类别
+      SrvStat: [],
+      SrvStatTableStructure: [
+        {
+          key: 'load',
+          title: 'load'
+        },
+        {
+          key: 'pcOnlineCount',
+          title: 'pcOnlineCount'
+        },
+        {
+          key: 'runningTime',
+          title: 'runningTime'
+        },
+        {
+          key: 'sendRate',
+          title: 'sendRate'
+        },
+        {
+          key: 'recvRate',
+          title: 'recvRate'
+        },
+        {
+          key: 'liTi',
+          title: 'liTi'
+        }
+      ]
     }
   },
   created () {
@@ -607,6 +640,8 @@ export default {
     this.handleGetCurrentPageServerInfo()
     this.handleGetNetworkx(this.currentPageServerip)
     this.handleGetDiskStatusx(this.currentPageServerip)
+
+    this.HandleGetSrvStat() // 获取服务器信息
   },
   methods: {
     openMonute () {
@@ -1087,6 +1122,14 @@ export default {
     },
     render3 (item) {
       return item.label + ' - ' + item.capacity
+    },
+    async HandleGetSrvStat () {
+      try {
+        let resp = await GetSrvStat(this.currentPageServerip)
+        this.SrvStat = [resp.data.result]
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }

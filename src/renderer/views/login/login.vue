@@ -149,7 +149,7 @@ export default {
                       this.notifyUser('error', '授权失败...')
                     }
                   }, (e) => {
-                    this.notifyUser('error', `${e.data.error}`)
+                    this.notifyUser('error', `${e}`)
                   })
                 } else {
                   this.$router.push('/game')

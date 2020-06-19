@@ -7,34 +7,27 @@ import BaseSetting from '@/views/ClientManagement/ClientSetting/BaseSetting'
 import HomeScreenIcon from '@/views/ClientManagement/ClientSetting/HomeScreenIcon'
 import BootPath from '@/views/ClientManagement/ClientSetting/BootPath'
 export default {
-  path: '/type3',
+  path: '/ClientManagement',
   name: 'ClientManagement',
   component: Layout,
-  redirect: '/type3/subType1/subType1-1',
-  meta: { title: 'ClientManagement', icon: 'example' },
+  redirect: '/ClientManagement/SubClientManagement',
+  meta: { title: 'ClientManagement', icon: 'md-laptop' },
   children: [
     {
-      path: 'subType1',
-      name: 'type3-SubType1',
+      path: 'SubClientManagement',
+      name: 'SubClientManagement',
+      redirect: '/ClientManagement/SubClientManagement/ClientManagementList',
       meta: { title: 'ClientManagement', hidden: true },
       component: NullLayout,
       children: [
         {
-          path: 'subType1-1',
+          path: 'ClientManagementList',
           name: 'ClientManagementList',
           alias: '/disklesslist',
           meta: { title: 'ClientList' },
           component: ClientList
 
         },
-        // {
-        //   path: 'subType1-2',
-        //   name: 'ClientManagementList2',
-        //   alias: '/disklesslist',
-        //   meta: { title: 'ClientListBeta' },
-        //   component: ClientListBeta
-
-        // },
         {
           path: 'hardwareinformation',
           name: 'hardwareinformation',
@@ -44,27 +37,28 @@ export default {
       ]
     },
     {
-      path: 'subType2',
+      path: 'clientSetting',
       name: 'clientSetting',
+      redirect: '/ClientManagement/clientSetting/BaseSetting',
       meta: { title: 'ClientSetting', hidden: true },
       component: NullLayout,
       hidden: true,
       children: [
         {
-          path: 'subType2-1',
-          name: 'type3-SubType1-1',
+          path: 'BaseSetting',
+          name: 'BaseSetting',
           meta: { title: 'BaseSetting' },
           component: BaseSetting
         },
         {
-          path: 'subType2-2',
-          name: 'type3-SubType1-2',
+          path: 'HomeScreenIcon',
+          name: 'HomeScreenIcon',
           meta: { title: 'HomeScreenIcon' },
           component: HomeScreenIcon
         },
         {
-          path: 'subType2-3',
-          name: 'type3-SubType1-3',
+          path: 'BootBatch',
+          name: 'BootBatch',
           meta: { title: 'BootBatch' },
           component: BootPath
         }

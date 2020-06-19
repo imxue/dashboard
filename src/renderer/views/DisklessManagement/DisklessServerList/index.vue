@@ -258,6 +258,30 @@ export default {
           }
         },
         {
+          key: 'onlinePcs',
+          maxWidth: 110,
+          minWidth: 110,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('onlinePcs'))
+          },
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: 'text'
+              },
+              style: {
+                color: 'green'
+              },
+              on: {
+                click: () => {
+                  this.HandleGoPc(params.row.serverIp)
+                }
+
+              }
+            }, params.row.onlinePcs)
+          }
+        },
+        {
           renderHeader: (h, params) => {
             return h('span', this.$t('operation'))
           },
@@ -269,7 +293,7 @@ export default {
               h(
                 'Button',
                 {
-                  props: { type: 'info', ghost: true },
+                  props: { type: 'info' },
                   style: { marginRight: '10px' },
                   on: {
                     click: () => {
@@ -282,7 +306,7 @@ export default {
             let b = h(
               'Button',
               {
-                props: { type: 'info', ghost: true },
+                props: { type: 'info' },
                 style: { marginLeft: '10px' },
                 on: {
                   click: () => {
@@ -295,7 +319,7 @@ export default {
             let c = h(
               'Button',
               {
-                props: { type: 'info', ghost: true },
+                props: { type: 'info' },
                 on: {
                   click: () => {
                     this.handleSeeServeHanrdInfo(params.row)
@@ -347,6 +371,7 @@ export default {
     })
   },
   methods: {
+
     openMonute () {
       ipcRenderer.sendSync('cmd', { mount: 'diskmappingtools.exe' })
     },
@@ -368,6 +393,7 @@ export default {
       try {
         let barid = this.$store.state.app.barinfo.bar_id.toString()
         let resp = await GetRegInfo(barid, this.masterIp)
+
         if (resp.data.result.regStat === '1') {
           this.$store.dispatch('savereginfo', resp.data.result)
           this.regInfo = resp.data.result
@@ -380,14 +406,16 @@ export default {
           })
         }
       } catch (error) {
-        console.log(error)
+        this.$Message.warning({
+          content: this.$t('ObtainAuthorizationFail')
+        })
       }
     },
     async getTableData () {
       this.loading = true
       let ip = await this.HandleMasterIp()
       if (ip && ip !== -1) {
-        // await addMasterServer(ip)
+        await addMasterServer(ip)
         let isMasterip = await this.checkIpisMaster(ip)
         if (isMasterip !== -1) {
           if (isMasterip) {
@@ -424,7 +452,7 @@ export default {
         }
       }
       this.loading = false
-      // await addMasterServer(ip)
+      await addMasterServer(ip)
     },
 
     /** 检查ip是否为主服务器
@@ -610,6 +638,7 @@ export default {
             if (resplist.length === 0) {
               // 服务器没有额外的类表
               if (this.masterIp) {
+                await addMasterServer(this.masterIp)
                 await this.HandleAddServerx(OptServerip, this.masterIp)
               } else {
                 await this.HandleAddServerx(OptServerip, OptServerip)
@@ -621,12 +650,14 @@ export default {
               // 服务器有额外的类表
               if (this.masterIp) {
                 // 已经存在主服务器
+                await addMasterServer(this.masterIp)
                 await this.HandleAddServerx(OptServerip, this.masterIp)
               } else {
                 // 不存在主服务
                 let masterServer = resplist.filter(item => { return item.isMaster === '1' })
                 if (masterServer) {
                   await this.setCustomConfig({ key: 'master', value: masterServer[0].serverIp })
+                  await addMasterServer(masterServer[0].serverIp)
                 } else {
                   this.modal4 = true
                 }
@@ -655,6 +686,12 @@ export default {
     */
     sleep (time) {
       return new Promise((resolve) => setTimeout(resolve, time))
+    },
+    HandleGoPc (ip) {
+      this.$router.push({
+        path: '/ClientManagement',
+        query: { ip }
+      })
     },
     /**
         登录

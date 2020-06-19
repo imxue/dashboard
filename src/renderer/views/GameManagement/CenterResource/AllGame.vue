@@ -85,20 +85,22 @@ export default {
                 return h('span', { style: { color: '#008000' } }, this.$t('Updating'))
               case 3:
                 return h('span', { style: { color: '#008000' } }, this.$t('LatestVersion'))
+              case 4:
+                return h('span', { style: { color: '#008000' } }, this.$t('Updatefailed'))
               default:
                 return '-'
             }
           }
         },
         { key: 'TypeName',
-          minWidth: 100,
-          maxWidth: 110,
+          minWidth: 120,
+          maxWidth: 120,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
         { key: 'DisplayName', maxWidth: 200, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
-          minWidth: 100,
-          maxWidth: 100,
+          minWidth: 120,
+          maxWidth: 120,
           sortable: true,
           renderHeader: (h, params) => { return h('span', this.$t('Popularity')) }
         },
@@ -115,44 +117,14 @@ export default {
         { key: 'LocalVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
-          minWidth: 210,
-          maxWidth: 210,
+          minWidth: 245,
           render: (h, params) => {
             let type = params.row.State
-            // let a = h('Button',
-            //   { style: { marginRight: '5px', width: '70px' },
-            //     props: { type: 'primary', size: 'small' },
-            //     on: { click: () => { this.handleFixGame(params.row) } }
-            //   }, this.$t('RepairGame'))
-            // let b = h('Button', {
-            //   style: { width: '70px' },
-            //   props: { type: 'error', size: 'small' },
-            //   on: { click: () => { this.handleRemove(params.row) } }
-            // }, this.$t('LocalRemoval'))
-            // let c = h('Button', {
-            //   style: { width: '70px' },
-            //   props: { type: 'primary', size: 'small' },
-            //   on: { click: () => { this.handleDownGame(params.row.Id) } }
-            // }, this.$t('DownloadGames'))
-            // switch (type) {
-            //   case 0:
-            //     return h('div', [c])
-            //   case 1:
-            //     return h('div', {
-            //       style: { display: 'flex' }
-            //     }, [a, b])
-            //   case 2:
-            //     return h('span', [b])
-            //   case 3:
-            //     return h('span', [b])
-            //   default:
-            //     return '-'
-            // }
             return h('div', { style: {
               display: 'flex'
             } }, [
               h('Button', {
-                style: { width: '70px' },
+                style: { width: '80px' },
                 props: { type: 'primary', disabled: type !== 0 },
                 on: { click: () => { this.handleDownGame(params.row.Id) } }
               }, this.$t('DownloadGames')),

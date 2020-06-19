@@ -115,7 +115,7 @@ export default {
               h(
                 'Button',
                 {
-                  props: { type: 'info', ghost: true, disabled: params.row.stat !== '0' },
+                  props: { type: 'info', disabled: params.row.stat !== '0' },
                   style: { marginRihgt: '10px' },
                   on: {
                     click: () => {
@@ -130,8 +130,7 @@ export default {
                 {
                   props: {
                     type: 'info',
-                    disabled: params.row.stat !== '1',
-                    ghost: true
+                    disabled: params.row.stat !== '1'
                   },
                   style: { marginLeft: '10px' },
                   on: {

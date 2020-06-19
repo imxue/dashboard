@@ -595,3 +595,7 @@ export function CtrlPcsConf (obj, ip) {
 export function GetServerHardInfo (ip) {
   return makeRequestx('Get_DeviceInfo', {}, ip)
 }
+// 服务器参数
+export function GetSrvStat (ip) {
+  return makeRequestx('Get_SrvStat', {}, ip)
+}

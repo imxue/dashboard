@@ -13,12 +13,13 @@ export default {
   path: '/Diskless',
   name: '无盘管理',
   component: Layout,
-  redirect: '/Diskless/DisklessServer/DisklessServerList',
-  meta: { title: 'DiskLessManagement', icon: 'example' },
+  redirect: '/Diskless/DisklessServer',
+  meta: { title: 'DiskLessManagement', icon: 'md-cloud' },
   children: [
     {
       path: 'DisklessServer',
       name: 'DisklessServer',
+      redirect: '/Diskless/DisklessServer/DisklessServerList',
       meta: { title: 'DisklessServer', hidden: true },
       component: NullLayout,
       children: [
@@ -54,6 +55,7 @@ export default {
     {
       path: 'MirrorManagement',
       name: 'MirrorManagement',
+      redirect: '/Diskless/MirrorManagement/AllMirror',
       meta: { title: 'MirrorManagement', hidden: true },
       component: NullLayout,
       children: [
@@ -75,6 +77,7 @@ export default {
     {
       path: 'ClientStartup',
       name: 'ClientStartup',
+      redirect: '/Diskless/ClientStartup/StartUpPlan',
       meta: { title: 'ClientStartup', hidden: true },
       component: NullLayout,
       children: [

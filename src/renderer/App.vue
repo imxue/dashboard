@@ -1,6 +1,21 @@
 <template>
   <div id="app">
     <router-view></router-view>
+    <div class="footerbar">
+      <div v-if="propraminfo">
+      <span>{{$t('softVer')}}: {{propraminfo.Version || '-'}}</span>
+       <!-- <span>Name: {{propraminfo.Name  || '-'}}</span>
+        <span>日期: {{propraminfo.Datetime  || '-'}}</span> -->
+      </div>
+      <div v-else>
+        <span>未获取到更新程序</span>
+      </div>
+      <div v-if="barinfo">
+        <span>网吧ID : {{barinfo.bar_id}}</span>
+        <span>在线终端 / 全部终端: {{barinfo.online_client_count}} / {{barinfo.client_count}}</span>
+        <span>授权有效期至: {{handleExpireTime(barinfo.expire_time)}}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -8,14 +23,29 @@
 import { getMasterIp } from './api/common'
 export default {
   name: 'my-project',
+  computed: {
+    barinfo () {
+      return this.$store.state.app.barinfo
+    },
+    propraminfo () {
+      return this.$store.state.app.propraminfo
+    }
+  },
   created () {
+    console.log(this.$store)
     this.$Message.config({
       top: 80,
       duration: 8
     })
-    // localStorage.setItem('connectNet', { ip: '127.0.0.1', port: 12880 })
   },
   methods: {
+    handleExpireTime (time) {
+      let date = new Date(time)
+      let year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      return `${year} / ${month} / ${day}`
+    },
     getMasterip () {
       getMasterIp().then((resp) => {
         this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
@@ -45,9 +75,9 @@ body {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
-.ive-table-tip {
+/* .ive-table-tip {
   overflow: hidden !important;
-}
+} */
 .ivu-table .demo-table-info-row td {
   background-color: #cce4f7;
 }
@@ -101,6 +131,44 @@ body {
     bottom: 0;
     right: 0;
     /* background: #2d8cf0; */
+}
+.footerbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 8px;
+  background: #515a6e;
+  z-index: 999999999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #CCD1D1;
+}
+.footerbar  span{
+  padding-left:10px;
+}
+
+*::-webkit-scrollbar {
+  height:8px;
+  width:8px;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 6px;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #777;
+}
+*::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px #ccc;
+    border-radius: 10px;
+}
+.ivu-icon  {
+  font-size: 18px !important;
+  vertical-align: sub !important;
+}
+.ggggg .ivu-table-wrapper  {
+  overflow: visible !important;
 }
 /*     
 .ivu-menu-vertical .ivu-menu-item, .ivu-menu-vertical .ivu-menu-submenu-title {

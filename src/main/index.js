@@ -22,10 +22,10 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 850,
-    width: 1390,
-    minWidth: 1390,
-    minHeight: 800,
+    height: 888,
+    width: 1480,
+    minWidth: 1480,
+    minHeight: 888,
     backgroundColor: '#F5F7F9',
     webPreferences: { webSecurity: false }
   })
@@ -60,6 +60,7 @@ ipcMain.on('restart', () => {
 })
 
 ipcMain.on('cmd', (e, arg) => {
+  console.log(arg)
   start(arg)
   e.returnValue = ''
 })
@@ -68,7 +69,6 @@ ipcMain.on('open-file-dialog', (event) => {
     properties: ['openFile', 'openDirectory']
   }, (files) => {
     if (files) {
-      // event.sender.send('selected-directory', files)
       event.returnValue = files
     } else {
       event.returnValue = ''
