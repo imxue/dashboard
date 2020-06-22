@@ -2,25 +2,24 @@
   <div id="app">
     <router-view></router-view>
     <div class="footerbar">
-      <div v-if="propraminfo">
-      <span>{{$t('softVer')}}: {{propraminfo.Version || '-'}}</span>
-       <!-- <span>Name: {{propraminfo.Name  || '-'}}</span>
-        <span>日期: {{propraminfo.Datetime  || '-'}}</span> -->
-      </div>
-      <div v-else>
-        <span>未获取到更新程序</span>
-      </div>
-      <div v-if="barinfo">
+
+     <div v-if="barinfo">
         <span>网吧ID : {{barinfo.bar_id}}</span>
         <span>在线终端 / 全部终端: {{barinfo.online_client_count}} / {{barinfo.client_count}}</span>
         <span>授权有效期至: {{handleExpireTime(barinfo.expire_time)}}</span>
+      </div>
+
+      <div v-if="propraminfo">
+      <span>{{$t('softVer')}}: {{propraminfo.Version || '-'}}</span>
+      </div>
+      <div v-else>
+        <span>未获取到更新程序</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getMasterIp } from './api/common'
 export default {
   name: 'my-project',
   computed: {
@@ -31,13 +30,6 @@ export default {
       return this.$store.state.app.propraminfo
     }
   },
-  created () {
-    console.log(this.$store)
-    this.$Message.config({
-      top: 80,
-      duration: 8
-    })
-  },
   methods: {
     handleExpireTime (time) {
       let date = new Date(time)
@@ -45,13 +37,7 @@ export default {
       let month = date.getMonth() + 1
       let day = date.getDate()
       return `${year} / ${month} / ${day}`
-    },
-    getMasterip () {
-      getMasterIp().then((resp) => {
-        this.$store.dispatch('saveMaster', resp.data.value || '') // 设置主服务器
-      })
     }
-
   }
 
 }

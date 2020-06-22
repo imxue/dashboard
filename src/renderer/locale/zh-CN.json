@@ -593,9 +593,11 @@
 	"wrRe":"写速率",
 	"wrTo":"总写量",
 	"onlinePcs":"在线客户机数",
-	"load":"负载",
+	"Load":"负载",
 	"liTi":"运行时间",
   "pcOnlineCount":"在线客户机数",
   "runningTime":"运行时间",
-  "onlineClientCount":"在线客户机数"
+  "onlineClientCount":"在线客户机数",
+  "11" : "连接注册中心失败",
+  "UpdateAddressfailed":"获取更新地址失败"
 }

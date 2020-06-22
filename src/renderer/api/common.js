@@ -105,9 +105,17 @@ export function defaultparam () {
  * 获取更新地址
  */
 
-export function getUpdate (barid) {
+export function getUpdate () {
   return request({
-    url: `/v1/sysbase/getUpgradeUrl?barid=${barid}`,
+    url: `/v1/sysbase/getUpgradeUrl`,
+    method: 'get'
+
+  })
+}
+
+export function getUpdateVersion (url) {
+  return request({
+    baseurl: `${url}`,
     method: 'get'
 
   })

@@ -5,15 +5,7 @@
         <Button style="margin-right:10px;" type="primary"  @click="handleButtonRefresh">{{
           $t("Refresh")
         }}</Button>
-        <Button style="margin-right:10px;" type="primary" @click="handleButtonAdd">{{
-          $t("Add")
-        }}</Button>
-        <Button style="margin-right:10px;" type="primary" @click="handleButtonEdit">{{
-          $t("Edit")
-        }}</Button>
-        <Button  style="margin-right:10px;" type="error" @click="handAllDetele">{{
-          $t("Delete")
-        }}</Button>
+        
     </div>
 
     <!-- table -->
@@ -40,6 +32,15 @@
         style="display:flex;margin-bottom:10px;justify-content:space-between;"
       >
         <div>
+          <Button style="margin-right:10px;" type="primary" @click="handleButtonAdd">{{
+          $t("Add")
+        }}</Button>
+        <Button style="margin-right:10px;" type="primary" @click="handleButtonEdit">{{
+          $t("Edit")
+        }}</Button>
+        <Button  style="margin-right:10px;" type="error" @click="handAllDetele">{{
+          $t("Delete")
+        }}</Button>
           <Button
             type="primary"
             class="topColumn"
@@ -106,6 +107,8 @@
     <Modal
       v-model="showDeleteBox"
       :title="this.$t('DeleteTip')"
+      :mask-closable="false"
+      @on-visible-change="HandleVisibleChange"
       @on-cancel="this.showDeleteBox = false"
     >
       <p>{{ $t("DeleteCurrentData") }}</p>
@@ -115,6 +118,8 @@
       v-model="adddetail"
       footer-hide
       width="500"
+       :mask-closable="false"
+      @on-visible-change="HandleVisibleChange"
     >
       <Form
         ref="formValidatex"
@@ -164,6 +169,8 @@
       :title="this.$t('CancleSuperS')"
       v-model="cancleup"
       footer-hide
+       :mask-closable="false"
+      @on-visible-change="HandleVisibleChange"
       :styles="{ top: '220px' }"
     >
       <Form
@@ -201,6 +208,7 @@
       :title="this.$t('ClientSetting')"
       @on-visible-change="test"
       footer-hide
+       :mask-closable="false"
     >
       <edit
         v-if="temp"
@@ -216,6 +224,8 @@
       v-model="EditModel"
       :title="this.$t('ClientSetting')"
       @on-ok="batchEdit"
+       :mask-closable="false"
+      @on-visible-change="HandleVisibleChange"
     >
       <Form ref="formInline" :model="formInline">
         <FormItem :label="this.$t('Enable')" prop="disable" :label-width="110">
@@ -714,8 +724,8 @@ export default {
         },
         {
           key: 'reRe',
-          minWidth: 105,
-          maxWidth: 120,
+          minWidth: 80,
+          maxWidth: 80,
           renderHeader: (h, params) => {
             return h('span', this.$t('reRe'))
           },
@@ -729,8 +739,8 @@ export default {
         },
         {
           key: 'reTo',
-          minWidth: 115,
-          maxWidth: 130,
+          minWidth: 85,
+          maxWidth: 85,
           renderHeader: (h, params) => {
             return h('span', this.$t('reTo'))
           },
@@ -744,8 +754,8 @@ export default {
         },
         {
           key: 'wrRe',
-          minWidth: 115,
-          maxWidth: 130,
+          minWidth: 80,
+          maxWidth: 80,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrRe'))
           },
@@ -759,8 +769,8 @@ export default {
         },
         {
           key: 'wrTo',
-          minWidth: 115,
-          maxWidth: 130,
+          minWidth: 100,
+          maxWidth: 100,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrTo'))
           },
@@ -774,7 +784,8 @@ export default {
         },
         {
           key: 'liTi',
-          width: 130,
+          minWidth: 100,
+          maxWidth: 100,
           renderHeader: (h, params) => {
             return h('span', this.$t('liTi'))
           },
@@ -791,8 +802,8 @@ export default {
             return h('span', this.$t('operation'))
           },
           key: 'super',
-          minWidth: 280,
-          fixed: 'right',
+          minWidth: 260,
+          // fixed: 'right',
           render: (h, params) => {
             return h('div', [
               h('Button', {
@@ -867,6 +878,16 @@ export default {
     async masterip (v) {
       if (v) {
         await this.getMasterList(v)
+      }
+    },
+    clientArray (value) {
+      if (value.length > 0) {
+        clearTimeout(this.timer)
+        this.timer = null
+      } else {
+        if (!this.timer) {
+          this.start()
+        }
       }
     }
   },
@@ -992,6 +1013,7 @@ export default {
     },
     // 选择某一项
     onSelect (selected, now) {
+      clearTimeout(this.timer)
       this.list.forEach(item => {
         if (now.ip === item.ip) {
           item._checked = true
@@ -1102,6 +1124,12 @@ export default {
       // this.searchVal = ''
     },
     test (hide) {
+      if (hide) {
+        clearTimeout(this.timer)
+        this.timer = null
+      } else {
+        this.start()
+      }
       if (!hide) {
         setTimeout(() => {
           this.temp = false
@@ -1171,22 +1199,18 @@ export default {
      * 获取客户机列
      */
     async handgetClienList () {
-      this.statCount = 0
       this.clientMac = []
       this.searchVal = ''
       let superip = await getSuper(this.masterip)
       let client = await getPcListConfig(this.masterip)
       let clientList = client.data.result && (client.data.result.list || [])
+      this.statCount = 0
       clientList.forEach(item => {
         if (item.stat === '1') {
           this.statCount++
         }
         this.clientMac.push(item.mac)
-      })
-      clientList.forEach(item => {
         this.exclientIp.push(item.ip)
-      })
-      clientList.forEach(item => {
         this.pc.push(item.pc)
       })
 
@@ -1655,6 +1679,14 @@ export default {
           return 1
         }
       })
+    },
+    HandleVisibleChange (show) {
+      if (show) {
+        clearTimeout(this.timer)
+        this.timer = null
+      } else {
+        this.start()
+      }
     }
   }
 }

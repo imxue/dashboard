@@ -85,6 +85,7 @@
 <script>
 import { ipcRenderer } from 'electron'
 import { getUpdate } from '../../../api/common'
+import axios from 'axios'
 export default {
   data () {
     return {
@@ -111,21 +112,31 @@ export default {
   },
   async created () {
     await this.HandleGetUpdate()
+    await this.GetOnlenVersion()
   },
   methods: {
     async HandleGetUpdate () {
       try {
-        let resp = await getUpdate('10019')
-        console.log(resp)
+        let resp = await getUpdate()
+        this.updateUrl = resp.data
+        // this.updateUrl = 'http://10.88.66.158:88/'
       } catch (error) {
-        this.OnlienVersion = error.data.Version
+        this.$Message.error(this.$t('UpdateAddressfailed'))
       }
+    },
+    async GetOnlenVersion () {
+      axios.get(`${this.updateUrl}/update.json`)
+        .then(resp => {
+          this.OnlienVersion = resp.data.Version
+        })
+      // let resp = await getUpdateVersion('http://10.88.66.158:88/update.json')
+      // console.log(resp)
     },
     ChangeLanguage (name) {
       if (!name) return
 
       if (name === 'update') {
-        ipcRenderer.sendSync('cmd', { update: 'Updater -url:"http://127.0.0.1:88/update.json"' })
+        ipcRenderer.sendSync('cmd', { update: `Updater -url:${this.updateUrl}/update.json"` })
       } else if (name === 'zh-CN' || name === 'zh-TW' || name === 'en-US') {
         this.$i18n.locale = name
         localStorage.setItem('lang', name)
@@ -137,7 +148,7 @@ export default {
       this.$router.push('/login')
     },
     HandleUpdate () {
-      ipcRenderer.sendSync('cmd', { update: 'Updater -url:"http://127.0.0.1:88/update.json"' })
+      ipcRenderer.sendSync('cmd', { update: `Updater -url:${this.updateUrl}/update.json"` })
     }
   },
   computed: {

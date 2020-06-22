@@ -32,6 +32,7 @@ function start () {
     start()
   }, 250560000)
 }
+// 本地程序版本
 let p = process.env.NODE_ENV === 'development' ? path.join(app.getAppPath(), '../../../../../cmd/Update/version.dat') : path.join(app.getAppPath(), '../../../Update/version.dat')
 fs.readFile(p, (_err, data) => {
   if (_err) {

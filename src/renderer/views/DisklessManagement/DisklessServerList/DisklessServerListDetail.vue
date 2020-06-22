@@ -623,11 +623,17 @@ export default {
         },
         {
           key: 'sendRate',
-          title: this.$t('sendRate')
+          title: this.$t('sendRate'),
+          render: (h, params) => {
+            return h('span', bytesToRate1(params.row.sendRate))
+          }
         },
         {
           key: 'recvRate',
-          title: this.$t('recvRate')
+          title: this.$t('recvRate'),
+          render: (h, params) => {
+            return h('span', bytesToRate1(params.row.recvRate))
+          }
         }
       ],
       timer: null
@@ -650,7 +656,7 @@ export default {
   methods: {
     async start () {
       this.HandleGetSrvStat()
-      this.handleGetCurrentPageServerInfo()
+      // this.handleGetCurrentPageServerInfo()
       this.handleGetNetworkx(this.currentPageServerip)
       this.handleGetDiskStatusx(this.currentPageServerip)
       this.timer = setTimeout(() => {
