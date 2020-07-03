@@ -4,16 +4,16 @@
     <div class="footerbar">
 
      <div v-if="barinfo">
-        <span>网吧ID : {{barinfo.bar_id}}</span>
-        <span>在线终端 / 全部终端: {{barinfo.online_client_count}} / {{barinfo.client_count}}</span>
-        <span>授权有效期至: {{handleExpireTime(barinfo.expire_time)}}</span>
+        <span>{{$t('BarId')}} : {{barinfo.bar_id}}</span>
+        <span>{{$t('OnlineTerminal')}} / {{$t('AllTerminal')}}: {{barinfo.online_client_count}} / {{barinfo.client_count}}</span>
+        <span>{{$t('AuthorizationIsValidUntil')}}: {{handleExpireTime(barinfo.expire_time)}}</span>
       </div>
 
       <div v-if="propraminfo">
       <span>{{$t('softVer')}}: {{propraminfo.Version || '-'}}</span>
       </div>
       <div v-else>
-        <span>未获取到更新程序</span>
+        <span>{{$t('NoUpdate')}}</span>
       </div>
     </div>
   </div>

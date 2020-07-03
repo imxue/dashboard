@@ -33,15 +33,18 @@ function start () {
   }, 250560000)
 }
 // 本地程序版本
-let p = process.env.NODE_ENV === 'development' ? path.join(app.getAppPath(), '../../../../../cmd/Update/version.dat') : path.join(app.getAppPath(), '../../../Update/version.dat')
-fs.readFile(p, (_err, data) => {
-  if (_err) {
-    store.dispatch('propraminfo', null)
-  } else {
-    // eslint-disable-next-line no-new-func
-    var propram = new Function('return ' + data.toString())()
-    store.dispatch('propraminfo', propram)
-  }
-})
+export default function getLocalVersion () {
+  let p = process.env.NODE_ENV === 'development' ? path.join(app.getAppPath(), '../../../../../cmd/Update/version.dat') : path.join(app.getAppPath(), '../../../version.dat')
+  fs.readFile(p, (_err, data) => {
+    if (_err) {
+      store.dispatch('propraminfo', null)
+    } else {
+      // eslint-disable-next-line no-new-func
+      var propram = new Function('return ' + data.toString())()
+      store.dispatch('propraminfo', propram)
+    }
+  })
+}
 
 start()
+getLocalVersion()

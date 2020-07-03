@@ -49,8 +49,8 @@
         </Menu>
         <div class="headerFooter">
         <template v-if="localVersion && OnlienVersion">
-      <Icon type="md-bulb"  style="margin-right:4px;color:#A5D6A7;font-size:20px;"/>
-       <span  style="color:#A5D6A7;cursor: pointer;" v-if="OnlienVersion !== localVersion + ''" @click="HandleUpdate">{{$t('CurrentNewVersion')}}</span>
+      <Icon v-if="OnlienVersion !== localVersion + ''" type="md-bulb"  style="margin-right:4px;color:#A5D6A7;font-size:20px;"/>
+       <span  style="color:#A5D6A7;cursor: pointer;" v-if="OnlienVersion !== localVersion + ''"  @click="HandleUpdate">{{$t('CurrentNewVersion')}}</span>
         </template>
               <Dropdown trigger="click" @on-click="ChangeLanguage" style="margin-Left:10px;">
             <a href="javascript:void(0)">
@@ -124,19 +124,26 @@ export default {
         this.$Message.error(this.$t('UpdateAddressfailed'))
       }
     },
-    async GetOnlenVersion () {
-      axios.get(`${this.updateUrl}/update.json`)
-        .then(resp => {
-          this.OnlienVersion = resp.data.Version
-        })
-      // let resp = await getUpdateVersion('http://10.88.66.158:88/update.json')
-      // console.log(resp)
+    GetOnlenVersion () {
+      axios.get(`${this.updateUrl}`).then((resp) => {
+        this.OnlienVersion = resp.data.Version
+      }).catch(e => {
+        console.log(e)
+      })
     },
-    ChangeLanguage (name) {
+    async ChangeLanguage (name) {
       if (!name) return
 
       if (name === 'update') {
-        ipcRenderer.sendSync('cmd', { update: `Updater -url:${this.updateUrl}/update.json"` })
+        try {
+          await this.GetOnlenVersion()
+          ipcRenderer.sendSync('cmd', { update: `updater.exe -url:${this.updateUrl}` })
+          ipcRenderer.on('cmd', (event, arg) => {
+            console.log(arg)
+          })
+        } catch (error) {
+          this.$Message.error(this.$t('getOnlineVersionFailed'))
+        }
       } else if (name === 'zh-CN' || name === 'zh-TW' || name === 'en-US') {
         this.$i18n.locale = name
         localStorage.setItem('lang', name)
@@ -148,7 +155,7 @@ export default {
       this.$router.push('/login')
     },
     HandleUpdate () {
-      ipcRenderer.sendSync('cmd', { update: `Updater -url:${this.updateUrl}/update.json"` })
+      ipcRenderer.sendSync('cmd', { update: `updater.exe  -url:${this.updateUrl}` })
     }
   },
   computed: {

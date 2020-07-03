@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topItem">
-      <Select v-model="gametypeid"  class="topColumn" style="width:150px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType">
+      <Select v-model="gametypeid"  class="topColumn" style="width:160px;" :placeholder="$t('pleaseInput')" @on-change="serchByGameType">
         <Option v-for="item in gameList" :value="item.id" :key="item.id" >{{ item.dispaly_name }}</Option>
       </Select>
         <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="value1" :data="GameName" @on-change='ChangeValue'  />

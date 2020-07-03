@@ -1,21 +1,9 @@
 <template>
   <div>
     <div class="topItem">
-      <!-- <Input
-        class="topColumn"
-        v-model="searchVal"
-        search
-        @on-search="handleDataByName"
-        :enter-button="$t('Search')"
-        :placeholder="this.$t('PleaseInputGameName')"
-        style="width: 200px;"
-      /> -->
       <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='handleDataByName' />
       <Button type="primary" class="topColumn" @click="handleButtonAdd">{{$t("Add")}}</Button>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonEdit">编辑</Button> -->
       <Button type="primary" class="topColumn" @click="handleButtonSync">{{$t("Synchronize")}}</Button>
-      <!-- <Button type="primary" class="topColumn" @click="handleButtonMore">批量操作</Button> -->
-      <!-- <Button type="primary" class="topColumn" @click="HandleRepairGame">{{$t("repair")}}</Button> -->
       <Button type="error" class="topColumn" @click="handleButtonDelete">{{$t("Delete")}}</Button>
     </div>
     <!-- table -->
@@ -148,12 +136,12 @@ export default {
           render: (h, params) => {
             let a = h('Button',
               { style: { marginRight: '5px', width: '70px' },
-                props: { type: 'primary', size: 'small' },
+                props: { type: 'primary' },
                 on: { click: () => { this.handleTableEdit(params.row) } }
               }, this.$t('Edit'))
             let b = h('Button',
               { style: { marginRight: '5px', width: '70px' },
-                props: { type: 'error', size: 'small' },
+                props: { type: 'error' },
                 on: { click: () => { this.handleTableDelete(params.row) } }
               }, this.$t('Delete'))
             switch (params) {

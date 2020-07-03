@@ -60,10 +60,14 @@
         masterip: this.$store.state.app.masterip || '',
         serverlist: '',
         tableColumns: [
-          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
+          { key: 'name',
+            maxWidth: 110,
+            minWidth: 110,
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
           {
             renderHeader: (h, params) => { return h('span', this.$t('MirrorSize')) },
             key: 'size',
+            maxWidth: 150,
             render: (h, params) => {
               return h('span', params.row.size + 'GB')
             }
@@ -71,6 +75,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('TakeupSpace')) },
             key: 'fileSizeB',
+            maxWidth: 180,
             render: (h, params) => {
               var value = params.row.fileSizeB
               if (value === '0' || value === 'undefined' || value === 'null') {
@@ -83,6 +88,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('ConfigurePoints')) },
             key: 'profileList',
+            maxWidth: 160,
             render: (h, params) => {
               var arr = params.row.profileList
               if (arr !== null || arr !== undefined) {
@@ -99,7 +105,7 @@
             }
           },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-            width: 400,
+            maxWidth: 180,
             key: 'operation',
             render: (h, params) => {
               let a = h('Button', {
@@ -123,6 +129,10 @@
               // return [a, c, d, e]
               return [a, e]
             }
+          },
+          {
+            title: ' ',
+            key: ''
           }
         ],
         mirrorList: [],

@@ -138,16 +138,19 @@ export default {
         if (valid) {
           try {
             await netbarRegister(Number(this.formInline.barid), this.formInline.password)
-            await login(Number(this.formInline.barid))
+            let r = await login(Number(this.formInline.barid))
+            localStorage.setItem('token', r.token)
             let e = await this.$store.dispatch('GetMasterip')
             if (e.data.value) {
               await GetRegInfo(this.formInline.barid + '', e.data.value)
             }
             this.$router.push('/game')
           } catch (error) {
-            debugger
-            console.log(error)
-            this.notifyUser('error', error.data.error)
+            if (error.data) {
+              this.notifyUser('error', error.data.error)
+            } else {
+              this.notifyUser('error', error)
+            }
           } finally {
             this.IsActive = false
           }

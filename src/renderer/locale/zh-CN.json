@@ -599,5 +599,16 @@
   "runningTime":"运行时间",
   "onlineClientCount":"在线客户机数",
   "11" : "连接注册中心失败",
-  "UpdateAddressfailed":"获取更新地址失败"
+  "UpdateAddressfailed":"获取更新地址失败",
+  "getOnlineVersionFailed":"查询线上版本失败",
+  "MirrorCount":"镜像个数",
+  "MenuName":"菜单名",
+  "wrLimTip":"当设置回写为零的时候，回写量是回写盘的十分之一",
+  "SoundCard":"声卡",
+  "monitor":"显示器",
+  "width":"宽",
+  "Hight":"高",
+  "PNPSet":"PNP设置",
+  "NoUpdate":"为获取到更新程序",
+  "More":"更多"
 }

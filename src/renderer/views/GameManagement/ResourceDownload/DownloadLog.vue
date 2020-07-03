@@ -29,6 +29,8 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('Status')) },
           key: 'state',
+          minWidth: 98,
+          maxWidth: 98,
           render: (h, params) => {
             let type = params.row.state
             switch (type) {
@@ -39,8 +41,8 @@ export default {
             }
           }
         },
-        { title: '游戏类型', key: 'type_name', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
-        { title: '游戏名称', key: 'display_name', renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { title: '游戏类型', key: 'type_name', minWidth: 110, maxWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
+        { title: '游戏名称', key: 'display_name', minWidth: 110, maxWidth: 110, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { title: '下载版本', key: 'version_code', minWidth: 135, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('DownloadVersion')) } },
         { title: '更新量',
           key: 'total_bytes',
@@ -49,8 +51,8 @@ export default {
         },
         { title: '开始时间',
           key: 'start_time',
-          minWidth: 145,
-          maxWidth: 145,
+          minWidth: 150,
+          maxWidth: 150,
           renderHeader: (h, params) => { return h('span', this.$t('StartingTime')) },
           render: (h, params) => {
             return h('span', this.formatTime1(params.row.start_time))
@@ -58,8 +60,8 @@ export default {
         },
         { title: '结束时间',
           key: 'end_time',
-          minWidth: 145,
-          maxWidth: 145,
+          minWidth: 150,
+          maxWidth: 150,
           renderHeader: (h, params) => { return h('span', this.$t('EndTime')) },
           render: (h, params) => {
             return h('span', this.formatTime1(params.row.end_time))

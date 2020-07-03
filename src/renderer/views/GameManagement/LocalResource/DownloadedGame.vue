@@ -3,7 +3,7 @@
     <div class="topItem">
       <Row>
         <i-col span="24">
-          <Select v-model="model1" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:150px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
+          <Select v-model="model1" clearable :placeholder="$t('TypeName')"  class="topColumn" style="width:160px;"  @on-change="handleSelectChange" :not-found-text="this.$t('Nodata')">
             <Option v-for="item in gameList" :value="item.id" :key="item.value">{{ $t(item.dispaly_name) }}</Option>
           </Select>
             <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('PleaseInputGameName')" style="width: 200px;" v-model="GameName" @on-change='ChangeValue' />
@@ -100,11 +100,11 @@
             render: (h, params) => {
               return h('div', [
                 h('Button', { style: { marginRight: '5px', width: '70px' },
-                  props: { type: 'info', size: 'small', disabled: params.row.State === 1 },
+                  props: { type: 'info', disabled: params.row.State === 1 },
                   on: { click: () => { this.handleTableRapir(params.row) } }
                 }, '修复'),
                 h('Button', { style: { marginRight: '5px', width: '70px' },
-                  props: { type: 'error', size: 'small' },
+                  props: { type: 'error' },
                   on: { click: () => { this.handleTableDelete(params.row) } }
                 }, '删除')
               ])

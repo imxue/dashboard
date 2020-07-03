@@ -6,7 +6,6 @@ export function start (obj) {
   let cmdPath = ''
   let cmdStr = ''
 
-  let resp = null
   // 子进程名称
   if (obj.mount) {
     cmdStr = obj.mount
@@ -20,13 +19,13 @@ export function start (obj) {
     cmdStr = `tvnviewer ${obj.ip}::5900 -password=${obj.password}`
     cmdPath = process.env.NODE_ENV === 'development' ? path.resolve(__dirname, '../../../cmd/') : path.resolve(app.getAppPath(), '../cmd/')
   }
+
   return new Promise((resolve, reject) => {
     exec(cmdStr, { cwd: cmdPath }, (error, stdout, stderr) => {
-      console.log(error)
       if (error) {
-        resp = error
+        reject(error)
       }
-      resolve(resp)
+      resolve(1)
     })
   })
 }

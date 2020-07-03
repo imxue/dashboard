@@ -407,7 +407,7 @@ export function CreateAt (dom, wh, height) {
   _this.content.style.height = height + 'px'
 }
 
-export function CreateScroll (dom, contentHe, contentHeight, allhe, AllHeight) {
+export function CreateScroll (dom, contentHe, contentHeight, allhe, AllHeight, position = 0) {
   contentHe.appendChild(allhe)
   dom.appendChild(contentHe)
   dom.style.height = contentHeight + 'px'
@@ -416,6 +416,12 @@ export function CreateScroll (dom, contentHe, contentHeight, allhe, AllHeight) {
   contentHe.style.overflow = 'auto'
   contentHe.style.width = '17px'
   contentHe.style.overflowX = 'hidden'
+  if (contentHeight === AllHeight) {
+    contentHe.scrollTop = 0
+  } else {
+    contentHe.scrollTop = position
+  }
+
   return contentHe
 }
 

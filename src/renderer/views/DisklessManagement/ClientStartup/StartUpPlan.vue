@@ -35,10 +35,11 @@
         masterip: this.$store.state.app.masterip || '',
         showPopup: false,
         tableColumns: [
-          { key: 'name', renderHeader: (h, params) => { return h('span', this.$t('StartupScenarioName')) } },
+          { key: 'name', maxWidth: 180, renderHeader: (h, params) => { return h('span', this.$t('StartupScenarioName')) } },
           {
-            renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) },
+            renderHeader: (h, params) => { return h('span', this.$t('MirrorCount')) },
             key: 'imgG',
+            maxWidth: 110,
             render: (h, params) => {
               var list = params.row.imgG
               if (list === null) {
@@ -51,6 +52,7 @@
           {
             renderHeader: (h, params) => { return h('span', this.$t('Status')) },
             key: 'disable',
+            maxWidth: 100,
             render: (h, params) => {
               switch (params.row.disable) {
                 case '1':
@@ -78,6 +80,10 @@
               }, this.$t('Delete'))
               return [a, d]
             }
+          },
+          {
+            title: ' ',
+            key: ''
           }
         ],
         tableData: [],

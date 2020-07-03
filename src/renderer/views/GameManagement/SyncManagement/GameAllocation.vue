@@ -1,43 +1,34 @@
 <template>
   <div>
     <div class="topItem">
-      <Row :gutter="16">
-           <Col span='3'>
-          <Select v-model="currentIp" clearable @on-change="handleSelectChange"  class="topColumn" >
+
+         
+          <Select v-model="currentIp" clearable @on-change="handleSelectChange" style="width:160px;"  >
             <Option v-for="item in serversIpList" :value="item.ip" :key="item.id">{{ item.ip }}</Option>
           </Select>
-          </Col>
-        <Col span='4'>
-          <AutoComplete  icon="ios-search" class="topColumn"  :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
-         </Col>
-           <Col  span='4'>
-           <Select v-model="gameType" @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
+
+          <Select v-model="gameType" style="width:160px;" clearable  @on-change="handleGetGameByTypeName" :placeholder="$t('PleaseInputGameType')">
              <Option v-for="item in gameList" :value="item.id" :key="item.id">{{ $t(item.name) }}</Option>
            </Select>
-        </Col>
-          <Col span='4'>
-          <Select v-model="serversDisk" clearable @on-change="handleSelectDiskChange"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
+
+          <Select v-model="serversDisk" style="width:160px;" clearable @on-change="handleSelectDiskChange"   :placeholder="this.$t('AllDiskSymbol')">
             <Option v-for="item in serversDiskList" :value="item.id" :key="item.id">{{ item.disk_symbol }} ( {{ item.extend_disk_type }} )</Option>
           </Select>
-           </Col>
-           <Col span='9'>
-            <Button type="primary" class="topColumn" @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
-            <Button type="primary" class="topColumn" @click="handleButtonMuteAddTask">{{$t('AddSynchronizationTask')}}</Button>
-        </Col>
-      </Row>
+
+          <AutoComplete  icon="ios-search"  style="width:200px;" :placeholder="$t('SupportGameInit')" v-model="value1" :data="GameName" @on-change='ChangeValue'  />
+      
+
+            <Button type="primary"  @click="handleButtonAllowe">{{$t('AssignGame')}}</Button>
+            <Button type="primary" @click="handleButtonCancleAllowe">{{$t('CancelAssign')}}</Button>
+            <Button type="primary"  @click="handleButtonMuteAddTask">{{$t('AddSynchronizationTask')}}</Button>
+
     </div>
-    <!-- table -->
-    <Row >
-        <Col span="24">
+  
+
     <Table border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe :no-data-text="this.$t('Nodata')"></Table>
-        </Col>
-    </Row>
+  
     <Row style="margin-top:10px; ">
-      <!-- <i-col span="7">{{$t('Resource')}}：3000 &nbsp;&nbsp;&nbsp;&nbsp;{{$t('Downloaded')}}：1000</i-col> -->
-      <i-col span="24">
         <Page :current="pageinfo.page_index" :total="pageinfo.count" :page-size="this.Pagelimit" show-total  @on-change="hanbleChangePage" style=" float:right;"/>
-</i-col>
     </Row>
     <Modal
         v-model="distributionPanel"
@@ -49,18 +40,17 @@
           <span>{{$t('DistributionServer')}}</span>
           </Col>
                 <Col span="18">
-         <Select v-model="serversIpValue1" clearable @on-change="handleSelectChangeserversIp1"  class="topColumn" label-in-value disabled>
+         <Select v-model="serversIpValue1" clearable @on-change="handleSelectChangeserversIp1"   label-in-value disabled>
             <Option v-for="item in serversIpList1" :value="item.id" :key="item.id">{{ item.ip }}</Option>
           </Select>
              </Col>
         </Row>
      <Row class="item">
        <Col span="5">
-<span>{{$t('AllocateDisk')}}</span>
+                     <span>{{$t('AllocateDisk')}}</span>
         </Col>
             <Col span=18>
-          <!-- <Select v-model="serversDisk1" clearable @on-change="handleSelectChangeDisk1"  class="topColumn" :placeholder="this.$t('AllDiskSymbol')"> -->
-              <Select v-model="serversDisk1" clearable   class="topColumn" :placeholder="this.$t('AllDiskSymbol')">
+              <Select v-model="serversDisk1" clearable   :placeholder="this.$t('AllDiskSymbol')">
             <Option v-for="item in serversDiskList1" :value="item.id" :key="item.id">{{ item.disk_symbol }} ( {{ item.extend_disk_type }} )</Option>
           </Select>
               </Col>
@@ -106,9 +96,7 @@
         serversDisk1: '',
         diskListOption: [],
         gameType: 0,
-        gameList: [
-          { id: 0, name: 'AllGame' }
-        ],
+        gameList: [],
         tableColumns: [
           { type: 'selection', minWidth: 60, align: 'center' },
           {
@@ -149,46 +137,6 @@
           { key: 'local_version', minWidth: 118, renderHeader: (h, params) => { return h('span', this.$t('LocalGameVersion')) } },
           { key: 'target_symbol', minWidth: 130, renderHeader: (h, params) => { return h('span', this.$t('Serverdisk')) } },
           { key: 'final_sync_version', minWidth: 119, renderHeader: (h, params) => { return h('span', this.$t('LasterSysVersion')) } }
-          // { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
-          //   key: 'operation',
-          //   minWidth: 220,
-          //   render: (h, params) => {
-          //     let type = params.row.state
-          //     let a = h('Button',
-          //       { style: { marginRight: '3px' },
-          //         props: { type: 'primary' },
-          //         on: { click: () => { this.handleAllowe(params.row) } }
-          //       }, this.$t('AssignGame'))
-          //     let b = h('Button',
-          //       { style: { marginRight: '3px' },
-          //         props: { type: 'primary' },
-          //         on: { click: () => { this.handleTableCancel(params.row) } }
-          //       }, this.$t('CancelAssign'))
-          //     let c = h('Button',
-          //       { style: { marginRight: '3px' },
-          //         props: { type: 'info' },
-          //         on: { click: () => { this.handleButtonAddTask(params.row) } }
-          //       }, this.$t('AddSynchronizationTask'))
-          //     switch (type) {
-          //       case 0:
-          //         return h('span', [a, b])
-          //       case 1:
-          //         return h('span', [a])
-          //       case 2:
-          //         return h('span', [b])
-          //       case 3:
-          //         return h('span', [c])
-          //       case 4:
-          //         return h('span', [c])
-          //       case 5:
-          //         return h('span', [c])
-          //       case 6:
-          //         return h('span', [c])
-          //       default:
-          //         return '-'
-          //     }
-          //   }
-          // }
         ],
         tableData: []
       }

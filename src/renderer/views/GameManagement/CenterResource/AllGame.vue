@@ -3,7 +3,7 @@
     <Modal v-model="DownloadGameUp" draggable scrollable :title="$t('DownloadGames')" footer-hide>
         <Form ref='Dg'  :model='Dg' label-position="left" :label-width="80" style="width: 300px">
           <FormItem :label="$t('DiskSymbol')" label-position="left">
-            <Select v-model="Dg.data" :placeholder="$t('Search')" clearable @on-clear="HandleGetGame">
+            <Select v-model="Dg.data" :placeholder="$t('Search')"  @on-clear="HandleGetGame">
               <Option v-for='item in disk' :value='item.DeviceID' :key='item.DeviceID'>{{item.DeviceID}} \ {{$t('AvailableSpace')}} {{item.free_space}}</Option>
             </Select>
             </FormItem> 
@@ -72,8 +72,8 @@ export default {
         {
           renderHeader: (h, params) => { return h('span', this.$t('CurrentStatus')) },
           key: 'State',
-          minWidth: 110,
-          maxWidth: 120,
+          minWidth: 120,
+          maxWidth: 130,
           render: (h, params) => {
             let type = params.row.State
             switch (type) {
@@ -113,8 +113,8 @@ export default {
             return h('span', bytesToSize3(params.row.Size))
           }
         },
-        { key: 'CenterVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
-        { key: 'LocalVersion', minWidth: 130, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
+        { key: 'CenterVersion', minWidth: 135, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('CenterVersion')) } },
+        { key: 'LocalVersion', minWidth: 135, maxWidth: 135, renderHeader: (h, params) => { return h('span', this.$t('LocalVersion')) } },
         { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
           key: 'operation',
           minWidth: 245,

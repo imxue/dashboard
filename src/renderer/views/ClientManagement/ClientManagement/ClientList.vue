@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="marginBottom:10px;display:flex;">
-         <Input v-model="searchVal" @on-search="ChangeValue" style="width:200px;margin-right:10px;" search enter-button :placeholder="$t('pleaseInput') + $t('MachineName') + $t('-ip')" />
+         <Input v-model="searchVal" @on-search="ChangeValue" style="width:200px;margin-right:10px;" search enter-button :placeholder="$t('pleaseInput') + $t('MachineName') + '-ip'" />
         <Button style="margin-right:10px;" type="primary"  @click="handleButtonRefresh">{{
           $t("Refresh")
         }}</Button>
@@ -289,11 +289,8 @@ export default {
       clientArray: '',
       clientList: [],
       flag: '',
-      Pagelimit: 10,
-      pageInfo: {
-        count: 0,
-        page_index: 1
-      },
+      Pagelimit: 15,
+
       pcGpList: '',
       EditModel: false,
       u: true,
@@ -566,13 +563,10 @@ export default {
       loadingshoudown: false,
       loadingRestart: false,
       timer: null,
-      srcList: '',
       filterServerIp: '',
+      filterStat: '',
       filtersCurDasv: [],
-      filterspcGp: [],
-      initCurDascFilterValue: [],
-      initStatFilterValue: [],
-      initPcGpFilterValue: []
+      filterspcGp: []
     }
   },
   async created () {
@@ -581,14 +575,11 @@ export default {
     await this.getMasterList()
     if (this.$route.query.ip) {
       this.filtercurDasc = this.$route.query.ip
-      this.initCurDascFilterValue = [this.$route.query.ip]
       this.filterStat = '1'
-      this.initStatFilterValue = ['1']
     }
-
     await this.handgetClienList().then(() => {
       this.start()
-    })// 获取客户机列表
+    })
   },
   mounted () {
     this.$refs.viewTable.addEventListener('mousewheel', e => {
@@ -615,26 +606,27 @@ export default {
     },
     tableColumns () {
       return [
-        { type: 'selection', width: 50, align: 'center' },
+        { type: 'selection', width: 50, align: 'center', fixed: 'left' },
         {
           renderHeader: (h, params) => {
             return h('span', this.$t('Status'))
           },
           key: 'stat',
-          minWidth: 85,
-          maxWidth: 85,
+          minWidth: 110,
+          maxWidth: 110,
+          fixed: 'left',
+          align: 'center',
           resizable: true,
           filters: [
             {
-              label: '在线',
+              label: this.$t('online'),
               value: '1'
             },
             {
-              label: '离线',
+              label: this.$t('Offline'),
               value: '0'
             }
           ],
-          filteredValue: this.initStatFilterValue,
           filterMultiple: false,
           filterRemote: this.fiterStatFunction,
           render: (h, params) => {
@@ -658,6 +650,7 @@ export default {
           key: 'ip',
           minWidth: 120,
           maxWidth: 130,
+          fixed: 'left',
           sortable: 'custom',
           renderHeader: (h, params) => {
             return h('span', this.$t('ClientIP'))
@@ -665,7 +658,7 @@ export default {
         },
         {
           key: 'rate',
-          minWidth: 110,
+          width: 100,
           render: (h, params) => {
             return h('span', `${params.row.rate || 0} Mb/s`)
           },
@@ -676,7 +669,9 @@ export default {
         {
           key: 'pc',
           minWidth: 110,
-          maxWidth: 120,
+          maxWidth: 110,
+          fixed: 'left',
+          align: 'center',
           sortable: 'custom',
           renderHeader: (h, params) => {
             return h('span', this.$t('MachineName'))
@@ -695,7 +690,6 @@ export default {
           minWidth: 120,
           maxWidth: 130,
           filters: this.filtersCurDasv,
-          filteredValue: this.initCurDascFilterValue,
           filterMultiple: false,
           filterRemote: this.fitercurIpFunction,
           renderHeader: (h, params) => {
@@ -708,7 +702,6 @@ export default {
           maxWidth: 110,
           filters: this.filterspcGp,
           filterMultiple: false,
-          filteredValue: this.initPcGpFilterValue,
           filterRemote: this.fiterFunction,
           renderHeader: (h, params) => {
             return h('span', this.$t('StartUpPlan'))
@@ -717,15 +710,15 @@ export default {
         {
           key: 'curImg',
           minWidth: 115,
-          maxWidth: 130,
+          maxWidth: 120,
           renderHeader: (h, params) => {
             return h('span', this.$t('MirrorName'))
           }
         },
         {
           key: 'reRe',
-          minWidth: 80,
-          maxWidth: 80,
+          minWidth: 150,
+          maxWidth: 150,
           renderHeader: (h, params) => {
             return h('span', this.$t('reRe'))
           },
@@ -737,25 +730,11 @@ export default {
             }
           }
         },
-        {
-          key: 'reTo',
-          minWidth: 85,
-          maxWidth: 85,
-          renderHeader: (h, params) => {
-            return h('span', this.$t('reTo'))
-          },
-          render: (h, params) => {
-            if (params.row.wrTo) {
-              return h('span', bytesToSize(params.row.reTo))
-            } else {
-              return h('span', '-')
-            }
-          }
-        },
+
         {
           key: 'wrRe',
-          minWidth: 80,
-          maxWidth: 80,
+          minWidth: 150,
+          maxWidth: 150,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrRe'))
           },
@@ -768,9 +747,24 @@ export default {
           }
         },
         {
+          key: 'reTo',
+          minWidth: 130,
+          maxWidth: 130,
+          renderHeader: (h, params) => {
+            return h('span', this.$t('reTo'))
+          },
+          render: (h, params) => {
+            if (params.row.wrTo) {
+              return h('span', bytesToSize(params.row.reTo))
+            } else {
+              return h('span', '-')
+            }
+          }
+        },
+        {
           key: 'wrTo',
-          minWidth: 100,
-          maxWidth: 100,
+          minWidth: 130,
+          maxWidth: 130,
           renderHeader: (h, params) => {
             return h('span', this.$t('wrTo'))
           },
@@ -784,8 +778,8 @@ export default {
         },
         {
           key: 'liTi',
-          minWidth: 100,
-          maxWidth: 100,
+          minWidth: 110,
+          maxWidth: 110,
           renderHeader: (h, params) => {
             return h('span', this.$t('liTi'))
           },
@@ -830,7 +824,7 @@ export default {
                 }
               }, [
                 h('Button', [
-                  h('span', '更多'),
+                  h('span', this.$t('More')),
                   h('Icon', {
                     props: {
                       'type': 'ios-arrow-down'
@@ -913,8 +907,14 @@ export default {
       }
     },
     HandleCreateScroll (view, all) {
-      this.elementScroll = CreateScroll(document.querySelector('#scroll'), document.querySelector('#content'), view * 48, document.querySelector('#all'), all * 48)
+      this.elementScroll = CreateScroll(document.querySelector('#scroll'),
+        document.querySelector('#content'), view * 48,
+        document.querySelector('#all'), all * 48,
+        this.currentScrollPosition
+      )
       this.elementScroll.addEventListener('scroll', e => {
+        this.currentScrollPosition = e.target.scrollTop
+
         this.tableData = this.list.slice(
           parseInt(this.elementScroll.scrollTop / 48),
           this.elementScroll.scrollTop / 48 + this.Pagelimit
@@ -922,54 +922,40 @@ export default {
       })
     },
     async fiterFunction (value) {
-      this.fiterPcGp = value[0]
-      this.elementScroll.scrollTop = 0
-      let list = await this.getClienList()
-      if (value.length === 0) {
-        this.list = list
-        this.tableData = list.slice(
-          parseInt(this.elementScroll.scrollTop / 48),
-          parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit
-        )
-        this.HandleCreateScroll(this.tableData.length, list.length)
-        return
-      }
-      let filterList = list.filter(item => {
-        return item.pcGp === value[0]
-      })
-      this.list = filterList
-      this.tableData = filterList.slice(
-        parseInt(this.elementScroll.scrollTop / 48),
-        parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit
-      )
-      this.HandleCreateScroll(this.tableData.length, filterList.length)
-    },
-    async fitercurIpFunction (value) {
-      if (value.length === 0) {
-        value = value[0]
-        this.filtercurDasc = value
-      }
       if (typeof value === 'string') {
         value = value + ''
-        this.filtercurDasc = value
+        this.fiterPcGp = value
       } else if (value instanceof Array) {
-        value = value[0]
-        this.filtercurDasc = value
+        if (value[0]) {
+          this.fiterPcGp = value[0]
+        } else {
+          this.fiterPcGp = ''
+        }
+      }
+      this.handgetClienList()
+    },
+    async fitercurIpFunction (value) {
+      if (typeof value === 'string') {
+        this.filtercurDasc = value + ''
+      } else if (value instanceof Array) {
+        if (value[0]) {
+          this.filtercurDasc = value[0]
+        } else {
+          this.filtercurDasc = ''
+        }
       }
       this.handgetClienList()
     },
 
     async fiterStatFunction (value) {
-      if (value.length === 0) {
-        value = value[0]
-        this.filterStat = value
-      }
       if (typeof value === 'string') {
-        value = value + ''
-        this.filterStat = value
+        this.filterStat = value + ''
       } else if (value instanceof Array) {
-        value = value[0]
-        this.filterStat = value
+        if (value[0]) {
+          this.filterStat = value[0]
+        } else {
+          this.filterStat = ''
+        }
       }
       this.handgetClienList()
     },
@@ -1023,12 +1009,6 @@ export default {
         return item._checked
       })
     },
-    // start () {
-    //   this.timer = setTimeout(() => {
-    //     this.handgetClienList()
-    //     this.start()
-    //   }, 2000)
-    // },
     async handleButtonRemoth (obj) {
       try {
         await PcRemote(
@@ -1102,26 +1082,9 @@ export default {
       })
     },
     async ChangeValue (value) {
-      if (!value) {
-        this.handgetClienList()
-        return
-      }
-      let list = await this.getClienList()
-      if (!list) return
-      this.tempx = []
-      list.forEach(item => {
-        if (
-          item.pc.indexOf(value) !== -1 ||
-          item.ip.indexOf(value) !== -1 ||
-          item.mac.indexOf(value) !== -1 ||
-          item.pcGp.indexOf(value) !== -1
-        ) {
-          this.tempx.push(item)
-        }
-      })
-      this.list = this.tempx
-      this.tableData = this.tempx.slice(0, 10)
-      // this.searchVal = ''
+      this.searchVal = value
+
+      this.handgetClienList()
     },
     test (hide) {
       if (hide) {
@@ -1200,193 +1163,100 @@ export default {
      */
     async handgetClienList () {
       this.clientMac = []
-      this.searchVal = ''
-      let superip = await getSuper(this.masterip)
-      let client = await getPcListConfig(this.masterip)
-      let clientList = client.data.result && (client.data.result.list || [])
+      this.exclientIp = []
+      this.pc = []
+
+      this.loading = false
+
+      let clientList = await this.getClienList() // 客户机列表
       this.statCount = 0
-      clientList.forEach(item => {
+      this.list = clientList.filter(item => {
         if (item.stat === '1') {
           this.statCount++
         }
-        this.clientMac.push(item.mac)
-        this.exclientIp.push(item.ip)
-        this.pc.push(item.pc)
-      })
 
-      this.srcList = clientList // 保存原数组
-      if (clientList) {
-        this.pageInfo.count = clientList.length
-      }
-      this.loading = false
-      if (superip.data.result) {
-        if (clientList.length > 0) {
-          let flag = true
-          this.list = clientList.filter(item => {
-            if (superip.data.result.ip === item.ip) {
-              this.show = false
-              flag = false
-              this.currentSuper = [item]
-            }
-            return superip.data.result.ip !== item.ip
-          })
-          var list = this.list
-          if (this.fiterPcGp) {
-            list = list.filter(item => {
-              return this.fiterPcGp === item.pcGp
-            })
-            this.list = list
-          }
-
-          if (this.filtercurDasc) {
-            list = list.filter(item => {
-              return this.filtercurDasc === item.curDaSV
-            })
-            this.list = list
-          }
-
-          if (this.filterStat) {
-            list = list.filter(item => {
-              return this.filterStat === item.stat
-            })
-            this.list = list
-          }
-
-          if (this.ipasc) {
-            this.ipSort(this.list, 'ip', 'asc')
-          }
-          if (this.ipdesc) {
-            this.ipSort(this.list, 'ip', 'desc')
-          }
-          if (this.pcasc) {
-            let shuzi = this.list.filter(item => {
-              return parseInt(item.pc)
-            })
-            shuzi.forEach(item => {
-              item.pc = parseInt(item.pc)
-            })
-            let zimu = this.list.filter(item => {
-              return !Number(item.pc)
-            })
-            this.list = shuzi
-              .sort((obj, obj1) => {
-                return obj.pc - obj1.pc
-              })
-              .concat(
-                zimu.sort((o, o1) => {
-                  return o.pc.localeCompare(o1.pc)
-                })
-              )
-          } else if (this.pcdesc) {
-            let shuzi = this.list.filter(item => {
-              return parseInt(item.pc)
-            })
-            shuzi.forEach(item => {
-              item.pc = parseInt(item.pc)
-            })
-            let zimu = this.list.filter(item => {
-              return !Number(item.pc)
-            })
-            this.list = shuzi
-              .sort((obj, obj1) => {
-                return obj1.pc - obj.pc
-              })
-              .concat(
-                zimu.sort((o, o1) => {
-                  return o1.pc.localeCompare(o.pc)
-                })
-              )
-          }
-          if (flag) {
-            this.show = true
-            this.currentSuper = [superip.data.result]
-          }
-          this.tableData = this.list.slice(
-            parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
-          )
-        }
-      } else {
-        let list = await this.getClienList()
-        if (this.fiterPcGp) {
-          list = list.filter(item => {
-            return this.fiterPcGp === item.pcGp
-          })
-          this.list = list
-        } else {
-          this.list = clientList
-        }
-        if (this.filtercurDasc) {
-          list = list.filter(item => {
-            return this.filtercurDasc === item.curDaSV
-          })
-          this.list = list
-        }
-        if (this.filterStat) {
-          list = list.filter(item => {
-            return this.filterStat === item.stat
-          })
-          this.list = list
-        }
-        if (this.ipasc) {
-          this.ipSort(this.list, 'ip', 'asc')
-        }
-        if (this.ipdesc) {
-          this.ipSort(this.list, 'ip', 'desc')
-        }
-        if (this.pcasc) {
-          let shuzi = this.list.filter(item => {
-            return parseInt(item.pc)
-          })
-          shuzi.forEach(item => {
-            item.pc = parseInt(item.pc)
-          })
-          let zimu = this.list.filter(item => {
-            return !Number(item.pc)
-          })
-          this.list = shuzi
-            .sort((obj, obj1) => {
-              return obj.pc - obj1.pc
-            })
-            .concat(
-              zimu.sort((o, o1) => {
-                return o.pc.localeCompare(o1.pc)
-              })
-            )
-        } else if (this.pcdesc) {
-          let shuzi = this.list.filter(item => {
-            return parseInt(item.pc)
-          })
-          shuzi.forEach(item => {
-            item.pc = parseInt(item.pc)
-          })
-          let zimu = this.list.filter(item => {
-            return !Number(item.pc)
-          })
-          this.list = shuzi
-            .sort((obj, obj1) => {
-              return obj1.pc - obj.pc
-            })
-            .concat(
-              zimu.sort((o, o1) => {
-                return o1.pc.localeCompare(o.pc)
-              })
-            )
-        }
-        this.tableData = this.list.slice(
-          parseInt(this.bar.scrollTop / 48), this.bar.scrollTop / 48 + this.Pagelimit
+        return (
+          (this.fiterPcGp === '' ? true : item.pcGp === this.fiterPcGp) &&
+          (this.filtercurDasc === '' ? true : item.curDaSV === this.filtercurDasc) &&
+          (this.filterStat === '' ? true : item.stat === this.filterStat)
         )
+      })
+      if (this.searchVal) {
+        this.list = this.list.filter(item =>
+          item.PcGp === this.searchVal ||
+          item.ip === this.searchVal ||
+          item.pc === this.searchVal ||
+          item.curDaSV === this.searchVal ||
+          item.mac === this.searchVal
+        )
+      }
+      if (this.ipasc) {
+        this.ipSort(this.list, 'ip', 'asc')
+      }
+      if (this.ipdesc) {
+        this.ipSort(this.list, 'ip', 'desc')
+      }
+      if (this.pcasc) {
+        let shuzi = this.list.filter(item => {
+          return parseInt(item.pc)
+        })
+        shuzi.forEach(item => {
+          item.pc = parseInt(item.pc)
+        })
+        let zimu = this.list.filter(item => {
+          return !Number(item.pc)
+        })
+        this.list = shuzi
+          .sort((obj, obj1) => {
+            return obj.pc - obj1.pc
+          })
+          .concat(
+            zimu.sort((o, o1) => {
+              return o.pc.localeCompare(o1.pc)
+            })
+          )
+      } else if (this.pcdesc) {
+        let shuzi = this.list.filter(item => {
+          return parseInt(item.pc)
+        })
+        shuzi.forEach(item => {
+          item.pc = parseInt(item.pc)
+        })
+        let zimu = this.list.filter(item => {
+          return !Number(item.pc)
+        })
+        this.list = shuzi
+          .sort((obj, obj1) => {
+            return obj1.pc - obj.pc
+          })
+          .concat(
+            zimu.sort((o, o1) => {
+              return o1.pc.localeCompare(o.pc)
+            })
+          )
+      }
+
+      if (this.list.length === 1) {
+        this.elementScroll.scrollTop = 0
+        this.tableData = this.list.slice(0, parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
+      } else {
+        this.tableData = this.list.slice(parseInt(this.elementScroll.scrollTop / 48), parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
       }
       this.HandleCreateScroll(this.tableData.length, this.list.length)
       return this.list
     },
     async getClienList () {
-      let superip = await getSuper(this.masterip)
-      let client = await getPcListConfig(this.masterip)
+      let superip = await getSuper(this.masterip) // 超级
+      let client = await getPcListConfig(this.masterip) // 客户机列表
       let clientList = client.data.result && (client.data.result.list || [])
       if (superip.data.result) {
         if (clientList.length > 0) {
           let list = clientList.filter(item => {
+            this.clientMac.push(item.mac)
+            this.exclientIp.push(item.ip)
+            this.pc.push(item.pc)
             if (superip.data.result.ip === item.ip) {
+              this.show = false
               this.currentSuper = [item]
             }
             return superip.data.result.ip !== item.ip

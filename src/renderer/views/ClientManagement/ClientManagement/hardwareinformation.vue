@@ -87,7 +87,7 @@ export default {
         {
           title: this.$t('ConfigState'),
           key: 'config_state',
-          width: 127,
+          width: 138,
           render: (h, params) => {
             if (params.row.config_state === 1) {
               return h('span', this.$t('Change'))
@@ -159,18 +159,6 @@ export default {
           ellipsis: true,
           tooltip: true
         }
-        // {
-        //   title: this.$t('operation'),
-        //   render: (h, params) => {
-        //     return h('Button', { props: {
-        //       type: 'primary',
-        //       size: 'small'
-        //     },
-        //     on: {
-        //       click: () => { this.handleConfirmSinger(params.row) }
-        //     } }, this.$t('Confirm'))
-        //   }
-        // }
       ],
       srcdData: '',
       data1: [],

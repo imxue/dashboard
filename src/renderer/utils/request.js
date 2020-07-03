@@ -55,6 +55,13 @@ service.interceptors.response.use(
         })
       }
     }
+    if (error.request && error.request.status === 401) {
+      if (store.state.app.barinfo) {
+        login(store.state.app.barinfo.bar_id).then(resp => {
+          localStorage.setItem('token', resp.token)
+        })
+      }
+    }
     return Promise.reject(error)
   }
 )

@@ -34,8 +34,12 @@
     "extraResources": [
       "./cmd/**"
     ],
+    
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "target":{
+        "target":"zip"
+      }
     },
     "dmg": {
       "contents": [

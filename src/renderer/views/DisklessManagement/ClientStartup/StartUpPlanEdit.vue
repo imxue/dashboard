@@ -53,7 +53,7 @@
         <FormItem prop="wrLimG"  :label="this.$t('WritebackLimit')" >
           <Row>
             <i-col span="10">
-                  <Tooltip max-width="200" content="当设置会写为零的时候，回写量是回写盘的十分之一">
+                  <Tooltip max-width="200" :content="this.$t('wrLimTip')">
               <i-input v-model="formValidate.wrLimG" placeholder="">
                <span slot="append">G</span>
               </i-input>
@@ -64,16 +64,12 @@
         <FormItem prop="gTim"  :label="this.$t('PlanSwitchingWait') + '：'" >
           <Row>
             <i-col span="10">
-            <!-- <Poptip trigger="focus"> -->
              <Tooltip max-width="200" :content="this.$t('tip')">
              <Input v-model="formValidate.gTim" placeholder="" >
              <span slot="append">S</span>
              </Input>
                 </Tooltip>
-             <!-- <div slot="content">{{$t('tip')}}</div> -->
-            <!-- </Poptip> -->
             </i-col>
-            <!-- <i-input v-model="formValidate.gTim" placeholder="" style="width:80px;"></i-input> {{$t('tip')}} -->
           </Row>
         </FormItem>
         <FormItem prop="cach" :label="this.$t('CacheSize') + '：'" >
@@ -83,23 +79,17 @@
             </i-col>
           </Row>
         </FormItem>
-        <!-- <FormItem prop="wieh" :label="this.$t('WideResolution') + '：'" :label-width="140">
-          <Row>
-            <i-col span="10">
-              <i-input v-model="formValidate.wieh" placeholder=""></i-input>
-              </i-col>
-          </Row>
-        </FormItem> -->
+     
         
-        <FormItem prop="PNPvalue" label="PNP设置：">
+        <FormItem prop="PNPvalue" :label="this.$t('PNPSet') + '：'">
           <Row>
             <i-col span="10">
             <Select v-model="formValidate.pnps" multiple >
-             <Option value="disp">{{$t('显卡')}}</Option>
+             <Option value="disp">{{$t('GraphicsCard')}}</Option>
               <Option value="usb">{{$t('usb')}}</Option>
-               <Option value="base">{{$t('主板')}}</Option>
-              <Option value="aud">{{$t('声卡')}}</Option>
-              <Option value="mon">{{$t('显示器')}}</Option>
+               <Option value="base">{{$t('MainBoard')}}</Option>
+              <Option value="aud">{{$t('SoundCard')}}</Option>
+              <Option value="mon">{{$t('monitor')}}</Option>
              </Select>
              </i-col>
           </Row>
@@ -110,7 +100,7 @@
                     <Poptip trigger="focus">
                      <i-input v-model="formValidate.wieh" placeholder="">
                      </i-input>
-                   <div slot="content">{{$t('宽')}}</div>
+                   <div slot="content">{{$t('width')}}</div>
                    </Poptip>
               </i-col>
                     <i-col span="1" style="text-align:center;">
@@ -119,7 +109,7 @@
             <i-col span="5">
                   <Poptip trigger="focus">
                 <i-input v-model="formValidate.hith" placeholder="" ></i-input>
-                <div slot="content">{{$t('高')}}</div>
+                <div slot="content">{{$t('Hight')}}</div>
                       </Poptip>
             </i-col>
           </Row>
@@ -153,22 +143,28 @@
       width= "500"
       footer-hide
       class-name="vertical-center-modal">
-      <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="110" label-position="left">
+      <Form ref="formValidate2" :model="formValidate2" :rules="ruleValidate2" :label-width="110" label-position="right">
          <FormItem :label="this.$t('DatabaseServer')" prop="daSV" style="white-space:nowrap;">
            <Select v-model="formValidate2.daSV" @on-change="handleGetImageList" style="width:200px;" :placeholder="this.$t('pleaseSelectDatabaseServer')">
               <Option v-for="item in serverlist" v-bind:key="item.serverIp" v-bind:value="item.serverIp">{{item.serverIp}}</Option>
             </Select>
         </FormItem>
         <FormItem :label="this.$t('MirrorName')" prop="schemeName">
-          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue" clearable style="width:200px;" :placeholder="this.$t('pleaseInputMirror')">
+          <Select v-model="formValidate2.schemeName" @on-change="handleSelectImageValue"  style="width:200px;" :placeholder="this.$t('pleaseInputMirror')">
             <Option v-for="item in imageList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
-        <FormItem :label="this.$t('ConfigurationName')" prop="configName" >
-          <Select v-model="formValidate2.configName" clearable style="width:200px;" :placeholder="this.$t('pleaseInputConfigurationName')">
+
+          <FormItem :label="this.$t('ConfigurationName')" prop="configName" >
+          <Select v-model="formValidate2.configName"  style="width:200px;" :placeholder="this.$t('pleaseInputConfigurationName')">
             <Option v-for="item in imageProList" :value="item.name" :key="item.id" >{{ item.name }}</Option>
           </Select>
         </FormItem>
+
+        <FormItem :label="this.$t('MenuName')" prop="item">
+          <Input v-model="formValidate2.item"  style="width:200px;" :placeholder="this.$t('pleaseInputMirror')"/>
+        </FormItem>
+
         <FormItem class="buttonList">
             <Button type="primary" @click="handleAddProject('formValidate2')">{{$t('Add')}}</Button>
             <Button @click="handleImageReset('formValidate2')" style="margin-left: 8px">{{$t('cancelText')}}</Button>
@@ -217,6 +213,7 @@
           { key: 'img', renderHeader: (h, params) => { return h('span', this.$t('MirrorName')) } },
           { key: 'daSV', renderHeader: (h, params) => { return h('span', this.$t('DatabaseServer')) } },
           { key: 'prof', renderHeader: (h, params) => { return h('span', this.$t('ConfigurationName')) } },
+          { key: 'item', renderHeader: (h, params) => { return h('span', this.$t('MenuName')) } },
           { renderHeader: (h, params) => { return h('span', this.$t('operation')) },
             width: 400,
             key: 'operation',
@@ -245,8 +242,7 @@
                 return [resp, b, c]
               }
             }
-          },
-          { renderHeader: (h, params) => { return h('span', this.$t('Remarks')) }, key: 'info' }
+          }
         ],
         tableData1: [],
         formValidate: {
@@ -288,7 +284,7 @@
           resh: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }],
           deps: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'blur' }]
         },
-        formValidate2: { schemeName: '', daSV: '', configName: '' },
+        formValidate2: { schemeName: '', daSV: '', configName: '', item: '' },
         ruleValidate2: {
           daSV: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
           schemeName: [{ required: true, message: this.$t('Thisfieldcannotbeempty'), trigger: 'change' }],
@@ -344,9 +340,9 @@
         if (!serverIp) return
         getImageListx(serverIp).then((resp) => {
           if (!resp.data.error) {
-            var arr = resp.data.result.list
-            this.imageList = arr
+            this.imageList = resp.data.result.list
             this.formValidate2.schemeName = this.imageList[0].name
+            this.formValidate2.item = this.imageList[0].image
             this.handleSelectImageValue()
           } else {
             this.$Message.error(resp.data.error)
@@ -356,11 +352,14 @@
       /**
        * 选择镜像配置
        */
-      handleSelectImageValue () {
+      handleSelectImageValue (v) {
         var arr = this.imageList
         var newArr = arr.filter(item => item.name === this.formValidate2.schemeName)
         this.imageProList = newArr[0].profileList
         this.formValidate2.configName = this.imageProList[0].name
+        if (v) {
+          this.formValidate2.item = v
+        }
       },
       handleButtonAdd () {
         this.showPopup = true
@@ -409,7 +408,7 @@
               img: this.formValidate2.schemeName,
               prof: this.formValidate2.configName,
               daSV: this.formValidate2.daSV,
-              item: this.formValidate2.schemeName
+              item: this.formValidate2.item
             })
             this.handleGetDataLength()
           } else {

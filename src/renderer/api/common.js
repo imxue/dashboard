@@ -115,7 +115,7 @@ export function getUpdate () {
 
 export function getUpdateVersion (url) {
   return request({
-    baseurl: `${url}`,
+    baseUrl: `${url}`,
     method: 'get'
 
   })

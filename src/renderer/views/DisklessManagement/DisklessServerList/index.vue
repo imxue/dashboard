@@ -225,8 +225,8 @@ export default {
             let isMaster = params.row.isMaster
             if (isMaster === '1') {
               return h('div', [
-                h('Tag', { props: { color: 'red' } }, this.$t('MasterIp')),
-                h('span', { style: { color: this.stateMpa.get(type).color } }, this.stateMpa.get(type).text)
+                h('span', { style: { color: this.stateMpa.get(type).color, marginRight: '10px' } }, this.stateMpa.get(type).text),
+                h('Tag', { props: { color: 'red' } }, this.$t('MasterIp'))
               ])
             }
             return h('span', { style: { color: this.stateMpa.get(type).color } }, this.stateMpa.get(type).text)
@@ -579,13 +579,17 @@ export default {
       })
     },
     handleSearch () {
-      this.loading = true
-      var arr = this.serverList
-      this.searchVal && setTimeout(() => {
-        this.loading = false
-        var newArr = arr.filter(item => item.serverIp === this.searchVal)
-        this.serverList = newArr
-      }, 1000)
+      if (this.searchVal) {
+        this.loading = true
+        var arr = this.serverList
+        this.searchVal && setTimeout(() => {
+          this.loading = false
+          var newArr = arr.filter(item => item.serverIp === this.searchVal)
+          this.serverList = newArr
+        }, 1000)
+      } else {
+        this.getTableData()
+      }
     },
     /**
      * 清除服务器信息

@@ -60,9 +60,8 @@ ipcMain.on('restart', () => {
 })
 
 ipcMain.on('cmd', (e, arg) => {
-  console.log(arg)
-  start(arg)
-  e.returnValue = ''
+  let x = start(arg)
+  e.returnValue = x
 })
 ipcMain.on('open-file-dialog', (event) => {
   dialog.showOpenDialog({
