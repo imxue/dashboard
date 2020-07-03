@@ -119,7 +119,6 @@ export default {
       try {
         let resp = await getUpdate()
         this.updateUrl = resp.data
-        // this.updateUrl = 'http://10.88.66.158:88/'
       } catch (error) {
         this.$Message.error(this.$t('UpdateAddressfailed'))
       }
@@ -128,7 +127,7 @@ export default {
       axios.get(`${this.updateUrl}`).then((resp) => {
         this.OnlienVersion = resp.data.Version
       }).catch(e => {
-        console.log(e)
+        this.$Message.error(this.$t('UpdateAddressfailed'))
       })
     },
     async ChangeLanguage (name) {
@@ -136,11 +135,8 @@ export default {
 
       if (name === 'update') {
         try {
-          await this.GetOnlenVersion()
+          await this.HandleGetUpdate()
           ipcRenderer.sendSync('cmd', { update: `updater.exe -url:${this.updateUrl}` })
-          ipcRenderer.on('cmd', (event, arg) => {
-            console.log(arg)
-          })
         } catch (error) {
           this.$Message.error(this.$t('getOnlineVersionFailed'))
         }
@@ -154,7 +150,8 @@ export default {
       this.$store.dispatch('saveBarInfo', null)
       this.$router.push('/login')
     },
-    HandleUpdate () {
+    async HandleUpdate () {
+      await this.HandleGetUpdate()
       ipcRenderer.sendSync('cmd', { update: `updater.exe  -url:${this.updateUrl}` })
     }
   },
