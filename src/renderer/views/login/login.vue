@@ -114,9 +114,9 @@ export default {
   watch: {},
   computed: {},
   mounted () {
-    // this.$store.dispatch('GetbarInfo').then(() => {
-    //   this.$router.push('/')
-    // })
+    this.$store.dispatch('GetbarInfo').then(() => {
+      this.$router.push('/')
+    })
   },
   created () {
     if (localStorage.getItem('connectNet')) {
@@ -154,41 +154,6 @@ export default {
           } finally {
             this.IsActive = false
           }
-          // netbarRegister(Number(this.formInline.barid), this.formInline.password).then((e) => {
-          //   login(Number(this.formInline.barid)).then(r => {
-          //     // 获取主服务
-          //     localStorage.setItem('token', r.token)
-          //     this.$store.dispatch('GetMasterip').then((e) => {
-          //       if (e.data.value) {
-          //         GetRegInfo(this.formInline.barid + '', e.data.value).then((e) => {
-          //           if (e.data.result.regStat === '1') {
-          //             this.$router.push('/game')
-          //           } else {
-          //             this.notifyUser('error', '授权失败...')
-          //           }
-          //         }, (e) => {
-          //           this.notifyUser('error', `${e}`)
-          //         })
-          //       } else {
-          //         this.$router.push('/game')
-          //       }
-          //     }, () => {
-          //       this.$router.push('/Diskless')
-          //     })
-          //   }, (e) => {
-          //     this.notifyUser('error', e.data.error)
-          //   })
-          // }, (e) => {
-          //   // 注册失败
-          //   if (!e.response && e.message) {
-          //     this.notifyUser('error', e.message)
-          //   }
-          //   if (e.data) {
-          //     this.notifyUser('error', e.data.error)
-          //   }
-          // }).finally(() => {
-          //   this.IsActive = false
-          // })
         } else {
           this.IsActive = false
         }

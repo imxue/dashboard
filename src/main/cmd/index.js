@@ -14,7 +14,7 @@ export function start (obj) {
   } else if (obj.update) {
     // 更新程序
     cmdStr = `${obj.update}`
-    cmdPath = process.env.NODE_ENV === 'development' ? path.resolve(__dirname, '../../../cmd/Update') : path.resolve(app.getAppPath(), '../cmd/Update')
+    cmdPath = process.env.NODE_ENV === 'development' ? path.resolve(__dirname, '../../../cmd/Update') : path.resolve(app.getAppPath(), '../../../')
   } else if (obj.ip && obj.password) {
     cmdStr = `tvnviewer ${obj.ip}::5900 -password=${obj.password}`
     cmdPath = process.env.NODE_ENV === 'development' ? path.resolve(__dirname, '../../../cmd/') : path.resolve(app.getAppPath(), '../cmd/')

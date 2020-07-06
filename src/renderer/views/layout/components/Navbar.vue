@@ -49,8 +49,8 @@
         </Menu>
         <div class="headerFooter">
         <template v-if="localVersion && OnlienVersion">
-      <Icon v-if="OnlienVersion !== localVersion + ''" type="md-bulb"  style="margin-right:4px;color:#A5D6A7;font-size:20px;"/>
-       <span  style="color:#A5D6A7;cursor: pointer;" v-if="OnlienVersion !== localVersion + ''"  @click="HandleUpdate">{{$t('CurrentNewVersion')}}</span>
+      <Icon v-if="OnlienVersion + '' !== localVersion + ''" type="md-bulb"  style="margin-right:4px;color:#A5D6A7;font-size:20px;"/>
+       <span  style="color:#A5D6A7;cursor: pointer;" v-if="OnlienVersion + '' !== localVersion + ''"  @click="HandleUpdate">{{$t('CurrentNewVersion')}}</span>
         </template>
               <Dropdown trigger="click" @on-click="ChangeLanguage" style="margin-Left:10px;">
             <a href="javascript:void(0)">
@@ -124,8 +124,9 @@ export default {
       }
     },
     GetOnlenVersion () {
-      axios.get(`${this.updateUrl}`).then((resp) => {
+      axios.get(`${this.updateUrl}?${new Date().getTime()}`).then((resp) => {
         this.OnlienVersion = resp.data.Version
+        console.log(this.OnlienVersion)
       }).catch(e => {
         this.$Message.error(this.$t('UpdateAddressfailed'))
       })
@@ -136,6 +137,13 @@ export default {
       if (name === 'update') {
         try {
           await this.HandleGetUpdate()
+
+          console.log('++++')
+          console.log(this.updateUrl)
+          console.log('++++')
+          console.log('---')
+          console.log(`updater.exe -url:${this.updateUrl}`)
+          console.log('---')
           ipcRenderer.sendSync('cmd', { update: `updater.exe -url:${this.updateUrl}` })
         } catch (error) {
           this.$Message.error(this.$t('getOnlineVersionFailed'))
@@ -152,6 +160,12 @@ export default {
     },
     async HandleUpdate () {
       await this.HandleGetUpdate()
+      console.log('++++')
+      console.log(this.updateUrl)
+      console.log('++++')
+      console.log('---')
+      console.log(`updater.exe -url:${this.updateUrl}`)
+      console.log('---')
       ipcRenderer.sendSync('cmd', { update: `updater.exe  -url:${this.updateUrl}` })
     }
   },
