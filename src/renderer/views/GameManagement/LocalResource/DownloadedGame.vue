@@ -50,11 +50,11 @@
               let type = params.row.State
               switch (type) {
                 case 0:
-                  // return h('span', this.$t('NotUpdated'))
-                  return h('span', '存在更新')
+                  return h('span', this.$t('NotUpdated'))
+                  // return h('span', '存在更新')
                 case 1:
                   // return h('span', { style: { color: '#008000' } }, this.$t('Updated'))
-                  return h('span', '正常')
+                  return h('span', this.$t('Updated'))
                 default:
                   return '-'
               }

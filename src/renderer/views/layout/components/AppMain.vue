@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-      <Button v-if="this.showBackBtn === true"><Icon type="ios-arrow-back" /> 返回上一页</Button>
-    <router-view v-if="isRouterAlive"></router-view>
+    <Button v-if="this.showBackBtn === true"><Icon type="ios-arrow-back" /> 返回上一页</Button>
+      <router-view v-if="isRouterAlive"></router-view>
   </div>
 </template>
 

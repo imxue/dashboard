@@ -610,5 +610,11 @@
   "Hight":"Hight",
   "PNPSet":"PNP Settings",
   "NoUpdate":"No update program obtained",
-  "More":"More"
+  "More":"More",
+  "ClientLanguage":"Client Language",
+  "tip3":"You did not submit your modified information, leaving directly will not save, please know",
+  "MaxUpTasks":"MaxUpTasks",
+  "UpSpeedlimit":"UpSpeedlimit",
+  "ListenerPort":"ListenerPort",
+  "DownloadSet":"DownloadSet"
 }

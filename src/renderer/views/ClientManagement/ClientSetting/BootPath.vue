@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <Tabs type="card" :animated="false" v-model="currentTab" @on-click="HandleGetAllScheme">
+  <div style="min-height:500px;">
+    <Tabs type="card" :animated="false" v-model="currentTab" @on-click="HandleGetAllScheme" style="min-height:500px;">
       <TabPane :label="$t('DefaultSetting')" name="DefaultSetting">
         <div>
           <Button type="primary" v-on:click="HandEdit" v-if="disabled">{{$t('EditBootPath')}}</Button>

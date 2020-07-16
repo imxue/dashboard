@@ -225,11 +225,9 @@ export default {
           this.pageinfo = response.data.pageino
         }
       }, (response) => {
-        // this.$Message.info({
-        //   content: this.$t(response.data.error),
-        //   closable: true
-        // })
-        window.clearTimeout(this.timer)
+        if (response.status !== 403) {
+          window.clearTimeout(this.timer)
+        }
         this.tableData = []
         this.pageinfo = { count: 0, page_index: 0 }
       })

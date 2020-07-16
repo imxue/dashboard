@@ -11,18 +11,34 @@
           <Row>
             <i-col span="3">{{this.$t('MaxdownloadTasks')}}：</i-col>
             <i-col span="5">
-              <Select v-model="formItem.select1"  class="topColumn" >
-                <Option v-for="item in gameList" :value="item.value" :key="item.Id" placeholder="全部游戏类型">{{ item.value }}</Option>
-              </Select>
+               <Input v-model.number="formItem.global_max_dl_tasks"  @on-change="handeChange"  class="topColumn"  placeholder="" />
             </i-col>
           </Row>
+               <Row style="marginTop:10px" >
+            <i-col span="3">{{this.$t('MaxUpTasks')}}：</i-col>
+            <i-col span="5">
+               <Input v-model.number="formItem.global_max_up_tasks"  @on-change="handeChange"  class="topColumn"  placeholder="" />
+            </i-col>
+          </Row>
+
         </FormItem>
         <FormItem label="">
-          <Row>
+          <Row style="marginTop:10px">
             <i-col span="3">{{this.$t('DownloadSpeedlimit')}}：</i-col>
             <i-col span="5">
               <div class="x">
-                <Input v-model="formItem.select2"   placeholder="" />
+                <Input v-model.number="formItem.global_max_dl_speed"  @on-change="handeChange" placeholder="" />
+                  <i-col span="12">
+                  <span >KB/s ({{this.$t('0ExpressSpeed')}})</span>
+                    </i-col>
+              </div>
+            </i-col>
+          </Row >
+                    <Row style="marginTop:10px">
+            <i-col span="3">{{this.$t('UpSpeedlimit')}}：</i-col>
+            <i-col span="5">
+              <div class="x">
+                <Input v-model.number="formItem.global_max_up_speed" @on-change="handeChange"  placeholder="" />
                   <i-col span="12">
                   <span >KB/s ({{this.$t('0ExpressSpeed')}})</span>
                     </i-col>
@@ -30,12 +46,19 @@
             </i-col>
           </Row>
         </FormItem>
-        <FormItem label="">
+
+               <FormItem label="">
           <Row>
-            <i-col span="3">{{$t('DefaultDownloadPaht')}}：</i-col>
-            <i-col span="8">
-              <Table border ref="selection" :columns="tableColumns" :data="tableData"></Table>
+            <i-col span="3">{{this.$t('ListenerPort')}}：</i-col>
+            <i-col span="5">
+              <div class="x">
+                <Input v-model.number="formItem.listen_port"  @on-change="handeChange"  placeholder="" />
+                  <i-col span="12">
+                    </i-col>
+              </div>
             </i-col>
+          </Row>
+
           </Row>
         </FormItem>
       </Form>
@@ -51,16 +74,13 @@ export default {
   data () {
     return {
       formItem: {
-        input: '',
-        select1: '',
-        select2: '',
-        change: false
+        global_max_up_tasks: '',
+        global_max_up_speed: '',
+        global_max_dl_speed: '',
+        global_max_dl_tasks: '',
+        listen_port: ''
       },
-      gameList: [
-        { Id: 0, value: 1 },
-        { Id: 1, value: 2 },
-        { Id: 2, value: 3 }
-      ],
+      change: false,
       tableColumns: [
         { key: 'TypeGame', renderHeader: (h, params) => { return h('span', this.$t('TypeName')) } },
         {
@@ -120,7 +140,8 @@ export default {
           }
         }
       ],
-      tableData: []
+      tableData: [],
+      srcData: []
     }
   },
   created () {
@@ -132,40 +153,53 @@ export default {
     }
   },
   methods: {
+    handeChange (e) {
+      this.change = true
+      console.log(this.srcData)
+    },
     HandleGetData () {
       getDownloadSettings().then((resp) => {
-        this.formItem.select1 = resp.data.max_download_task
-        this.formItem.select2 = resp.data.download_speed_limit
-        let test = []
-        let obj = resp.data.default_download_disk
-        for (let i in obj) {
-          let o = i // 保存原来的key值
-          let x = {}
-          switch (i) {
-            case '网络游戏':
-              i = this.$t('OnlineGame')
-              break
-            case '单机游戏':
-              i = this.$t('ConsoleGame')
-              break
-            case '休闲游戏':
-              i = this.$t('CasualGame')
-              break
-            case '棋牌游戏':
-              i = this.$t('ChessGame')
-              break
-            case '辅助游戏':
-              i = this.$t('AuxiliaryGame')
-              break
-            case '系统工具':
-              i = this.$t('SystemTool')
-              break
+        this.formItem.global_max_dl_tasks = resp.data[0].global_max_dl_tasks
+        this.formItem.global_max_dl_speed = resp.data[0].global_max_dl_speed
+        this.formItem.global_max_up_tasks = resp.data[0].global_max_up_tasks
+        this.formItem.global_max_up_speed = resp.data[0].global_max_up_speed
+        this.formItem.listen_port = resp.data[0].listen_port
+        this.srcData = { ...this.formItem }
+        for (const key in this.formItem) {
+          if (this.formItem.hasOwnProperty(key)) {
+            this.srcData[key] = this.formItem[key]
           }
-          x['TypeGame'] = i
-          x['disk'] = obj[o]
-          test.push(x)
         }
-        this.tableData = test
+        // let test = []
+        // let obj = resp.data.default_download_disk
+        // for (let i in obj) {
+        //   let o = i // 保存原来的key值
+        //   let x = {}
+        //   switch (i) {
+        //     case '网络游戏':
+        //       i = this.$t('OnlineGame')
+        //       break
+        //     case '单机游戏':
+        //       i = this.$t('ConsoleGame')
+        //       break
+        //     case '休闲游戏':
+        //       i = this.$t('CasualGame')
+        //       break
+        //     case '棋牌游戏':
+        //       i = this.$t('ChessGame')
+        //       break
+        //     case '辅助游戏':
+        //       i = this.$t('AuxiliaryGame')
+        //       break
+        //     case '系统工具':
+        //       i = this.$t('SystemTool')
+        //       break
+        //   }
+        //   x['TypeGame'] = i
+        //   x['disk'] = obj[o]
+        //   test.push(x)
+        // }
+        // this.tableData = test
       }, (err) => {
         console.log(err)
       })
@@ -175,11 +209,7 @@ export default {
       for (var item in this.tableData) {
         obj[this.tableData[item].TypeGame] = this.tableData[item].disk
       };
-      let info = {
-        max_download_task: this.formItem.select1,
-        download_speed_limit: this.formItem.select2,
-        default_download_disk: obj
-      }
+      let info = { ...this.formItem }
       setDownloadSettings(info).then((resp) => {
         this.change = false
         this.$Message.success({
@@ -196,9 +226,19 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
+    let answer
     if (this.change) {
-      const answer = window.confirm('你没有提交你修改的信息，直接离开将不会保存，请知晓')
+      for (const key in this.srcData) {
+        if (this.srcData.hasOwnProperty(key)) {
+          if (this.srcData[key] !== this.formItem[key]) {
+            answer = window.confirm('你没有提交你修改的信息，直接离开将不会保存，请知晓')
+            console.log('存在不一样')
+          }
+        }
+      }
       if (answer) {
+        next()
+      } else if (typeof answer === 'undefined') {
         next()
       }
     } else {

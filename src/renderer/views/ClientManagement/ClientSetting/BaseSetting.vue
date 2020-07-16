@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height:500px;">
     <Row>
       <Col span="11">
         <span>{{$t('MenuSet')}}</span>
@@ -18,9 +18,17 @@
         </div>
         <div class="row">
           <span>{{$t('GameStartupMethod')}}</span>
-    
           <i-switch v-model="form.is_single_click_startup" @on-change="is_single_click_startupChange" :true-value='1' :false-value='0'/>
         </div>
+
+
+          <div  style="marginTop:10px; "> 
+            <span class="desc">{{$t('ClientLanguage')}}:</span>
+                 <Select v-model="form.client_language" style="width:200px" @on-change="handleSetLanguage">
+                 <Option value="chinese" >{{$t('chinese')}}</Option>
+                 <Option value="english" >{{$t('english')}}</Option>
+              </Select>
+          </div>
       </Col>
     </Row>
     <div class="main">
@@ -37,8 +45,12 @@
           <div class="rowSinger">
             <span class="desc">{{$t('ArchiveServerIp')}}:</span>
              <Input v-model="archive_server_ip" placeholder="Enter something..." />
-             <Button type="primary" @click="SetArchiveServerIp">{{$t('Set')}}</Button>
+             <Button type="primary" @click="SetArchiveServerIp" style="margin-left:10px;">{{$t('Set')}}</Button>
           </div>
+
+          
+
+
         </Row>
       </Col>
     </div>
@@ -56,7 +68,8 @@ export default {
         is_sync_server_time: '',
         is_hide_pallet_icon: '',
         is_single_click_startup: '',
-        is_open_game_archive: ''
+        is_open_game_archive: '',
+        client_language: ''
       },
       tempform: {},
       archive_server_ip: ''
@@ -72,6 +85,9 @@ export default {
     }
   },
   methods: {
+    handleSetLanguage (status) {
+      this.HandleSetBasic()
+    },
     /**
      * 设置是否显示菜单
     */

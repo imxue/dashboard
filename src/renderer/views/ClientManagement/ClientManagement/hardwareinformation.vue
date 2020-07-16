@@ -205,7 +205,7 @@ export default {
     },
     async HandleGetInfo (info) {
       try {
-        let e = await getAllPcConfigs()
+        let e = await getAllPcConfigs(info)
         this.data1 = e.data.data
         this.pageinfo = e.data.pageino
         let changeClient = this.data1.filter(item => {

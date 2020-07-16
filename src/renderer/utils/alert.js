@@ -11,6 +11,12 @@ function notifyUserOfDiskError (error) {
     content: i18n.t(`kxLinuxErr.${error}`)
   })
 }
+
+function notify (error) {
+  iView.Message.error({
+    content: error + ''
+  })
+}
 function notifyUserOfSucess (error) {
   iView.Message.success({
     content: i18n.t(error)
@@ -27,7 +33,8 @@ const test = {
   notifyUserOfError,
   notifyUserOfDiskError,
   notifyUserOfSucess,
-  notifyUser
+  notifyUser,
+  notify
 }
 
 export default test

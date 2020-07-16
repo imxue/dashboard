@@ -610,5 +610,11 @@
   "Hight":"高",
   "PNPSet":"PNP設置",
   "NoUpdate":"未獲取到更新程序",
-  "More":"更多"
+  "More":"更多",
+  "ClientLanguage":"客户机语言",
+  "tip3":"你没有提交你修改的信息，直接离开将不会保存，请知晓",
+  "MaxUpTasks":"最大同时下载任务数",
+  "UpSpeedlimit":"上次限速",
+  "ListenerPort":"监听端口",
+  "DownloadSet":"下载设置"
 }

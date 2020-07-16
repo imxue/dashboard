@@ -79,12 +79,12 @@
 
         </div>
       </div>
-      <div ref="viewTable" class="box  ggggg">
-        <Table
+      <Table
           border
           stripe
           highlight-row
           ref="demox"
+          :max-height="TableHeight"
           :columns="tableColumns"
           :data="tableData"
           @on-sort-change="handleSort"
@@ -95,12 +95,6 @@
           @on-selection-change="onSelectionChange"
           :loading="loading"
         ></Table>
-        <div ref="scroll" id="scroll">
-          <div ref="content" id="content">
-            <div ref="all" id="all"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- 删除提示 -->
@@ -566,29 +560,26 @@ export default {
       filterServerIp: '',
       filterStat: '',
       filtersCurDasv: [],
-      filterspcGp: []
+      filterspcGp: [],
+      TableHeight: '300',
+      leave: false
     }
   },
   async created () {
-    await this.HandleGetMaster() // 获取主服务器
-    await this.handleGetPcGroup()
+    await this.setMaster()
     await this.getMasterList()
-    if (this.$route.query.ip) {
-      this.filtercurDasc = this.$route.query.ip
-      this.filterStat = '1'
-    }
-    await this.handgetClienList().then(() => {
-      this.start()
-    })
+    this.filterspcGp = await this.FetchPcGroup(this.masterip)
+    // await this.handgetClienList().then(() => {
+    //   this.start()
+    // })
+
+    this.Throttling(this.handgetClienList, 3000)
   },
-  mounted () {
-    this.$refs.viewTable.addEventListener('mousewheel', e => {
-      e.preventDefault && e.preventDefault()
-      if (e.deltaY < 0) {
-        this.elementScroll.scrollTop -= 48
-      } else {
-        this.elementScroll.scrollTop += 48
-      }
+
+  async mounted () {
+    requestAnimationFrame(this.setHeight)
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(this.setHeight)
     })
   },
   computed: {
@@ -864,7 +855,15 @@ export default {
   components: {
     edit
   },
+  beforeRouteUpdate (to, from, next) {
+    if (this.$route.query.ip) {
+      this.filtercurDasc = this.$route.query.ip
+      this.filterStat = '1'
+    }
+    next()
+  },
   beforeRouteLeave (to, from, next) {
+    this.leave = true
     clearTimeout(this.timer)
     next()
   },
@@ -880,18 +879,59 @@ export default {
         this.timer = null
       } else {
         if (!this.timer) {
+          console.log(123)
           this.start()
         }
       }
     }
   },
   methods: {
-    async start () {
-      await this.handgetClienList()
+    async  Throttling (callback, time) {
+      console.log(this.timer)
+      try {
+        await callback()
+        this.timer = setTimeout(() => {
+          this.Throttling(callback, time)
+        }, time)
+      } catch (error) {
+        if (this.timer) clearTimeout(this.timer)
+      }
+    },
+    /**
+      获取主服务器
+    */
+    async setMaster () {
+      try {
+        let resp = await getMasterIp()
+        this.$store.dispatch('saveMaster', resp.data.value || '')
+      } catch (e) {
+        this.$Message.error(e.data.error)
+      }
+    },
+    /**
+     * 获取启动方案
+    */
+    async FetchPcGroup (ip) {
+      try {
+        let resp = await getPcGroupx(ip)
+        return resp.data.result.list.map(item => ({ label: item.name, value: item.name }))
+      } catch (e) {
+        this.$Message.error(e.data.error)
+      }
+    },
+    setHeight () {
+      this.TableHeight = (document.body.clientHeight - 400)
+    },
+    start () {
+      this.handgetClienList()
       this.timer = setTimeout(() => {
         this.start()
+        if (this.leave) {
+          clearTimeout(this.timer)
+        }
       }, 3000)
     },
+
     async getMasterList () {
       try {
         let respList = await getServers(this.masterip)
@@ -1067,20 +1107,7 @@ export default {
       }
       this.handgetClienList()
     },
-    /**
-      获取主服务器
-    */
-    async HandleGetMaster () {
-      return new Promise(async (resolve, reject) => {
-        try {
-          let resp = await getMasterIp()
-          this.$store.dispatch('saveMaster', resp.data.value || '')
-          resolve()
-        } catch (error) {
-          reject(error)
-        }
-      })
-    },
+
     async ChangeValue (value) {
       this.searchVal = value
 
@@ -1168,82 +1195,89 @@ export default {
 
       this.loading = false
 
-      let clientList = await this.getClienList() // 客户机列表
-      this.statCount = 0
-      this.list = clientList.filter(item => {
-        if (item.stat === '1') {
-          this.statCount++
-        }
+      try {
+        let clientList = await this.getClienList() // 客户机列表
+        this.statCount = 0
+        this.list = clientList.filter(item => {
+          if (item.stat === '1') {
+            this.statCount++
+          }
 
-        return (
-          (this.fiterPcGp === '' ? true : item.pcGp === this.fiterPcGp) &&
+          return (
+            (this.fiterPcGp === '' ? true : item.pcGp === this.fiterPcGp) &&
           (this.filtercurDasc === '' ? true : item.curDaSV === this.filtercurDasc) &&
           (this.filterStat === '' ? true : item.stat === this.filterStat)
-        )
-      })
-      if (this.searchVal) {
-        this.list = this.list.filter(item =>
-          item.PcGp === this.searchVal ||
+          )
+        })
+        if (this.searchVal) {
+          this.list = this.list.filter(item =>
+            item.PcGp === this.searchVal ||
           item.ip === this.searchVal ||
           item.pc === this.searchVal ||
           item.curDaSV === this.searchVal ||
           item.mac === this.searchVal
-        )
-      }
-      if (this.ipasc) {
-        this.ipSort(this.list, 'ip', 'asc')
-      }
-      if (this.ipdesc) {
-        this.ipSort(this.list, 'ip', 'desc')
-      }
-      if (this.pcasc) {
-        let shuzi = this.list.filter(item => {
-          return parseInt(item.pc)
-        })
-        shuzi.forEach(item => {
-          item.pc = parseInt(item.pc)
-        })
-        let zimu = this.list.filter(item => {
-          return !Number(item.pc)
-        })
-        this.list = shuzi
-          .sort((obj, obj1) => {
-            return obj.pc - obj1.pc
-          })
-          .concat(
-            zimu.sort((o, o1) => {
-              return o.pc.localeCompare(o1.pc)
-            })
           )
-      } else if (this.pcdesc) {
-        let shuzi = this.list.filter(item => {
-          return parseInt(item.pc)
-        })
-        shuzi.forEach(item => {
-          item.pc = parseInt(item.pc)
-        })
-        let zimu = this.list.filter(item => {
-          return !Number(item.pc)
-        })
-        this.list = shuzi
-          .sort((obj, obj1) => {
-            return obj1.pc - obj.pc
+        }
+        if (this.ipasc) {
+          this.ipSort(this.list, 'ip', 'asc')
+        }
+        if (this.ipdesc) {
+          this.ipSort(this.list, 'ip', 'desc')
+        }
+        if (this.pcasc) {
+          let shuzi = this.list.filter(item => {
+            return parseInt(item.pc)
           })
-          .concat(
-            zimu.sort((o, o1) => {
-              return o1.pc.localeCompare(o.pc)
+          shuzi.forEach(item => {
+            item.pc = parseInt(item.pc)
+          })
+          let zimu = this.list.filter(item => {
+            return !Number(item.pc)
+          })
+          this.list = shuzi
+            .sort((obj, obj1) => {
+              return obj.pc - obj1.pc
             })
-          )
+            .concat(
+              zimu.sort((o, o1) => {
+                return o.pc.localeCompare(o1.pc)
+              })
+            )
+        } else if (this.pcdesc) {
+          let shuzi = this.list.filter(item => {
+            return parseInt(item.pc)
+          })
+          shuzi.forEach(item => {
+            item.pc = parseInt(item.pc)
+          })
+          let zimu = this.list.filter(item => {
+            return !Number(item.pc)
+          })
+          this.list = shuzi
+            .sort((obj, obj1) => {
+              return obj1.pc - obj.pc
+            })
+            .concat(
+              zimu.sort((o, o1) => {
+                return o1.pc.localeCompare(o.pc)
+              })
+            )
+        }
+        // if (this.list.length === 1) {
+        //   this.elementScroll.scrollTop = 0
+        //   this.tableData = this.list.slice(0, parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
+        // } else {
+        //   this.tableData = this.list.slice(parseInt(this.elementScroll.scrollTop / 48), parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
+        // }
+        this.tableData = this.list
+        // this.HandleCreateScroll(this.tableData.length, this.list.length)
+        return this.list
+      } catch (error) {
+        if (error.status !== 403) {
+          clearTimeout(this.timer)
+        }
+        this.tableData = []
       }
-
-      if (this.list.length === 1) {
-        this.elementScroll.scrollTop = 0
-        this.tableData = this.list.slice(0, parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
-      } else {
-        this.tableData = this.list.slice(parseInt(this.elementScroll.scrollTop / 48), parseInt(this.elementScroll.scrollTop / 48) + this.Pagelimit)
-      }
-      this.HandleCreateScroll(this.tableData.length, this.list.length)
-      return this.list
     },
     async getClienList () {
       let superip = await getSuper(this.masterip) // 超级
@@ -1396,22 +1430,7 @@ export default {
         }
       )
     },
-    // 获取启动方案
-    handleGetPcGroup () {
-      getPcGroupx(this.masterip).then(
-        e => {
-          this.filterspcGp = e.data.result.list.map((i) => {
-            let o = {}
-            o.label = i.name
-            o.value = i.name
-            return o
-          })
-        },
-        e => {
-          this.$Message.error(e.data.error)
-        }
-      )
-    },
+
     /**
      * 批量修改客户
      */

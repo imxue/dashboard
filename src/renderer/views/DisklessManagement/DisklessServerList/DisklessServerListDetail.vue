@@ -1,10 +1,10 @@
 <template>
-  <div class="container">
+  <div ref="innerHeight">
     <Spin
       size="large"
       fix
-      v-if="spinShow"
-    ></Spin>
+      v-if="spinShow">
+      </Spin>
     <div class="topItem">
       <Select
         style="width:200px; marginRight:10px;"
@@ -78,13 +78,15 @@
         @click="handleLoadNICx"
       >{{$t('SetTheLoadNetworkCard')}}</Button>
     </Row>
+    
     <Table
       border
-      ref="selection"
+   ref="netTable"
       :columns="tableColumns2"
       :data="tableData2"
       @on-selection-change="handleCheckBox"
     ></Table>
+
     <div style="margin:10px 0; ">
       <span>{{$t('DiskSetting')}}</span>
       <Divider />
@@ -121,14 +123,15 @@
         ></Icon>
       </Spin>
     </Modal>
-
     <Table
       border
       :columns="tableColumns3"
       :data="diskInfo"
+      :max-height="DiskHeight"
       :row-class-name="rowClassName"
       @on-row-dblclick="ShowDiskPlan"
     ></Table>
+
     <div class="dig">
       <Modal
         v-model="DiskSettingDialog"
@@ -366,6 +369,8 @@ export default {
         width: '300px',
         height: '300px'
       },
+      NetworkHeight: 200,
+      DiskHeight: 200,
       clientCount: 0,
       clientLength: 0, // 备份数
       PcGroupCount: 0,
@@ -649,11 +654,30 @@ export default {
       this.start()
     }) // 获取服务器信息
   },
+  mounted () {
+    setTimeout(() => {
+      requestAnimationFrame(this.setHeight)
+    })
+    window.addEventListener('resize', (e) => {
+      requestAnimationFrame(this.setHeight)
+    })
+  },
   beforeRouteLeave (to, from, next) {
     clearTimeout(this.timer)
     next()
   },
   methods: {
+    setHeight () {
+      let allHeight = document.body.clientHeight - 158
+
+      if (this.$refs.innerHeight) {
+        this.$refs.innerHeight.style.height = allHeight + 'px'
+        console.log('allHeight', allHeight)
+        console.log('netTable', this.$refs.netTable.$el.offsetHeight)
+        console.log(allHeight - 60 - 89 - 99 - 104 - 104 - this.$refs.netTable.$el.offsetHeight)
+        this.DiskHeight = allHeight - 60 - 89 - 99 - 104 - 104 - this.$refs.netTable.$el.offsetHeight
+      }
+    },
     async start () {
       this.HandleGetSrvStat()
       // this.handleGetCurrentPageServerInfo()

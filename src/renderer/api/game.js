@@ -83,7 +83,7 @@ export function downloadTodayGame (centerId, dir) {
  */
 export function getDownloadSettings () {
   return request({
-    url: '/v1/downloadsetting/getDownloadSettings',
+    url: '/v1/downloaderconfig/getall',
     method: 'get'
   })
 }
@@ -93,7 +93,7 @@ export function getDownloadSettings () {
 export function setDownloadSettings (info) {
   const data = { ...info }
   return request({
-    url: '/v1/downloadsetting/setDownloadSettings',
+    url: '/v1/downloaderconfig/setRunConfig',
     method: 'post',
     data
   })

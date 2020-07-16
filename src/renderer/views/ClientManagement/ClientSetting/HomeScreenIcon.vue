@@ -10,7 +10,7 @@
         <TabPane :label="$t('ClientStartPlan')" name="StartPlan" >
           <div class="main">
             <span>{{$t('ClientScheme')}}:</span>
-            <Select v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
+            <Select  v-model="plan" style="width:200px" @on-change="handleHomeScreenicon">
               <Option v-for="item in cityList" :value="item.id" v-bind:key="item.id">{{ item.name }}</Option>
             </Select>
              <Checkbox size="large" false-value='0' true-value='1' v-model="single" @on-change='SetDefault'>{{$t('UseDefaultSetting')}}</Checkbox>
@@ -46,7 +46,7 @@ export default {
       defaultGameId: [], // 默认游戏Id
       currentTab: 'DefaultSetting',
       SelectedDataGame: [], // 选择的游戏
-      single: '',
+      single: '0',
       plan: '',
       planCopy: '',
       cityList: [],
@@ -144,15 +144,16 @@ export default {
     /**
      * 点击进入tab页
      */
-    HandleGetAllScheme () {
+    async HandleGetAllScheme () {
       if (this.currentTab === 'StartPlan') {
-        getAllScheme().then((response) => {
+        try {
+          await this.handleGetPcGroup()
           this.HandleGetAllHomeIcon()
-        }, (response) => {
+        } catch (error) {
           this.$Message.info({
-            content: response.data.error
+            content: error.data.error
           })
-        })
+        }
       } else {
         this.HandleGetAllHomeIcon()
       }
@@ -180,17 +181,20 @@ export default {
     /**
      * 获取启动方案
      */
-    handleGetPcGroup () {
-      getAllScheme().then((resp) => {
-        this.cityList = resp.data.filter(item => {
-          return item.name !== 'default'
-        })
+    async handleGetPcGroup () {
+      try {
+        let resp = await getAllScheme()
+        // this.cityList = resp.data.filter(item => {
+        //   return item.name !== 'default'
+        // })
+
+        this.cityList = resp.data
         if (this.cityList.length !== 0) {
           this.plan = this.cityList[0].id
         }
-      }, (resp) => {
-        this.$Message.error(resp.data.error)
-      })
+      } catch (error) {
+        this.$Message.error(error.data.error)
+      }
     },
     /**
      * 获取图标
@@ -200,8 +204,9 @@ export default {
         default: '',
         schemeId: ''
       }
-      this.currentTab === 'DefaultSetting' ? info.default = true : info.default = false
-      info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
+      this.currentTab === 'DefaultSetting' ? info.default = true : info.schemeId = this.plan
+      // info.schemeId = this.currentTab === 'DefaultSetting' ? '' : this.plan
+
       getSchemeIcon(info).then(resp => {
         this.single = resp.data.use_default_setting + ''
         if (this.single === '1' && this.currentTab !== 'DefaultSetting') {
@@ -220,7 +225,12 @@ export default {
         schemeId: this.plan
       }
       getSchemeIcon(info).then(response => {
-        this.imgreSource = response.data
+        this.single = response.data.use_default_setting + ''
+        if (response.data.scheme_icon_settings) {
+          this.imgreSource = response.data.scheme_icon_settings
+        } else {
+          this.imgreSource = []
+        }
       }, (response) => {
         this.imgreSource = []
         this.$Message.info({

@@ -6,7 +6,7 @@
    
       <div class="wrapper">
         <Col  class="siderbar" style="background:#fff" :xxl="{ span: 4, offset: 0 }" :xl="{ span: 4, offset: 0 }" :lg="{span: 4, offset: 0 }"	:md="{ span: 4, offset: 0 }" :xs='{span:4,offset: 0}'>
-          <Sidebar ></Sidebar>
+          <Sidebar ref="test" ></Sidebar>
         </Col>
          <Col  class="main" >
             <Breadcrumb :style="{margin: '10px 10px'}">
@@ -18,11 +18,11 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-          <div class="mainWrapper" >
-              <Card dis-hover :style="{margin: '0 10px'}">
-              <AppMain></AppMain>
+          <!-- <div class="mainWrapper" > -->
+              <Card dis-hover :style="{margin: '0 10px'}" ref="mainWrapper">
+                <AppMain></AppMain>
             </Card>
-          </div>
+          <!-- </div> -->
         </col>
       </div>
   </div>  
@@ -57,8 +57,16 @@
     },
     created () {
       this.getBreadcrumb()
+      requestAnimationFrame(this.setHeight)
+      window.addEventListener('resize', () => {
+        requestAnimationFrame(this.setHeight)
+      })
     },
     methods: {
+      setHeight () {
+        this.$refs.test.$el.style.height = (document.body.clientHeight - 60) + 'px'
+        this.$refs.mainWrapper.$el.style.height = (document.body.clientHeight - 122) + 'px'
+      },
       getBreadcrumb () {
         let matched = this.$route.matched.filter(item => item.name)
         this.levelList = matched
@@ -101,10 +109,10 @@
     background: #f5f7f9;
     height: calc(100vh - 60px);
   }
-  .mainWrapper {
+  /* .mainWrapper {
     overflow: auto;
     height: calc(100vh - 122px);
-  }
+  } */
 </style>
 
 

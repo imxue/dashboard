@@ -135,8 +135,8 @@ body {
 }
 
 *::-webkit-scrollbar {
-  height:8px;
-  width:8px;
+  height:10px;
+  width:10px;
 }
 *::-webkit-scrollbar-thumb {
     background-color: #ccc;
@@ -147,7 +147,7 @@ body {
 }
 *::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px #ccc;
-    border-radius: 10px;
+    /* border-radius: 10px; */
 }
 .ivu-icon  {
   font-size: 18px !important;

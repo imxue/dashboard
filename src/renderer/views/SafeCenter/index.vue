@@ -149,12 +149,27 @@ export default {
                       props: {
                         type: 'primary'
                       },
+                      style: {
+                        marginRight: '20px'
+                      },
                       on: {
                         click: () => {
                           this.delete(params.row)
                         }
                       }
-                    }, this.$t('Delete'))
+                    }, this.$t('Delete')),
+                    h('Button', {
+                      props: {
+                        type: 'primary'
+                      },
+
+                      on: {
+                        click: () => {
+                          this.Add(params.row)
+                        }
+                      }
+                    }, this.$t('Add'))
+
                   ])
                 } else {
                   return h('div', [
@@ -1442,10 +1457,8 @@ export default {
       this.$set(row, '$isEdit', true)
     },
     async Add (row) {
-      console.log('add')
       try {
         await addSafeStrategy(row)
-        console.log(row)
         this.$set(row, '$isAdd', false)
         this.addFlag = false
       } catch (error) {
