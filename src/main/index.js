@@ -30,6 +30,8 @@ function createWindow () {
     webPreferences: { webSecurity: false }
   })
   // mainWindow.webContents.openDevTools()
+  mainWindow.maximize()
+
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -38,11 +40,20 @@ function createWindow () {
     mainWindow.show()
   })
 }
+const exits = app.makeSingleInstance(() => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
+
+if (exits) {
+  app.quit()
+}
 
 app.on('ready', function () {
   createWindow()
 })
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

@@ -23,7 +23,7 @@
       <Button type="error" class="topColumn" @click="handleButtonRemove">{{$t('LocalRemoval')}}</Button>
     </div>
     <!-- table -->
-    <Table width="100%" border ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe @on-sort-change="sortOrder"></Table>
+    <Table width="100%" border  ref="selection" :columns="tableColumns" :data="tableData" @on-selection-change="handleCheckBox" stripe @on-sort-change="sortOrder"></Table>
     <Row style="margin-top:10px; ">
       <Col span="24">
       <Page :total="this.pageInfo.count" show-total :current="Number(pageInfo.page_index + 1)" :page-size="this.Pagelimit" @on-change="handleGetTableList" style=" float:right;"/></Col>
@@ -97,7 +97,7 @@ export default {
           maxWidth: 120,
           renderHeader: (h, params) => { return h('span', this.$t('TypeName')) }
         },
-        { key: 'DisplayName', maxWidth: 200, minWidth: 108, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
+        { key: 'DisplayName', maxWidth: 210, minWidth: 128, renderHeader: (h, params) => { return h('span', this.$t('gameName')) } },
         { key: 'Popularity',
           minWidth: 120,
           maxWidth: 120,
@@ -125,17 +125,17 @@ export default {
             } }, [
               h('Button', {
                 style: { width: '80px' },
-                props: { type: 'primary', disabled: type !== 0 },
+                props: { type: 'primary', size: 'small', disabled: type !== 0 },
                 on: { click: () => { this.handleDownGame(params.row.Id) } }
               }, this.$t('DownloadGames')),
               h('Button',
                 { style: { marginLeft: '5px', width: '70px' },
-                  props: { type: 'primary', disabled: type !== 1 },
+                  props: { type: 'primary', size: 'small', disabled: type !== 1 },
                   on: { click: () => { this.handleFixGame(params.row) } }
                 }, this.$t('RepairGame')),
               h('Button', {
                 style: { width: '70px', marginLeft: '5px' },
-                props: { type: 'error', disabled: type === 0 },
+                props: { type: 'error', size: 'small', disabled: type === 0 },
                 on: { click: () => { this.handleRemove(params.row) } }
               }, this.$t('LocalRemoval'))
 

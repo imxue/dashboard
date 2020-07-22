@@ -18,11 +18,11 @@
                 </BreadcrumbItem>
               </template>
             </Breadcrumb>
-          <!-- <div class="mainWrapper" > -->
+          <div class="mainWrapper" >
               <Card dis-hover :style="{margin: '0 10px'}" ref="mainWrapper">
                 <AppMain></AppMain>
             </Card>
-          <!-- </div> -->
+          </div>
         </col>
       </div>
   </div>  
@@ -98,21 +98,21 @@
     z-index: 1030;
     bottom: 0;
     overflow-y: scroll; 
-    width: 200px;
+    width: 180px;
   }
   .siderbar::-webkit-scrollbar{
     display: none; 
   }
   .main{
     position: relative;
-    margin-left: 200px;
+    margin-left: 180px;
     background: #f5f7f9;
     height: calc(100vh - 60px);
   }
-  /* .mainWrapper {
+  .mainWrapper {
     overflow: auto;
-    height: calc(100vh - 122px);
-  } */
+    /* height: calc(100vh - 122px); */
+  }
 </style>
 
 

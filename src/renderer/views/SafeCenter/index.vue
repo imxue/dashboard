@@ -145,19 +145,7 @@ export default {
               if (params.row.$isEdit || params.row.$isAdd) {
                 if (params.row.$isAdd) {
                   return h('div', [
-                    h('Button', {
-                      props: {
-                        type: 'primary'
-                      },
-                      style: {
-                        marginRight: '20px'
-                      },
-                      on: {
-                        click: () => {
-                          this.delete(params.row)
-                        }
-                      }
-                    }, this.$t('Delete')),
+
                     h('Button', {
                       props: {
                         type: 'primary'
@@ -168,7 +156,20 @@ export default {
                           this.Add(params.row)
                         }
                       }
-                    }, this.$t('Add'))
+                    }, this.$t('Add')),
+                    h('Button', {
+                      props: {
+                        type: 'error'
+                      },
+                      style: {
+                        marginRight: '20px'
+                      },
+                      on: {
+                        click: () => {
+                          this.delete(params.row)
+                        }
+                      }
+                    }, this.$t('Delete'))
 
                   ])
                 } else {
