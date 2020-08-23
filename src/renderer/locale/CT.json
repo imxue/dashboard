@@ -616,5 +616,7 @@
   "MaxUpTasks":"最大同时下载任务数",
   "UpSpeedlimit":"上次限速",
   "ListenerPort":"监听端口",
-  "DownloadSet":"下载设置"
+  "DownloadSet":"下载设置",
+  "Archivepath":"存档路径",
+  "RunParameter":"运行参数"
 }

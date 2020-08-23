@@ -198,6 +198,8 @@ export default {
     * 整理数据
     */
     handleDownGame (id) {
+      const ipc = require('electron').ipcRenderer
+      ipc.send('Show', `111`)
       if (typeof id !== 'string' && this.getCheckboxVal.length === 0) {
         this.notifyUser('error', 'PleaseSelectAtLeastOneItemInTheList')
         return

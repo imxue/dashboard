@@ -21,10 +21,10 @@
         <FormItem  :label="$t('gameName')" prop="name"  style="width:400px;">
             <i-input v-model="formValidate.name"  :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
-         <FormItem  label="运行参数" prop="run_parameter"  style="width:400px;">
+         <FormItem  :label="$t('RunParameter')" prop="run_parameter"  style="width:400px;">
             <i-input v-model="formValidate.run_parameter"  :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
-        <FormItem  label="存档路径" prop="save_path"  style="width:400px;">
+        <FormItem  :label="$t('Archivepath')" prop="save_path"  style="width:400px;">
             <i-input v-model="formValidate.save_path"  :placeholder="$t('pleaseInput')"></i-input>
         </FormItem>
         <FormItem :label="$t('ServerPath')"  prop="path"  style="width:400px;">

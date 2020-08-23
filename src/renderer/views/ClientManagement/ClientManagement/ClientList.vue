@@ -569,11 +569,11 @@ export default {
     await this.setMaster()
     await this.getMasterList()
     this.filterspcGp = await this.FetchPcGroup(this.masterip)
-    // await this.handgetClienList().then(() => {
-    //   this.start()
-    // })
+    await this.handgetClienList().then(() => {
+      this.start()
+    })
 
-    this.Throttling(this.handgetClienList, 3000)
+    // this.Throttling(this.handgetClienList, 3000)
   },
 
   async mounted () {
@@ -887,7 +887,6 @@ export default {
   },
   methods: {
     async  Throttling (callback, time) {
-      console.log(this.timer)
       try {
         await callback()
         this.timer = setTimeout(() => {

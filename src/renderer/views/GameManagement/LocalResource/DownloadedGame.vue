@@ -102,11 +102,11 @@
                 h('Button', { style: { marginRight: '5px', width: '70px' },
                   props: { type: 'info', disabled: params.row.State === 1 },
                   on: { click: () => { this.handleTableRapir(params.row) } }
-                }, '修复'),
+                }, this.$t('repair')),
                 h('Button', { style: { marginRight: '5px', width: '70px' },
                   props: { type: 'error' },
                   on: { click: () => { this.handleTableDelete(params.row) } }
-                }, '删除')
+                }, this.$t('Delete'))
               ])
             }
           }

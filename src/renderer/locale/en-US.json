@@ -616,5 +616,7 @@
   "MaxUpTasks":"MaxUpTasks",
   "UpSpeedlimit":"UpSpeedlimit",
   "ListenerPort":"ListenerPort",
-  "DownloadSet":"DownloadSet"
+  "DownloadSet":"DownloadSet",
+  "Archivepath":"Archivepath",
+  "RunParameter":"RunParameter"
 }

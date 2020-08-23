@@ -2,7 +2,6 @@
   <div id="app">
     <router-view></router-view>
     <div class="footerbar">
-
      <div v-if="barinfo">
         <span>{{$t('BarId')}} : {{barinfo.bar_id}}</span>
         <span>{{$t('OnlineTerminal')}} / {{$t('AllTerminal')}}: {{barinfo.online_client_count}} / {{barinfo.client_count}}</span>
@@ -62,9 +61,10 @@ body {
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
-/* .ive-table-tip {
-  overflow: hidden !important;
-} */
+.ivu-table-cell {
+  padding-left:5px !important;
+  padding-right: 5px !important;
+}
 .ivu-table .demo-table-info-row td {
   background-color: #cce4f7;
 }

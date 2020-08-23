@@ -6,15 +6,6 @@ import fs from 'fs'
 import path from 'path'
 const { app } = require('electron').remote
 
-// store.dispatch('GetbarInfo').then(async (barinfo) => {
-//   let resp = await store.dispatch('GetMasterip')
-//   if (resp.data.value) {
-//     await GetRegInfo(barinfo.data.barid + '', resp.data.value)
-//   }
-// }).catch((e) => {
-//   alert.notifyUserOfError('获取网吧信息失败')
-// })
-
 async function test () {
   try {
     let barinfo = await store.dispatch('GetbarInfo')
@@ -22,7 +13,7 @@ async function test () {
     resp.data.value && await GetRegInfo(barinfo.data.bar_id + '', resp.data.value)
   } catch (error) {
     if (error === '硬件编码不一致') {
-      alert.notifyUserOfError('请先去解绑')
+      alert.notifyUserOfError('硬件编码不一致, 请先去解绑')
     } else {
       alert.notifyUserOfError(error)
     }
